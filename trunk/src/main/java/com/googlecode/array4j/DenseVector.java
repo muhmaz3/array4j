@@ -7,7 +7,7 @@ public final class DenseVector extends AbstractDenseVector<DenseVector> {
         super(dimension, 1);
     }
 
-    public DenseVector(final DenseVector other) {
+    public DenseVector(final Vector other) {
         super(other);
     }
 

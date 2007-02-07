@@ -5,7 +5,7 @@ import com.googlecode.array4j.DenseVector;
 import com.googlecode.array4j.Vector;
 import com.googlecode.array4j.kernel.Interface;
 
-public final class DiagonalGaussian extends Gaussian {
+public final class DiagonalGaussian extends AbstractGaussian {
     private final Vector fMean;
 
     private final Vector fVariance;

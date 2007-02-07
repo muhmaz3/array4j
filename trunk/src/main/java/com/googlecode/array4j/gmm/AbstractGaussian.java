@@ -3,10 +3,10 @@ package com.googlecode.array4j.gmm;
 import com.googlecode.array4j.Array;
 import com.googlecode.array4j.Vector;
 
-public abstract class Gaussian {
+public abstract class AbstractGaussian implements Gaussian {
     private final int fDimension;
 
-    public Gaussian(final int dimension) {
+    public AbstractGaussian(final int dimension) {
         this.fDimension = dimension;
     }
 

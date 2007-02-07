@@ -9,7 +9,7 @@ public abstract class AbstractDenseVector<E extends AbstractDenseVector>
         checkRowsColumns(rows, columns);
     }
 
-    protected AbstractDenseVector(final AbstractDenseVector other) {
+    protected AbstractDenseVector(final Vector other) {
         super(other);
     }
 

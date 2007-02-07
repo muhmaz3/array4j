@@ -4,7 +4,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.DoubleBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import com.googlecode.array4j.kernel.Interface;
@@ -28,7 +27,7 @@ public class DenseArray<E extends DenseArray> implements Array<E> {
         this(values, new int[]{values.length});
     }
 
-    public DenseArray(final DenseArray other) {
+    public DenseArray(final Array other) {
         this(other.getShape());
         final DoubleBuffer buffer = other.getBuffer();
         buffer.rewind();
