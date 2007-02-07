@@ -5,7 +5,7 @@ import com.googlecode.array4j.DenseVector;
 import com.googlecode.array4j.Vector;
 import com.googlecode.array4j.kernel.Interface;
 
-public final class DiagonalGaussian extends AbstractGaussian {
+public class DiagonalGaussian extends AbstractGaussian {
     private final Vector fMean;
 
     private final Vector fVariance;
@@ -27,7 +27,7 @@ public final class DiagonalGaussian extends AbstractGaussian {
     }
 
     @Override
-    public Vector logLikelihood(final Array data) {
+    public final Vector logLikelihood(final Array data) {
         if (data.ndim() != 2 || data.shape(1) != getDimension()) {
             throw new IllegalArgumentException();
         }
@@ -40,7 +40,7 @@ public final class DiagonalGaussian extends AbstractGaussian {
     }
 
     @Override
-    public double logLikelihood(final double... values) {
+    public final double logLikelihood(final double... values) {
         final DenseVector x = DenseVector.valueOf(values);
         if (x.length() != getDimension()) {
             throw new IllegalArgumentException();

@@ -7,7 +7,7 @@ import com.googlecode.array4j.Array;
 import com.googlecode.array4j.DenseVector;
 import com.googlecode.array4j.Vector;
 
-public final class GaussianMixture implements Gaussian {
+public class GaussianMixture implements Gaussian {
     private final List<Gaussian> fGaussians;
 
     private final Vector logweights;
@@ -36,15 +36,15 @@ public final class GaussianMixture implements Gaussian {
         return DenseVector.valueOf(weights);
     }
 
-    public int getDimension() {
+    public final int getDimension() {
         return logweights.getDimension();
     }
 
-    public Vector logLikelihood(final Array data) {
+    public final Vector logLikelihood(final Array data) {
         return null;
     }
 
-    public double logLikelihood(final double... values) {
+    public final double logLikelihood(final double... values) {
         return 0.0;
     }
 }

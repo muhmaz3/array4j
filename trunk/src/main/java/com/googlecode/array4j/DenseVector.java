@@ -2,7 +2,7 @@ package com.googlecode.array4j;
 
 import java.nio.DoubleBuffer;
 
-public final class DenseVector extends AbstractDenseVector<DenseVector> {
+public class DenseVector extends AbstractDenseVector<DenseVector> {
     public DenseVector(final int dimension) {
         super(dimension, 1);
     }
