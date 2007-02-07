@@ -5,7 +5,15 @@ import java.nio.DoubleBuffer;
 public interface Array<E extends Array> {
     int[] getShape();
 
+    int getShape(int index);
+
     int[] shape();
+
+    int shape(int index);
+
+    int getNdim();
+
+    int ndim();
 
     double get(int... indexes);
 
@@ -22,6 +30,10 @@ public interface Array<E extends Array> {
     double sum();
 
     double sum(int axis);
+
+    E plusEquals(double value);
+
+    E timesEquals(double value);
 
     DoubleBuffer getBuffer();
 }

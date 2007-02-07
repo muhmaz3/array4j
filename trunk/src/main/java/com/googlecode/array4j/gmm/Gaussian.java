@@ -1,6 +1,6 @@
 package com.googlecode.array4j.gmm;
 
-import com.googlecode.array4j.Matrix;
+import com.googlecode.array4j.Array;
 import com.googlecode.array4j.Vector;
 
 public abstract class Gaussian {
@@ -10,7 +10,7 @@ public abstract class Gaussian {
         this.fDimension = dimension;
     }
 
-    public abstract Vector logLikelihood(final Matrix x);
+    public abstract Vector logLikelihood(final Array data);
 
     public abstract double logLikelihood(final double... values);
 

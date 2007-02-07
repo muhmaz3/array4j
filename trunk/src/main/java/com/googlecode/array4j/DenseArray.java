@@ -92,6 +92,14 @@ public class DenseArray<E extends DenseArray> implements Array<E> {
         return fBuffer.capacity();
     }
 
+    public final int getNdim() {
+        return fShape.length;
+    }
+
+    public final int ndim() {
+        return fShape.length;
+    }
+
     public final int size() {
         return getSize();
     }
@@ -131,7 +139,7 @@ public class DenseArray<E extends DenseArray> implements Array<E> {
      *            value to fill with
      */
     public final void fill(final double value) {
-        Interface.kernel().fill(fBuffer, value);
+        Interface.kernel().fill(value, fBuffer);
     }
 
     public final E reshape(final int... shape) {
@@ -180,6 +188,16 @@ public class DenseArray<E extends DenseArray> implements Array<E> {
 
     public final double sum(final int axis) {
         throw new UnsupportedOperationException();
+    }
+
+    public final E plusEquals(final double value) {
+        Interface.kernel().plus(value, fBuffer, fBuffer);
+        return (E) this;
+    }
+
+    public final E timesEquals(final double value) {
+        Interface.kernel().times(value, fBuffer, fBuffer);
+        return (E) this;
     }
 
     public boolean equals(final Object obj) {

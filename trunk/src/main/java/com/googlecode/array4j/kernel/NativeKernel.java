@@ -4,13 +4,13 @@ import java.nio.DoubleBuffer;
 
 public final class NativeKernel implements Kernel {
     static {
-        System.loadLibrary("nni_blas");
+        System.loadLibrary("array4j");
     }
 
     public static void init() {
     }
 
-    public void fill(final DoubleBuffer in, final double value) {
+    public void fill(final double value, final DoubleBuffer in) {
         in.rewind();
         final int length = in.remaining();
         for (int i = 0; i < length; i++) {
@@ -23,11 +23,24 @@ public final class NativeKernel implements Kernel {
         throw new UnsupportedOperationException();
     }
 
-    private static native void log(DoubleBuffer in, DoubleBuffer out, int length);
+    private static native void log(final int length, final DoubleBuffer in, final DoubleBuffer out);
 
     public double sum(final DoubleBuffer in) {
         throw new UnsupportedOperationException();
     }
 
-    private static native void sum(DoubleBuffer in, int length);
+    private static native void sum(final int length, final DoubleBuffer in);
+
+    public void plus(final double value, final DoubleBuffer inbuf, final DoubleBuffer outbuf) {
+        throw new UnsupportedOperationException();
+    }
+
+    public void times(final double value, final DoubleBuffer inbuf, final DoubleBuffer outbuf) {
+        throw new UnsupportedOperationException();
+    }
+
+    public void diagonalLogLikelihood(final int[] shape, final DoubleBuffer meanbuf, final DoubleBuffer varbuf,
+            final DoubleBuffer inbuf, final DoubleBuffer outbuf) {
+        throw new UnsupportedOperationException();
+    }
 }

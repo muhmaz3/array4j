@@ -25,7 +25,7 @@ public abstract class AbstractDenseVector<E extends AbstractDenseVector>
     }
 
     public final double get(final int index) {
-        return getRows() == 1 ? get(1, index) : get(index, 1);
+        return getRows() == 1 ? get(0, index) : get(index, 0);
     }
 
     public final int getDimension() {

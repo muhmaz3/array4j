@@ -4,8 +4,6 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import com.googlecode.array4j.DenseArray;
-
 public final class DenseArrayTest {
     @Test
     public void testReshapeAndGet() {
@@ -33,7 +31,7 @@ public final class DenseArrayTest {
 
     @Test
     public void testSetGet() {
-        final DenseArray arr = new DenseArray(2, 4, 3);
+        DenseArray arr = new DenseArray(2, 4, 3);
         double value = 0.0;
         for (int i = 0; i < arr.shape(0); i++) {
             for (int j = 0; j < arr.shape(1); j++) {
@@ -44,6 +42,8 @@ public final class DenseArrayTest {
                 }
             }
         }
+        arr = new DenseArray(1, 1, 1);
+        assertEquals(0.0, arr.get(0, 0, 0));
     }
 
     @Test
@@ -82,5 +82,23 @@ public final class DenseArrayTest {
     public void testSum() {
         final DenseArray arr = DenseArray.valueOf(1.0, 2.0, 3.0);
         assertEquals(6.0, arr.sum());
+    }
+
+    @Test
+    public void testTimesEquals() {
+        final DenseArray arr = DenseArray.valueOf(1.0, -1.0, 0.0);
+        arr.timesEquals(3.0);
+        assertEquals(arr.get(0), 3.0);
+        assertEquals(arr.get(1), -3.0);
+        assertEquals(arr.get(2), 0.0);
+    }
+
+    @Test
+    public void testPlusEquals() {
+        final DenseArray arr = DenseArray.valueOf(1.0, -1.0, 0.0);
+        arr.plusEquals(3.0);
+        assertEquals(arr.get(0), 4.0);
+        assertEquals(arr.get(1), 2.0);
+        assertEquals(arr.get(2), 3.0);
     }
 }

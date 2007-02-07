@@ -6,7 +6,7 @@ public final class JavaKernel implements Kernel {
     public static void init() {
     }
 
-    public void fill(final DoubleBuffer in, final double value) {
+    public void fill(final double value, final DoubleBuffer in) {
         in.rewind();
         final int length = in.remaining();
         for (int i = 0; i < length; i++) {
@@ -30,5 +30,35 @@ public final class JavaKernel implements Kernel {
             sum += x;
         }
         return sum;
+    }
+
+    public void plus(final double value, final DoubleBuffer inbuf, final DoubleBuffer outbuf) {
+        final double[] in = inbuf.array();
+        final double[] out = outbuf.array();
+        for (int i = 0; i < in.length; i++) {
+            out[i] = value + in[i];
+        }
+    }
+
+    public void times(final double value, final DoubleBuffer inbuf, final DoubleBuffer outbuf) {
+        final double[] in = inbuf.array();
+        final double[] out = outbuf.array();
+        for (int i = 0; i < in.length; i++) {
+            out[i] = value * in[i];
+        }
+    }
+
+    public void diagonalLogLikelihood(final int[] shape, final DoubleBuffer meanbuf, final DoubleBuffer varbuf,
+            final DoubleBuffer inbuf, final DoubleBuffer outbuf) {
+        final double[] mean = meanbuf.array();
+        final double[] var = varbuf.array();
+        final double[] in = inbuf.array();
+        final double[] out = outbuf.array();
+        for (int i = 0; i < shape[0]; i++) {
+            for (int j = 0; j < shape[1]; j++) {
+                final double x = in[i * shape[0] + j] - mean[j];
+                out[i] = (x * x) / var[j];
+            }
+        }
     }
 }

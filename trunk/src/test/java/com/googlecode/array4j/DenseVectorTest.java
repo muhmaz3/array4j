@@ -5,8 +5,6 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.googlecode.array4j.DenseVector;
-
 public final class DenseVectorTest {
     @Test
     public void testConstructors() {
@@ -41,5 +39,11 @@ public final class DenseVectorTest {
                 assertEquals(value, vec.get(i));
             }
         }
+    }
+
+    @Test
+    public void testGet() {
+        final DenseVector arr = new DenseVector(1);
+        assertEquals(0.0, arr.get(0));
     }
 }

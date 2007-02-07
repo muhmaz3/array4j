@@ -1,17 +1,16 @@
 package com.googlecode.array4j.gmm;
 
+import com.googlecode.array4j.Array;
 import com.googlecode.array4j.DenseVector;
-import com.googlecode.array4j.Matrix;
 import com.googlecode.array4j.Vector;
+import com.googlecode.array4j.kernel.Interface;
 
 public final class DiagonalGaussian extends Gaussian {
     private final Vector fMean;
 
     private final Vector fVariance;
 
-    private final double sumlogvariances;
-
-    private final double ndimlog2pi;
+    private final double llconst;
 
     public DiagonalGaussian(final double[] mean, final double[] variance) {
         this(DenseVector.valueOf(mean), DenseVector.valueOf(variance));
@@ -24,24 +23,28 @@ public final class DiagonalGaussian extends Gaussian {
         }
         this.fMean = mean;
         this.fVariance = variance;
-        this.sumlogvariances = variance.log().sum();
-        this.ndimlog2pi = getDimension() * Math.log(2.0 * Math.PI);
+        this.llconst = variance.log().sum() + getDimension() * Math.log(2.0 * Math.PI);
     }
 
     @Override
-    public Vector logLikelihood(final Matrix x) {
-        if (x.getColumns() != getDimension()) {
+    public Vector logLikelihood(final Array data) {
+        if (data.ndim() != 2 || data.shape(1) != getDimension()) {
             throw new IllegalArgumentException();
         }
-        final Vector logLikelihoods = DenseVector.valueOf(new double[x.getRows()]);
-        throw new UnsupportedOperationException();
-//        logLikelihood(getDimension(), x.getRows(), x.buffer, fMean.buffer, fVariance.buffer, logLikelihoods.buffer);
-//        return logLikelihoods;
+        final Vector logLikelihoods = new DenseVector(data.shape(0));
+        Interface.kernel().diagonalLogLikelihood(data.shape(), fMean.getBuffer(), fVariance.getBuffer(),
+                data.getBuffer(), logLikelihoods.getBuffer());
+        logLikelihoods.plusEquals(llconst);
+        logLikelihoods.timesEquals(-0.5);
+        return logLikelihoods;
     }
 
     @Override
     public double logLikelihood(final double... values) {
-        final DenseVector valuesVec = DenseVector.valueOf(values);
-        throw new UnsupportedOperationException();
+        final DenseVector x = DenseVector.valueOf(values);
+        if (x.length() != getDimension()) {
+            throw new IllegalArgumentException();
+        }
+        return logLikelihood(x).get(0);
     }
 }

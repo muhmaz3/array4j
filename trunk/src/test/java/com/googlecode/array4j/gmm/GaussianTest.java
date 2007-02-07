@@ -4,8 +4,6 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import com.googlecode.array4j.gmm.DiagonalGaussian;
-
 public final class GaussianTest {
     @Test
     public void test() {
