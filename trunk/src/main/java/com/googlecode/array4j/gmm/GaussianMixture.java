@@ -7,24 +7,24 @@ import com.googlecode.array4j.Array;
 import com.googlecode.array4j.DenseVector;
 import com.googlecode.array4j.Vector;
 
-public final class GaussianMixture<E extends Gaussian> implements Gaussian {
-    private final List<E> fGaussians;
+public final class GaussianMixture implements Gaussian {
+    private final List<Gaussian> fGaussians;
 
     private final Vector logweights;
 
-    public GaussianMixture(final List<E> gaussians, final double[] weights) {
+    public GaussianMixture(final List<Gaussian> gaussians, final double[] weights) {
         this(gaussians, DenseVector.valueOf(weights));
     }
 
-    public GaussianMixture(final List<E> gaussians) {
+    public GaussianMixture(final List<Gaussian> gaussians) {
         this(gaussians, createEqualWeights(gaussians.size()));
     }
 
-    public GaussianMixture(final List<E> gaussians, final Vector weights) {
+    public GaussianMixture(final List<Gaussian> gaussians, final Vector weights) {
         if (gaussians.size() != weights.getDimension()) {
             throw new IllegalArgumentException();
         }
-        this.fGaussians = new ArrayList<E>(gaussians);
+        this.fGaussians = new ArrayList<Gaussian>(gaussians);
         this.logweights = new DenseVector(weights).log();
     }
 

@@ -1,6 +1,7 @@
 package com.googlecode.array4j;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -23,6 +24,7 @@ public final class DenseVectorTest {
     public void testReshape() {
         DenseVector vec = new DenseVector(10);
         vec = vec.reshape(10);
+        assertNotNull(vec);
     }
 
     @Ignore

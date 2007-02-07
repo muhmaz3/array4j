@@ -27,6 +27,16 @@ public class DenseArray<E extends DenseArray> implements Array<E> {
         this(values, new int[]{values.length});
     }
 
+    public DenseArray(final double[][] values) {
+        this(calculateShape(values));
+        for (int i = 0; i < values.length; i++) {
+            if (values[i].length != values[0].length) {
+                throw new IllegalArgumentException();
+            }
+            fBuffer.put(values[i]);
+        }
+    }
+
     public DenseArray(final Array other) {
         this(other.getShape());
         final DoubleBuffer buffer = other.getBuffer();
@@ -70,6 +80,10 @@ public class DenseArray<E extends DenseArray> implements Array<E> {
             capacity *= dim;
         }
         return capacity;
+    }
+
+    private static int[] calculateShape(final double[][] values) {
+        return new int[]{values.length, values[0].length};
     }
 
     private static void checkShape(final int[] shape) {
