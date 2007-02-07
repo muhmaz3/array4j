@@ -9,6 +9,8 @@ import java.util.List;
 
 import com.googlecode.array4j.kernel.Interface;
 
+// TODO DoubleBuffer.asReadOnlyBuffer could be useful
+
 public class DenseArray<E extends DenseArray> implements Array<E> {
     private final int[] fShape;
 
@@ -24,6 +26,13 @@ public class DenseArray<E extends DenseArray> implements Array<E> {
 
     protected DenseArray(final double[] values) {
         this(values, new int[]{values.length});
+    }
+
+    public DenseArray(final DenseArray other) {
+        this(other.getShape());
+        final DoubleBuffer buffer = other.getBuffer();
+        buffer.rewind();
+        fBuffer.put(buffer);
     }
 
     public DenseArray(final double[] values, final int... shape) {
@@ -73,7 +82,9 @@ public class DenseArray<E extends DenseArray> implements Array<E> {
     }
 
     public final int[] getShape() {
-        return Arrays.copyOf(fShape, fShape.length);
+        final int[] shapeCopy = new int[fShape.length];
+        System.arraycopy(fShape, 0, shapeCopy, 0, fShape.length);
+        return shapeCopy;
     }
 
     public final int getShape(final int index) {

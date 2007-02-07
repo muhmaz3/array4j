@@ -9,6 +9,10 @@ public abstract class AbstractDenseVector<E extends AbstractDenseVector>
         checkRowsColumns(rows, columns);
     }
 
+    protected AbstractDenseVector(final AbstractDenseVector other) {
+        super(other);
+    }
+
     protected AbstractDenseVector(final double[] values, final int rows, final int columns) {
         super(values, rows, columns);
         checkRowsColumns(rows, columns);

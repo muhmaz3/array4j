@@ -7,6 +7,10 @@ public final class DenseVector extends AbstractDenseVector<DenseVector> {
         super(dimension, 1);
     }
 
+    public DenseVector(final DenseVector other) {
+        super(other);
+    }
+
     private DenseVector(final double[] values) {
         super(values, values.length, 1);
     }

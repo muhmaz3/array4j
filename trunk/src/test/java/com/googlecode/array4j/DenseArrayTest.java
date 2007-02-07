@@ -101,4 +101,22 @@ public final class DenseArrayTest {
         assertEquals(arr.get(1), 2.0);
         assertEquals(arr.get(2), 3.0);
     }
+
+    @Test
+    public void testCopyConstructor() {
+        final DenseArray arr = new DenseArray(2, 2);
+        arr.set(1.0, 0, 0);
+        arr.set(2.0, 0, 1);
+        arr.set(3.0, 1, 0);
+        arr.set(4.0, 1, 1);
+        final DenseArray arr2 = new DenseArray(arr);
+        double value = 1.0;
+        for (int i = 0; i < arr.shape(0); i++) {
+            for (int j = 0; j < arr.shape(1); j++) {
+                assertEquals(value, arr.get(i, j));
+                assertEquals(value, arr2.get(i, j));
+                value += 1.0;
+            }
+        }
+    }
 }

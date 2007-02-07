@@ -14,6 +14,12 @@ public abstract class AbstractDenseMatrix<E extends AbstractDenseMatrix>
         this.fColumns = columns;
     }
 
+    protected AbstractDenseMatrix(final AbstractDenseMatrix other) {
+        super(other);
+        this.fRows = other.fRows;
+        this.fColumns = other.fColumns;
+    }
+
     protected AbstractDenseMatrix(final double[] values, final int rows, final int columns) {
         super(values, rows, columns);
         this.fRows = rows;
