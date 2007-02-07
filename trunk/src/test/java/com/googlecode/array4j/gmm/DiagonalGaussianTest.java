@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-public final class GaussianTest {
+public final class DiagonalGaussianTest {
     @Test
     public void test() {
         final DiagonalGaussian gaussian = new DiagonalGaussian(new double[]{0.0}, new double[]{1.0});
