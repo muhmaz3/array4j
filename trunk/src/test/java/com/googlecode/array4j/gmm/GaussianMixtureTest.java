@@ -3,6 +3,8 @@ package com.googlecode.array4j.gmm;
 import java.util.ArrayList;
 import java.util.List;
 
+import junit.framework.JUnit4TestAdapter;
+
 import org.junit.Test;
 
 import com.googlecode.array4j.DenseMatrix;
@@ -39,5 +41,9 @@ public final class GaussianMixtureTest {
             values[i] = Math.random();
         }
         return values;
+    }
+
+    public static junit.framework.Test suite() {
+        return new JUnit4TestAdapter(GaussianMixtureTest.class);
     }
 }

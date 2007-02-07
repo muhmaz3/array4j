@@ -1,6 +1,7 @@
 package com.googlecode.array4j;
 
 import static org.junit.Assert.assertEquals;
+import junit.framework.JUnit4TestAdapter;
 
 import org.junit.Test;
 
@@ -118,5 +119,9 @@ public final class DenseArrayTest {
                 value += 1.0;
             }
         }
+    }
+
+    public static junit.framework.Test suite() {
+        return new JUnit4TestAdapter(DenseArrayTest.class);
     }
 }

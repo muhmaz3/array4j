@@ -2,6 +2,7 @@ package com.googlecode.array4j;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import junit.framework.JUnit4TestAdapter;
 
 import org.junit.Test;
 
@@ -26,5 +27,9 @@ public final class DenseMatrixTest {
         values[0] = new double[]{1.0, 2.0};
         values[1] = new double[]{3.0};
         DenseMatrix.valueOf(values);
+    }
+
+    public static junit.framework.Test suite() {
+        return new JUnit4TestAdapter(DenseMatrixTest.class);
     }
 }

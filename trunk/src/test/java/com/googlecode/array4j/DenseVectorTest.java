@@ -2,6 +2,7 @@ package com.googlecode.array4j;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import junit.framework.JUnit4TestAdapter;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -47,5 +48,9 @@ public final class DenseVectorTest {
     public void testGet() {
         final DenseVector arr = new DenseVector(1);
         assertEquals(0.0, arr.get(0));
+    }
+
+    public static junit.framework.Test suite() {
+        return new JUnit4TestAdapter(DenseVectorTest.class);
     }
 }
