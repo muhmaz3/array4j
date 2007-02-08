@@ -53,7 +53,10 @@ public class DenseArray<E extends DenseArray> implements Array<E> {
     /** Constructor reshaping and other view-type operations. */
     public DenseArray(final DoubleBuffer buffer, final int[] shape) {
         checkShape(shape);
-        if (calculateSize(shape) != buffer.capacity()) {
+        // check for required size greater than buffer capacity instead of
+        // strict equality check for the case where we slice the buffer to make
+        // a view
+        if (calculateSize(shape) > buffer.capacity()) {
             throw new IllegalArgumentException("buffer size is invalid");
         }
         this.fShape = shape;

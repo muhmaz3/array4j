@@ -7,6 +7,13 @@ public class DenseVector extends AbstractDenseVector<DenseVector> {
         super(dimension, 1);
     }
 
+    /** Constructor for making new vectors with a given shape. */
+    public DenseVector(final int[] shape) {
+        // TODO should maybe do some checks on shape to ensure that the
+        // following call is valid
+        super(shape[0], 1);
+    }
+
     public DenseVector(final Vector other) {
         super(other);
     }
@@ -18,13 +25,6 @@ public class DenseVector extends AbstractDenseVector<DenseVector> {
     /** Constructor reshaping and other view-type operations. */
     public DenseVector(final DoubleBuffer buffer, final int[] shape) {
         super(buffer, shape);
-    }
-
-    /** Constructor for making new vectors with a given shape. */
-    public DenseVector(final int[] shape) {
-        // TODO should maybe do some checks on shape to ensure that the
-        // following call is valid
-        super(shape[0], 1);
     }
 
     public static DenseVector valueOf(final double... values) {

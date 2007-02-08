@@ -66,7 +66,13 @@ public abstract class AbstractDenseMatrix<E extends AbstractDenseMatrix>
     }
 
     public final RowVector getRow(final int index) {
-        throw new UnsupportedOperationException();
+        final DoubleBuffer buffer = getBuffer();
+        buffer.position(index * shape(1));
+        return new DenseRowVector(buffer.slice(), new int[]{1, shape(1)});
+    }
+
+    public final RowVector row(final int index) {
+        return getRow(index);
     }
 
     public final RowVector[] getRows(final int... indexes) {
@@ -75,6 +81,10 @@ public abstract class AbstractDenseMatrix<E extends AbstractDenseMatrix>
 
     public final ColumnVector getColumn(final int index) {
         throw new UnsupportedOperationException();
+    }
+
+    public final ColumnVector column(final int index) {
+        return getColumn(index);
     }
 
     public final ColumnVector[] getColumns(final int... indexes) {

@@ -13,11 +13,15 @@ public interface Matrix<E extends Matrix> extends Array<E> {
 
     int columns();
 
-    RowVector getRow(final int index);
+    RowVector getRow(int index);
+
+    RowVector row(int index);
 
     RowVector[] getRows(int... indexes);
 
     ColumnVector getColumn(int index);
+
+    ColumnVector column(int index);
 
     ColumnVector[] getColumns(int... indexes);
 }

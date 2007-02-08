@@ -29,6 +29,18 @@ public final class DenseMatrixTest {
         DenseMatrix.valueOf(values);
     }
 
+    @Test
+    public void testGetRow() {
+        final double[][] values = {{1.0, 2.0}, {3.0, 4.0}};
+        final DenseMatrix mat = DenseMatrix.valueOf(values);
+        RowVector rowVec = mat.getRow(0);
+        assertEquals(1.0, rowVec.get(0));
+        assertEquals(2.0, rowVec.get(1));
+        rowVec = mat.getRow(1);
+        assertEquals(3.0, rowVec.get(0));
+        assertEquals(4.0, rowVec.get(1));
+    }
+
     public static junit.framework.Test suite() {
         return new JUnit4TestAdapter(DenseMatrixTest.class);
     }
