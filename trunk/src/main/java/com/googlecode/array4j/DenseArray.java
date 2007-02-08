@@ -72,6 +72,10 @@ public class DenseArray<E extends DenseArray> implements Array<E> {
         return new DenseArray(values);
     }
 
+    public static DenseArray valueOf(final double[]... values) {
+        return new DenseArray(values);
+    }
+
     private static int calculateSize(final int[] shape) {
         int capacity = 1;
         for (int dim : shape) {

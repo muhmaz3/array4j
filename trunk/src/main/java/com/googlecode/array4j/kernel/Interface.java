@@ -41,6 +41,7 @@ public final class Interface {
             byteBuffer.order(ByteOrder.nativeOrder());
             return byteBuffer.asDoubleBuffer();
         } else {
+            // TODO check if we need to fix this buffer's byte order
             return DoubleBuffer.allocate(capacity);
         }
     }
@@ -51,6 +52,7 @@ public final class Interface {
             byteBuffer.order(ByteOrder.nativeOrder());
             return byteBuffer.asFloatBuffer();
         } else {
+            // TODO check if we need to fix this buffer's byte order
             return FloatBuffer.allocate(capacity);
         }
     }

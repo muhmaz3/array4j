@@ -34,7 +34,7 @@ public abstract class AbstractDenseMatrix<E extends AbstractDenseMatrix>
 
     protected AbstractDenseMatrix(final DoubleBuffer buffer, final int[] shape) {
         super(buffer, shape);
-        if (shape.length != 2) {
+        if (ndim() != 2) {
             throw new IllegalArgumentException("invalid shape for matrix");
         }
         this.fRows = shape[0];
