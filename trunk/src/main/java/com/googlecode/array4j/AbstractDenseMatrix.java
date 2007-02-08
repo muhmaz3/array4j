@@ -64,4 +64,20 @@ public abstract class AbstractDenseMatrix<E extends AbstractDenseMatrix>
     public final int columns() {
         return getColumns();
     }
+
+    public final RowVector getRow(final int index) {
+        throw new UnsupportedOperationException();
+    }
+
+    public final RowVector[] getRows(final int... indexes) {
+        throw new UnsupportedOperationException();
+    }
+
+    public final ColumnVector getColumn(final int index) {
+        throw new UnsupportedOperationException();
+    }
+
+    public final ColumnVector[] getColumns(final int... indexes) {
+        throw new UnsupportedOperationException();
+    }
 }

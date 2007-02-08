@@ -22,7 +22,7 @@ public class DenseMatrix extends AbstractDenseMatrix<DenseMatrix> {
         super(values);
     }
 
-    public static DenseMatrix valueOf(final double[][] values) {
+    public static DenseMatrix valueOf(final double[]... values) {
         return new DenseMatrix(values);
     }
 }

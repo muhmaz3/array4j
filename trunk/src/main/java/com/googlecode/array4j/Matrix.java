@@ -12,4 +12,12 @@ public interface Matrix<E extends Matrix> extends Array<E> {
     int getColumns();
 
     int columns();
+
+    RowVector getRow(final int index);
+
+    RowVector[] getRows(int... indexes);
+
+    ColumnVector getColumn(int index);
+
+    ColumnVector[] getColumns(int... indexes);
 }

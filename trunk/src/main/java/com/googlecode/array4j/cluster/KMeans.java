@@ -1,32 +1,35 @@
 package com.googlecode.array4j.cluster;
 
-import static com.googlecode.array4j.ArrayUtils.checkExactly2d;
-
 import com.googlecode.array4j.Array;
 import com.googlecode.array4j.DenseVector;
+import com.googlecode.array4j.Matrix;
 import com.googlecode.array4j.Vector;
 
 public class KMeans {
-    private final Array fCodebook;
+    private final Matrix fCodebook;
 
     private final Vector clusterCounts;
 
-    public KMeans(final Array codebook) {
-        checkExactly2d(codebook);
+    public KMeans(final Matrix codebook) {
         // TODO should clone original codebook here?
         this.fCodebook = codebook;
         this.clusterCounts = new DenseVector(codebook.shape(0));
     }
 
-    public final void train(final Array data, final int niter) {
+    public final void train(final Matrix data, final int niter) {
         train(data, niter, 1.0e-4);
     }
 
-    public final void train(final Array data, final int niter, final double threshold) {
+    public final void train(final Matrix data, final int niter, final double threshold) {
+        for (int i = 0; i < niter; i++) {
+            for (int j = 0; j < data.shape(1); j++) {
+                double distortion = example(data.getRow(i));
+            }
+        }
         throw new UnsupportedOperationException();
     }
 
-    private void example(final Array data) {
+    private double example(final Vector x) {
         throw new UnsupportedOperationException();
     }
 
