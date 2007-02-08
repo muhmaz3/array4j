@@ -33,6 +33,8 @@ public interface Array<E extends Array> {
 
     E plusEquals(double value);
 
+    E plusEquals(Array other);
+
     E timesEquals(double value);
 
     DoubleBuffer getBuffer();

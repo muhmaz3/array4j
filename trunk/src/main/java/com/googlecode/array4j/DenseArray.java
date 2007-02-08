@@ -4,6 +4,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.DoubleBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import com.googlecode.array4j.kernel.Interface;
@@ -216,6 +217,19 @@ public class DenseArray<E extends DenseArray> implements Array<E> {
 
     public final E plusEquals(final double value) {
         Interface.kernel().plus(value, fBuffer, fBuffer);
+        return (E) this;
+    }
+
+    public final E plusEquals(final Array other) {
+        if (!(other instanceof DenseArray)) {
+            throw new UnsupportedOperationException();
+        }
+        final DenseArray denseOther = (DenseArray) other;
+        // TODO this is where support for broadcasting should be added
+        if (!Arrays.equals(fShape, denseOther.fShape)) {
+            throw new IllegalArgumentException("shape mismatch");
+        }
+        Interface.kernel().plus(fBuffer, ((DenseArray) other).fBuffer, fBuffer);
         return (E) this;
     }
 

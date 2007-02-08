@@ -35,6 +35,10 @@ public final class NativeKernel implements Kernel {
         throw new UnsupportedOperationException();
     }
 
+    public void plus(final DoubleBuffer inbuf1, final DoubleBuffer inbuf2, final DoubleBuffer outbuf) {
+        throw new UnsupportedOperationException();
+    }
+
     public void times(final double value, final DoubleBuffer inbuf, final DoubleBuffer outbuf) {
         throw new UnsupportedOperationException();
     }

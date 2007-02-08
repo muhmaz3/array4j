@@ -121,6 +121,22 @@ public final class DenseArrayTest {
         }
     }
 
+    @Test
+    public void testPlusEqualsArray() {
+        final int[] shape = {2, 3};
+        final DenseArray arr1 = new DenseArray(shape);
+        arr1.fill(123.0);
+        final DenseArray arr2 = new DenseArray(shape);
+        arr2.fill(456.0);
+        arr1.plusEquals(arr2);
+        for (int i = 0; i < shape[0]; i++) {
+            for (int j = 0; j < shape[1]; j++) {
+                assertEquals(456.0, arr2.get(i, j));
+                assertEquals(123.0 + 456.0, arr1.get(i, j));
+            }
+        }
+    }
+
     public static junit.framework.Test suite() {
         return new JUnit4TestAdapter(DenseArrayTest.class);
     }

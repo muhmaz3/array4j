@@ -7,15 +7,17 @@ import java.nio.DoubleBuffer;
 // TODO also need to send lengths for handling subarrays
 
 public interface Kernel {
-    void fill(double value, DoubleBuffer in);
+    void fill(double value, DoubleBuffer inbuf);
 
-    void log(DoubleBuffer in, DoubleBuffer out);
+    void log(DoubleBuffer inbuf, DoubleBuffer outbuf);
 
-    double sum(DoubleBuffer in);
+    double sum(DoubleBuffer inbuf);
 
-    void plus(double value, DoubleBuffer in, DoubleBuffer out);
+    void plus(double value, DoubleBuffer inbuf, DoubleBuffer outbuf);
 
-    void times(double value, DoubleBuffer in, DoubleBuffer out);
+    void plus(DoubleBuffer inbuf1, DoubleBuffer inbuf2, DoubleBuffer outbuf);
+
+    void times(double value, DoubleBuffer inbuf, DoubleBuffer outbuf);
 
     /**
      * Calculate log likelihood of vectors in array.

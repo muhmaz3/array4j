@@ -1,5 +1,7 @@
 package com.googlecode.array4j.gmm;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,27 +14,33 @@ import com.googlecode.array4j.Vector;
 
 public final class GaussianMixtureTest {
     @Test
-    public void test() {
-        final int dimension = 39;
-        final int ndata = 5 * 60 * 100;
+    public void testSingleComponent() {
+        final DiagonalGaussian gaussian = new DiagonalGaussian(new double[]{0.0}, new double[]{1.0});
+        final GaussianMixture gmm = new GaussianMixture(gaussian);
+        final double y1 = Math.log(1.0 / Math.sqrt(2.0 * Math.PI));
+        assertEquals(y1, gaussian.logLikelihood(0.0));
+        assertEquals(y1, gmm.logLikelihood(0.0));
+    }
+
+    @Test
+    public void testManyComponents() {
+        final int dimension = 3;
+        final int ndata = 100;
         final double[][] data = new double[ndata][];
         for (int i = 0; i < data.length; i++) {
             data[i] = random(dimension);
         }
         final DenseMatrix dataMat = DenseMatrix.valueOf(data);
 
-        final int mixtures = 10;
+        final int mixtures = 7;
         final List<Gaussian> gaussians = new ArrayList<Gaussian>();
         for (int i = 0; i < mixtures; i++) {
             gaussians.add(new DiagonalGaussian(random(dimension), random(dimension)));
         }
         final GaussianMixture gmm = new GaussianMixture(gaussians);
-
-        final long startTime = System.currentTimeMillis();
         for (int i = 0; i < 10; i++) {
             final Vector lls = gmm.logLikelihood(dataMat);
         }
-        System.out.println(System.currentTimeMillis() - startTime);
     }
 
     private double[] random(final int length) {

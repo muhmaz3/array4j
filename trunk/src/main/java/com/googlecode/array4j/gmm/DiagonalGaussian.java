@@ -32,19 +32,10 @@ public class DiagonalGaussian extends AbstractGaussian {
             throw new IllegalArgumentException();
         }
         final Vector logLikelihoods = new DenseVector(data.shape(0));
-        Interface.kernel().diagonalLogLikelihood(data.shape(), fMean.getBuffer(), fVariance.getBuffer(),
+        Interface.kernel().diagonalLogLikelihood(data.getShape(), fMean.getBuffer(), fVariance.getBuffer(),
                 data.getBuffer(), logLikelihoods.getBuffer());
         logLikelihoods.plusEquals(llconst);
         logLikelihoods.timesEquals(-0.5);
         return logLikelihoods;
-    }
-
-    @Override
-    public final double logLikelihood(final double... values) {
-        final DenseVector x = DenseVector.valueOf(values);
-        if (x.length() != getDimension()) {
-            throw new IllegalArgumentException();
-        }
-        return logLikelihood(x).get(0);
     }
 }
