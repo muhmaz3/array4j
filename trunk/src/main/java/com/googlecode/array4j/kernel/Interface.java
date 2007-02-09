@@ -1,13 +1,13 @@
 package com.googlecode.array4j.kernel;
 
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.nio.DoubleBuffer;
 import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
+import java.nio.LongBuffer;
+import java.nio.ShortBuffer;
 
 public final class Interface {
-    private static final boolean IS_KERNEL_NATIVE;
-
     private static final Kernel KERNEL;
 
     private Interface() {
@@ -15,7 +15,6 @@ public final class Interface {
 
     static {
         KERNEL = createKernel();
-        IS_KERNEL_NATIVE = KERNEL instanceof NativeKernel;
     }
 
     private static Kernel createKernel() {
@@ -35,25 +34,35 @@ public final class Interface {
         return KERNEL;
     }
 
+    public static ByteBuffer createByteBuffer(final int capacity) {
+        return KERNEL.createByteBuffer(capacity);
+    }
+
+    public static ShortBuffer createShortBuffer(final int capacity) {
+        return KERNEL.createShortBuffer(capacity);
+    }
+
+    public static IntBuffer createIntBuffer(final int capacity) {
+        return KERNEL.createIntBuffer(capacity);
+    }
+
+    public static LongBuffer createLongBuffer(final int capacity) {
+        return KERNEL.createLongBuffer(capacity);
+    }
+
     public static DoubleBuffer createDoubleBuffer(final int capacity) {
-        if (IS_KERNEL_NATIVE) {
-            final ByteBuffer byteBuffer = ByteBuffer.allocateDirect(8 * capacity);
-            byteBuffer.order(ByteOrder.nativeOrder());
-            return byteBuffer.asDoubleBuffer();
-        } else {
-            // TODO check if we need to fix this buffer's byte order
-            return DoubleBuffer.allocate(capacity);
-        }
+        return KERNEL.createDoubleBuffer(capacity);
     }
 
     public static FloatBuffer createFloatBuffer(final int capacity) {
-        if (IS_KERNEL_NATIVE) {
-            final ByteBuffer byteBuffer = ByteBuffer.allocateDirect(4 * capacity);
-            byteBuffer.order(ByteOrder.nativeOrder());
-            return byteBuffer.asFloatBuffer();
-        } else {
-            // TODO check if we need to fix this buffer's byte order
-            return FloatBuffer.allocate(capacity);
-        }
+        return KERNEL.createFloatBuffer(capacity);
+    }
+
+    public static DoubleBuffer createDoubleComplexBuffer(final int capacity) {
+        return KERNEL.createDoubleBuffer(2 * capacity);
+    }
+
+    public static FloatBuffer createFloatComplexBuffer(final int capacity) {
+        return KERNEL.createFloatBuffer(2 * capacity);
     }
 }

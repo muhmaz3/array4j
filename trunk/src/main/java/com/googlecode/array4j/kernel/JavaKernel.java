@@ -1,9 +1,38 @@
 package com.googlecode.array4j.kernel;
 
+import java.nio.ByteBuffer;
 import java.nio.DoubleBuffer;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
+import java.nio.LongBuffer;
+import java.nio.ShortBuffer;
 
 public final class JavaKernel implements Kernel {
     public static void init() {
+    }
+
+    public ByteBuffer createByteBuffer(final int capacity) {
+        return ByteBuffer.allocate(capacity);
+    }
+
+    public ShortBuffer createShortBuffer(final int capacity) {
+        return ShortBuffer.allocate(capacity);
+    }
+
+    public IntBuffer createIntBuffer(final int capacity) {
+        return IntBuffer.allocate(capacity);
+    }
+
+    public LongBuffer createLongBuffer(final int capacity) {
+        return LongBuffer.allocate(capacity);
+    }
+
+    public DoubleBuffer createDoubleBuffer(final int capacity) {
+        return DoubleBuffer.allocate(capacity);
+    }
+
+    public FloatBuffer createFloatBuffer(final int capacity) {
+        return FloatBuffer.allocate(capacity);
     }
 
     public void fill(final double value, final DoubleBuffer in) {

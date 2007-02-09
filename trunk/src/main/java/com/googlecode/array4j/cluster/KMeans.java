@@ -3,6 +3,7 @@ package com.googlecode.array4j.cluster;
 import com.googlecode.array4j.Array;
 import com.googlecode.array4j.DenseVector;
 import com.googlecode.array4j.Matrix;
+import com.googlecode.array4j.RowVector;
 import com.googlecode.array4j.Vector;
 
 public class KMeans {
@@ -22,14 +23,19 @@ public class KMeans {
 
     public final void train(final Matrix data, final int niter, final double threshold) {
         for (int i = 0; i < niter; i++) {
-            for (int j = 0; j < data.shape(1); j++) {
-                double distortion = example(data.getRow(i));
+            for (int j = 0; j < data.rows(); j++) {
+                double distortion = example(data.row(i));
             }
         }
         throw new UnsupportedOperationException();
     }
 
-    private double example(final Vector x) {
+    private double example(final RowVector x) {
+        // TODO this could be faster in the native case if we make fewer
+        // function calls
+        for (int i = 0; i < fCodebook.rows(); i++) {
+//            fCodebook.row(i);
+        }
         throw new UnsupportedOperationException();
     }
 
