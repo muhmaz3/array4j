@@ -1,8 +1,29 @@
 package com.googlecode.array4j;
 
+import java.nio.Buffer;
+
 import com.googlecode.array4j.Indexing.Index;
 
+// TODO investigate PyArray_Where
+
 public abstract class AbstractArray<E extends AbstractArray> implements Array2<E> {
+    private int nd; // nd = shape.length
+
+    private int itemsize; // TODO should be final
+
+    // C contiguous, F contiguous, own data, aligned, writeable, updateifcopy
+    private int flags;
+
+    private int[] shape;
+
+    private int[] strides;
+
+    private final Buffer data;
+
+    public AbstractArray() {
+        this.data = null;
+    }
+
     public final int getNdim() {
         // TODO Auto-generated method stub
         return 0;
@@ -40,7 +61,7 @@ public abstract class AbstractArray<E extends AbstractArray> implements Array2<E
 
     protected final void checkIndexes(final Object... indexes) {
         for (Object index : indexes) {
-            if (!(index instanceof Integer) && !(index instanceof Index)) {
+            if (!(index instanceof Integer) && !(index instanceof Index) && !(index instanceof int[])) {
                 throw new IllegalArgumentException("invalid index type");
             }
         }

@@ -33,6 +33,9 @@ public final class Indexing {
         }
 
         public Slice(final int start, final int stop, final int step) {
+            if (step == 0) {
+                throw new IllegalArgumentException("slice step cannot be zero");
+            }
             this.start = start;
             this.stop = stop;
             this.step = step;
@@ -59,6 +62,13 @@ public final class Indexing {
 
     public static Slice slice(final int start, final int stop, final int step) {
         return new Slice(start, stop, step);
+    }
+
+    public static Slice sliceStep(final int step) {
+        if (step > 0) {
+            return new Slice(Integer.MIN_VALUE, Integer.MAX_VALUE, step);
+        }
+        return new Slice(Integer.MAX_VALUE, Integer.MIN_VALUE, step);
     }
 
     public static Ellipsis ellipsis() {
