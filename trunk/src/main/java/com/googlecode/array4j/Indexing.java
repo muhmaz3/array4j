@@ -1,9 +1,11 @@
 package com.googlecode.array4j;
 
 public final class Indexing {
+    private static final Slice SLICE = new Slice();
+
     private static final Ellipsis ELLIPSIS = new Ellipsis();
 
-    private static final Slice DEFAULT_SLICE = new Slice();
+    private static final NewAxis NEWAXIS = new NewAxis();
 
     private Indexing() {
     }
@@ -40,12 +42,11 @@ public final class Indexing {
     private static final class Ellipsis implements Index {
     }
 
-    public static Ellipsis ellipsis() {
-        return ELLIPSIS;
+    private static final class NewAxis implements Index {
     }
 
     public static Slice slice() {
-        return DEFAULT_SLICE;
+        return SLICE;
     }
 
     public static Slice slice(final int stop) {
@@ -58,5 +59,13 @@ public final class Indexing {
 
     public static Slice slice(final int start, final int stop, final int step) {
         return new Slice(start, stop, step);
+    }
+
+    public static Ellipsis ellipsis() {
+        return ELLIPSIS;
+    }
+
+    public static NewAxis newaxis() {
+        return NEWAXIS;
     }
 }
