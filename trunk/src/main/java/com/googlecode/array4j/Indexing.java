@@ -13,39 +13,10 @@ public final class Indexing {
     public interface Index {
     }
 
-    private static final class Slice implements Index {
-        public final int start;
-
-        public final int stop;
-
-        public final int step;
-
-        public Slice() {
-            this(0, Integer.MAX_VALUE);
-        }
-
-        public Slice(final int stop) {
-            this(0, stop);
-        }
-
-        public Slice(final int start, final int stop) {
-            this(start, stop, 1);
-        }
-
-        public Slice(final int start, final int stop, final int step) {
-            if (step == 0) {
-                throw new IllegalArgumentException("slice step cannot be zero");
-            }
-            this.start = start;
-            this.stop = stop;
-            this.step = step;
-        }
+    public static final class Ellipsis implements Index {
     }
 
-    private static final class Ellipsis implements Index {
-    }
-
-    private static final class NewAxis implements Index {
+    public static final class NewAxis implements Index {
     }
 
     public static Slice slice() {
@@ -65,10 +36,7 @@ public final class Indexing {
     }
 
     public static Slice sliceStep(final int step) {
-        if (step > 0) {
-            return new Slice(Integer.MIN_VALUE, Integer.MAX_VALUE, step);
-        }
-        return new Slice(Integer.MAX_VALUE, Integer.MIN_VALUE, step);
+        return new Slice(null, null, step);
     }
 
     public static Ellipsis ellipsis() {
