@@ -190,7 +190,8 @@ public abstract class AbstractArray<E extends AbstractArray> implements Array2<E
         public int nsteps;
         public int stepSize;
     }
-    
+
+    // TODO refactor this logic into the subindex class
     protected final int parseSubIndex(final Object index, final int max) {
         int start = 0;
         int nsteps;
@@ -202,12 +203,14 @@ public abstract class AbstractArray<E extends AbstractArray> implements Array2<E
             nsteps = RUBBER_INDEX;
             start = 0;
         } else if (index instanceof Slice) {
-            // TODO check slice and maybe set some stuff
-            nsteps = -99;
+            final Slice slice = (Slice) index;
+            start = slice.getStart(max);
+            stepSize = slice.getStep();
+            nsteps = slice.getSliceLength(max);
             if (nsteps <= 0) {
-                nsteps = 0;
-                stepSize = 1;
                 start = 0;
+                stepSize = 1;
+                nsteps = 0;
             }
         } else {
             start = (Integer) index;
