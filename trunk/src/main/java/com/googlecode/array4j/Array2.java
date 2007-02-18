@@ -14,4 +14,8 @@ public interface Array2<E extends Array2> {
     int ndim();
 
     E reshape(int... shape);
+
+    E getArray(final int... indexes);
+
+    E get(final Object... indexes);
 }
