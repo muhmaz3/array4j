@@ -11,14 +11,40 @@ public abstract class AbstractArray<E extends AbstractArray> implements Array2<E
 
     private static final int SINGLE_INDEX = -3;
 
-    private int fFlags;
-
     private int[] fDimensions;
 
     private int[] fStrides;
 
-    public AbstractArray() {
-        // TODO flags can probably be final
+    private int fFlags;
+
+    private final E fBase;
+
+    public AbstractArray(final int[] dims, final int[] strides, final int flags) {
+        this(dims, strides, flags, null);
+    }
+
+    /**
+     * Array constructor.
+     * <p>
+     * This constructor corresponds to the <CODE>PyArray_NewFromDescr</CODE>
+     * function in NumPy.
+     *
+     * @param dims
+     *            dimensions
+     * @param strides
+     *            strides
+     * @param flags
+     *            flags
+     * @param base
+     *            base array
+     */
+    public AbstractArray(final int[] dims, final int[] strides, final int flags, final E base) {
+        this.fDimensions = copyOf(dims);
+        this.fStrides = copyOf(strides);
+        this.fFlags = flags;
+        this.fBase = base;
+
+        // TODO many checks to be done on the arguments
     }
 
     protected final void reconfigureShapeStrides(final int[] dims, final int[] strides) {
@@ -29,18 +55,6 @@ public abstract class AbstractArray<E extends AbstractArray> implements Array2<E
 
     public final int ndim() {
        return fDimensions.length;
-    }
-
-    private Order chooseOrder(final Order order) {
-        if (order == Order.ANY) {
-            if (isFortran()) {
-                return Order.FORTRAN;
-            } else {
-                return Order.C;
-            }
-        } else {
-            return order;
-        }
     }
 
     /**
@@ -457,4 +471,22 @@ public abstract class AbstractArray<E extends AbstractArray> implements Array2<E
 
     // XXX derived types must override this all the way to the top
     protected abstract E create(final E other);
+
+    private Order chooseOrder(final Order order) {
+        if (order == Order.ANY) {
+            if (isFortran()) {
+                return Order.FORTRAN;
+            } else {
+                return Order.C;
+            }
+        } else {
+            return order;
+        }
+    }
+
+    private static int[] copyOf(final int[] arr) {
+        final int[] newarr = new int[arr.length];
+        System.arraycopy(arr, 0, newarr, 0, arr.length);
+        return newarr;
+    }
 }
