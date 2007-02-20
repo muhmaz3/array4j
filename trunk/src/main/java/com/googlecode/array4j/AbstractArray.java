@@ -1,5 +1,6 @@
 package com.googlecode.array4j;
 
+import java.nio.Buffer;
 import java.util.Arrays;
 
 import com.googlecode.array4j.Indexing.Index;
@@ -15,12 +16,22 @@ public abstract class AbstractArray<E extends AbstractArray> implements Array2<E
 
     private int[] fStrides;
 
+    private final Buffer fData;
+
     private int fFlags;
 
     private final E fBase;
 
+    public AbstractArray(final int[] dims, final int flags) {
+        this(dims, null, null, flags, null);
+    }
+
     public AbstractArray(final int[] dims, final int[] strides, final int flags) {
-        this(dims, strides, flags, null);
+        this(dims, strides, null, flags, null);
+    }
+
+    public AbstractArray(final int[] dims, final int[] strides, final Buffer data, final int flags) {
+        this(dims, strides, data, flags, null);
     }
 
     /**
@@ -33,28 +44,105 @@ public abstract class AbstractArray<E extends AbstractArray> implements Array2<E
      *            dimensions
      * @param strides
      *            strides
+     * @param data
+     *            data buffer
      * @param flags
      *            flags
      * @param base
      *            base array
      */
-    public AbstractArray(final int[] dims, final int[] strides, final int flags, final E base) {
-        this.fDimensions = copyOf(dims);
-        this.fStrides = copyOf(strides);
-        this.fFlags = flags;
-        this.fBase = base;
+    public AbstractArray(final int[] dims, final int[] strides, final Buffer data, final int flags, final E base) {
+        final int nd = dims != null ? dims.length : 0;
 
-        // TODO many checks to be done on the arguments
+        /* Check dimensions. */
+        int size = 1;
+        int sd = elementSize();
+        if (sd == 0) {
+            throw new UnsupportedOperationException();
+        }
+        final int largest = Integer.MAX_VALUE / sd;
+        for (int i = 0; i < nd; i++) {
+            if (dims[i] == 0) {
+                continue;
+            }
+            if (dims[i] < 0) {
+                throw new IllegalArgumentException("negative dimensions are not allowed");
+            }
+            size *= dims[i];
+            if (size <= 0 || size > largest) {
+                throw new IllegalArgumentException("dimensions too large");
+            }
+        }
+
+        int arrayFillFlags = flags;
+        if (data == null) {
+            fFlags = Flags.DEFAULT.getValue();
+            if (flags != 0) {
+                fFlags |= Flags.FORTRAN.getValue();
+                if (nd > 1) {
+                    fFlags &= ~Flags.CONTIGUOUS.getValue();
+                }
+                arrayFillFlags = Flags.FORTRAN.getValue();
+            }
+        } else {
+            fFlags = flags & ~Flags.UPDATEIFCOPY.getValue();
+        }
+
+        if (nd > 0) {
+            this.fDimensions = copyOf(dims);
+            if (strides == null) {
+                fStrides = new int[nd];
+                sd = arrayFillStrides(dims, sd, arrayFillFlags);
+                sd = 0;
+            } else {
+                fStrides = copyOf(strides);
+                sd *= size;
+            }
+        } else {
+            fDimensions = null;
+            fStrides = null;
+        }
+
+        if (data == null) {
+            if (sd == 0) {
+                sd = elementSize();
+            }
+            // TODO allocate buffer
+//            this.fData = null;
+            fFlags |= Flags.OWNDATA.getValue();
+        } else {
+            fFlags &= ~Flags.OWNDATA.getValue();
+            fData = data;
+        }
     }
 
-    protected final void reconfigureShapeStrides(final int[] dims, final int[] strides) {
-        // TODO might want to copy arguments here
-        this.fDimensions = dims;
-        this.fStrides = strides;
-    }
-
-    public final int ndim() {
-       return fDimensions.length;
+    private int arrayFillStrides(final int[] dims, final int sd, final int inflag) {
+        final int nd = dims.length;
+        int itemsize = sd;
+        if (Flags.FORTRAN.and(inflag) && !Flags.CONTIGUOUS.and(inflag)) {
+            for (int i = 0; i < nd; i++) {
+                fStrides[i] = itemsize;
+                itemsize *= dims[i] > 0 ? dims[i] : 1;
+            }
+            fFlags |= Flags.FORTRAN.getValue();
+            if (nd > 1) {
+                fFlags &= ~Flags.CONTIGUOUS.getValue();
+            } else {
+                fFlags |= Flags.CONTIGUOUS.getValue();
+            }
+        } else {
+            for (int i = nd - 1; i >= 0; i--) {
+                fStrides[i] = itemsize;
+                itemsize *= dims[i] > 0 ? dims[i] : 1;
+            }
+            fFlags |= Flags.CONTIGUOUS.getValue();
+            if (nd > 1) {
+                fFlags &= ~Flags.FORTRAN.getValue();
+            } else {
+                fFlags |= Flags.FORTRAN.getValue();
+            }
+        }
+        return 0;
     }
 
     /**
@@ -450,6 +538,10 @@ public abstract class AbstractArray<E extends AbstractArray> implements Array2<E
         }
 
         return offset;
+    }
+
+    public final int ndim() {
+        return fDimensions.length;
     }
 
     public final boolean checkFlags(final Flags... flags) {

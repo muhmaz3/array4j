@@ -12,4 +12,6 @@ public interface Array2<E extends Array2> {
     E getArray(final int... indexes);
 
     E get(final Object... indexes);
+
+    int elementSize();
 }

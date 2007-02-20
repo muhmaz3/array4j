@@ -1,6 +1,7 @@
 package com.googlecode.array4j;
 
 enum Flags {
+    EMPTY(0),
     /**
      * Means c-style contiguous (last index varies the fastest). The data
      * elements right after each other.
@@ -76,7 +77,7 @@ enum Flags {
     public int getValue() {
         return fValue;
     }
-    
+
     public boolean and(final int value) {
         return (fValue & value) != 0;
     }
