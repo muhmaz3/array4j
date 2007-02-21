@@ -4,6 +4,7 @@ import java.nio.Buffer;
 import java.util.Arrays;
 
 import com.googlecode.array4j.Indexing.Index;
+import com.googlecode.array4j.kernel.KernelType;
 
 public abstract class AbstractArray<E extends AbstractArray> implements Array2<E> {
     private static final int PSEUDO_INDEX = -1;
@@ -20,18 +21,14 @@ public abstract class AbstractArray<E extends AbstractArray> implements Array2<E
 
     private int fFlags;
 
-    private final E fBase;
+    private final Object fBase;
 
-    public AbstractArray(final int[] dims, final int flags) {
-        this(dims, null, null, flags, null);
+    protected AbstractArray(final int[] dims, final int flags) {
+        this(dims, null, null, flags, null, KernelType.DEFAULT);
     }
 
-    public AbstractArray(final int[] dims, final int[] strides, final int flags) {
-        this(dims, strides, null, flags, null);
-    }
-
-    public AbstractArray(final int[] dims, final int[] strides, final Buffer data, final int flags) {
-        this(dims, strides, data, flags, null);
+    protected AbstractArray(final int[] dims, final int[] strides, final int flags) {
+        this(dims, strides, null, flags, null, KernelType.DEFAULT);
     }
 
     /**
@@ -45,13 +42,21 @@ public abstract class AbstractArray<E extends AbstractArray> implements Array2<E
      * @param strides
      *            strides
      * @param data
-     *            data buffer
+     *            flag indicating whether array has its own buffer
      * @param flags
      *            flags
      * @param base
      *            base array
+     * @param kernelType
+     *            kernel to use when allocating data buffer
      */
-    public AbstractArray(final int[] dims, final int[] strides, final Buffer data, final int flags, final E base) {
+    protected AbstractArray(final int[] dims, final int[] strides, final Buffer data, final int flags,
+            final Object base, final KernelType kernelType) {
+        if (base != null) {
+            throw new UnsupportedOperationException();
+        }
+        fBase = null;
+
         final int nd = dims != null ? dims.length : 0;
 
         /* Check dimensions. */
@@ -108,7 +113,7 @@ public abstract class AbstractArray<E extends AbstractArray> implements Array2<E
                 sd = elementSize();
             }
             // TODO allocate buffer
-//            this.fData = null;
+            this.fData = allocate(kernelType, 0);
             fFlags |= Flags.OWNDATA.getValue();
         } else {
             fFlags &= ~Flags.OWNDATA.getValue();
@@ -382,10 +387,9 @@ public abstract class AbstractArray<E extends AbstractArray> implements Array2<E
     }
 
     public final int size() {
-        // TODO only calculate this once
-        // TODO code very similar to what's going on in calculateSize
         int size = 1;
         for (int dim : fDimensions) {
+            // checks in constructor will ensure that this never overflows
             size *= dim;
         }
         return size;
@@ -486,7 +490,8 @@ public abstract class AbstractArray<E extends AbstractArray> implements Array2<E
         checkIndexes(indexes);
         final String msg = "too many indices";
 
-        final E newArr = create(null);
+//        final E newArr = create(null);
+        final E newArr = null;
         final int n = indexes.length;
         int ndold = 0;
         int ndnew = 0;
@@ -561,9 +566,6 @@ public abstract class AbstractArray<E extends AbstractArray> implements Array2<E
         return Flags.FORTRAN.and(fFlags) && ndim() > 1;
     }
 
-    // XXX derived types must override this all the way to the top
-    protected abstract E create(final E other);
-
     private Order chooseOrder(final Order order) {
         if (order == Order.ANY) {
             if (isFortran()) {
@@ -581,4 +583,6 @@ public abstract class AbstractArray<E extends AbstractArray> implements Array2<E
         System.arraycopy(arr, 0, newarr, 0, arr.length);
         return newarr;
     }
+
+    protected abstract Buffer allocate(KernelType kernelType, int capacity);
 }
