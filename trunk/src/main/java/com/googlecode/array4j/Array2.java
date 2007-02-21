@@ -7,6 +7,8 @@ public interface Array2<E extends Array2> {
 
     int ndim();
 
+    int flags();
+
     E reshape(int... shape);
 
     E getArray(final int... indexes);

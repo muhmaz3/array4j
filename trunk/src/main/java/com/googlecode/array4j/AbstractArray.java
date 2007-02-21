@@ -549,6 +549,10 @@ public abstract class AbstractArray<E extends AbstractArray> implements Array2<E
         return fDimensions.length;
     }
 
+    public final int flags() {
+        return fFlags;
+    }
+
     public final boolean checkFlags(final Flags... flags) {
         for (final Flags flag : flags) {
             if (!flag.and(fFlags)) {
