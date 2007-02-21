@@ -19,6 +19,8 @@ public abstract class AbstractArray<E extends AbstractArray> implements Array2<E
 
     private final Buffer fData;
 
+    private final KernelType fKernelType;
+
     private int fFlags;
 
     private final Object fBase;
@@ -52,9 +54,9 @@ public abstract class AbstractArray<E extends AbstractArray> implements Array2<E
      */
     protected AbstractArray(final int[] dims, final int[] strides, final Buffer data, final int flags,
             final Object base, final KernelType kernelType) {
-        if (base != null) {
-            throw new UnsupportedOperationException();
-        }
+//        if (base != null) {
+//            throw new UnsupportedOperationException();
+//        }
         fBase = null;
 
         final int nd = dims != null ? dims.length : 0;
@@ -115,12 +117,13 @@ public abstract class AbstractArray<E extends AbstractArray> implements Array2<E
             if (sd == 0) {
                 sd = elementSize();
             }
-            this.fData = allocate(kernelType, sd);
+            fData = allocate(kernelType, sd);
             fFlags |= Flags.OWNDATA.getValue();
         } else {
             fFlags &= ~Flags.OWNDATA.getValue();
             fData = data;
         }
+        fKernelType = kernelType;
     }
 
     private int arrayFillStrides(final int[] dims, final int sd, final int inflag) {
@@ -352,8 +355,7 @@ public abstract class AbstractArray<E extends AbstractArray> implements Array2<E
              */
             if (fortran.equals(Order.FORTRAN)) {
                 if (strides[0] == 0) {
-                    // TODO numpy sets value to self->descr->elsize;
-                    strides[0] = 1;
+                    strides[0] = elementSize();
                     throw new UnsupportedOperationException();
                 }
                 for (int i = 1; i < n; i++) {
@@ -363,8 +365,7 @@ public abstract class AbstractArray<E extends AbstractArray> implements Array2<E
                 }
             } else {
                 if (strides[n - 1] == 0) {
-                    // TODO numpy sets value to self->descr->elsize
-                    strides[n - 1] = 1;
+                    strides[n - 1] = elementSize();
                     throw new UnsupportedOperationException();
                 }
                 for (int i = n - 2; i >= -1; i--) {
@@ -375,7 +376,7 @@ public abstract class AbstractArray<E extends AbstractArray> implements Array2<E
             }
         }
 
-        return null;
+        return view(newdims, strides, fData, flags, fKernelType);
     }
 
     public final int[] shape() {
@@ -547,6 +548,10 @@ public abstract class AbstractArray<E extends AbstractArray> implements Array2<E
         return offset;
     }
 
+    public final int nbytes() {
+        return fData.capacity();
+    }
+
     public final int ndim() {
         return fDimensions.length;
     }
@@ -555,7 +560,7 @@ public abstract class AbstractArray<E extends AbstractArray> implements Array2<E
         return fFlags;
     }
 
-    public final boolean checkFlags(final Flags... flags) {
+    private boolean checkFlags(final Flags... flags) {
         for (final Flags flag : flags) {
             if (!flag.and(fFlags)) {
                 return false;
@@ -591,4 +596,6 @@ public abstract class AbstractArray<E extends AbstractArray> implements Array2<E
     }
 
     protected abstract Buffer allocate(KernelType kernelType, int capacity);
+
+    protected abstract E view(int[] dims, int[] strides, Buffer data, int flags, KernelType kernelType);
 }

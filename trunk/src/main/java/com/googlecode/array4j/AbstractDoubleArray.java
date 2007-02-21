@@ -12,9 +12,10 @@ public abstract class AbstractDoubleArray<E extends AbstractDoubleArray> extends
 
     private DoubleBuffer fData;
 
-    public AbstractDoubleArray(final int[] dims, final int[] strides, final int flags, final Object base,
-            final KernelType kernelType) {
-        super(dims, strides, null, flags, base, kernelType);
+    public AbstractDoubleArray(final int[] dims, final int[] strides, final Buffer data, final int flags,
+            final Object base, final KernelType kernelType) {
+        super(dims, strides, data, flags, base, kernelType);
+        fData = (DoubleBuffer) data;
     }
 
     public final int elementSize() {
