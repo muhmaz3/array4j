@@ -13,10 +13,10 @@ public final class Indexing {
     public interface Index {
     }
 
-    public static final class Ellipsis implements Index {
+    private static final class Ellipsis implements Index {
     }
 
-    public static final class NewAxis implements Index {
+    private static final class NewAxis implements Index {
     }
 
     public static Slice slice() {
