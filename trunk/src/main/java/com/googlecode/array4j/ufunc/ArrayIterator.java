@@ -1,4 +1,4 @@
-package com.googlecode.array4j;
+package com.googlecode.array4j.ufunc;
 
 import java.util.Iterator;
 
