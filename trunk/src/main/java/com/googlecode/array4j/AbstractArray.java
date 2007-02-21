@@ -13,6 +13,8 @@ public abstract class AbstractArray<E extends AbstractArray> implements Array2<E
 
     private static final int SINGLE_INDEX = -3;
 
+    private static final int MAX_DIMS = 32;
+
     private int[] fDimensions;
 
     private int[] fStrides;
@@ -376,7 +378,7 @@ public abstract class AbstractArray<E extends AbstractArray> implements Array2<E
             }
         }
 
-        return view(newdims, strides, fData, flags, fKernelType);
+        return create(newdims, strides, fData.position(0), flags, fKernelType);
     }
 
     public final int[] shape() {
@@ -489,23 +491,26 @@ public abstract class AbstractArray<E extends AbstractArray> implements Array2<E
         return subindex;
     }
 
-    protected final int parseIndexes(final Object[] indexes) {
+//    protected final int parseIndexes(final Object[] indexes) {
+    public final E get(final Object... indexes) {
         checkIndexes(indexes);
         final String msg = "too many indices";
-
-//        final E newArr = create(null);
-        final E newArr = null;
         final int n = indexes.length;
         int ndold = 0;
         int ndnew = 0;
         int nadd = 0;
         int offset = 0;
+
+        // TODO see if we can avoid this hard-coded size up front
+        final int[] dims = new int[MAX_DIMS];
+        final int[] strides = new int[MAX_DIMS];
+
         for (int i = 0; i < n; i++) {
             final int max = ndold < fDimensions.length ? fDimensions[ndold] : 0;
             final SubIndex subindex = parseSubIndex(indexes[i], max);
             if (PSEUDO_INDEX == subindex.nsteps) {
-                newArr.fDimensions[ndnew] = 1;
-                newArr.fStrides[ndnew] = 0;
+                dims[ndnew] = 1;
+                strides[ndnew] = 0;
                 ndnew++;
             } else if (RUBBER_INDEX == subindex.nsteps) {
                 int npseudo = 0;
@@ -519,8 +524,8 @@ public abstract class AbstractArray<E extends AbstractArray> implements Array2<E
                     throw new IllegalArgumentException(msg);
                 }
                 for (int j = 0; j < nadd; j++) {
-                    newArr.fDimensions[ndnew] = fDimensions[ndold];
-                    newArr.fStrides[ndnew] = fStrides[ndold];
+                    dims[ndnew] = fDimensions[ndold];
+                    strides[ndnew] = fStrides[ndold];
                     ndnew++;
                     ndold++;
                 }
@@ -531,21 +536,26 @@ public abstract class AbstractArray<E extends AbstractArray> implements Array2<E
                 offset += fStrides[ndold] * subindex.start;
                 ndold++;
                 if (subindex.nsteps != SINGLE_INDEX) {
-                    newArr.fDimensions[ndnew] = subindex.nsteps;
-                    newArr.fStrides[ndnew] = subindex.stepSize * fStrides[ndold - 1];
+                    dims[ndnew] = subindex.nsteps;
+                    strides[ndnew] = subindex.stepSize * fStrides[ndold - 1];
                     ndnew++;
                 }
             }
         }
         nadd = fDimensions.length - ndold;
         for (int j = 0; j < nadd; j++) {
-            newArr.fDimensions[ndnew] = fDimensions[ndold];
-            newArr.fStrides[ndnew] = fStrides[ndold];
+            dims[ndnew] = fDimensions[ndold];
+            strides[ndnew] = fStrides[ndold];
             ndnew++;
             ndold++;
         }
 
-        return offset;
+        final int[] newdims = new int[ndnew];
+        System.arraycopy(dims, 0, newdims, 0, ndnew);
+        final int[] newstrides = new int[ndnew];
+        System.arraycopy(strides, 0, newstrides, 0, ndnew);
+
+        return create(newdims, newstrides, fData.position(offset), fFlags, fKernelType);
     }
 
     public final int nbytes() {
@@ -597,5 +607,5 @@ public abstract class AbstractArray<E extends AbstractArray> implements Array2<E
 
     protected abstract Buffer allocate(KernelType kernelType, int capacity);
 
-    protected abstract E view(int[] dims, int[] strides, Buffer data, int flags, KernelType kernelType);
+    protected abstract E create(int[] dims, int[] strides, Buffer data, int flags, KernelType kernelType);
 }

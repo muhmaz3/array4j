@@ -33,12 +33,8 @@ public final class DenseDoubleArray extends AbstractDoubleArray<DenseDoubleArray
         throw new UnsupportedOperationException();
     }
 
-    public DenseDoubleArray get(final Object... indexes) {
-        throw new UnsupportedOperationException();
-    }
-
     @Override
-    protected DenseDoubleArray view(final int[] dims, final int[] strides, final Buffer data, final int flags,
+    protected DenseDoubleArray create(final int[] dims, final int[] strides, final Buffer data, final int flags,
             final KernelType kernelType) {
         return new DenseDoubleArray(dims, strides, data, flags, this, kernelType);
     }

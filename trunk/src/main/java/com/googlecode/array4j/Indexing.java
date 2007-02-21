@@ -35,6 +35,10 @@ public final class Indexing {
         return new Slice(start, stop, step);
     }
 
+    public static Slice sliceStart(final int start) {
+        return new Slice(start, null, null);
+    }
+
     public static Slice sliceStep(final int step) {
         return new Slice(null, null, step);
     }

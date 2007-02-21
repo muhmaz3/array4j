@@ -1,8 +1,9 @@
 package com.googlecode.array4j;
 
+import static com.googlecode.array4j.Indexing.sliceStart;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 
@@ -39,5 +40,15 @@ public final class DenseDoubleArrayTest {
         arr = arr.reshape(3, 4);
         assertNotNull(arr);
         assertTrue(Arrays.equals(new int[]{3, 4}, arr.shape()));
+    }
+
+    @Test
+    public void testIndexing() {
+        DoubleArray<? extends DoubleArray> arr;
+        arr = DenseDoubleArray.zeros(3, 3);
+        arr = arr.get(sliceStart(1), sliceStart(1));
+        assertNotNull(arr);
+        assertTrue(Arrays.equals(new int[]{2, 2}, arr.shape()));
+        // TODO check that we actually get the right data from the view
     }
 }

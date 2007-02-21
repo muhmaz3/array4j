@@ -88,9 +88,9 @@ public final class Slice implements Index {
         if ((step < 0 && stop >= start) || (step > 0 && start >= stop)) {
             return 0;
         } else if (step < 0) {
-            return (stop - start + 1) / (step + 1);
+            return ((stop - start + 1) / step) + 1;
         } else {
-            return (stop - start - 1) / (step + 1);
+            return ((stop - start - 1) / step) + 1;
         }
     }
 }
