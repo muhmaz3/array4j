@@ -21,8 +21,9 @@ public abstract class AbstractDoubleArray<E extends AbstractDoubleArray> extends
         return ELEMENT_SIZE;
     }
 
+    @Override
     protected final Buffer allocate(final KernelType kernelType, final int capacity) {
-        fData = Interface.kernel(kernelType).createDoubleBuffer(0);
+        fData = Interface.kernel(kernelType).createDoubleBuffer(capacity);
         return fData;
     }
 }

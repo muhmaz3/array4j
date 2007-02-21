@@ -9,10 +9,10 @@ public final class DenseByteArray extends AbstractByteArray<DenseByteArray> {
         super(other);
     }
 
-    @Override
-    protected DenseByteArray create(final DenseByteArray other) {
-        return new DenseByteArray(other);
-    }
+//    @Override
+//    protected DenseByteArray create(final DenseByteArray other) {
+//        return new DenseByteArray(other);
+//    }
 
     public static DenseByteArray arange(final int stop) {
         return arange(0, stop, 1);

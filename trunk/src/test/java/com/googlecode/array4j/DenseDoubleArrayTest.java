@@ -7,7 +7,8 @@ import static org.junit.Assert.assertEquals;
 public final class DenseDoubleArrayTest {
     @Test
     public void testZeros() {
-        DoubleArray<? extends DoubleArray> arr = DenseDoubleArray.zeros(0);
+        DoubleArray<? extends DoubleArray> arr;
+        arr = DenseDoubleArray.zeros(0);
         assertEquals(1287, arr.flags());
 
         DenseDoubleArray.zeros(0, 0);

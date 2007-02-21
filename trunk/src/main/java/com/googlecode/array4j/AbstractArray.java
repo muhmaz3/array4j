@@ -98,8 +98,11 @@ public abstract class AbstractArray<E extends AbstractArray> implements Array2<E
             if (strides == null) {
                 fStrides = new int[nd];
                 sd = arrayFillStrides(dims, sd, arrayFillFlags);
-                sd = 0;
             } else {
+                /*
+                 * we allow strides even when we create the memory, but be
+                 * careful with this...
+                 */
                 fStrides = copyOf(strides);
                 sd *= size;
             }
@@ -112,8 +115,7 @@ public abstract class AbstractArray<E extends AbstractArray> implements Array2<E
             if (sd == 0) {
                 sd = elementSize();
             }
-            // TODO allocate buffer
-            this.fData = allocate(kernelType, 0);
+            this.fData = allocate(kernelType, sd);
             fFlags |= Flags.OWNDATA.getValue();
         } else {
             fFlags &= ~Flags.OWNDATA.getValue();
@@ -127,7 +129,7 @@ public abstract class AbstractArray<E extends AbstractArray> implements Array2<E
         if (Flags.FORTRAN.and(inflag) && !Flags.CONTIGUOUS.and(inflag)) {
             for (int i = 0; i < nd; i++) {
                 fStrides[i] = itemsize;
-                itemsize *= dims[i] > 0 ? dims[i] : 1;
+                itemsize *= dims[i] != 0 ? dims[i] : 1;
             }
             fFlags |= Flags.FORTRAN.getValue();
             if (nd > 1) {
@@ -138,7 +140,7 @@ public abstract class AbstractArray<E extends AbstractArray> implements Array2<E
         } else {
             for (int i = nd - 1; i >= 0; i--) {
                 fStrides[i] = itemsize;
-                itemsize *= dims[i] > 0 ? dims[i] : 1;
+                itemsize *= dims[i] != 0 ? dims[i] : 1;
             }
             fFlags |= Flags.CONTIGUOUS.getValue();
             if (nd > 1) {
@@ -147,7 +149,7 @@ public abstract class AbstractArray<E extends AbstractArray> implements Array2<E
                 fFlags |= Flags.FORTRAN.getValue();
             }
         }
-        return 0;
+        return itemsize;
     }
 
     /**
