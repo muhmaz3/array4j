@@ -1,28 +1,31 @@
 package com.googlecode.array4j;
 
+import java.nio.Buffer;
+
+import com.googlecode.array4j.kernel.KernelType;
+
 public final class DenseByteArray extends AbstractByteArray<DenseByteArray> {
-    private DenseByteArray() {
-        super();
+    private DenseByteArray(final int[] dims, final int[] strides, final int flags, final Object base,
+            final KernelType kernelType) {
+        this(dims, strides, null, flags, base, kernelType);
     }
 
-    private DenseByteArray(final DenseByteArray other) {
-        super(other);
+    private DenseByteArray(final int[] dims, final int[] strides, final Buffer data, final int flags,
+            final Object base, final KernelType kernelType) {
+        super(dims, strides, data, flags, base, kernelType);
     }
 
-//    @Override
-//    protected DenseByteArray create(final DenseByteArray other) {
-//        return new DenseByteArray(other);
-//    }
-
-    public static DenseByteArray arange(final int stop) {
-        return arange(0, stop, 1);
+    public static DenseByteArray zeros(final int... dims) {
+        return zeros(KernelType.DEFAULT, Order.C, dims);
     }
 
-    public static DenseByteArray arange(final int start, final int stop) {
-        return arange(start, stop, 1);
+    public static DenseByteArray zeros(final KernelType kernelType, final Order order, final int... dims) {
+        return new DenseByteArray(dims, null, orderAsFlags(order), null, kernelType);
     }
 
-    public static DenseByteArray arange(final int start, final int stop, final int step) {
-        return arange(start, stop, step, new DenseByteArray());
+    @Override
+    protected DenseByteArray create(final int[] dims, final int[] strides, final Buffer data, final int flags,
+            final KernelType kernelType) {
+        return new DenseByteArray(dims, strides, data, flags, this, kernelType);
     }
 }

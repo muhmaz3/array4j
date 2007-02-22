@@ -22,6 +22,10 @@ public abstract class AbstractDoubleArray<E extends AbstractDoubleArray> extends
         return ELEMENT_SIZE;
     }
 
+    public final double get(final int... indexes) {
+        throw new UnsupportedOperationException();
+    }
+
     @Override
     protected final Buffer allocate(final KernelType kernelType, final int capacity) {
         fData = Interface.kernel(kernelType).createDoubleBuffer(capacity);

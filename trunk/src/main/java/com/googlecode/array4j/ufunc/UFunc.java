@@ -1,38 +1,49 @@
 package com.googlecode.array4j.ufunc;
 
-import com.googlecode.array4j.DenseDoubleArray;
+import com.googlecode.array4j.Array2;
 
-public class UFunc {
-    public int nargs() {
-        return 0;
-    }
+public interface UFunc {
+    int nin();
 
-    public void call(final DenseDoubleArray m1, final DenseDoubleArray m2) {
-        UFuncLoop loop = new UFuncLoop(this);
+    int nout();
 
-        // TODO can probably put this case inside a function of the loop
-//        int loopmeth = 0;
-//        switch (loopmeth) {
-//        case ONE_UFUNCLOOP:
-//            break;
-//        case NOBUFFER_UFUNCLOOP:
-//            break;
-//        case BUFFER_UFUNCLOOP:
-//            break;
-//        default:
-//            throw new AssertionError();
-//        }
-    }
+    int nargs();
 
-    public void accumulate() {
-    }
+    <E extends Array2<E>> E reduce(E arr);
 
-    public void reduce() {
-    }
+    <E extends Array2<E>, F extends Array2<F>> F reduce(E arr, Class<F> dtype);
 
-    public void reduceat() {
-    }
+    <E extends Array2<E>> E reduce(E arr, int axis);
 
-    public void outer() {
-    }
+    <E extends Array2<E>, F extends Array2<F>> F reduce(E arr, int axis, Class<F> dtype);
+
+    <E extends Array2<E>> E accumulate(E arr);
+
+    <E extends Array2<E>, F extends Array2<F>> F accumulate(E arr, Class<F> dtype);
+
+    <E extends Array2<E>> E accumulate(E arr, int axis);
+
+    <E extends Array2<E>, F extends Array2<F>> F accumulate(E arr, int axis, Class<F> dtype);
+
+    <E extends Array2<E>> E reduceat(final E arr);
+
+    <E extends Array2<E>, F extends Array2<F>> F reduceat(final E arr, final Class<F> dtype);
+
+    <E extends Array2<E>> E reduceat(final E arr, final int axis);
+
+    <E extends Array2<E>, F extends Array2<F>> F reduceat(final E arr, final int axis, final Class<F> dtype);
+
+    <E extends Array2<E>> E reduceat(final E arr, final int[] indices);
+
+    <E extends Array2<E>, F extends Array2<F>> F reduceat(final E arr, final int[] indices, final Class<F> dtype);
+
+    <E extends Array2<E>> E reduceat(final E arr, final int axis, final int... indices);
+
+    <E extends Array2<E>, F extends Array2<F>> F reduceat(E arr, int axis, int[] indices, Class<F> dtype);
+
+    // TODO make an outer that doesn't need the class, but restricts the
+    // arguments to all be of the same type
+//    <E extends Array2<E>> E outer(E arr1, E arr2);
+
+    <E extends Array2<E>, F extends Array2<F>, G extends Array2<G>> G outer(E arr1, F arr2, Class<G> dtype);
 }

@@ -491,7 +491,6 @@ public abstract class AbstractArray<E extends AbstractArray> implements Array2<E
         return subindex;
     }
 
-//    protected final int parseIndexes(final Object[] indexes) {
     public final E get(final Object... indexes) {
         checkIndexes(indexes);
         final String msg = "too many indices";
@@ -608,4 +607,14 @@ public abstract class AbstractArray<E extends AbstractArray> implements Array2<E
     protected abstract Buffer allocate(KernelType kernelType, int capacity);
 
     protected abstract E create(int[] dims, int[] strides, Buffer data, int flags, KernelType kernelType);
+
+    protected static int orderAsFlags(final Order order) {
+        final Flags fortran;
+        if (order.equals(Order.FORTRAN)) {
+            fortran = Flags.FORTRAN;
+        } else {
+            fortran = Flags.EMPTY;
+        }
+        return fortran.getValue();
+    }
 }

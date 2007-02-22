@@ -1,3 +1,6 @@
+Check if two views of the same array can be used in different threads in read-only mode?
+Here we'll want separate buffers probably. This should be happening with the slice scheme we currently have in create.
+
 // TODO investigate PyArray_Where
 
 /*

@@ -20,17 +20,7 @@ public final class DenseDoubleArray extends AbstractDoubleArray<DenseDoubleArray
     }
 
     public static DenseDoubleArray zeros(final KernelType kernelType, final Order order, final int... dims) {
-        final Flags fortran;
-        if (order.equals(Order.FORTRAN)) {
-            fortran = Flags.FORTRAN;
-        } else {
-            fortran = Flags.EMPTY;
-        }
-        return new DenseDoubleArray(dims, null, fortran.getValue(), null, kernelType);
-    }
-
-    public double get(final int... indexes) {
-        throw new UnsupportedOperationException();
+        return new DenseDoubleArray(dims, null, orderAsFlags(order), null, kernelType);
     }
 
     @Override
