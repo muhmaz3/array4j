@@ -1,13 +1,21 @@
 package com.googlecode.array4j.ufunc;
 
 import com.googlecode.array4j.Array2;
+import com.googlecode.array4j.kernel.KernelType;
 
 public abstract class AbstractUFunc implements UFunc {
+    private final KernelType fKernelType;
+
     private final int fNin;
 
     private final int fNout;
 
     protected AbstractUFunc(final int nin, final int nout) {
+        this(KernelType.DEFAULT, nin, nout);
+    }
+
+    protected AbstractUFunc(final KernelType kernelType, final int nin, final int nout) {
+        this.fKernelType = kernelType;
         this.fNin = nin;
         this.fNout = nout;
     }
@@ -24,26 +32,25 @@ public abstract class AbstractUFunc implements UFunc {
         return fNin + fNout;
     }
 
-    // TODO make some decisions based on the kernel for what to call
-    // TODO also allow user to choose a kernel at construction time
-
-    public final void call() {
-        // final DenseDoubleArray m1, final DenseDoubleArray m2
-//        UFuncLoop loop = new UFuncLoop(this);
-
-        // TODO can probably put this case inside a function of the loop
-//        int loopmeth = 0;
-//        switch (loopmeth) {
-//        case ONE_UFUNCLOOP:
-//            break;
-//        case NOBUFFER_UFUNCLOOP:
-//            break;
-//        case BUFFER_UFUNCLOOP:
-//            break;
-//        default:
-//            throw new AssertionError();
-//        }
+    public final <E extends Array2<E>> E call(final E... args) {
+        // TODO check that args.length > 0
+        return (E) call(args[0].getClass(), args);
     }
+
+    public final <E extends Array2<E>> E call(final Class<E> dtype, final Array2<?>... args) {
+        // TODO create output array from dtype
+        // TODO can we have multiple output arrays here?
+        // TODO if dtype is null, choose some sensible dtype
+        call(new Array2<?>[]{});
+        return null;
+    }
+
+    public final void call(final Array2<?>... args) {
+        // TODO split args into input and output argument arrays
+        call(new Array2<?>[]{}, new Array2<?>[]{});
+    }
+
+    protected abstract void call(final Array2<?>[] argsin, final Array2<?>[] argsout);
 
     public final <E extends Array2<E>> E reduce(final E arr) {
         return reduce(arr, 0, null);
@@ -115,6 +122,10 @@ public abstract class AbstractUFunc implements UFunc {
             final int[] indices, final Class<F> dtype) {
         // TODO if dtype is null, make it the same as arr's dtype
         return null;
+    }
+
+    public final <E extends Array2<E>> E outer(final E arr1, final E arr2) {
+        return (E) outer(arr1, arr2, arr1.getClass());
     }
 
     public final <E extends Array2<E>, F extends Array2<F>, G extends Array2<G>> G outer(final E arr1, final F arr2,

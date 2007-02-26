@@ -391,6 +391,16 @@ public abstract class AbstractArray<E extends AbstractArray> implements Array2<E
         return fDimensions[index];
     }
 
+    public final int[] strides() {
+        final int[] stridesCopy = new int[fStrides.length];
+        System.arraycopy(fStrides, 0, stridesCopy, 0, fStrides.length);
+        return stridesCopy;
+    }
+
+    public final int strides(final int index) {
+        return fStrides[index];
+    }
+
     public final int size() {
         int size = 1;
         for (int dim : fDimensions) {
@@ -584,6 +594,10 @@ public abstract class AbstractArray<E extends AbstractArray> implements Array2<E
 
     public final boolean isFortran() {
         return Flags.FORTRAN.and(fFlags) && ndim() > 1;
+    }
+
+    public final boolean isWriteable() {
+        return Flags.WRITEABLE.and(fFlags);
     }
 
     private Order chooseOrder(final Order order) {

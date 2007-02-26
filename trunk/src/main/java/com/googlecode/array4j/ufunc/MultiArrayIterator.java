@@ -2,7 +2,6 @@ package com.googlecode.array4j.ufunc;
 
 import java.util.Iterator;
 
-
 /**
  * Iterator for broadcasting.
  * <p>

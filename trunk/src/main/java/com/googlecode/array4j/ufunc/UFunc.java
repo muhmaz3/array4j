@@ -9,6 +9,12 @@ public interface UFunc {
 
     int nargs();
 
+    <E extends Array2<E>> E call(E... args);
+
+    <E extends Array2<E>> E call(Class<E> dtype, Array2<?>... args);
+
+    void call(final Array2<?>... args);
+
     <E extends Array2<E>> E reduce(E arr);
 
     <E extends Array2<E>, F extends Array2<F>> F reduce(E arr, Class<F> dtype);
@@ -41,9 +47,7 @@ public interface UFunc {
 
     <E extends Array2<E>, F extends Array2<F>> F reduceat(E arr, int axis, int[] indices, Class<F> dtype);
 
-    // TODO make an outer that doesn't need the class, but restricts the
-    // arguments to all be of the same type
-//    <E extends Array2<E>> E outer(E arr1, E arr2);
+    <E extends Array2<E>> E outer(E arr1, E arr2);
 
     <E extends Array2<E>, F extends Array2<F>, G extends Array2<G>> G outer(E arr1, F arr2, Class<G> dtype);
 }
