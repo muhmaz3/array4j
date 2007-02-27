@@ -1,12 +1,16 @@
+C-ism: get rid of nulls and just pass 0 length arrays instead
+
 Many of the for loops can probably be replaced with enhanced for loops
 
+Look at the difference between 
 
+    (ByteBuffer) fData.position(0)
+    
+and
 
-
-
-
-
-
+    (ByteBuffer) fData.duplicate().rewind()
+    
+with regards to thread safety when sharing arrays.
 
 === UFUNCLOOOP STUFF ===
 

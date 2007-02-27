@@ -1,11 +1,6 @@
 package com.googlecode.array4j.kernel;
 
 import java.nio.ByteBuffer;
-import java.nio.DoubleBuffer;
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
-import java.nio.LongBuffer;
-import java.nio.ShortBuffer;
 
 public final class Interface {
     private static final Kernel DEFAULT_KERNEL;
@@ -55,35 +50,7 @@ public final class Interface {
         }
     }
 
-    public static ByteBuffer createByteBuffer(final int capacity) {
-        return DEFAULT_KERNEL.createByteBuffer(capacity);
-    }
-
-    public static ShortBuffer createShortBuffer(final int capacity) {
-        return DEFAULT_KERNEL.createShortBuffer(capacity);
-    }
-
-    public static IntBuffer createIntBuffer(final int capacity) {
-        return DEFAULT_KERNEL.createIntBuffer(capacity);
-    }
-
-    public static LongBuffer createLongBuffer(final int capacity) {
-        return DEFAULT_KERNEL.createLongBuffer(capacity);
-    }
-
-    public static DoubleBuffer createDoubleBuffer(final int capacity) {
-        return DEFAULT_KERNEL.createDoubleBuffer(capacity);
-    }
-
-    public static FloatBuffer createFloatBuffer(final int capacity) {
-        return DEFAULT_KERNEL.createFloatBuffer(capacity);
-    }
-
-    public static DoubleBuffer createDoubleComplexBuffer(final int capacity) {
-        return DEFAULT_KERNEL.createDoubleBuffer(2 * capacity);
-    }
-
-    public static FloatBuffer createFloatComplexBuffer(final int capacity) {
-        return DEFAULT_KERNEL.createFloatBuffer(2 * capacity);
+    public static ByteBuffer createBuffer(final int capacity) {
+        return DEFAULT_KERNEL.createBuffer(capacity);
     }
 }

@@ -1,6 +1,5 @@
 package com.googlecode.array4j;
 
-import java.nio.Buffer;
 import java.nio.ByteBuffer;
 
 import com.googlecode.array4j.kernel.Interface;
@@ -11,10 +10,9 @@ public abstract class AbstractByteArray<E extends AbstractByteArray> extends Abs
 
     private ByteBuffer fData;
 
-    public AbstractByteArray(final int[] dims, final int[] strides, final Buffer data, final int flags,
+    public AbstractByteArray(final int[] dims, final int[] strides, final ByteBuffer data, final int flags,
             final Object base, final KernelType kernelType) {
         super(dims, strides, data, flags, base, kernelType);
-        fData = (ByteBuffer) data;
     }
 
     public final int elementSize() {
@@ -26,8 +24,7 @@ public abstract class AbstractByteArray<E extends AbstractByteArray> extends Abs
     }
 
     @Override
-    protected final Buffer allocate(final KernelType kernelType, final int capacity) {
-        fData = Interface.kernel(kernelType).createByteBuffer(capacity);
-        return fData;
+    protected final void setBuffer(final ByteBuffer data) {
+        fData = (ByteBuffer) data.duplicate().rewind();
     }
 }

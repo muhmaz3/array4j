@@ -2,27 +2,13 @@ package com.googlecode.array4j.kernel;
 
 import java.nio.ByteBuffer;
 import java.nio.DoubleBuffer;
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
-import java.nio.LongBuffer;
-import java.nio.ShortBuffer;
 
 // TODO also need to send strides?
 
 // TODO also need to send lengths for handling subarrays
 
 public interface Kernel {
-    ByteBuffer createByteBuffer(int capacity);
-
-    ShortBuffer createShortBuffer(int capacity);
-
-    IntBuffer createIntBuffer(int capacity);
-
-    LongBuffer createLongBuffer(int capacity);
-
-    DoubleBuffer createDoubleBuffer(int capacity);
-
-    FloatBuffer createFloatBuffer(int capacity);
+    ByteBuffer createBuffer(int capacity);
 
     void fill(double value, DoubleBuffer inbuf);
 

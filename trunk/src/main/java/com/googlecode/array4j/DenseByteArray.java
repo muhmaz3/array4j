@@ -1,6 +1,6 @@
 package com.googlecode.array4j;
 
-import java.nio.Buffer;
+import java.nio.ByteBuffer;
 
 import com.googlecode.array4j.kernel.KernelType;
 
@@ -10,7 +10,7 @@ public final class DenseByteArray extends AbstractByteArray<DenseByteArray> {
         this(dims, strides, null, flags, base, kernelType);
     }
 
-    private DenseByteArray(final int[] dims, final int[] strides, final Buffer data, final int flags,
+    private DenseByteArray(final int[] dims, final int[] strides, final ByteBuffer data, final int flags,
             final Object base, final KernelType kernelType) {
         super(dims, strides, data, flags, base, kernelType);
     }
@@ -24,7 +24,7 @@ public final class DenseByteArray extends AbstractByteArray<DenseByteArray> {
     }
 
     @Override
-    protected DenseByteArray create(final int[] dims, final int[] strides, final Buffer data, final int flags,
+    protected DenseByteArray create(final int[] dims, final int[] strides, final ByteBuffer data, final int flags,
             final KernelType kernelType) {
         return new DenseByteArray(dims, strides, data, flags, this, kernelType);
     }

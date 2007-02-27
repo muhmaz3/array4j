@@ -132,6 +132,10 @@ public class UFuncLoop {
          * If any of different type, or misaligned or swapped then must use
          * buffers
          */
+
+        // TODO array4j specific: also use buffers if kernel types don't match
+        // up, since native code requires direct buffers
+
         fBufCnt = 0;
 //        obj = false
 

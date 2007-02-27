@@ -11,6 +11,9 @@ public interface UFunc {
 
     <E extends Array2<E>> E call(E... args);
 
+    // TODO might want this instead, if we support priorities
+//    Array2<?> call(Array2<?>... args);
+
     <E extends Array2<E>> E call(Class<E> dtype, Array2<?>... args);
 
     void call(final Array2<?>... args);

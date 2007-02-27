@@ -28,4 +28,6 @@ public interface Array2<E extends Array2> {
     boolean isFortran();
 
     boolean isWriteable();
+
+    E addEquals(Array2<?> arr);
 }

@@ -12,7 +12,7 @@ import org.junit.Test;
 public final class DenseDoubleArrayTest {
     @Test
     public void testZeros() {
-        DoubleArray<? extends DoubleArray> arr;
+        DoubleArray<?> arr;
         arr = DenseDoubleArray.zeros(0);
         assertEquals(1287, arr.flags());
         // TODO numpy allocates something, but doesn't report it
@@ -29,12 +29,23 @@ public final class DenseDoubleArrayTest {
         assertEquals(1285, arr.flags());
         assertEquals(72, arr.nbytes());
 
-        // TODO test DenseDoubleArray.zeros(); (no arguments)
+        arr = DenseDoubleArray.zeros();
+        assertEquals(1285, arr.flags());
+        assertEquals(8, arr.nbytes());
+    }
+
+    @Test
+    public void testArange() {
+        DoubleArray<?> arr;
+        arr = DenseDoubleArray.arange(12.0);
+        assertEquals(9.0, arr.get(9));
+        assertEquals(8.0, arr.reshape(4, 3).get(2, 2));
+        assertEquals(10.0, arr.reshape(3, 4).get(2, 2));
     }
 
     @Test
     public void testReshape() {
-        DoubleArray<? extends DoubleArray> arr;
+        DoubleArray<?> arr;
 
         arr = DenseDoubleArray.zeros(4, 3);
         arr = arr.reshape(3, 4);
@@ -44,11 +55,20 @@ public final class DenseDoubleArrayTest {
 
     @Test
     public void testIndexing() {
-        DoubleArray<? extends DoubleArray> arr;
+        DoubleArray<?> arr;
         arr = DenseDoubleArray.zeros(3, 3);
         arr = arr.get(sliceStart(1), sliceStart(1));
         assertNotNull(arr);
         assertTrue(Arrays.equals(new int[]{2, 2}, arr.shape()));
         // TODO check that we actually get the right data from the view
+    }
+
+    @Test
+    public void testAddEquals() {
+        final DoubleArray<?> arr1 = DenseDoubleArray.zeros();
+        final DoubleArray<?> arr2 = DenseDoubleArray.zeros();
+        final ByteArray<?> arr3 = DenseByteArray.zeros();
+        arr1.addEquals(arr2);
+        arr1.addEquals(arr3);
     }
 }

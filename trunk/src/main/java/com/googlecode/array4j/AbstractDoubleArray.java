@@ -1,9 +1,8 @@
 package com.googlecode.array4j;
 
-import java.nio.Buffer;
+import java.nio.ByteBuffer;
 import java.nio.DoubleBuffer;
 
-import com.googlecode.array4j.kernel.Interface;
 import com.googlecode.array4j.kernel.KernelType;
 
 public abstract class AbstractDoubleArray<E extends AbstractDoubleArray> extends AbstractArray<E> implements
@@ -12,10 +11,9 @@ public abstract class AbstractDoubleArray<E extends AbstractDoubleArray> extends
 
     private DoubleBuffer fData;
 
-    public AbstractDoubleArray(final int[] dims, final int[] strides, final Buffer data, final int flags,
+    public AbstractDoubleArray(final int[] dims, final int[] strides, final ByteBuffer data, final int flags,
             final Object base, final KernelType kernelType) {
         super(dims, strides, data, flags, base, kernelType);
-        fData = (DoubleBuffer) data;
     }
 
     public final int elementSize() {
@@ -23,12 +21,31 @@ public abstract class AbstractDoubleArray<E extends AbstractDoubleArray> extends
     }
 
     public final double get(final int... indexes) {
-        throw new UnsupportedOperationException();
+        return getData().getDouble(getOffsetFromIndexes(indexes));
+    }
+
+    protected static void fill(final AbstractDoubleArray<?> arr, final Range range) {
+        if (range.length == 0) {
+            return;
+        }
+        final ByteBuffer data = arr.getData();
+        data.putDouble(0, range.start);
+        if (range.length == 1) {
+            return;
+        }
+        data.putDouble(ELEMENT_SIZE, range.next);
+
+        // This code corresponds to the DOUBLE_fill function in NumPy.
+        final double start = arr.fData.get(0);
+        double delta = arr.fData.get(1);
+        delta -= start;
+        for (int i = 2; i < range.length; i++) {
+            arr.fData.put(i, start + i * delta);
+        }
     }
 
     @Override
-    protected final Buffer allocate(final KernelType kernelType, final int capacity) {
-        fData = Interface.kernel(kernelType).createDoubleBuffer(capacity);
-        return fData;
+    protected final void setBuffer(final ByteBuffer data) {
+        fData = ((ByteBuffer) data.duplicate().rewind()).asDoubleBuffer();
     }
 }

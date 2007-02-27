@@ -3,10 +3,6 @@ package com.googlecode.array4j.kernel;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.DoubleBuffer;
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
-import java.nio.LongBuffer;
-import java.nio.ShortBuffer;
 
 public final class NativeKernel implements Kernel {
     static {
@@ -16,40 +12,10 @@ public final class NativeKernel implements Kernel {
     public static void init() {
     }
 
-    public ByteBuffer createByteBuffer(final int capacity) {
+    public ByteBuffer createBuffer(final int capacity) {
         final ByteBuffer byteBuffer = ByteBuffer.allocateDirect(capacity);
         byteBuffer.order(ByteOrder.nativeOrder());
         return byteBuffer;
-    }
-
-    public ShortBuffer createShortBuffer(final int capacity) {
-        final ByteBuffer byteBuffer = ByteBuffer.allocateDirect(2 * capacity);
-        byteBuffer.order(ByteOrder.nativeOrder());
-        return byteBuffer.asShortBuffer();
-    }
-
-    public IntBuffer createIntBuffer(final int capacity) {
-        final ByteBuffer byteBuffer = ByteBuffer.allocateDirect(4 * capacity);
-        byteBuffer.order(ByteOrder.nativeOrder());
-        return byteBuffer.asIntBuffer();
-    }
-
-    public LongBuffer createLongBuffer(final int capacity) {
-        final ByteBuffer byteBuffer = ByteBuffer.allocateDirect(8 * capacity);
-        byteBuffer.order(ByteOrder.nativeOrder());
-        return byteBuffer.asLongBuffer();
-    }
-
-    public DoubleBuffer createDoubleBuffer(final int capacity) {
-        final ByteBuffer byteBuffer = ByteBuffer.allocateDirect(8 * capacity);
-        byteBuffer.order(ByteOrder.nativeOrder());
-        return byteBuffer.asDoubleBuffer();
-    }
-
-    public FloatBuffer createFloatBuffer(final int capacity) {
-        final ByteBuffer byteBuffer = ByteBuffer.allocateDirect(4 * capacity);
-        byteBuffer.order(ByteOrder.nativeOrder());
-        return byteBuffer.asFloatBuffer();
     }
 
     public void fill(final double value, final DoubleBuffer in) {

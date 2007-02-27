@@ -1,9 +1,10 @@
 package com.googlecode.array4j;
 
-import java.nio.Buffer;
+import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 import com.googlecode.array4j.Indexing.Index;
+import com.googlecode.array4j.kernel.Interface;
 import com.googlecode.array4j.kernel.KernelType;
 
 public abstract class AbstractArray<E extends AbstractArray> implements Array2<E> {
@@ -19,13 +20,26 @@ public abstract class AbstractArray<E extends AbstractArray> implements Array2<E
 
     private int[] fStrides;
 
-    private final Buffer fData;
+    private final ByteBuffer fData;
 
     private final KernelType fKernelType;
 
     private int fFlags;
 
     private final Object fBase;
+
+    /**
+     * Simple constructor.
+     * <p>
+     * This constructor corresponds to the <CODE>PyArray_SimpleNewFromDescr</CODE>
+     * function in NumPy.
+     *
+     * @param dims
+     *            dimensions
+     */
+    protected AbstractArray(final int[] dims) {
+        this(dims, Flags.EMPTY.getValue());
+    }
 
     protected AbstractArray(final int[] dims, final int flags) {
         this(dims, null, null, flags, null, KernelType.DEFAULT);
@@ -54,11 +68,8 @@ public abstract class AbstractArray<E extends AbstractArray> implements Array2<E
      * @param kernelType
      *            kernel to use when allocating data buffer
      */
-    protected AbstractArray(final int[] dims, final int[] strides, final Buffer data, final int flags,
+    protected AbstractArray(final int[] dims, final int[] strides, final ByteBuffer data, final int flags,
             final Object base, final KernelType kernelType) {
-//        if (base != null) {
-//            throw new UnsupportedOperationException();
-//        }
         fBase = null;
 
         final int nd = dims != null ? dims.length : 0;
@@ -119,12 +130,14 @@ public abstract class AbstractArray<E extends AbstractArray> implements Array2<E
             if (sd == 0) {
                 sd = elementSize();
             }
-            fData = allocate(kernelType, sd);
+            fData = Interface.kernel(kernelType).createBuffer(sd);
             fFlags |= Flags.OWNDATA.getValue();
         } else {
             fFlags &= ~Flags.OWNDATA.getValue();
             fData = data;
         }
+        // set the typed buffer in the derived type
+        setBuffer(fData);
         fKernelType = kernelType;
     }
 
@@ -378,7 +391,7 @@ public abstract class AbstractArray<E extends AbstractArray> implements Array2<E
             }
         }
 
-        return create(newdims, strides, fData.position(0), flags, fKernelType);
+        return create(newdims, strides, (ByteBuffer) fData.duplicate().rewind(), flags, fKernelType);
     }
 
     public final int[] shape() {
@@ -418,9 +431,41 @@ public abstract class AbstractArray<E extends AbstractArray> implements Array2<E
         return get(indexObjs);
     }
 
+    /**
+     * Check if integer indexes are valid and calculate offset into array.
+     * <p>
+     * This function is based on the code in the NumPy function <CODE>array_subscript_nice</CODE>
+     * where it does "optimization for a tuple of integers".
+     */
+    protected final int getOffsetFromIndexes(final int[] indexes) {
+        if (indexes.length != fDimensions.length) {
+            throw new IllegalArgumentException("invalid number of indexes");
+        }
+
+        final int[] vals = new int[indexes.length];
+        for (int i = 0; i < indexes.length; i++) {
+            vals[i] = indexes[i];
+            if (vals[i] < 0) {
+                vals[i] += fDimensions[i];
+            }
+            if (vals[i] < 0 || vals[i] >= fDimensions[i]) {
+                throw new ArrayIndexOutOfBoundsException("index " + vals[i] + " out of range (0<=index<="
+                        + fDimensions[i] + ") in dimension " + i);
+            }
+        }
+
+        // This code corresponds to the PyArray_GetPtr function in NumPy.
+        final int nd = fDimensions.length;
+        int offset = 0;
+        for (int i = 0; i < nd; i++) {
+            offset += fStrides[i] * vals[i];
+        }
+        return offset;
+    }
+
     protected final void checkIndexes(final Object... indexes) {
         if (indexes.length == 0) {
-            throw new IllegalArgumentException("msut specify at least one index");
+            throw new IllegalArgumentException("must specify at least one index");
         }
         for (Object index : indexes) {
             // TODO support Lists in fancy indexing
@@ -564,7 +609,7 @@ public abstract class AbstractArray<E extends AbstractArray> implements Array2<E
         final int[] newstrides = new int[ndnew];
         System.arraycopy(strides, 0, newstrides, 0, ndnew);
 
-        return create(newdims, newstrides, fData.position(offset), fFlags, fKernelType);
+        return create(newdims, newstrides, (ByteBuffer) fData.position(offset), fFlags, fKernelType);
     }
 
     public final int nbytes() {
@@ -600,6 +645,13 @@ public abstract class AbstractArray<E extends AbstractArray> implements Array2<E
         return Flags.WRITEABLE.and(fFlags);
     }
 
+    public final E addEquals(final Array2<?> arr) {
+        if (!(arr instanceof AbstractArray)) {
+            throw new UnsupportedOperationException();
+        }
+        return (E) this;
+    }
+
     private Order chooseOrder(final Order order) {
         if (order == Order.ANY) {
             if (isFortran()) {
@@ -618,9 +670,59 @@ public abstract class AbstractArray<E extends AbstractArray> implements Array2<E
         return newarr;
     }
 
-    protected abstract Buffer allocate(KernelType kernelType, int capacity);
+    protected static class Range {
+        public int length;
 
-    protected abstract E create(int[] dims, int[] strides, Buffer data, int flags, KernelType kernelType);
+        public double start;
+
+        public double stop;
+
+        public double step;
+
+        public double next;
+    }
+
+    /**
+     * Calculate the length and next = start + step.
+     */
+    protected static Range calculateRange(final double start, final double stop, final double step) {
+        double next = stop - start;
+        // "true" division
+        final double val = next / step;
+        int len;
+        if (false) {
+            // TODO support range calculation for complex types
+            throw new UnsupportedOperationException();
+        } else {
+            len = (int) Math.ceil(val);
+        }
+        if (len > 0) {
+            next = start + step;
+        }
+        if (len < 0) {
+            len = 0;
+            next = 0;
+        }
+
+        final Range range = new Range();
+        range.length = len;
+        range.start = start;
+        range.stop = stop;
+        range.step = step;
+        range.next = next;
+        return range;
+    }
+
+    protected abstract void setBuffer(final ByteBuffer data);
+
+    protected final ByteBuffer getData() {
+        return (ByteBuffer) fData.duplicate().rewind();
+    }
+
+    // TODO can probably get rid of this if derived classes pass their Class to
+    // the AbstractArray constructor so it can call the right constructor using
+    // reflection
+    protected abstract E create(int[] dims, int[] strides, ByteBuffer data, int flags, KernelType kernelType);
 
     protected static int orderAsFlags(final Order order) {
         final Flags fortran;
