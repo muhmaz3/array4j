@@ -4,6 +4,8 @@ import java.util.Iterator;
 
 import com.googlecode.array4j.Array2;
 
+// TODO look at PyArrayIterObject in ndarrayobject.h
+
 /**
  * Iterator for elements in an N-dimensional array.
  * <p>

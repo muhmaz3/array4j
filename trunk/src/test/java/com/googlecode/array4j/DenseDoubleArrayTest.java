@@ -65,10 +65,12 @@ public final class DenseDoubleArrayTest {
 
     @Test
     public void testAddEquals() {
-        final DoubleArray<?> arr1 = DenseDoubleArray.zeros();
-        final DoubleArray<?> arr2 = DenseDoubleArray.zeros();
-        final ByteArray<?> arr3 = DenseByteArray.zeros();
+        final DoubleArray<?> arr1 = DenseDoubleArray.arange(4).reshape(2, 2);
+        final DoubleArray<?> arr2 = DenseDoubleArray.arange(2);
         arr1.addEquals(arr2);
-        arr1.addEquals(arr3);
+        assertEquals(0.0, arr1.get(0, 0));
+        assertEquals(2.0, arr1.get(0, 1));
+        assertEquals(2.0, arr1.get(1, 0));
+        assertEquals(4.0, arr1.get(1, 1));
     }
 }

@@ -11,8 +11,6 @@ public final class AddUFunc extends AbstractUFunc {
         super(NIN, NOUT);
     }
 
-    protected void call(final Array2<?>[] argsin, final Array2<?>[] argsout) {
-        // TODO depending on kernel, do calculation or extract buffers from
-        // array and pass all the necessary bits to a JNI function
-    }
+    // TODO need functions that operate on a bunch of buffers -- can then have a
+    // Java and a C implementation
 }

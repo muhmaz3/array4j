@@ -47,10 +47,14 @@ public abstract class AbstractUFunc implements UFunc {
 
     public final void call(final Array2<?>... args) {
         // TODO split args into input and output argument arrays
-        call(new Array2<?>[]{}, new Array2<?>[]{});
+
+        final UFuncLoop loop = new UFuncLoop(this, args);
+
+        // TODO call some code in derived ufunc
+//        call(new Array2<?>[]{}, new Array2<?>[]{});
     }
 
-    protected abstract void call(final Array2<?>[] argsin, final Array2<?>[] argsout);
+//    protected abstract void call(final Array2<?>[] argsin, final Array2<?>[] argsout);
 
     public final <E extends Array2<E>> E reduce(final E arr) {
         return reduce(arr, 0, null);

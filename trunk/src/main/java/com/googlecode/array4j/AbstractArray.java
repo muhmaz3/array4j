@@ -6,6 +6,9 @@ import java.util.Arrays;
 import com.googlecode.array4j.Indexing.Index;
 import com.googlecode.array4j.kernel.Interface;
 import com.googlecode.array4j.kernel.KernelType;
+import com.googlecode.array4j.types.ArrayDescr;
+import com.googlecode.array4j.ufunc.AddUFunc;
+import com.googlecode.array4j.ufunc.UFunc;
 
 public abstract class AbstractArray<E extends AbstractArray> implements Array2<E> {
     private static final int PSEUDO_INDEX = -1;
@@ -139,6 +142,12 @@ public abstract class AbstractArray<E extends AbstractArray> implements Array2<E
         // set the typed buffer in the derived type
         setBuffer(fData);
         fKernelType = kernelType;
+    }
+
+    private void foo(final Class<? extends ArrayDescr<?>> dtypeClass) {
+    }
+
+    private <T extends ArrayDescr<T>> void foo(final T dtype) {
     }
 
     private int arrayFillStrides(final int[] dims, final int sd, final int inflag) {
@@ -649,6 +658,10 @@ public abstract class AbstractArray<E extends AbstractArray> implements Array2<E
         if (!(arr instanceof AbstractArray)) {
             throw new UnsupportedOperationException();
         }
+
+        UFunc ufunc = new AddUFunc();
+        ufunc.call(this, arr, this);
+
         return (E) this;
     }
 

@@ -13,7 +13,7 @@ public class UFuncLoop {
 
     private int fIndex;
 
-    private UFunc fUfunc;
+    private final UFunc fUfunc;
 
     private Object[] fIters;
 
@@ -28,6 +28,8 @@ public class UFuncLoop {
     private int[] fDimensions;
 
     private int fBufCnt;
+    
+    private int fBufSize = 0;
 
     private LoopMethod fMeth;
 
@@ -65,9 +67,16 @@ public class UFuncLoop {
         boolean object = false;
         for (int i = 0; i < nin; i++) {
             mps[i] = args[i];
+            if (!flexible && false) {
+                flexible = true;
+            }
+            if (!object && false) {
+                object = true;
+            }
 
-            // TODO check for flexible and object arrays
-            // TODO various array scalar bits
+            if (mps[i].ndim() > 0) {
+                // TODO do some scalar stuff
+            }
         }
 
         if (flexible && !object) {
@@ -77,11 +86,19 @@ public class UFuncLoop {
 
         /* If everything is a scalar, then use normal coercion rules */
         if (false) {
-            // TODO look at supporting array scalars
+            for (int i = 0; i < nin; i++) {
+                // TODO look at supporting array scalars
+            }
         }
 
         /* Select an appropriate function for these argument types. */
         selectTypes();
+
+        if (false) {
+            if (false) {
+                fNotImplemented = true;
+            }
+        }
 
         /*
          * Create copies for some of the arrays if they are small enough and not
@@ -253,9 +270,38 @@ public class UFuncLoop {
     }
 
     private void selectTypes() {
+        // TODO user loops?
+        if (false) {
+        }
+
+        // TODO typetup
+        if (false) {
+            extractSpecifiedLoop();
+        }
+
+        // TODO userdef > 0
+        if (false) {
+        }
+
+        // TODO more code here
+    }
+
+    private void extractSpecifiedLoop() {
     }
 
     private void createCopies() {
+        final Array2<?>[] mps = new Array2<?>[0];
+        for (int i = 0; i < nin(); i++) {
+            final int size = mps[i].size();
+            if (false) {
+            }
+            if (size < fBufSize) {
+                if (false) {
+                    // create new array with FORCECAST | ALIGNED
+                    // TODO assign new array to mps[i]
+                }
+            }
+        }
     }
 
     public final int nin() {

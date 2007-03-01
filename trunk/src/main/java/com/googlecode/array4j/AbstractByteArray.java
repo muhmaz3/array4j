@@ -2,7 +2,6 @@ package com.googlecode.array4j;
 
 import java.nio.ByteBuffer;
 
-import com.googlecode.array4j.kernel.Interface;
 import com.googlecode.array4j.kernel.KernelType;
 
 public abstract class AbstractByteArray<E extends AbstractByteArray> extends AbstractArray<E> implements ByteArray<E> {
