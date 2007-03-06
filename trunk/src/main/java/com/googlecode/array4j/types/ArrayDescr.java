@@ -5,12 +5,14 @@ import java.util.Map;
 
 import com.googlecode.array4j.ByteOrder;
 
-public abstract class ArrayDescr<E extends ArrayDescr> {
+public class ArrayDescr {
     /*
      * the type object representing an instance of this type -- should not be
      * two type_numbers with the same type object.
      */
-    private Object typeobj;
+    // TODO does class make sense in the record array case?
+    // TODO class is void in record array case
+    private Class<? extends ArrayType> typeobj;
 
     /* kind for this type */
     private char kind;
@@ -58,6 +60,12 @@ public abstract class ArrayDescr<E extends ArrayDescr> {
      */
     private Object[] f;
 
+    public ArrayDescr(final ArrayType type) {
+    }
+
+    public ArrayDescr(final ArrayDescr other) {
+    }
+
     protected ArrayDescr() {
         this(ByteOrder.NATIVE);
     }
@@ -66,6 +74,5 @@ public abstract class ArrayDescr<E extends ArrayDescr> {
         this.fByteOrder = byteOrder;
     }
 
-    public abstract E newByteOrder(ByteOrder byteOrder);
+//    public abstract E newByteOrder(ByteOrder byteOrder);
 }
-
