@@ -134,4 +134,9 @@ public final class ArrayDescr {
     public int getAlignment() {
         return fAlignment;
     }
+
+    public Object getSubArray() {
+//        return fSubArray;
+        return null;
+    }
 }

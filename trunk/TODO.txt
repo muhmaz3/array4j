@@ -1,3 +1,66 @@
+Look at using buffers' asReadOnlyBuffer methods when making read-only arrays
+
+
+Old reflection code:
+
+    private final Constructor<? extends DenseArray> bufferShapeConstructor;
+
+    private final Constructor<? extends DenseArray> shapeConstructor;
+
+    public DenseArray(final DoubleBuffer buffer, final int[] shape) {
+        // ...
+        try {
+            this.bufferShapeConstructor = getClass().getConstructor(DoubleBuffer.class, int[].class);
+            this.shapeConstructor = getClass().getConstructor(int[].class);
+        } catch (final SecurityException e) {
+            throw new RuntimeException(e);
+        } catch (final NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    private E callConstructor(final Constructor<? extends DenseArray> constructor, final Object... args) {
+        try {
+            return (E) constructor.newInstance(args);
+        } catch (final IllegalArgumentException e) {
+            throw new RuntimeException(e);
+        } catch (final InstantiationException e) {
+            throw new RuntimeException(e);
+        } catch (final IllegalAccessException e) {
+            throw new RuntimeException(e);
+        } catch (final InvocationTargetException e) {
+            final Throwable t = e.getTargetException();
+            if (t instanceof RuntimeException) {
+                throw (RuntimeException) t;
+            }
+            // This should never happen unless the constructors start throwing
+            // checked exceptions, in which case this method must be changed to
+            // also throw the same checked exceptions.
+            throw new AssertionError();
+        }
+    }
+    
+    
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+Kernel type is currently set on array separate from its descr.
+array descr in numpy has a function table.
+Our function table could depend on the kernel type
+
+
 C-ism: get rid of nulls and just pass 0 length arrays instead
 
 Many of the for loops can probably be replaced with enhanced for loops

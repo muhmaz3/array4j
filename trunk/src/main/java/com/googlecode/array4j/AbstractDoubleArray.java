@@ -4,20 +4,18 @@ import java.nio.ByteBuffer;
 import java.nio.DoubleBuffer;
 
 import com.googlecode.array4j.kernel.KernelType;
+import com.googlecode.array4j.types.ArrayDescr;
+import com.googlecode.array4j.types.Types;
 
 public abstract class AbstractDoubleArray<E extends AbstractDoubleArray> extends AbstractArray<E> implements
         DoubleArray<E> {
-    private static final int ELEMENT_SIZE = 8;
+    private static final ArrayDescr DESCR = ArrayDescr.valueOf(Types.DOUBLE);
 
     private DoubleBuffer fData;
 
     public AbstractDoubleArray(final int[] dims, final int[] strides, final ByteBuffer data, final int flags,
             final Object base, final KernelType kernelType) {
-        super(dims, strides, data, flags, base, kernelType);
-    }
-
-    public final int elementSize() {
-        return ELEMENT_SIZE;
+        super(DESCR, dims, strides, data, flags, base, kernelType);
     }
 
     public final double get(final int... indexes) {
@@ -33,7 +31,7 @@ public abstract class AbstractDoubleArray<E extends AbstractDoubleArray> extends
         if (range.length == 1) {
             return;
         }
-        data.putDouble(ELEMENT_SIZE, range.next);
+        data.putDouble(arr.elementSize(), range.next);
 
         // This code corresponds to the DOUBLE_fill function in NumPy.
         final double start = arr.fData.get(0);

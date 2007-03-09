@@ -6,8 +6,7 @@ import java.util.Arrays;
 import com.googlecode.array4j.Indexing.Index;
 import com.googlecode.array4j.kernel.Interface;
 import com.googlecode.array4j.kernel.KernelType;
-import com.googlecode.array4j.types.ArrayType;
-import com.googlecode.array4j.types.GenericType;
+import com.googlecode.array4j.types.ArrayDescr;
 import com.googlecode.array4j.ufunc.AddUFunc;
 import com.googlecode.array4j.ufunc.UFunc;
 
@@ -30,6 +29,8 @@ public abstract class AbstractArray<E extends AbstractArray> implements Array2<E
 
     private int fFlags;
 
+    private final ArrayDescr fDescr;
+
     private final Object fBase;
 
     /**
@@ -41,16 +42,16 @@ public abstract class AbstractArray<E extends AbstractArray> implements Array2<E
      * @param dims
      *            dimensions
      */
-    protected AbstractArray(final int[] dims) {
-        this(dims, Flags.EMPTY.getValue());
+    protected AbstractArray(final ArrayDescr descr, final int[] dims) {
+        this(descr, dims, Flags.EMPTY.getValue());
     }
 
-    protected AbstractArray(final int[] dims, final int flags) {
-        this(dims, null, null, flags, null, KernelType.DEFAULT);
+    protected AbstractArray(final ArrayDescr descr, final int[] dims, final int flags) {
+        this(descr, dims, null, null, flags, null, KernelType.DEFAULT);
     }
 
-    protected AbstractArray(final int[] dims, final int[] strides, final int flags) {
-        this(dims, strides, null, flags, null, KernelType.DEFAULT);
+    protected AbstractArray(final ArrayDescr descr, final int[] dims, final int[] strides, final int flags) {
+        this(descr, dims, strides, null, flags, null, KernelType.DEFAULT);
     }
 
     /**
@@ -59,6 +60,8 @@ public abstract class AbstractArray<E extends AbstractArray> implements Array2<E
      * This constructor corresponds to the <CODE>PyArray_NewFromDescr</CODE>
      * function in NumPy.
      *
+     * @param descr
+     *            array description
      * @param dims
      *            dimensions
      * @param strides
@@ -72,13 +75,19 @@ public abstract class AbstractArray<E extends AbstractArray> implements Array2<E
      * @param kernelType
      *            kernel to use when allocating data buffer
      */
-    protected AbstractArray(final int[] dims, final int[] strides, final ByteBuffer data, final int flags,
-            final Object base, final KernelType kernelType) {
+    protected AbstractArray(final ArrayDescr descr, final int[] dims, final int[] strides, final ByteBuffer data,
+            final int flags, final Object base, final KernelType kernelType) {
+        if (descr.getSubArray() != null) {
+            throw new UnsupportedOperationException();
+        }
+        // TODO make sure ArrayDescr is immutable
+        fDescr = descr;
+
+        // TODO set base array properly
         fBase = null;
 
-        final int nd = dims != null ? dims.length : 0;
-
         /* Check dimensions. */
+        final int nd = dims != null ? dims.length : 0;
         int size = 1;
         int sd = elementSize();
         if (sd == 0) {
@@ -145,11 +154,11 @@ public abstract class AbstractArray<E extends AbstractArray> implements Array2<E
         fKernelType = kernelType;
     }
 
-    private void foo(final Class<? extends GenericType<?>> dtypeClass) {
-    }
-
-    private <T extends ArrayType<T>> void foo(final T dtype) {
-    }
+//    private void foo(final Class<? extends GenericType<?>> dtypeClass) {
+//    }
+//
+//    private <T extends ArrayType<T>> void foo(final T dtype) {
+//    }
 
     private int arrayFillStrides(final int[] dims, final int sd, final int inflag) {
         final int nd = dims.length;
@@ -628,6 +637,10 @@ public abstract class AbstractArray<E extends AbstractArray> implements Array2<E
 
     public final int ndim() {
         return fDimensions.length;
+    }
+
+    public final int elementSize() {
+        return fDescr.getElementSize();
     }
 
     public final int flags() {
