@@ -1,24 +1,36 @@
 package com.googlecode.array4j.types;
 
-import java.util.List;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import com.googlecode.array4j.ByteOrder;
 
-public class ArrayDescr {
+public final class ArrayDescr {
+    private static final Map<Types, ArrayDescr> BUILTIN_DESCRS;
+
+    static {
+        final Map<Types, ArrayDescr> descrs = new HashMap<Types, ArrayDescr>();
+        for (Types type : Types.values()) {
+            if (type.getType() != null) {
+                descrs.put(type, new ArrayDescr(type));
+            }
+        }
+        BUILTIN_DESCRS = Collections.unmodifiableMap(descrs);
+    }
+
     /*
      * the type object representing an instance of this type -- should not be
      * two type_numbers with the same type object.
      */
-    // TODO does class make sense in the record array case?
-    // TODO class is void in record array case
-    private Class<? extends ArrayType> typeobj;
+    private Object fTypeObj;
 
     /* kind for this type */
-    private char kind;
+    private final Class<? extends ArrayType> fKind;
 
     /* unique-character representing this type */
-    private char type;
+    private final Class<? extends ArrayType> fType;
 
     /*
      * '>' (big), '<' (little), '|' (not-applicable), or '=' (native).
@@ -28,51 +40,98 @@ public class ArrayDescr {
     /*
      * non-zero if it has object arrays in fields
      */
-    private boolean hasobject;
+    private final int hasobject;
 
     /* number representing this type */
-    private int typenum;
+    private final Types fTypeNum;
 
     /* element size for this type */
-    private int elsize;
+    private final int fElSize;
 
     /* alignment needed for this type */
-    private int alignment;
+    private final int fAlignment;
 
     /*
      * Non-NULL if this type is is an array (C-contiguous) of some other type
      */
-    private Object subarray;
+    private final Object fSubArray;
 
     /* The fields dictionary for this type */
-    /*
-     * For statically defined descr this is always Py_None
-     */
-    private Map<String, Object> fields;
-
-    /*
-     * An ordered tuple of field names or NULL if no fields are defined
-     */
-    private List<String> names;
+    // TODO in numpy, values of this map are a bunch of 2-tuples containing dtypes and something else
+    private Map<String, ArrayDescr> fFields;
 
     /*
      * a table of functions specific for each basic data descriptor
      */
-    private Object[] f;
+    private final Object[] f;
 
-    public ArrayDescr(final ArrayType type) {
+    private ArrayDescr(final Types type) {
+        // TODO figure out if fTypeObj is useful for anything
+        fTypeObj = null;
+        fKind = type.getKind();
+        fType = type.getType();
+        fByteOrder = type.getByteOrder();
+        // TODO set flags if type is OBJECT
+        hasobject = 0;
+        fTypeNum = type;
+        fElSize = type.getElementSize();
+        fAlignment = type.getAlignment();
+        fSubArray = null;
+        fFields = null;
+        f = null;
     }
 
-    public ArrayDescr(final ArrayDescr other) {
+    public ArrayDescr(final Iterable<Field> fields) {
+        this(fields, false);
     }
 
-    protected ArrayDescr() {
-        this(ByteOrder.NATIVE);
+    // TODO look at <CODE>arraydescr_new</CODE> in NumPy for more stuff
+    public ArrayDescr(final Iterable<Field> fields, final boolean align) {
+        fTypeObj = null;
+        fKind = null;
+        fType = null;
+        fByteOrder = ByteOrder.NOT_APPLICABLE;
+        // TODO set flags if any field contains object types
+        hasobject = 0;
+        fTypeNum = Types.VOID;
+        fElSize = fTypeNum.getElementSize();
+        fAlignment = fTypeNum.getAlignment();
+        fSubArray = null;
+        fFields = new LinkedHashMap<String, ArrayDescr>();
+        for (Field field : fields) {
+            if (fFields.containsKey(field.getName())) {
+                throw new IllegalArgumentException("two fields with the same name");
+            }
+            fFields.put(field.getName(), field.getDescr());
+        }
+        f = null;
     }
 
-    protected ArrayDescr(final ByteOrder byteOrder) {
-        this.fByteOrder = byteOrder;
+
+    public static ArrayDescr valueOf(final Types type) {
+        if (BUILTIN_DESCRS.containsKey(type)) {
+            return BUILTIN_DESCRS.get(type);
+        }
+        throw new UnsupportedOperationException("unsupported type");
     }
 
-//    public abstract E newByteOrder(ByteOrder byteOrder);
+    public Class<? extends ArrayType> getKind() {
+        return fKind;
+    }
+
+    public Class<? extends ArrayType> getType() {
+        return fType;
+    }
+
+    public ByteOrder getByteOrder() {
+        return fByteOrder;
+    }
+
+    public int getElementSize() {
+        return fElSize;
+    }
+
+    public int getAlignment() {
+        return fAlignment;
+    }
 }
