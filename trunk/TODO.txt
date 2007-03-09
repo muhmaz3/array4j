@@ -1,3 +1,46 @@
+Some indexing tests:
+
+    @Ignore
+    public void test() {
+//        final ByteArray arr = new ByteArray(10);
+        final ByteArray arr = null;
+
+        arr.get(10);
+
+        // TODO figure out how to do: arr[1:, 1:] and arr[-1:,-1:]
+
+        // arr[:, ...]
+        arr.get(slice(), ellipsis());
+
+        // arr[10, ...]
+        arr.get(10, ellipsis());
+
+        // arr[10, 20, 30]
+        arr.get(10, 20, 30);
+
+        // two ways to force array return even when using only integer indexes
+        arr.get(new Object[]{10, 20, 30});
+        arr.get(10, 20, 30, ellipsis());
+        arr.getArray(10, 20, 30);
+
+        // arr[10, 20, 30] (not fancy indexing)
+        arr.get(new int[]{10, 20, 30});
+
+        // arr[newaxis, 10, 20, ...]
+        arr.get(newaxis(), 10, 20, ellipsis());
+
+        // arr[..., ::2]
+        arr.get(ellipsis(), sliceStep(2));
+
+        // fancy indexing (returns a copy)
+        arr.get(new int[]{3, 1, 2}, ellipsis());
+    }
+
+
+we want any function that accepts an array to accept a matrix, so interfaces are derived in this way,
+but we'll make a base class that throws UnsupportedOperationException for the array functions which
+we can't support in odd-shaped/sparse cases.
+
 
 //    RowVector getRow(int index);
 //

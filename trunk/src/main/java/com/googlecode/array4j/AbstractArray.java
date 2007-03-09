@@ -746,9 +746,6 @@ public abstract class AbstractArray<E extends AbstractArray> implements Array<E>
         return (ByteBuffer) fData.duplicate().rewind();
     }
 
-    // TODO can probably get rid of this if derived classes pass their Class to
-    // the AbstractArray constructor so it can call the right constructor using
-    // reflection
     protected abstract E create(int[] dims, int[] strides, ByteBuffer data, int flags, KernelType kernelType);
 
     protected static int orderAsFlags(final Order order) {

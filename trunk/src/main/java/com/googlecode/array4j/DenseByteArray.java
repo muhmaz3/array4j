@@ -3,16 +3,31 @@ package com.googlecode.array4j;
 import java.nio.ByteBuffer;
 
 import com.googlecode.array4j.kernel.KernelType;
+import com.googlecode.array4j.types.ArrayDescr;
+import com.googlecode.array4j.types.Types;
 
-public final class DenseByteArray extends AbstractByteArray<DenseByteArray> {
+public final class DenseByteArray extends AbstractArray<DenseByteArray> implements ByteArray<DenseByteArray> {
+    private static final ArrayDescr DESCR = ArrayDescr.valueOf(Types.BYTE);
+
+    private ByteBuffer fData;
+
     private DenseByteArray(final int[] dims, final int[] strides, final int flags, final Object base,
             final KernelType kernelType) {
         this(dims, strides, null, flags, base, kernelType);
     }
 
-    private DenseByteArray(final int[] dims, final int[] strides, final ByteBuffer data, final int flags,
+    public DenseByteArray(final int[] dims, final int[] strides, final ByteBuffer data, final int flags,
             final Object base, final KernelType kernelType) {
-        super(dims, strides, data, flags, base, kernelType);
+        super(DESCR, dims, strides, data, flags, base, kernelType);
+    }
+
+    public byte get(final int... indexes) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    protected void setBuffer(final ByteBuffer data) {
+        fData = (ByteBuffer) data.duplicate().rewind();
     }
 
     public static DenseByteArray zeros(final int... dims) {

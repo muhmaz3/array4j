@@ -12,10 +12,6 @@ public abstract class AbstractRecordArray<E extends AbstractRecordArray> extends
         super(null);
     }
 
-    public final int elementSize() {
-        return 0;
-    }
-
     @Override
     protected final void setBuffer(final ByteBuffer data) {
         fData = (ByteBuffer) data.duplicate().rewind();
