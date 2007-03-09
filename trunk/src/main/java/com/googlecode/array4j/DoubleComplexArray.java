@@ -1,4 +1,5 @@
 package com.googlecode.array4j;
 
-public class DoubleComplexArray<E extends DoubleComplexArray> extends AbstractArray<E> {
+public interface DoubleComplexArray<E extends DoubleComplexArray> extends Array<E> {
+    DoubleComplex get(final int... indexes);
 }

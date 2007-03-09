@@ -2,7 +2,7 @@ package com.googlecode.array4j.ufunc;
 
 import java.util.Arrays;
 
-import com.googlecode.array4j.Array2;
+import com.googlecode.array4j.Array;
 
 public class UFuncLoop {
     private enum LoopMethod {
@@ -40,7 +40,7 @@ public class UFuncLoop {
 
     private int[] fSteps;
 
-    public UFuncLoop(final UFunc ufunc, final Array2<?>[] args) {
+    public UFuncLoop(final UFunc ufunc, final Array<?>[] args) {
         // TODO support something like NumPy's extobj and sig keyword arguments
         this.fIndex = 0;
         this.fUfunc = ufunc;
@@ -52,8 +52,8 @@ public class UFuncLoop {
         constructArrays(args);
     }
 
-    private int constructArrays(final Array2<?>[] args) {
-        final Array2<?>[] mps = new Array2<?>[0];
+    private int constructArrays(final Array<?>[] args) {
+        final Array<?>[] mps = new Array<?>[0];
 
         /* Check number of arguments */
         final int nargs = args.length;
@@ -290,7 +290,7 @@ public class UFuncLoop {
     }
 
     private void createCopies() {
-        final Array2<?>[] mps = new Array2<?>[0];
+        final Array<?>[] mps = new Array<?>[0];
         for (int i = 0; i < nin(); i++) {
             final int size = mps[i].size();
             if (false) {

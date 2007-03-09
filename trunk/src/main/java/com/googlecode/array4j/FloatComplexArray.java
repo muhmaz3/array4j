@@ -1,4 +1,5 @@
 package com.googlecode.array4j;
 
-public class FloatComplexArray<E extends FloatComplexArray> extends AbstractArray<E> {
+public interface FloatComplexArray<E extends FloatComplexArray> extends Array<E> {
+    FloatComplex get(final int... indexes);
 }

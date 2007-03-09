@@ -10,7 +10,7 @@ import junit.framework.JUnit4TestAdapter;
 import org.junit.Test;
 
 import com.googlecode.array4j.DenseMatrix;
-import com.googlecode.array4j.Vector;
+import com.googlecode.array4j.matrix.Vector;
 
 public final class GaussianMixtureTest {
     @Test

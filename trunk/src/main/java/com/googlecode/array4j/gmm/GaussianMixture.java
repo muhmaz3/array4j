@@ -6,7 +6,7 @@ import java.util.List;
 
 import com.googlecode.array4j.Array;
 import com.googlecode.array4j.DenseVector;
-import com.googlecode.array4j.Vector;
+import com.googlecode.array4j.matrix.Vector;
 
 public class GaussianMixture extends AbstractGaussian {
     private final List<Gaussian> fGaussians;

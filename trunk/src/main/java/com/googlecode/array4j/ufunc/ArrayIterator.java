@@ -2,7 +2,7 @@ package com.googlecode.array4j.ufunc;
 
 import java.util.Iterator;
 
-import com.googlecode.array4j.Array2;
+import com.googlecode.array4j.Array;
 
 // TODO look at PyArrayIterObject in ndarrayobject.h
 
@@ -12,7 +12,7 @@ import com.googlecode.array4j.Array2;
  * Corresponds to <CODE>PyArrayIterObject</CODE> in the NumPy C-API.
  */
 public final class ArrayIterator implements Iterable<ArrayIterator> {
-    public ArrayIterator(final Array2<?> arr) {
+    public ArrayIterator(final Array<?> arr) {
     }
 
     // TODO next

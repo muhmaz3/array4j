@@ -2,7 +2,7 @@ package com.googlecode.array4j.gmm;
 
 import com.googlecode.array4j.Array;
 import com.googlecode.array4j.DenseVector;
-import com.googlecode.array4j.Vector;
+import com.googlecode.array4j.matrix.Vector;
 
 public abstract class AbstractGaussian implements Gaussian {
     private final int fDimension;

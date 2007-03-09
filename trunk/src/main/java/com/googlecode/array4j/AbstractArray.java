@@ -10,7 +10,7 @@ import com.googlecode.array4j.types.ArrayDescr;
 import com.googlecode.array4j.ufunc.AddUFunc;
 import com.googlecode.array4j.ufunc.UFunc;
 
-public abstract class AbstractArray<E extends AbstractArray> implements Array2<E> {
+public abstract class AbstractArray<E extends AbstractArray> implements Array<E> {
     private static final int PSEUDO_INDEX = -1;
 
     private static final int RUBBER_INDEX = -2;
@@ -668,7 +668,7 @@ public abstract class AbstractArray<E extends AbstractArray> implements Array2<E
         return Flags.WRITEABLE.and(fFlags);
     }
 
-    public final E addEquals(final Array2<?> arr) {
+    public final E addEquals(final Array<?> arr) {
         if (!(arr instanceof AbstractArray)) {
             throw new UnsupportedOperationException();
         }

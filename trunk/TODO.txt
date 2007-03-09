@@ -1,3 +1,17 @@
+
+//    RowVector getRow(int index);
+//
+//    RowVector row(int index);
+//
+//    RowVector[] getRows(int... indexes);
+//
+//    ColumnVector getColumn(int index);
+//
+//    ColumnVector column(int index);
+//
+//    ColumnVector[] getColumns(int... indexes);
+
+
 Look at using buffers' asReadOnlyBuffer methods when making read-only arrays
 
 

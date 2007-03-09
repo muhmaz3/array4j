@@ -1,6 +1,6 @@
 package com.googlecode.array4j;
 
-public interface Array2<E extends Array2> {
+public interface Array<E extends Array> {
     int[] shape();
 
     int shape(int index);
@@ -29,5 +29,5 @@ public interface Array2<E extends Array2> {
 
     boolean isWriteable();
 
-    E addEquals(Array2<?> arr);
+    E addEquals(Array<?> arr);
 }

@@ -1,6 +1,6 @@
 package com.googlecode.array4j.ufunc;
 
-import com.googlecode.array4j.Array2;
+import com.googlecode.array4j.Array;
 
 public final class AddUFunc extends AbstractUFunc {
     private static final int NIN = 2;

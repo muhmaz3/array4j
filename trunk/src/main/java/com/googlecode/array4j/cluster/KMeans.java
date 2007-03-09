@@ -2,9 +2,9 @@ package com.googlecode.array4j.cluster;
 
 import com.googlecode.array4j.Array;
 import com.googlecode.array4j.DenseVector;
-import com.googlecode.array4j.Matrix;
 import com.googlecode.array4j.RowVector;
-import com.googlecode.array4j.Vector;
+import com.googlecode.array4j.matrix.Matrix;
+import com.googlecode.array4j.matrix.Vector;
 
 public class KMeans {
     private final Matrix fCodebook;

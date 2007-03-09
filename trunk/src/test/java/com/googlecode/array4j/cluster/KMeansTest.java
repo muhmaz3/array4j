@@ -6,7 +6,7 @@ import junit.framework.JUnit4TestAdapter;
 import org.junit.Test;
 
 import com.googlecode.array4j.DenseMatrix;
-import com.googlecode.array4j.Matrix;
+import com.googlecode.array4j.matrix.Matrix;
 
 public final class KMeansTest {
     @Test
