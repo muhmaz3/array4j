@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 import com.googlecode.array4j.Array;
 
-public class UFuncLoop {
+public final class UFuncLoop {
     private enum LoopMethod {
         NO_UFUNCLOOP,
         ONE_UFUNCLOOP,
@@ -15,8 +15,6 @@ public class UFuncLoop {
 
     private final UFunc fUfunc;
 
-    private Object[] fIters;
-
     private Object[] fCast;
 
     private Object fErrObj;
@@ -25,35 +23,37 @@ public class UFuncLoop {
 
     private boolean fFirst;
 
-    private int[] fDimensions;
-
     private int fBufCnt;
-    
+
     private int fBufSize = 0;
 
     private LoopMethod fMeth;
 
     private boolean[] fNeedBuffer;
 
-    // TODO should be able to get this value from fIters.length
-    private int fNumIter;
-
     private int[] fSteps;
+
+    private final MultiArrayIterator mit;
 
     public UFuncLoop(final UFunc ufunc, final Array<?>[] args) {
         // TODO support something like NumPy's extobj and sig keyword arguments
         this.fIndex = 0;
         this.fUfunc = ufunc;
         // TODO buffer
-        this.fIters = new Object[ufunc.nargs()];
-        this.fCast = new Object[ufunc.nargs()];
+        final int nargs = ufunc.nargs();
+        this.fCast = new Object[nargs];
         this.fNotImplemented = false;
         this.fFirst = true;
+        this.fNeedBuffer = new boolean[nargs];
+        this.fSteps = new int[nargs];
+
+        this.mit = new MultiArrayIterator(nargs());
+
         constructArrays(args);
     }
 
     private int constructArrays(final Array<?>[] args) {
-        final Array<?>[] mps = new Array<?>[0];
+        final Array<?>[] mps = new Array<?>[nargs()];
 
         /* Check number of arguments */
         final int nargs = args.length;
@@ -104,21 +104,21 @@ public class UFuncLoop {
          * Create copies for some of the arrays if they are small enough and not
          * already contiguous
          */
-        createCopies();
+        createCopies(mps);
 
         /* Create Iterators for the Inputs */
         for (int i = 0; i < nin; i++) {
-            fIters[i] = new ArrayIterator(mps[i]);
+            mit.setIterator(i, mps[i]);
         }
 
-        /* Broadcast the result */
-        broadcast(null);
+        /* Broadcast the result over the input arguments. */
+        mit.broadcast(nin());
 
         /* Get any return arguments */
         for (int i = nin; i < nargs; i++) {
             mps[i] = args[i];
-            final int nd = fDimensions.length;
-            if (mps[i].ndim() != nd || !Arrays.equals(mps[i].shape(), fDimensions)) {
+            final int nd = mit.ndim();
+            if (mps[i].ndim() != nd || !Arrays.equals(mps[i].shape(), mit.shape())) {
                 throw new IllegalArgumentException("invalid return array shape");
             }
             if (!mps[i].isWriteable()) {
@@ -142,7 +142,7 @@ public class UFuncLoop {
             if (false) {
             }
 
-            fIters[i] = new ArrayIterator(mps[i]);
+            mit.setIterator(i, mps[i]);
         }
 
         /*
@@ -190,8 +190,9 @@ public class UFuncLoop {
             }
         }
 
-        // TODO
-        fNumIter = nargs;
+        // TODO more code here?
+        // TODO this bit is probably unnecessary
+//        fNumIter = nargs;
 
         if (!fMeth.equals(LoopMethod.ONE_UFUNCLOOP)) {
             /* Fix iterators */
@@ -209,10 +210,10 @@ public class UFuncLoop {
              * Thus, choose the axis for which strides of the last iterator is
              * smallest but non-zero.
              */
-            final int nd = fDimensions.length;
+            final int nd = mit.ndim();
             final int[] stridesum = new int[0];
             for (int i = 0; i < nd; i++) {
-                for (int j = 0; j < fNumIter; j++) {
+                for (int j = 0; j < mit.numiter(); j++) {
 //                    stridesum[i] += fIters[j].strides(i);
                 }
             }
@@ -224,7 +225,7 @@ public class UFuncLoop {
                     minsum = stridesum[i];
                 }
             }
-            final int maxdim = fDimensions[ldim];
+            final int maxdim = mit.shape(ldim);
 //            fSize /= maxdim;
 //            fBufCnt = maxdim;
 //            fLastDim = ldim;
@@ -234,7 +235,7 @@ public class UFuncLoop {
              * dimensions -- This can be done by setting the size to 1 in that
              * dimension (just in the iterators).
              */
-            for (int i = 0; i < fNumIter; i++) {
+            for (int i = 0; i < mit.numiter(); i++) {
             }
 
             /*
@@ -289,8 +290,7 @@ public class UFuncLoop {
     private void extractSpecifiedLoop() {
     }
 
-    private void createCopies() {
-        final Array<?>[] mps = new Array<?>[0];
+    private void createCopies(final Array<?>[] mps) {
         for (int i = 0; i < nin(); i++) {
             final int size = mps[i].size();
             if (false) {
@@ -304,19 +304,15 @@ public class UFuncLoop {
         }
     }
 
-    public final int nin() {
+    public int nin() {
         return fUfunc.nin();
     }
 
-    public final int nout() {
+    public int nout() {
         return fUfunc.nout();
     }
 
-    public final int nargs() {
+    public int nargs() {
         return fUfunc.nargs();
-    }
-
-    public static void broadcast(final MultiArrayIterator mit) {
-        // TODO broadcast sets nd of loop
     }
 }

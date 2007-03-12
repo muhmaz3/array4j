@@ -25,9 +25,13 @@ public interface Array<E extends Array> {
 
     int elementSize();
 
+    void updateFlags(Flags... flags);
+
     boolean isFortran();
 
     boolean isWriteable();
+
+    boolean isContiguous();
 
     E addEquals(Array<?> arr);
 }

@@ -1,3 +1,11 @@
+Code that was going to be useful for something:
+
+//    private void foo(final Class<? extends GenericType<?>> dtypeClass) {
+//    }
+//
+//    private <T extends ArrayType<T>> void foo(final T dtype) {
+//    }
+
 Some indexing tests:
 
     @Ignore

@@ -1,6 +1,6 @@
 package com.googlecode.array4j;
 
-enum Flags {
+public enum Flags {
     EMPTY(0),
     /**
      * Means c-style contiguous (last index varies the fastest). The data

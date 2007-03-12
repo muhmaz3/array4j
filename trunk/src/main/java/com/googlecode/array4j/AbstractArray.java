@@ -154,12 +154,6 @@ public abstract class AbstractArray<E extends AbstractArray> implements Array<E>
         fKernelType = kernelType;
     }
 
-//    private void foo(final Class<? extends GenericType<?>> dtypeClass) {
-//    }
-//
-//    private <T extends ArrayType<T>> void foo(final T dtype) {
-//    }
-
     private int arrayFillStrides(final int[] dims, final int sd, final int inflag) {
         final int nd = dims.length;
         int itemsize = sd;
@@ -647,6 +641,11 @@ public abstract class AbstractArray<E extends AbstractArray> implements Array<E>
         return fFlags;
     }
 
+    public final void updateFlags(final Flags... flags) {
+        for (final Flags flag : flags) {
+        }
+    }
+
     private boolean checkFlags(final Flags... flags) {
         for (final Flags flag : flags) {
             if (!flag.and(fFlags)) {
@@ -666,6 +665,10 @@ public abstract class AbstractArray<E extends AbstractArray> implements Array<E>
 
     public final boolean isWriteable() {
         return Flags.WRITEABLE.and(fFlags);
+    }
+
+    public final boolean isContiguous() {
+        return Flags.CONTIGUOUS.and(fFlags);
     }
 
     public final E addEquals(final Array<?> arr) {
