@@ -1,6 +1,7 @@
 package com.googlecode.array4j.ufunc;
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 import com.googlecode.array4j.Array;
 import com.googlecode.array4j.Flags;
@@ -10,7 +11,7 @@ import com.googlecode.array4j.Flags;
  * <p>
  * Corresponds to <CODE>PyArrayIterObject</CODE> in the NumPy C-API.
  */
-public final class ArrayIterator implements Iterable<ArrayIterator> {
+public final class ArrayIterator implements Iterator<ArrayIterator> {
     /* number of dimensions - 1 */
     private int ndm1;
 
@@ -79,11 +80,77 @@ public final class ArrayIterator implements Iterable<ArrayIterator> {
         return ao.shape(index);
     }
 
-    // TODO next
+    public boolean hasNext() {
+        return index < size;
+    }
 
-    // TODO goto
+    /**
+     * Returns the next element in the iteration.
+     * <p>
+     * This code corresponds to the <CODE>PyArray_ITER_NEXT</CODE> macro in NumPy.
+     */
+    public ArrayIterator next() {
+        if (index == size) {
+            throw new NoSuchElementException();
+        }
+        index++;
+        if (ndm1 == 0) {
+            dataptr += strides[0];
+            coordinates[0]++;
+        } else if (contiguous) {
+            dataptr += ao.elementSize();
+        } else if (ndm1 == 1) {
+            if (coordinates[1] < dimsm1[1]) {
+                coordinates[1]++;
+                dataptr += strides[1];
+            } else {
+                coordinates[1] = 0;
+                coordinates[0]++;
+                dataptr += strides[0] - backstrides[1];
+            }
+        } else {
+            for (int i = ndm1; i >= 0; i--) {
+                if (coordinates[i] < dimsm1[i]) {
+                    coordinates[i]++;
+                    dataptr += strides[i];
+                    break;
+                } else {
+                    coordinates[i] = 0;
+                    dataptr -= backstrides[i];
+                }
+            }
+        }
+        return this;
+    }
 
-    // TODO goto1d
+    public void remove() {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * This code corresponsds to the <CODE>PyArray_ITER_GOTO</CODE> macro in Numpy.
+     */
+    public ArrayIterator gotond(final int[] destination) {
+        index = 0;
+        dataptr = 0;
+        for (int i = ndm1; i >= 0; i--) {
+            int dest = destination[i];
+            if (dest < 0) {
+                dest += dimsm1[i] + 1;
+            }
+            dataptr += dest * strides[i];
+            coordinates[i] = dest;
+            index += dest * (i == ndm1 ? 1 : dimsm1[i + 1] + 1);
+        }
+        return this;
+    }
+
+    /**
+     * This code corresponsds to the <CODE>PyArray_ITER_GOTO1D</CODE> macro in Numpy.
+     */
+    public ArrayIterator goto1d(final int ind) {
+        throw new UnsupportedOperationException();
+    }
 
     /**
      * Reset iterator.
@@ -94,8 +161,9 @@ public final class ArrayIterator implements Iterable<ArrayIterator> {
         index = 0;
         // reset dataptr to start of array
         dataptr = 0;
-        // TODO reseting coordinates to 0 might be faster than allocating a new array
-        coordinates = new int[coordinates.length];
+        for (int i = 0; i < coordinates.length; i++) {
+            coordinates[i] = 0;
+        }
     }
 
     /**
@@ -124,7 +192,7 @@ public final class ArrayIterator implements Iterable<ArrayIterator> {
             /*
              * If this dimension was added or shape of underlying array was 1
              */
-            if ((k < 0) || ao.shape(k) != mit.shape(j)){
+            if ((k < 0) || ao.shape(k) != mit.shape(j)) {
                 contiguous = false;
                 strides[j] = 0;
             } else {
@@ -137,10 +205,6 @@ public final class ArrayIterator implements Iterable<ArrayIterator> {
             }
         }
         reset();
-    }
-
-    public Iterator<ArrayIterator> iterator() {
-        return null;
     }
 
     private int[] resizeCopy(final int length, final int[] oldarr) {

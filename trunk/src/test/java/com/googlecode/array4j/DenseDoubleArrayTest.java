@@ -73,4 +73,14 @@ public final class DenseDoubleArrayTest {
         assertEquals(2.0, arr1.get(1, 0));
         assertEquals(4.0, arr1.get(1, 1));
     }
+
+//    @Test
+//    public void testAdd() {
+//        // arr1 and arr2 have to be declared with <?> for add to work
+//        final DoubleArray<?> arr1 = DenseDoubleArray.arange(4).reshape(2, 2);
+//        final DoubleArray<?> arr2 = DenseDoubleArray.arange(2);
+//        // TODO allowing this is probably unsafe, since the cast is checked
+//        // against the erased type
+//        final ByteArray<?> arr3 = arr1.add(arr2);
+//    }
 }

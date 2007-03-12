@@ -676,11 +676,17 @@ public abstract class AbstractArray<E extends AbstractArray> implements Array<E>
             throw new UnsupportedOperationException();
         }
 
-        UFunc ufunc = new AddUFunc();
+        final UFunc ufunc = new AddUFunc();
         ufunc.call(this, arr, this);
 
         return (E) this;
     }
+
+//    public final <F extends Array<?>> F add(final Array<?> arr) {
+//        final F f = (F) arr;
+//        return f;
+//        return (F) null;
+//    }
 
     private Order chooseOrder(final Order order) {
         if (order == Order.ANY) {

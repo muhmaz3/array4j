@@ -3,6 +3,8 @@ package com.googlecode.array4j.ufunc;
 import com.googlecode.array4j.Array;
 import com.googlecode.array4j.kernel.KernelType;
 
+// TODO review these functions
+
 public abstract class AbstractUFunc implements UFunc {
     private final KernelType fKernelType;
 
@@ -45,16 +47,16 @@ public abstract class AbstractUFunc implements UFunc {
         return null;
     }
 
+    /**
+     * Generic ufunc call.
+     * <p>
+     * This function corresponds to the NumPy functions <CODE>ufunc_generic_call</CODE>
+     * and <CODE>PyUFunc_GenericFunction</CODE>.
+     */
     public final void call(final Array<?>... args) {
-        // TODO split args into input and output argument arrays
-
         final UFuncLoop loop = new UFuncLoop(this, args);
-
-        // TODO call some code in derived ufunc
-//        call(new Array2<?>[]{}, new Array2<?>[]{});
+        loop.execute();
     }
-
-//    protected abstract void call(final Array2<?>[] argsin, final Array2<?>[] argsout);
 
     public final <E extends Array<E>> E reduce(final E arr) {
         return reduce(arr, 0, null);

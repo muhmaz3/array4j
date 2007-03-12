@@ -1,13 +1,15 @@
 package com.googlecode.array4j.ufunc;
 
 import java.util.Arrays;
+import java.util.Iterator;
 
 import com.googlecode.array4j.Array;
 
-public final class UFuncLoop {
+public final class UFuncLoop implements Iterable<MultiArrayIterator> {
     private enum LoopMethod {
         NO_UFUNCLOOP,
         ONE_UFUNCLOOP,
+        NOBUFFER_UFUNCLOOP,
         BUFFER_UFUNCLOOP;
     }
 
@@ -35,6 +37,8 @@ public final class UFuncLoop {
 
     private final MultiArrayIterator mit;
 
+    private int[] bufptr;
+
     public UFuncLoop(final UFunc ufunc, final Array<?>[] args) {
         // TODO support something like NumPy's extobj and sig keyword arguments
         this.fIndex = 0;
@@ -50,6 +54,34 @@ public final class UFuncLoop {
         this.mit = new MultiArrayIterator(nargs());
 
         constructArrays(args);
+    }
+
+    public void execute() {
+        if (fNotImplemented) {
+            throw new UnsupportedOperationException();
+        }
+
+        switch (fMeth) {
+        case ONE_UFUNCLOOP:
+            throw new UnsupportedOperationException();
+//            break;
+        case NOBUFFER_UFUNCLOOP:
+            for (MultiArrayIterator it : this) {
+                // TODO update bufptr from iter
+                // TODO call function
+            }
+            throw new UnsupportedOperationException();
+//            break;
+        case BUFFER_UFUNCLOOP:
+            throw new UnsupportedOperationException();
+//            break;
+        default:
+            throw new AssertionError();
+        }
+    }
+
+    public Iterator<MultiArrayIterator> iterator() {
+        return mit;
     }
 
     private int constructArrays(final Array<?>[] args) {
@@ -108,7 +140,7 @@ public final class UFuncLoop {
 
         /* Create Iterators for the Inputs */
         for (int i = 0; i < nin; i++) {
-            mit.setIterator(i, mps[i]);
+            mit.createArrayIterator(i, mps[i]);
         }
 
         /* Broadcast the result over the input arguments. */
@@ -142,7 +174,7 @@ public final class UFuncLoop {
             if (false) {
             }
 
-            mit.setIterator(i, mps[i]);
+            mit.createArrayIterator(i, mps[i]);
         }
 
         /*

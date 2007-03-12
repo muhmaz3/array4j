@@ -1,6 +1,7 @@
 package com.googlecode.array4j.ufunc;
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 import com.googlecode.array4j.Array;
 import com.googlecode.array4j.ArrayUtils;
@@ -10,10 +11,10 @@ import com.googlecode.array4j.ArrayUtils;
  * <p>
  * Corresponds to <CODE>PyArrayMultiIterObject</CODE> in the NumPy C-API.
  */
-public final class MultiArrayIterator implements Iterable<ArrayIterator> {
+public final class MultiArrayIterator implements Iterator<MultiArrayIterator> {
     private int fSize;
 
-//    private int[] fIndex;
+    private int fIndex;
 
     private int[] fDimensions;
 
@@ -23,11 +24,29 @@ public final class MultiArrayIterator implements Iterable<ArrayIterator> {
         this.fIters = new ArrayIterator[numiter];
     }
 
-    public Iterator<ArrayIterator> iterator() {
-        return null;
+    public boolean hasNext() {
+        return fIndex < fSize;
     }
 
-    public void setIterator(final int index, final Array<?> arr) {
+    public MultiArrayIterator next() {
+        if (fIndex == fSize) {
+            throw new NoSuchElementException();
+        }
+
+        /* Adjust loop pointers */
+        for (ArrayIterator iter : fIters) {
+            iter.next();
+        }
+
+        fIndex++;
+        return this;
+    }
+
+    public void remove() {
+        throw new UnsupportedOperationException();
+    }
+
+    public void createArrayIterator(final int index, final Array<?> arr) {
         fIters[index] = new ArrayIterator(arr);
     }
 
