@@ -22,7 +22,7 @@ public final class DenseByteArray extends AbstractArray<DenseByteArray> implemen
     }
 
     public byte get(final int... indexes) {
-        throw new UnsupportedOperationException();
+        return getData().get(getOffsetFromIndexes(indexes));
     }
 
     @Override
