@@ -20,7 +20,7 @@ public final class Error {
     public enum Action {
         IGNORE(0),
         WARN(1),
-        RAISE(2),
+        THROW(2),
         CALL(3),
         PRINT(4),
         LOG(5);

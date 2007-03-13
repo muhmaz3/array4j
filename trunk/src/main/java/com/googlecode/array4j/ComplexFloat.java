@@ -1,11 +1,11 @@
 package com.googlecode.array4j;
 
-public final class FloatComplex {
+public final class ComplexFloat {
     private final float fReal;
 
     private final float fImag;
 
-    public FloatComplex(final float real, final float imag) {
+    public ComplexFloat(final float real, final float imag) {
         fReal = real;
         fImag = imag;
     }

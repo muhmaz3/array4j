@@ -2,9 +2,6 @@ package com.googlecode.array4j.ufunc;
 
 import org.junit.Test;
 
-import com.googlecode.array4j.DenseByteArray;
-import com.googlecode.array4j.DenseDoubleArray;
-
 public final class AddUFuncTest {
     @Test
     public void testCall() {

@@ -34,6 +34,4 @@ public interface Array<E extends Array> {
     boolean isContiguous();
 
     E addEquals(Array<?> arr);
-
-//    <F extends Array<?>> F add(Array<?> arr);
 }

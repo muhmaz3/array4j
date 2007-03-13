@@ -10,7 +10,7 @@ import com.googlecode.array4j.types.ArrayDescr;
 import com.googlecode.array4j.ufunc.AddUFunc;
 import com.googlecode.array4j.ufunc.UFunc;
 
-public abstract class AbstractArray<E extends AbstractArray> implements Array<E> {
+public final class DenseArray implements Array<DenseArray> {
     private static final int PSEUDO_INDEX = -1;
 
     private static final int RUBBER_INDEX = -2;
@@ -42,15 +42,15 @@ public abstract class AbstractArray<E extends AbstractArray> implements Array<E>
      * @param dims
      *            dimensions
      */
-    protected AbstractArray(final ArrayDescr descr, final int[] dims) {
+    private DenseArray(final ArrayDescr descr, final int[] dims) {
         this(descr, dims, Flags.EMPTY.getValue());
     }
 
-    protected AbstractArray(final ArrayDescr descr, final int[] dims, final int flags) {
+    private DenseArray(final ArrayDescr descr, final int[] dims, final int flags) {
         this(descr, dims, null, null, flags, null, KernelType.DEFAULT);
     }
 
-    protected AbstractArray(final ArrayDescr descr, final int[] dims, final int[] strides, final int flags) {
+    private DenseArray(final ArrayDescr descr, final int[] dims, final int[] strides, final int flags) {
         this(descr, dims, strides, null, flags, null, KernelType.DEFAULT);
     }
 
@@ -75,7 +75,7 @@ public abstract class AbstractArray<E extends AbstractArray> implements Array<E>
      * @param kernelType
      *            kernel to use when allocating data buffer
      */
-    protected AbstractArray(final ArrayDescr descr, final int[] dims, final int[] strides, final ByteBuffer data,
+    protected DenseArray(final ArrayDescr descr, final int[] dims, final int[] strides, final ByteBuffer data,
             final int flags, final Object base, final KernelType kernelType) {
         if (descr.getSubArray() != null) {
             throw new UnsupportedOperationException();
@@ -149,8 +149,7 @@ public abstract class AbstractArray<E extends AbstractArray> implements Array<E>
             fFlags &= ~Flags.OWNDATA.getValue();
             fData = data;
         }
-        // set the typed buffer in the derived type
-        setBuffer(fData);
+
         fKernelType = kernelType;
     }
 
@@ -329,17 +328,17 @@ public abstract class AbstractArray<E extends AbstractArray> implements Array<E>
         return newstrides;
     }
 
-    public final E reshape(final int... newdims) {
+    public DenseArray reshape(final int... newdims) {
         return reshape(Order.C, newdims);
     }
 
-    public final E reshape(final Order order, final int... newdims) {
+    public DenseArray reshape(final Order order, final int... newdims) {
         final Order fortran = chooseOrder(order);
 
         /*  Quick check to make sure anything actually needs to be done */
         if (newdims == null || Arrays.equals(fDimensions, newdims)) {
             // TODO might want to return a new object here
-            return (E) this;
+            return this;
         }
 
         int[] strides = checkStridesOnes(newdims);
@@ -404,30 +403,31 @@ public abstract class AbstractArray<E extends AbstractArray> implements Array<E>
             }
         }
 
-        return create(newdims, strides, (ByteBuffer) fData.duplicate().rewind(), flags, fKernelType);
+//        return new DenseArray(newdims, strides, (ByteBuffer) fData.duplicate().rewind(), flags, fKernelType);
+        return null;
     }
 
-    public final int[] shape() {
+    public int[] shape() {
         final int[] shapeCopy = new int[fDimensions.length];
         System.arraycopy(fDimensions, 0, shapeCopy, 0, fDimensions.length);
         return shapeCopy;
     }
 
-    public final int shape(final int index) {
+    public int shape(final int index) {
         return fDimensions[index];
     }
 
-    public final int[] strides() {
+    public int[] strides() {
         final int[] stridesCopy = new int[fStrides.length];
         System.arraycopy(fStrides, 0, stridesCopy, 0, fStrides.length);
         return stridesCopy;
     }
 
-    public final int strides(final int index) {
+    public int strides(final int index) {
         return fStrides[index];
     }
 
-    public final int size() {
+    public int size() {
         int size = 1;
         for (int dim : fDimensions) {
             // checks in constructor will ensure that this never overflows
@@ -436,7 +436,7 @@ public abstract class AbstractArray<E extends AbstractArray> implements Array<E>
         return size;
     }
 
-    public final E getArray(final int... indexes) {
+    public DenseArray getArray(final int... indexes) {
         final Object[] indexObjs = new Object[indexes.length];
         for (int i = 0; i < indexes.length; i++) {
             indexObjs[i] = indexes[i];
@@ -450,7 +450,7 @@ public abstract class AbstractArray<E extends AbstractArray> implements Array<E>
      * This function is based on the code in the NumPy function <CODE>array_subscript_nice</CODE>
      * where it does "optimization for a tuple of integers".
      */
-    protected final int getOffsetFromIndexes(final int[] indexes) {
+    private int getOffsetFromIndexes(final int[] indexes) {
         if (indexes.length != fDimensions.length) {
             throw new IllegalArgumentException("invalid number of indexes");
         }
@@ -476,7 +476,7 @@ public abstract class AbstractArray<E extends AbstractArray> implements Array<E>
         return offset;
     }
 
-    protected final void checkIndexes(final Object... indexes) {
+    private void checkIndexes(final Object... indexes) {
         if (indexes.length == 0) {
             throw new IllegalArgumentException("must specify at least one index");
         }
@@ -493,7 +493,7 @@ public abstract class AbstractArray<E extends AbstractArray> implements Array<E>
      * @param indexes dimensional indexes
      * @return absolute index
      */
-    protected final int indexesToIndex(final int[] indexes) {
+    private int indexesToIndex(final int[] indexes) {
         if (indexes.length != fDimensions.length) {
             throw new IllegalArgumentException();
         }
@@ -519,7 +519,7 @@ public abstract class AbstractArray<E extends AbstractArray> implements Array<E>
         private int stepSize;
     }
 
-    protected final SubIndex parseSubIndex(final Object index, final int max) {
+    private SubIndex parseSubIndex(final Object index, final int max) {
         int start;
         int nsteps;
         int stepSize;
@@ -559,7 +559,7 @@ public abstract class AbstractArray<E extends AbstractArray> implements Array<E>
         return subindex;
     }
 
-    public final E get(final Object... indexes) {
+    public DenseArray get(final Object... indexes) {
         checkIndexes(indexes);
         final String msg = "too many indices";
         final int n = indexes.length;
@@ -622,26 +622,27 @@ public abstract class AbstractArray<E extends AbstractArray> implements Array<E>
         final int[] newstrides = new int[ndnew];
         System.arraycopy(strides, 0, newstrides, 0, ndnew);
 
-        return create(newdims, newstrides, (ByteBuffer) fData.position(offset), fFlags, fKernelType);
+//        return new DenseArray(newdims, newstrides, (ByteBuffer) fData.position(offset), fFlags, fKernelType);
+        return null;
     }
 
-    public final int nbytes() {
+    public int nbytes() {
         return fData.capacity();
     }
 
-    public final int ndim() {
+    public int ndim() {
         return fDimensions.length;
     }
 
-    public final int elementSize() {
+    public int elementSize() {
         return fDescr.getElementSize();
     }
 
-    public final int flags() {
+    public int flags() {
         return fFlags;
     }
 
-    public final void updateFlags(final Flags... flags) {
+    public void updateFlags(final Flags... flags) {
         for (final Flags flag : flags) {
         }
     }
@@ -655,38 +656,32 @@ public abstract class AbstractArray<E extends AbstractArray> implements Array<E>
         return true;
     }
 
-    public final boolean isOneSegment() {
+    public boolean isOneSegment() {
         return ndim() == 0 || Flags.CONTIGUOUS.and(fFlags) || Flags.FORTRAN.and(fFlags);
     }
 
-    public final boolean isFortran() {
+    public boolean isFortran() {
         return Flags.FORTRAN.and(fFlags) && ndim() > 1;
     }
 
-    public final boolean isWriteable() {
+    public boolean isWriteable() {
         return Flags.WRITEABLE.and(fFlags);
     }
 
-    public final boolean isContiguous() {
+    public boolean isContiguous() {
         return Flags.CONTIGUOUS.and(fFlags);
     }
 
-    public final E addEquals(final Array<?> arr) {
-        if (!(arr instanceof AbstractArray)) {
+    public DenseArray addEquals(final Array<?> arr) {
+        if (!(arr instanceof DenseArray)) {
             throw new UnsupportedOperationException();
         }
 
         final UFunc ufunc = new AddUFunc();
         ufunc.call(this, arr, this);
 
-        return (E) this;
+        return this;
     }
-
-//    public final <F extends Array<?>> F add(final Array<?> arr) {
-//        final F f = (F) arr;
-//        return f;
-//        return (F) null;
-//    }
 
     private Order chooseOrder(final Order order) {
         if (order == Order.ANY) {
@@ -706,22 +701,22 @@ public abstract class AbstractArray<E extends AbstractArray> implements Array<E>
         return newarr;
     }
 
-    protected static class Range {
-        public int length;
+    private static class Range {
+        private int length;
 
-        public double start;
+        private double start;
 
-        public double stop;
+        private double stop;
 
-        public double step;
+        private double step;
 
-        public double next;
+        private double next;
     }
 
     /**
      * Calculate the length and next = start + step.
      */
-    protected static Range calculateRange(final double start, final double stop, final double step) {
+    private static Range calculateRange(final double start, final double stop, final double step) {
         double next = stop - start;
         // "true" division
         final double val = next / step;
@@ -749,13 +744,9 @@ public abstract class AbstractArray<E extends AbstractArray> implements Array<E>
         return range;
     }
 
-    protected abstract void setBuffer(final ByteBuffer data);
-
-    protected final ByteBuffer getData() {
+    private ByteBuffer getData() {
         return (ByteBuffer) fData.duplicate().rewind();
     }
-
-    protected abstract E create(int[] dims, int[] strides, ByteBuffer data, int flags, KernelType kernelType);
 
     protected static int orderAsFlags(final Order order) {
         final Flags fortran;
@@ -766,4 +757,48 @@ public abstract class AbstractArray<E extends AbstractArray> implements Array<E>
         }
         return fortran.getValue();
     }
+
+//    static DenseArray zeros(final ArrayDescr dtype, final KernelType kernelType, final Order order,
+//            final int... dims) {
+//        return new DenseArray(dtype, dims, null, orderAsFlags(order), null, kernelType);
+//    }
+
+//    static DenseArray arange(final ArrayDescr dtype, final double stop) {
+//        return arange(dtype, 0.0, stop, 1.0);
+//    }
+
+//    static DenseArray arange(final ArrayDescr dtype, final double start, final double stop, final double step) {
+//        final Range range = calculateRange(start, stop, step);
+//        final DenseArray arr = new DenseArray(dtype, new int[]{range.length}, KernelType.DEFAULT);
+//        fill(arr, range);
+//        // TODO byte swapping
+//        return arr;
+//    }
+
+//    private static void fill(final DenseDoubleArray arr, final Range range) {
+//        if (range.length == 0) {
+//            return;
+//        }
+//        final ByteBuffer data = arr.getData();
+//        data.putDouble(0, range.start);
+//        if (range.length == 1) {
+//            return;
+//        }
+//        data.putDouble(arr.elementSize(), range.next);
+//
+//        // This code corresponds to the DOUBLE_fill function in NumPy.
+//        final double start = arr.fData.get(0);
+//        double delta = arr.fData.get(1);
+//        delta -= start;
+//        for (int i = 2; i < range.length; i++) {
+//            arr.fData.put(i, start + i * delta);
+//        }
+//    }
+
+    public double getDouble(final int... indexes) {
+        // TODO byte swapping and all that
+        return getData().getDouble(getOffsetFromIndexes(indexes));
+    }
+
+
 }
