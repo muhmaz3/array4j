@@ -1,5 +1,6 @@
 package com.googlecode.array4j.ufunc;
 
+import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Iterator;
 
@@ -17,41 +18,57 @@ public final class UFuncLoop implements Iterable<MultiArrayIterator> {
 
     private final UFunc fUfunc;
 
+    /* Buffers for the loop */
+    private ByteBuffer[] fBuffer;
+
+    private final MultiArrayIterator mit;
+
     private Object[] fCast;
 
-    private Object fErrObj;
-
+    /* The loop caused notimplemented */
     private boolean fNotImplemented;
 
     private boolean fFirst;
 
+    private final int fBufSize;
+
+    private final int fErrorMask;
+
+    private final ErrorHandler fErrObj;
+
     private int fBufCnt;
-
-    private int fBufSize = 0;
-
     private LoopMethod fMeth;
-
     private boolean[] fNeedBuffer;
-
     private int[] fSteps;
-
-    private final MultiArrayIterator mit;
-
     private int[] bufptr;
 
     public UFuncLoop(final UFunc ufunc, final Array<?>[] args) {
-        // TODO support something like NumPy's extobj and sig keyword arguments
+        this(ufunc, args, Error.DEFAULT_ERROR);
+    }
+
+    public UFuncLoop(final UFunc ufunc, final Array<?>[] args, final Error extobj) {
         this.fIndex = 0;
         this.fUfunc = ufunc;
-        // TODO buffer
-        final int nargs = ufunc.nargs();
+        final int nargs = nargs();
+        this.fBuffer = new ByteBuffer[nargs];
+        fBuffer[0] = null;
+
+        // the multi iterator contains the iterators
+        this.mit = new MultiArrayIterator(nargs);
         this.fCast = new Object[nargs];
+        // TODO fCast contains PyArray_VectorUnaryFuncs
+
         this.fNotImplemented = false;
         this.fFirst = true;
+
+        this.fBufSize = extobj.getBufSize();
+        this.fErrorMask = extobj.getErrorMask();
+        this.fErrObj = extobj.getErrorHandler();
+
+        // initialize other arrays (these have a static size in NumPy)
+        this.fCast = new Object[nargs];
         this.fNeedBuffer = new boolean[nargs];
         this.fSteps = new int[nargs];
-
-        this.mit = new MultiArrayIterator(nargs());
 
         constructArrays(args);
     }

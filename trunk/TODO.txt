@@ -1,3 +1,7 @@
+// TODO support something like NumPy's extobj and sig keyword arguments for ufuncs
+
+
+
 Code that was going to be useful for something:
 
 //    private void foo(final Class<? extends GenericType<?>> dtypeClass) {
