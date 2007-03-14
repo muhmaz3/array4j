@@ -37,7 +37,7 @@ public final class ArrayDescr {
     private final int hasobject;
 
     /* element size for this type */
-    private final int fElSize;
+    private final int fItemSize;
 
     /* alignment needed for this type */
     private final int fAlignment;
@@ -74,7 +74,7 @@ public final class ArrayDescr {
         fByteOrder = type.getByteOrder();
         // TODO set flags if type is OBJECT
         hasobject = 0;
-        fElSize = type.getElementSize();
+        fItemSize = type.getElementSize();
         fAlignment = type.getAlignment();
         fSubArray = null;
         fFields = null;
@@ -94,7 +94,7 @@ public final class ArrayDescr {
         fByteOrder = ByteOrder.NOT_APPLICABLE;
         // TODO set flags if any field contains object types
         hasobject = 0;
-        fElSize = fType.getElementSize();
+        fItemSize = fType.getElementSize();
         fAlignment = fType.getAlignment();
         fSubArray = null;
         fFields = new LinkedHashMap<String, ArrayDescr>();
@@ -189,7 +189,7 @@ public final class ArrayDescr {
     private static ArrayDescr finishType(final ArrayDescr chktype, final ArrayDescr mintype) {
         final ArrayDescr outtype = smallType(chktype, mintype);
         /* VOID Arrays should not occur by "default" unless input was already a VOID */
-        if (outtype.getType().equals(ArrayType.VOID) && !mintype.getType().equals(ArrayType.VOID)) {
+        if (outtype.type().equals(ArrayType.VOID) && !mintype.type().equals(ArrayType.VOID)) {
             return fromType(ArrayType.OBJECT);
         }
         return outtype;
@@ -204,13 +204,13 @@ public final class ArrayDescr {
         }
 
         ArrayDescr outtype;
-        if (chktype.getType().compareTo(mintype.getType()) > 0) {
-            outtype = fromType(chktype.getType());
+        if (chktype.type().compareTo(mintype.type()) > 0) {
+            outtype = fromType(chktype.type());
         } else {
-            outtype = fromType(mintype.getType());
+            outtype = fromType(mintype.type());
         }
         for (ArrayType typ : ArrayType.values()) {
-            if (typ.canCastSafely(chktype.getType()) && typ.canCastSafely(mintype.getType())) {
+            if (typ.canCastSafely(chktype.type()) && typ.canCastSafely(mintype.type())) {
                 outtype = fromType(typ);
                 break;
             }
@@ -258,23 +258,23 @@ public final class ArrayDescr {
         return null;
     }
 
-    public ArrayKind getKind() {
+    public ArrayKind kind() {
         return fKind;
     }
 
-    public ArrayType getType() {
+    public ArrayType type() {
         return fType;
     }
 
-    public ByteOrder getByteOrder() {
+    public ByteOrder byteOrder() {
         return fByteOrder;
     }
 
-    public int getElementSize() {
-        return fElSize;
+    public int itemSize() {
+        return fItemSize;
     }
 
-    public int getAlignment() {
+    public int alignment() {
         return fAlignment;
     }
 
@@ -311,17 +311,17 @@ public final class ArrayDescr {
      * This method corresponds to the NumPy function <CODE>PyArray_EquivTypes</CODE>.
      */
     public boolean isEquivalent(final ArrayDescr typ) {
-        if (getElementSize() != typ.getElementSize()) {
+        if (itemSize() != typ.itemSize()) {
             return false;
         }
-        if (!getByteOrder().equals(typ.getByteOrder())) {
+        if (!byteOrder().equals(typ.byteOrder())) {
             return false;
         }
-        if (getType().equals(ArrayType.VOID) || typ.getType().equals(ArrayType.VOID)) {
+        if (type().equals(ArrayType.VOID) || typ.type().equals(ArrayType.VOID)) {
             // TODO check that fields are equivalent
-            return getType().equals(typ.getType()) && false;
+            return type().equals(typ.type()) && false;
         }
-        return getKind().equals(typ.getKind());
+        return kind().equals(typ.kind());
     }
 
     public ByteBuffer createBuffer(final int capacity) {

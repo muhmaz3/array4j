@@ -41,7 +41,7 @@ final class Arange {
 
         /* calculate the length and next = start + step*/
         final Object[] next = new Number[1];
-        int length = calcLength(nonNullStart, nonNullStop, nonNullStep, next, dtype.getType().isComplex());
+        int length = calcLength(nonNullStart, nonNullStop, nonNullStep, next, dtype.type().isComplex());
 
         if (length <= 0) {
             length = 0;

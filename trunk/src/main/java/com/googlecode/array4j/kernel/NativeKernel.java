@@ -19,7 +19,7 @@ public final class NativeKernel implements Kernel {
         return byteBuffer;
     }
 
-    public ArrayFunctions getDoubleArrayFunctions() {
+    public ArrayFunctions getDoubleFunctions() {
         throw new UnsupportedOperationException();
     }
 }

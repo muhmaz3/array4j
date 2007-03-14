@@ -3,7 +3,7 @@ package com.googlecode.array4j.ufunc;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import com.googlecode.array4j.Array;
+import com.googlecode.array4j.DenseArray;
 import com.googlecode.array4j.Flags;
 
 /**
@@ -34,7 +34,7 @@ public final class ArrayIterator implements Iterator<ArrayIterator> {
     /* shape factors */
     private int[] factors;
 
-    private final Array<?> ao;
+    private final DenseArray ao;
 
     /* pointer to current item */
     private int dataptr;
@@ -46,7 +46,7 @@ public final class ArrayIterator implements Iterator<ArrayIterator> {
      * <p>
      * This code corresponds to the <CODE>PyArray_IterNew</CODE> function in NumPy.
      */
-    public ArrayIterator(final Array<?> arr) {
+    public ArrayIterator(final DenseArray arr) {
         this.ao = arr;
         ao.updateFlags(Flags.CONTIGUOUS);
         contiguous = ao.isContiguous();

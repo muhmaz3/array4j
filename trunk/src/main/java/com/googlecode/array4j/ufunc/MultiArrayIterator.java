@@ -3,8 +3,8 @@ package com.googlecode.array4j.ufunc;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import com.googlecode.array4j.Array;
 import com.googlecode.array4j.ArrayUtils;
+import com.googlecode.array4j.DenseArray;
 
 /**
  * Iterator for broadcasting.
@@ -46,7 +46,7 @@ public final class MultiArrayIterator implements Iterator<MultiArrayIterator> {
         throw new UnsupportedOperationException();
     }
 
-    public void createArrayIterator(final int index, final Array<?> arr) {
+    public void createArrayIterator(final int index, final DenseArray arr) {
         fIters[index] = new ArrayIterator(arr);
     }
 

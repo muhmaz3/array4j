@@ -7,5 +7,5 @@ import com.googlecode.array4j.ArrayFunctions;
 public interface Kernel {
     ByteBuffer createBuffer(int capacity);
 
-    ArrayFunctions getDoubleArrayFunctions();
+    ArrayFunctions getDoubleFunctions();
 }

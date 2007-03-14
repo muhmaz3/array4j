@@ -44,7 +44,7 @@ public enum ArrayType {
     },
     DOUBLE(ArrayKind.FLOATING, ByteOrder.NATIVE, 8) {
         public ArrayFunctions getArrayFunctions(final KernelType kernelType) {
-            return Interface.kernel(kernelType).getDoubleArrayFunctions();
+            return Interface.kernel(kernelType).getDoubleFunctions();
         }
     },
     CFLOAT(ArrayKind.COMPLEX, ByteOrder.NATIVE, 2 * 4) {
@@ -108,12 +108,20 @@ public enum ArrayType {
 
     public abstract ArrayFunctions getArrayFunctions(final KernelType kernelType);
 
+    public boolean isBool() {
+        return equals(BOOL);
+    }
+
     public boolean isInteger() {
-        return false;
+        return compareTo(BYTE) >= 0 && compareTo(LONG) <= 0;
     }
 
     public boolean isFloat() {
-        return false;
+        return equals(DOUBLE) || equals(FLOAT);
+    }
+
+    public boolean isSigned() {
+        return equals(BYTE) || equals(SHORT) || equals(INT) || equals(LONG);
     }
 
     public boolean isUnsigned() {
@@ -121,7 +129,15 @@ public enum ArrayType {
     }
 
     public boolean isComplex() {
-        return false;
+        return equals(CDOUBLE) || equals(CFLOAT);
+    }
+
+    public boolean isFlexible() {
+        return compareTo(OBJECT) >= 0 && compareTo(VOID) <= 0;
+    }
+
+    public boolean isObject() {
+        return equals(OBJECT);
     }
 
     /**
@@ -150,8 +166,8 @@ public enum ArrayType {
         // TODO cancastto function stuff
 
         final ArrayDescr to = ArrayDescr.fromType(totype);
-        final int telsize = to.getElementSize();
-        final int felsize = from.getElementSize();
+        final int telsize = to.itemSize();
+        final int felsize = from.itemSize();
 
         switch (fromtype) {
         case BYTE:

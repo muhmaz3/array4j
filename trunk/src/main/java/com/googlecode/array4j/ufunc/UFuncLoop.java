@@ -4,7 +4,9 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Iterator;
 
-import com.googlecode.array4j.Array;
+import com.googlecode.array4j.ArrayType;
+import com.googlecode.array4j.DenseArray;
+import com.googlecode.array4j.ScalarKind;
 
 public final class UFuncLoop implements Iterable<MultiArrayIterator> {
     private enum LoopMethod {
@@ -19,11 +21,11 @@ public final class UFuncLoop implements Iterable<MultiArrayIterator> {
     private final UFunc fUfunc;
 
     /* Buffers for the loop */
-    private ByteBuffer[] fBuffer;
+    private final ByteBuffer[] fBuffer;
 
     private final MultiArrayIterator mit;
 
-    private Object[] fCast;
+    private final Object[] fCast;
 
     /* The loop caused notimplemented */
     private boolean fNotImplemented;
@@ -36,17 +38,20 @@ public final class UFuncLoop implements Iterable<MultiArrayIterator> {
 
     private final ErrorHandler fErrObj;
 
+    private final boolean[] fNeedBuffer;
+
+    private final int[] fSteps;
+
+    // TODO check if these fields are useful for something
     private int fBufCnt;
     private LoopMethod fMeth;
-    private boolean[] fNeedBuffer;
-    private int[] fSteps;
     private int[] bufptr;
 
-    public UFuncLoop(final UFunc ufunc, final Array<?>[] args) {
+    public UFuncLoop(final UFunc ufunc, final DenseArray[] args) {
         this(ufunc, args, Error.DEFAULT_ERROR);
     }
 
-    public UFuncLoop(final UFunc ufunc, final Array<?>[] args, final Error extobj) {
+    public UFuncLoop(final UFunc ufunc, final DenseArray[] args, final Error extobj) {
         this.fIndex = 0;
         this.fUfunc = ufunc;
         final int nargs = nargs();
@@ -66,7 +71,6 @@ public final class UFuncLoop implements Iterable<MultiArrayIterator> {
         this.fErrObj = extobj.getErrorHandler();
 
         // initialize other arrays (these have a static size in NumPy)
-        this.fCast = new Object[nargs];
         this.fNeedBuffer = new boolean[nargs];
         this.fSteps = new int[nargs];
 
@@ -101,8 +105,11 @@ public final class UFuncLoop implements Iterable<MultiArrayIterator> {
         return mit;
     }
 
-    private int constructArrays(final Array<?>[] args) {
-        final Array<?>[] mps = new Array<?>[nargs()];
+    private int constructArrays(final DenseArray[] args) {
+        // TODO if input and output arrays don't all have dtypes with the same
+        // kernel (i. e. the same type of underlying buffer), use some kind of
+        // heuristic to decide if we should copy the Java arrays or the C arrays
+        // and call Java code or C code
 
         /* Check number of arguments */
         final int nargs = args.length;
@@ -111,20 +118,34 @@ public final class UFuncLoop implements Iterable<MultiArrayIterator> {
             throw new IllegalArgumentException("invalid number of arguments");
         }
 
+        final DenseArray[] mps = new DenseArray[nargs()];
+        final ArrayType[] argtypes = new ArrayType[mps.length];
+        final ScalarKind[] scalars = new ScalarKind[mps.length];
+        boolean allscalars = true;
+
         /* Get each input argument */
         boolean flexible = false;
         boolean object = false;
         for (int i = 0; i < nin; i++) {
+            if (false) {
+            } else {
+                // TODO set context to null
+            }
+            // TODO mps[i] = PyArray_FromAny(obj, NULL, 0, 0, 0, context)
+
             mps[i] = args[i];
-            if (!flexible && false) {
+            argtypes[i] = mps[i].dtype().type();
+            if (!flexible && argtypes[i].isFlexible()) {
                 flexible = true;
             }
-            if (!object && false) {
+            if (!object && argtypes[i].isObject()) {
                 object = true;
             }
 
+            /* Scalars are 0-dimensional arrays at this point */
             if (mps[i].ndim() > 0) {
-                // TODO do some scalar stuff
+                scalars[i] = ScalarKind.NOSCALAR;
+                allscalars = false;
             }
         }
 
@@ -134,14 +155,14 @@ public final class UFuncLoop implements Iterable<MultiArrayIterator> {
         }
 
         /* If everything is a scalar, then use normal coercion rules */
-        if (false) {
+        if (allscalars) {
             for (int i = 0; i < nin; i++) {
-                // TODO look at supporting array scalars
+                scalars[i] = ScalarKind.NOSCALAR;
             }
         }
 
         /* Select an appropriate function for these argument types. */
-        selectTypes();
+        selectTypes(argtypes, scalars, null);
 
         if (false) {
             if (false) {
@@ -151,7 +172,7 @@ public final class UFuncLoop implements Iterable<MultiArrayIterator> {
 
         /*
          * Create copies for some of the arrays if they are small enough and not
-         * already contiguous
+         * already contiguous.
          */
         createCopies(mps);
 
@@ -187,7 +208,7 @@ public final class UFuncLoop implements Iterable<MultiArrayIterator> {
 
             }
 
-            /* still not the same -- or will we have to use buffers?*/
+            /* still not the same -- or will we have to use buffers? */
             if (false) {
             }
 
@@ -198,9 +219,6 @@ public final class UFuncLoop implements Iterable<MultiArrayIterator> {
          * If any of different type, or misaligned or swapped then must use
          * buffers
          */
-
-        // TODO array4j specific: also use buffers if kernel types don't match
-        // up, since native code requires direct buffers
 
         fBufCnt = 0;
 //        obj = false
@@ -319,27 +337,52 @@ public final class UFuncLoop implements Iterable<MultiArrayIterator> {
         return nargs;
     }
 
-    private void selectTypes() {
-        // TODO user loops?
+    /**
+     * Called to determine coercion. Can change argtypes.
+     */
+    private void selectTypes(final ArrayType[] argtypes, final ScalarKind[] scalars, final Object typetup) {
+        int userdef = -1;
         if (false) {
+            // TODO check if ufunc has a user loop
         }
 
-        // TODO typetup
-        if (false) {
-            extractSpecifiedLoop();
+        if (typetup != null) {
+            // TODO handle typetyp... something to do with the sig kwarg
+            throw new UnsupportedOperationException();
         }
 
-        // TODO userdef > 0
-        if (false) {
+        if (userdef > 0) {
+            throw new UnsupportedOperationException();
+        }
+
+        ArrayType starttype = argtypes[0];
+        /*
+         * If the first argument is a scalar we need to place the start type as
+         * the lowest type in the class
+         */
+        if (scalars[0] != ScalarKind.NOSCALAR) {
+            starttype = lowestType(starttype);
         }
 
         // TODO more code here
     }
 
-    private void extractSpecifiedLoop() {
+    private static ArrayType lowestType(final ArrayType intype) {
+        switch(intype) {
+        case SHORT:
+        case INT:
+        case LONG:
+            return ArrayType.BYTE;
+        case DOUBLE:
+            return ArrayType.FLOAT;
+        case CDOUBLE:
+            return ArrayType.CFLOAT;
+        default:
+            return intype;
+        }
     }
 
-    private void createCopies(final Array<?>[] mps) {
+    private void createCopies(final DenseArray[] mps) {
         for (int i = 0; i < nin(); i++) {
             final int size = mps[i].size();
             if (false) {

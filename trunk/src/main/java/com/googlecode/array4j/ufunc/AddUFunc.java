@@ -1,14 +1,17 @@
 package com.googlecode.array4j.ufunc;
 
-public final class AddUFunc extends AbstractUFunc {
+import com.googlecode.array4j.ArrayType;
+
+final class AddUFunc extends AbstractUFunc {
     private static final int NIN = 2;
 
     private static final int NOUT = 1;
 
-    public AddUFunc() {
-        super(NIN, NOUT);
-    }
+    private static final Signature[] SIGNATURES = {
+        new Signature(ArrayType.DOUBLE, ArrayType.DOUBLE, ArrayType.DOUBLE)
+    };
 
-    // TODO need functions that operate on a bunch of buffers -- can then have a
-    // Java and a C implementation
+    public AddUFunc() {
+        super(null, SIGNATURES, NIN, NOUT, Identity.ZERO);
+    }
 }

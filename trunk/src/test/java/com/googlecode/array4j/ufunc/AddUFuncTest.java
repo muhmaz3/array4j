@@ -11,7 +11,7 @@ public final class AddUFuncTest {
 
     @Test
     public void testCall() {
-        final UFunc add = new AddUFunc();
+        final UFunc add = UFuncs.ADD;
         final DenseArray in = null;
         DenseArray out = null;
         final DenseByteArray in2 = null;
@@ -25,7 +25,7 @@ public final class AddUFuncTest {
 
     @Test
     public void testAccumulate() {
-        final UFunc add = new AddUFunc();
+        final UFunc add = UFuncs.ADD;
 
         final DenseArray in = null;
         DenseArray out;
@@ -41,7 +41,7 @@ public final class AddUFuncTest {
 
     @Test
     public void testReduce() {
-        final UFunc add = new AddUFunc();
+        final UFunc add = UFuncs.ADD;
 
         final DenseArray in = null;
         DenseArray out;
@@ -57,7 +57,7 @@ public final class AddUFuncTest {
 
     @Test
     public void testReduceAt() {
-        final UFunc add = new AddUFunc();
+        final UFunc add = UFuncs.ADD;
 
         final DenseArray in = null;
         DenseArray out;
@@ -74,7 +74,7 @@ public final class AddUFuncTest {
 
     @Test
     public void testOuter() {
-        final UFunc add = new AddUFunc();
+        final UFunc add = UFuncs.ADD;
         final DenseArray in1 = null;
         DenseArray out1;
         final DenseByteArray in2 = null;

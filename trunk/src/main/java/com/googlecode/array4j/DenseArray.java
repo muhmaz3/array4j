@@ -4,8 +4,7 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 import com.googlecode.array4j.Indexing.Index;
-import com.googlecode.array4j.ufunc.AddUFunc;
-import com.googlecode.array4j.ufunc.UFunc;
+import com.googlecode.array4j.ufunc.UFuncs;
 
 public final class DenseArray implements Array<DenseArray> {
     private static final int PSEUDO_INDEX = -1;
@@ -626,7 +625,7 @@ public final class DenseArray implements Array<DenseArray> {
     }
 
     public int itemSize() {
-        return fDescr.getElementSize();
+        return fDescr.itemSize();
     }
 
     public int flags() {
@@ -667,8 +666,7 @@ public final class DenseArray implements Array<DenseArray> {
         if (!(arr instanceof DenseArray)) {
             throw new UnsupportedOperationException();
         }
-        final UFunc ufunc = new AddUFunc();
-        ufunc.call(this, (DenseArray) arr, this);
+        UFuncs.ADD.call(this, (DenseArray) arr, this);
         return this;
     }
 
