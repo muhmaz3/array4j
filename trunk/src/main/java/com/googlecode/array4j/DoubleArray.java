@@ -1,7 +1,7 @@
 package com.googlecode.array4j;
 
 public final class DoubleArray {
-    private static final ArrayDescr DTYPE = ArrayDescr.fromType(ArrayType.DOUBLE);
+    public static final ArrayDescr DTYPE = ArrayDescr.fromType(ArrayType.DOUBLE);
 
     private DoubleArray() {
     }

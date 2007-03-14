@@ -667,10 +667,8 @@ public final class DenseArray implements Array<DenseArray> {
         if (!(arr instanceof DenseArray)) {
             throw new UnsupportedOperationException();
         }
-
         final UFunc ufunc = new AddUFunc();
-        ufunc.call(this, arr, this);
-
+        ufunc.call(this, (DenseArray) arr, this);
         return this;
     }
 

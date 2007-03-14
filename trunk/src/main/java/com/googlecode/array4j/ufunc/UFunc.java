@@ -1,6 +1,7 @@
 package com.googlecode.array4j.ufunc;
 
-import com.googlecode.array4j.Array;
+import com.googlecode.array4j.ArrayDescr;
+import com.googlecode.array4j.DenseArray;
 
 public interface UFunc {
     int nin();
@@ -9,48 +10,43 @@ public interface UFunc {
 
     int nargs();
 
-    <E extends Array<E>> E call(E... args);
+    void call(DenseArray... args);
 
-    // TODO might want this instead, if we support priorities
-//    Array2<?> call(Array2<?>... args);
+    DenseArray call(ArrayDescr dtype, DenseArray... args);
 
-    <E extends Array<E>> E call(Class<E> dtype, Array<?>... args);
+    DenseArray reduce(DenseArray arr);
 
-    void call(final Array<?>... args);
+    DenseArray reduce(DenseArray arr, ArrayDescr dtype);
 
-    <E extends Array<E>> E reduce(E arr);
+    DenseArray reduce(DenseArray arr, int axis);
 
-    <E extends Array<E>, F extends Array<F>> F reduce(E arr, Class<F> dtype);
+    DenseArray reduce(DenseArray arr, int axis, ArrayDescr dtype);
 
-    <E extends Array<E>> E reduce(E arr, int axis);
+    DenseArray accumulate(DenseArray arr);
 
-    <E extends Array<E>, F extends Array<F>> F reduce(E arr, int axis, Class<F> dtype);
+    DenseArray accumulate(DenseArray arr, ArrayDescr dtype);
 
-    <E extends Array<E>> E accumulate(E arr);
+    DenseArray accumulate(DenseArray arr, int axis);
 
-    <E extends Array<E>, F extends Array<F>> F accumulate(E arr, Class<F> dtype);
+    DenseArray accumulate(DenseArray arr, int axis, ArrayDescr dtype);
 
-    <E extends Array<E>> E accumulate(E arr, int axis);
+    DenseArray reduceat(DenseArray arr);
 
-    <E extends Array<E>, F extends Array<F>> F accumulate(E arr, int axis, Class<F> dtype);
+    DenseArray reduceat(DenseArray arr, ArrayDescr dtype);
 
-    <E extends Array<E>> E reduceat(final E arr);
+    DenseArray reduceat(DenseArray arr, int axis);
 
-    <E extends Array<E>, F extends Array<F>> F reduceat(final E arr, final Class<F> dtype);
+    DenseArray reduceat(DenseArray arr, int axis, ArrayDescr dtype);
 
-    <E extends Array<E>> E reduceat(final E arr, final int axis);
+    DenseArray reduceat(DenseArray arr, int[] indices);
 
-    <E extends Array<E>, F extends Array<F>> F reduceat(final E arr, final int axis, final Class<F> dtype);
+    DenseArray reduceat(DenseArray arr, int[] indices, ArrayDescr dtype);
 
-    <E extends Array<E>> E reduceat(final E arr, final int[] indices);
+    DenseArray reduceat(DenseArray arr, int axis, int... indices);
 
-    <E extends Array<E>, F extends Array<F>> F reduceat(final E arr, final int[] indices, final Class<F> dtype);
+    DenseArray reduceat(DenseArray arr, int axis, int[] indices, ArrayDescr dtype);
 
-    <E extends Array<E>> E reduceat(final E arr, final int axis, final int... indices);
+    DenseArray outer(DenseArray arr1, DenseArray arr2);
 
-    <E extends Array<E>, F extends Array<F>> F reduceat(E arr, int axis, int[] indices, Class<F> dtype);
-
-    <E extends Array<E>> E outer(E arr1, E arr2);
-
-    <E extends Array<E>, F extends Array<F>, G extends Array<G>> G outer(E arr1, F arr2, Class<G> dtype);
+    DenseArray outer(DenseArray arr1, DenseArray arr2, ArrayDescr dtype);
 }
