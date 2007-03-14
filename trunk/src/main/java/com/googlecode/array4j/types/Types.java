@@ -2,6 +2,8 @@ package com.googlecode.array4j.types;
 
 import com.googlecode.array4j.ByteOrder;
 
+// TODO rename Types to ArrayType
+
 /**
  * Built-in types.
  * <p>
@@ -12,37 +14,35 @@ import com.googlecode.array4j.ByteOrder;
  */
 public enum Types {
     // TODO kind for BOOL is GENBOOL, whatever that is
-    BOOL(null, BooleanType.class, ByteOrder.NOT_APPLICABLE, 1),
-    BYTE(SignedIntegerType.class, ByteType.class, ByteOrder.NOT_APPLICABLE, 1),
+    BOOL(ArrayKind.GENBOOL, ByteOrder.NOT_APPLICABLE, 1),
+    BYTE(ArrayKind.SIGNED, ByteOrder.NOT_APPLICABLE, 1),
     UBYTE,
-    SHORT(SignedIntegerType.class, ShortType.class, ByteOrder.NATIVE, 2),
+    SHORT(ArrayKind.SIGNED, ByteOrder.NATIVE, 2),
     USHORT,
-    INT(SignedIntegerType.class, IntegerType.class, ByteOrder.NATIVE, 4),
+    INT(ArrayKind.SIGNED, ByteOrder.NATIVE, 4),
     UINT,
-    LONG(SignedIntegerType.class, LongType.class, ByteOrder.NATIVE, 8),
+    LONG(ArrayKind.SIGNED, ByteOrder.NATIVE, 8),
     ULONG,
     LONGLONG,
     ULONGLONG,
-    FLOAT(FloatingType.class, FloatType.class, ByteOrder.NATIVE, 4),
-    DOUBLE(FloatingType.class, DoubleType.class, ByteOrder.NATIVE, 8),
+    FLOAT(ArrayKind.FLOATING, ByteOrder.NATIVE, 4),
+    DOUBLE(ArrayKind.FLOATING, ByteOrder.NATIVE, 8),
     LONGDOUBLE,
-    CFLOAT(ComplexFloatingType.class, ComplexFloatType.class, ByteOrder.NATIVE, 2 * 4),
-    CDOUBLE(ComplexFloatingType.class, ComplexDoubleType.class, ByteOrder.NATIVE, 2 * 8),
+    CFLOAT(ArrayKind.COMPLEX, ByteOrder.NATIVE, 2 * 4),
+    CDOUBLE(ArrayKind.COMPLEX, ByteOrder.NATIVE, 2 * 8),
     CLONGDOUBLE,
-    OBJECT(ObjectType.class, ObjectType.class, ByteOrder.NOT_APPLICABLE, -1),
+    OBJECT(null, ByteOrder.NOT_APPLICABLE, -1),
     STRING,
     UNICODE,
-    VOID(VoidType.class, VoidType.class, ByteOrder.NOT_APPLICABLE, 0),
-    NOTYPE,
+    VOID(null, ByteOrder.NOT_APPLICABLE, 0),
     /* special flag */
+    NOTYPE,
     CHAR,
     // TODO userdef should be have a value of 256
     /* leave room for characters */
     USERDEF;
 
-    private final Class<? extends ArrayType> fKind;
-
-    private final Class<? extends ArrayType> fType;
+    private final ArrayKind fKind;
 
     private final ByteOrder fByteOrder;
 
@@ -51,16 +51,14 @@ public enum Types {
     private final int fAlignment;
 
     Types() {
-        this(null, null, ByteOrder.NOT_APPLICABLE, -1);
+        this(null, ByteOrder.NOT_APPLICABLE, -1);
     }
 
-    Types(final Class<? extends ArrayType> kind, final Class<? extends ArrayType> type, final ByteOrder byteOrder,
-            final int elsize) {
-        if (kind != null && !kind.isAssignableFrom(type)) {
+    Types(final ArrayKind kind, final ByteOrder byteOrder, final int elsize) {
+        if (kind != null && !kind.isAssignableFrom(this)) {
             throw new AssertionError();
         }
         fKind = kind;
-        fType = type;
         fByteOrder = byteOrder;
         fElSize = elsize;
         // TODO need to add a native function that calls <CODE>offsetof(struct
@@ -69,12 +67,8 @@ public enum Types {
         fAlignment = -1;
     }
 
-    public Class<? extends ArrayType> getKind() {
+    public ArrayKind getKind() {
         return fKind;
-    }
-
-    public Class<? extends ArrayType> getType() {
-        return fType;
     }
 
     public ByteOrder getByteOrder() {
@@ -87,5 +81,9 @@ public enum Types {
 
     public int getAlignment() {
         return fAlignment;
+    }
+
+    public boolean isSupported() {
+        return fKind != null;
     }
 }

@@ -25,7 +25,7 @@ public final class DenseArray implements Array<DenseArray> {
 
     private final ByteBuffer fData;
 
-    private final KernelType fKernelType;
+//    private final KernelType fKernelType;
 
     private int fFlags;
 
@@ -626,6 +626,10 @@ public final class DenseArray implements Array<DenseArray> {
         return null;
     }
 
+    public ArrayDescr dtype() {
+        return fDescr;
+    }
+
     public int nbytes() {
         return fData.capacity();
     }
@@ -715,8 +719,10 @@ public final class DenseArray implements Array<DenseArray> {
 
     /**
      * Calculate the length and next = start + step.
+     * <p>
+     * This code corresponds to the NumPy function <CODE>PyArray_ArangeObj</CODE>.
      */
-    private static Range calculateRange(final double start, final double stop, final double step) {
+    private static Range calculateRange(final Object start, final Object stop, final Object step) {
         double next = stop - start;
         // "true" division
         final double val = next / step;
@@ -767,13 +773,13 @@ public final class DenseArray implements Array<DenseArray> {
 //        return arange(dtype, 0.0, stop, 1.0);
 //    }
 
-//    static DenseArray arange(final ArrayDescr dtype, final double start, final double stop, final double step) {
-//        final Range range = calculateRange(start, stop, step);
-//        final DenseArray arr = new DenseArray(dtype, new int[]{range.length}, KernelType.DEFAULT);
-//        fill(arr, range);
-//        // TODO byte swapping
-//        return arr;
-//    }
+    static DenseArray arange(final ArrayDescr dtype, final Object start, final Object stop, final Object step) {
+        final Range range = calculateRange(start, stop, step);
+        final DenseArray arr = new DenseArray(dtype, new int[]{range.length}, KernelType.DEFAULT);
+        fill(arr, range);
+        // TODO byte swapping
+        return arr;
+    }
 
 //    private static void fill(final DenseDoubleArray arr, final Range range) {
 //        if (range.length == 0) {
