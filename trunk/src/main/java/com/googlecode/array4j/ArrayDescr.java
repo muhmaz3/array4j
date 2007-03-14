@@ -1,10 +1,12 @@
 package com.googlecode.array4j;
 
+import java.nio.ByteBuffer;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import com.googlecode.array4j.kernel.Interface;
 import com.googlecode.array4j.kernel.KernelType;
 
 public final class ArrayDescr {
@@ -13,9 +15,7 @@ public final class ArrayDescr {
     static {
         final Map<ArrayType, ArrayDescr> descrs = new HashMap<ArrayType, ArrayDescr>();
         for (ArrayType type : ArrayType.values()) {
-            if (type.isSupported()) {
-                descrs.put(type, new ArrayDescr(type));
-            }
+            descrs.put(type, new ArrayDescr(type, KernelType.DEFAULT));
         }
         BUILTIN_DESCRS = Collections.unmodifiableMap(descrs);
     }
@@ -51,19 +51,23 @@ public final class ArrayDescr {
     // TODO in numpy, values of this map are a bunch of 2-tuples containing dtypes and something else
     private Map<String, ArrayDescr> fFields;
 
+    private final KernelType fKernelType;
+
     /*
      * a table of functions specific for each basic data descriptor
      */
-    private final Object[] f;
-
-    private final KernelType fKernelType;
+    private final ArrayFunctions fArrFuncs;
 
     /**
      * Constructor.
      * <p>
      * This constructor corresponds to the NumPy function <CODE>PyArray_DescrFromType</CODE>.
      */
-    private ArrayDescr(final ArrayType type) {
+    private ArrayDescr(final ArrayType type, final KernelType kernelType) {
+        // TODO might want to fix byte order as little or big endian at
+        // construction so that we don't have NATIVE and NOT_APPLICABLE byte
+        // orders floating around
+
         // TODO figure out if fTypeObj is useful for anything
         fKind = type.getKind();
         fType = type;
@@ -74,12 +78,17 @@ public final class ArrayDescr {
         fAlignment = type.getAlignment();
         fSubArray = null;
         fFields = null;
-        f = null;
+        fKernelType = kernelType;
+        fArrFuncs = type.getArrayFunctions(kernelType);
     }
 
     public ArrayDescr(final Iterable<Field> fields, final boolean align) {
-        // TODO look at <CODE>arraydescr_new</CODE> in NumPy for more stuff
+        this(fields, align, KernelType.DEFAULT);
+    }
 
+    public ArrayDescr(final Iterable<Field> fields, final boolean align, final KernelType kernelType) {
+        // TODO look at <CODE>arraydescr_new</CODE> in NumPy for more stuff that
+        // has to be done for record arrays
         fKind = null;
         fType = ArrayType.VOID;
         fByteOrder = ByteOrder.NOT_APPLICABLE;
@@ -95,7 +104,8 @@ public final class ArrayDescr {
             }
             fFields.put(field.getName(), field.getDescr());
         }
-        f = null;
+        fArrFuncs = null;
+        fKernelType = kernelType;
     }
 
 
@@ -177,16 +187,40 @@ public final class ArrayDescr {
     }
 
     private static ArrayDescr finishType(final ArrayDescr chktype, final ArrayDescr mintype) {
-//        outtype = _array_small_type(chktype, minitype);
-//        /* VOID Arrays should not occur by "default"
-//           unless input was already a VOID */
-//        if (outtype->type_num == PyArray_VOID && \
-//            minitype->type_num != PyArray_VOID) {
-//                Py_DECREF(outtype);
-//                return PyArray_DescrFromType(PyArray_OBJECT);
-//        }
-//        return outtype;
-        return null;
+        final ArrayDescr outtype = smallType(chktype, mintype);
+        /* VOID Arrays should not occur by "default" unless input was already a VOID */
+        if (outtype.getType().equals(ArrayType.VOID) && !mintype.getType().equals(ArrayType.VOID)) {
+            return fromType(ArrayType.OBJECT);
+        }
+        return outtype;
+    }
+
+    /**
+     * This code corresponds to the NumPy function <CODE>_array_small_type</CODE>.
+     */
+    private static ArrayDescr smallType(final ArrayDescr chktype, final ArrayDescr mintype) {
+        if (chktype.isEquivalent(mintype)) {
+            return mintype;
+        }
+
+        ArrayDescr outtype;
+        if (chktype.getType().compareTo(mintype.getType()) > 0) {
+            outtype = fromType(chktype.getType());
+        } else {
+            outtype = fromType(mintype.getType());
+        }
+        for (ArrayType typ : ArrayType.values()) {
+            if (typ.canCastSafely(chktype.getType()) && typ.canCastSafely(mintype.getType())) {
+                outtype = fromType(typ);
+                break;
+            }
+        }
+
+        // TODO handle extended types
+        if (false) {
+        }
+
+        return outtype;
     }
 
     private static boolean checkArray(final Object obj) {
@@ -244,7 +278,13 @@ public final class ArrayDescr {
         return fAlignment;
     }
 
+    public ArrayFunctions getArrayFunctions() {
+        return fArrFuncs;
+    }
+
     public Object getSubArray() {
+        // TODO need to implement a few bits in DenseArray constructor before
+        // this can be enabled
 //        return fSubArray;
         return null;
     }
@@ -255,7 +295,14 @@ public final class ArrayDescr {
      * This method corresponds to the NumPy macro <CODE>PyArray_ISNBO</CODE>.
      */
     public boolean isNativeByteOrder() {
-        throw new UnsupportedOperationException();
+        if (fByteOrder.equals(ByteOrder.NATIVE) || fByteOrder.equals(ByteOrder.NOT_APPLICABLE)) {
+            return true;
+        }
+        if (java.nio.ByteOrder.nativeOrder().equals(java.nio.ByteOrder.LITTLE_ENDIAN)) {
+            return fByteOrder.equals(ByteOrder.LITTLE_ENDIAN);
+        } else {
+            return fByteOrder.equals(ByteOrder.BIG_ENDIAN);
+        }
     }
 
     /**
@@ -272,9 +319,12 @@ public final class ArrayDescr {
         }
         if (getType().equals(ArrayType.VOID) || typ.getType().equals(ArrayType.VOID)) {
             // TODO check that fields are equivalent
-//            return getType().equals(typ.getType()) && false;
-            throw new UnsupportedOperationException();
+            return getType().equals(typ.getType()) && false;
         }
         return getKind().equals(typ.getKind());
+    }
+
+    public ByteBuffer createBuffer(final int capacity) {
+        return Interface.kernel(fKernelType).createBuffer(capacity);
     }
 }

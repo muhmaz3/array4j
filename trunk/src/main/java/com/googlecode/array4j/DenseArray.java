@@ -4,8 +4,6 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 import com.googlecode.array4j.Indexing.Index;
-import com.googlecode.array4j.kernel.Interface;
-import com.googlecode.array4j.kernel.KernelType;
 import com.googlecode.array4j.ufunc.AddUFunc;
 import com.googlecode.array4j.ufunc.UFunc;
 
@@ -24,8 +22,6 @@ public final class DenseArray implements Array<DenseArray> {
 
     private final ByteBuffer fData;
 
-//    private final KernelType fKernelType;
-
     private int fFlags;
 
     private final ArrayDescr fDescr;
@@ -41,16 +37,16 @@ public final class DenseArray implements Array<DenseArray> {
      * @param dims
      *            dimensions
      */
-    private DenseArray(final ArrayDescr descr, final int[] dims) {
+    public DenseArray(final ArrayDescr descr, final int[] dims) {
         this(descr, dims, Flags.EMPTY.getValue());
     }
 
     private DenseArray(final ArrayDescr descr, final int[] dims, final int flags) {
-        this(descr, dims, null, null, flags, null, KernelType.DEFAULT);
+        this(descr, dims, null, null, flags, null);
     }
 
     private DenseArray(final ArrayDescr descr, final int[] dims, final int[] strides, final int flags) {
-        this(descr, dims, strides, null, flags, null, KernelType.DEFAULT);
+        this(descr, dims, strides, null, flags, null);
     }
 
     /**
@@ -75,7 +71,7 @@ public final class DenseArray implements Array<DenseArray> {
      *            kernel to use when allocating data buffer
      */
     protected DenseArray(final ArrayDescr descr, final int[] dims, final int[] strides, final ByteBuffer data,
-            final int flags, final Object base, final KernelType kernelType) {
+            final int flags, final Object base) {
         if (descr.getSubArray() != null) {
             throw new UnsupportedOperationException();
         }
@@ -88,7 +84,7 @@ public final class DenseArray implements Array<DenseArray> {
         /* Check dimensions. */
         final int nd = dims != null ? dims.length : 0;
         int size = 1;
-        int sd = elementSize();
+        int sd = itemSize();
         if (sd == 0) {
             throw new UnsupportedOperationException();
         }
@@ -140,16 +136,14 @@ public final class DenseArray implements Array<DenseArray> {
 
         if (data == null) {
             if (sd == 0) {
-                sd = elementSize();
+                sd = itemSize();
             }
-            fData = Interface.kernel(kernelType).createBuffer(sd);
+            fData = fDescr.createBuffer(sd);
             fFlags |= Flags.OWNDATA.getValue();
         } else {
             fFlags &= ~Flags.OWNDATA.getValue();
             fData = data;
         }
-
-        fKernelType = kernelType;
     }
 
     private int arrayFillStrides(final int[] dims, final int sd, final int inflag) {
@@ -381,7 +375,7 @@ public final class DenseArray implements Array<DenseArray> {
              */
             if (fortran.equals(Order.FORTRAN)) {
                 if (strides[0] == 0) {
-                    strides[0] = elementSize();
+                    strides[0] = itemSize();
                     throw new UnsupportedOperationException();
                 }
                 for (int i = 1; i < n; i++) {
@@ -391,7 +385,7 @@ public final class DenseArray implements Array<DenseArray> {
                 }
             } else {
                 if (strides[n - 1] == 0) {
-                    strides[n - 1] = elementSize();
+                    strides[n - 1] = itemSize();
                     throw new UnsupportedOperationException();
                 }
                 for (int i = n - 2; i >= -1; i--) {
@@ -637,7 +631,7 @@ public final class DenseArray implements Array<DenseArray> {
         return fDimensions.length;
     }
 
-    public int elementSize() {
+    public int itemSize() {
         return fDescr.getElementSize();
     }
 
@@ -704,53 +698,12 @@ public final class DenseArray implements Array<DenseArray> {
         return newarr;
     }
 
-    private static class Range {
-        private int length;
-
-        private double start;
-
-        private double stop;
-
-        private double step;
-
-        private double next;
-    }
-
-    /**
-     * Calculate the length and next = start + step.
-     * <p>
-     * This code corresponds to the NumPy function <CODE>PyArray_ArangeObj</CODE>.
-     */
-    private static Range calculateRange(final Object start, final Object stop, final Object step) {
-        double next = stop - start;
-        // "true" division
-        final double val = next / step;
-        int len;
-        if (false) {
-            // TODO support range calculation for complex types
-            throw new UnsupportedOperationException();
-        } else {
-            len = (int) Math.ceil(val);
-        }
-        if (len > 0) {
-            next = start + step;
-        }
-        if (len < 0) {
-            len = 0;
-            next = 0;
-        }
-
-        final Range range = new Range();
-        range.length = len;
-        range.start = start;
-        range.stop = stop;
-        range.step = step;
-        range.next = next;
-        return range;
-    }
-
-    private ByteBuffer getData() {
+    public ByteBuffer getData() {
         return (ByteBuffer) fData.duplicate().rewind();
+    }
+
+    public ByteBuffer getDataOffset(final int offset) {
+        return (ByteBuffer) getData().position(offset);
     }
 
     protected static int orderAsFlags(final Order order) {
@@ -761,23 +714,6 @@ public final class DenseArray implements Array<DenseArray> {
             fortran = Flags.EMPTY;
         }
         return fortran.getValue();
-    }
-
-//    static DenseArray zeros(final ArrayDescr dtype, final KernelType kernelType, final Order order,
-//            final int... dims) {
-//        return new DenseArray(dtype, dims, null, orderAsFlags(order), null, kernelType);
-//    }
-
-//    static DenseArray arange(final ArrayDescr dtype, final double stop) {
-//        return arange(dtype, 0.0, stop, 1.0);
-//    }
-
-    static DenseArray arange(final ArrayDescr dtype, final Object start, final Object stop, final Object step) {
-        final Range range = calculateRange(start, stop, step);
-        final DenseArray arr = new DenseArray(dtype, new int[]{range.length}, KernelType.DEFAULT);
-        fill(arr, range);
-        // TODO byte swapping
-        return arr;
     }
 
 //    private static void fill(final DenseDoubleArray arr, final Range range) {

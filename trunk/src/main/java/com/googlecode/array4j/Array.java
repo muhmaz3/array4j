@@ -23,7 +23,7 @@ public interface Array<E extends Array> {
 
     E get(final Object... indexes);
 
-    int elementSize();
+    int itemSize();
 
     void updateFlags(Flags... flags);
 

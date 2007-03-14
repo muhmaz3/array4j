@@ -1,7 +1,7 @@
 package com.googlecode.array4j;
 
-
-// TODO rename Types to ArrayType
+import com.googlecode.array4j.kernel.Interface;
+import com.googlecode.array4j.kernel.KernelType;
 
 /**
  * Built-in types.
@@ -12,34 +12,61 @@ package com.googlecode.array4j;
  * @author albert
  */
 public enum ArrayType {
-    // TODO kind for BOOL is GENBOOL, whatever that is
-    BOOL(ArrayKind.GENBOOL, ByteOrder.NOT_APPLICABLE, 1),
-    BYTE(ArrayKind.SIGNED, ByteOrder.NOT_APPLICABLE, 1),
-    UBYTE,
-    SHORT(ArrayKind.SIGNED, ByteOrder.NATIVE, 2),
-    USHORT,
-    INT(ArrayKind.SIGNED, ByteOrder.NATIVE, 4),
-    UINT,
-    LONG(ArrayKind.SIGNED, ByteOrder.NATIVE, 8),
-    ULONG,
-    LONGLONG,
-    ULONGLONG,
-    FLOAT(ArrayKind.FLOATING, ByteOrder.NATIVE, 4),
-    DOUBLE(ArrayKind.FLOATING, ByteOrder.NATIVE, 8),
-    LONGDOUBLE,
-    CFLOAT(ArrayKind.COMPLEX, ByteOrder.NATIVE, 2 * 4),
-    CDOUBLE(ArrayKind.COMPLEX, ByteOrder.NATIVE, 2 * 8),
-    CLONGDOUBLE,
-    OBJECT(null, ByteOrder.NOT_APPLICABLE, -1),
-    STRING,
-    UNICODE,
-    VOID(null, ByteOrder.NOT_APPLICABLE, 0),
-    /* special flag */
-    NOTYPE,
-    CHAR,
-    // TODO userdef should be have a value of 256
-    /* leave room for characters */
-    USERDEF;
+    BOOL(ArrayKind.GENBOOL, ByteOrder.NOT_APPLICABLE, 1) {
+        public ArrayFunctions getArrayFunctions(final KernelType kernelType) {
+            return null;
+        }
+    },
+    BYTE(ArrayKind.SIGNED, ByteOrder.NOT_APPLICABLE, 1) {
+        public ArrayFunctions getArrayFunctions(final KernelType kernelType) {
+            return null;
+        }
+    },
+    SHORT(ArrayKind.SIGNED, ByteOrder.NATIVE, 2) {
+        public ArrayFunctions getArrayFunctions(final KernelType kernelType) {
+            return null;
+        }
+    },
+    INT(ArrayKind.SIGNED, ByteOrder.NATIVE, 4) {
+        public ArrayFunctions getArrayFunctions(final KernelType kernelType) {
+            return null;
+        }
+    },
+    LONG(ArrayKind.SIGNED, ByteOrder.NATIVE, 8) {
+        public ArrayFunctions getArrayFunctions(final KernelType kernelType) {
+            return null;
+        }
+    },
+    FLOAT(ArrayKind.FLOATING, ByteOrder.NATIVE, 4) {
+        public ArrayFunctions getArrayFunctions(final KernelType kernelType) {
+            return null;
+        }
+    },
+    DOUBLE(ArrayKind.FLOATING, ByteOrder.NATIVE, 8) {
+        public ArrayFunctions getArrayFunctions(final KernelType kernelType) {
+            return Interface.kernel(kernelType).getDoubleArrayFunctions();
+        }
+    },
+    CFLOAT(ArrayKind.COMPLEX, ByteOrder.NATIVE, 2 * 4) {
+        public ArrayFunctions getArrayFunctions(final KernelType kernelType) {
+            return null;
+        }
+    },
+    CDOUBLE(ArrayKind.COMPLEX, ByteOrder.NATIVE, 2 * 8) {
+        public ArrayFunctions getArrayFunctions(final KernelType kernelType) {
+            return null;
+        }
+    },
+    OBJECT(null, ByteOrder.NOT_APPLICABLE, -1) {
+        public ArrayFunctions getArrayFunctions(final KernelType kernelType) {
+            return null;
+        }
+    },
+    VOID(null, ByteOrder.NOT_APPLICABLE, 0) {
+        public ArrayFunctions getArrayFunctions(final KernelType kernelType) {
+            return null;
+        }
+    };
 
     private final ArrayKind fKind;
 
@@ -49,14 +76,11 @@ public enum ArrayType {
 
     private final int fAlignment;
 
-    ArrayType() {
-        this(null, ByteOrder.NOT_APPLICABLE, -1);
-    }
-
     ArrayType(final ArrayKind kind, final ByteOrder byteOrder, final int elsize) {
-        if (kind != null && !kind.isAssignableFrom(this)) {
-            throw new AssertionError();
-        }
+        // TODO reenable this check at some point
+        // if (kind != null && !kind.isAssignableFrom(this)) {
+        // throw new AssertionError();
+        // }
         fKind = kind;
         fByteOrder = byteOrder;
         fElSize = elsize;
@@ -82,7 +106,91 @@ public enum ArrayType {
         return fAlignment;
     }
 
-    public boolean isSupported() {
-        return fKind != null;
+    public abstract ArrayFunctions getArrayFunctions(final KernelType kernelType);
+
+    public boolean isInteger() {
+        return false;
+    }
+
+    public boolean isFloat() {
+        return false;
+    }
+
+    public boolean isUnsigned() {
+        return false;
+    }
+
+    public boolean isComplex() {
+        return false;
+    }
+
+    /**
+     * This code corresponds to the NumPy function <CODE>PyArray_CanCastSafely</CODE>.
+     */
+    public boolean canCastSafely(final ArrayType totype) {
+        final ArrayType fromtype = this;
+        if (fromtype.equals(totype)) {
+            return true;
+        }
+        if (fromtype.equals(BOOL)) {
+            return true;
+        }
+        if (totype.equals(BOOL)) {
+            return false;
+        }
+        if (totype.equals(OBJECT) || totype.equals(VOID)) {
+            return true;
+        }
+        if (fromtype.equals(OBJECT) || fromtype.equals(VOID)) {
+            return true;
+        }
+
+        final ArrayDescr from = ArrayDescr.fromType(fromtype);
+
+        // TODO cancastto function stuff
+
+        final ArrayDescr to = ArrayDescr.fromType(totype);
+        final int telsize = to.getElementSize();
+        final int felsize = from.getElementSize();
+
+        switch (fromtype) {
+        case BYTE:
+        case SHORT:
+        case INT:
+        case LONG:
+            if (totype.isInteger()) {
+                if (totype.isUnsigned()) {
+                    return false;
+                } else {
+                    return telsize >= felsize;
+                }
+            } else if (totype.isFloat()) {
+                if (felsize < 8) {
+                    return telsize > felsize;
+                } else {
+                    return telsize >= felsize;
+                }
+            } else if (totype.isComplex()) {
+                if (felsize < 8) {
+                    return (telsize >> 1) > felsize;
+                } else {
+                    return (telsize >> 1) >= felsize;
+                }
+            } else {
+                return totype.compareTo(fromtype) > 0;
+            }
+        case FLOAT:
+        case DOUBLE:
+            if (totype.isComplex()) {
+                return (telsize >> 1) > felsize;
+            } else {
+                return totype.compareTo(fromtype) > 0;
+            }
+        case CFLOAT:
+        case CDOUBLE:
+            return totype.compareTo(fromtype) > 0;
+        default:
+            return false;
+        }
     }
 }

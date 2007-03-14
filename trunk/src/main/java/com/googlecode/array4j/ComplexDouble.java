@@ -1,6 +1,6 @@
 package com.googlecode.array4j;
 
-public final class ComplexDouble {
+public final class ComplexDouble implements Complex<ComplexDouble> {
     private final double fReal;
 
     private final double fImag;

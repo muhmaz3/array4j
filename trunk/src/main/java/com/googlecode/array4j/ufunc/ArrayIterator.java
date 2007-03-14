@@ -98,7 +98,7 @@ public final class ArrayIterator implements Iterator<ArrayIterator> {
             dataptr += strides[0];
             coordinates[0]++;
         } else if (contiguous) {
-            dataptr += ao.elementSize();
+            dataptr += ao.itemSize();
         } else if (ndm1 == 1) {
             if (coordinates[1] < dimsm1[1]) {
                 coordinates[1]++;
