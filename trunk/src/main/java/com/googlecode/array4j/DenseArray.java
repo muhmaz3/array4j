@@ -45,10 +45,6 @@ public final class DenseArray implements Array<DenseArray> {
         this(descr, dims, null, null, flags, null);
     }
 
-    private DenseArray(final ArrayDescr descr, final int[] dims, final int[] strides, final int flags) {
-        this(descr, dims, strides, null, flags, null);
-    }
-
     /**
      * Array constructor.
      * <p>
@@ -396,8 +392,7 @@ public final class DenseArray implements Array<DenseArray> {
             }
         }
 
-//        return new DenseArray(newdims, strides, (ByteBuffer) fData.duplicate().rewind(), flags, fKernelType);
-        return null;
+        return new DenseArray(fDescr, newdims, strides, getData(), flags, this);
     }
 
     public int[] shape() {
@@ -615,8 +610,7 @@ public final class DenseArray implements Array<DenseArray> {
         final int[] newstrides = new int[ndnew];
         System.arraycopy(strides, 0, newstrides, 0, ndnew);
 
-//        return new DenseArray(newdims, newstrides, (ByteBuffer) fData.position(offset), fFlags, fKernelType);
-        return null;
+        return new DenseArray(fDescr, newdims, newstrides, (ByteBuffer) getDataOffset(offset), fFlags, this);
     }
 
     public ArrayDescr dtype() {
@@ -716,30 +710,8 @@ public final class DenseArray implements Array<DenseArray> {
         return fortran.getValue();
     }
 
-//    private static void fill(final DenseDoubleArray arr, final Range range) {
-//        if (range.length == 0) {
-//            return;
-//        }
-//        final ByteBuffer data = arr.getData();
-//        data.putDouble(0, range.start);
-//        if (range.length == 1) {
-//            return;
-//        }
-//        data.putDouble(arr.elementSize(), range.next);
-//
-//        // This code corresponds to the DOUBLE_fill function in NumPy.
-//        final double start = arr.fData.get(0);
-//        double delta = arr.fData.get(1);
-//        delta -= start;
-//        for (int i = 2; i < range.length; i++) {
-//            arr.fData.put(i, start + i * delta);
-//        }
-//    }
-
     public double getDouble(final int... indexes) {
         // TODO byte swapping and all that
         return getData().getDouble(getOffsetFromIndexes(indexes));
     }
-
-
 }

@@ -52,7 +52,7 @@ final class Arange {
          * If dtype is not in native byte-order then get native-byte order
          * version. And then swap on the way out.
          */
-        if (!dtype.isNativeByteOrder()) {
+        if (!nonNullDtype.isNativeByteOrder()) {
             throw new UnsupportedOperationException();
         }
 
