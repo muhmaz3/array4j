@@ -38,9 +38,9 @@ public final class DenseArrayTest {
     public void testArange() {
         DenseArray arr;
         arr = DoubleArray.arange(12.0);
-        assertEquals(9.0, arr.get(9));
-        assertEquals(8.0, arr.reshape(4, 3).get(2, 2));
-        assertEquals(10.0, arr.reshape(3, 4).get(2, 2));
+        assertEquals(9.0, arr.getDouble(9));
+        assertEquals(8.0, arr.reshape(4, 3).getDouble(2, 2));
+        assertEquals(10.0, arr.reshape(3, 4).getDouble(2, 2));
     }
 
     @Test

@@ -6,8 +6,8 @@ public final class DoubleArray {
     private DoubleArray() {
     }
 
-    public static DenseArray zeros(final int... indexes) {
-        return null;
+    public static DenseArray zeros(final int... dims) {
+        return new DenseArray(DTYPE, dims);
     }
 
     public static DenseArray arange(final double stop) {
