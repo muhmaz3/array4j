@@ -1,4 +1,4 @@
-package com.googlecode.array4j.types;
+package com.googlecode.array4j;
 
 public final class Field {
     private final String fName;

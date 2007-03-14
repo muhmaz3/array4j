@@ -1,22 +1,18 @@
-package com.googlecode.array4j.types;
+package com.googlecode.array4j;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import com.googlecode.array4j.ByteOrder;
-import com.googlecode.array4j.ComplexDouble;
-import com.googlecode.array4j.ComplexFloat;
-import com.googlecode.array4j.DenseArray;
 import com.googlecode.array4j.kernel.KernelType;
 
 public final class ArrayDescr {
-    private static final Map<Types, ArrayDescr> BUILTIN_DESCRS;
+    private static final Map<ArrayType, ArrayDescr> BUILTIN_DESCRS;
 
     static {
-        final Map<Types, ArrayDescr> descrs = new HashMap<Types, ArrayDescr>();
-        for (Types type : Types.values()) {
+        final Map<ArrayType, ArrayDescr> descrs = new HashMap<ArrayType, ArrayDescr>();
+        for (ArrayType type : ArrayType.values()) {
             if (type.isSupported()) {
                 descrs.put(type, new ArrayDescr(type));
             }
@@ -28,7 +24,7 @@ public final class ArrayDescr {
     private final ArrayKind fKind;
 
     /* unique-character representing this type */
-    private final Types fType;
+    private final ArrayType fType;
 
     /*
      * '>' (big), '<' (little), '|' (not-applicable), or '=' (native).
@@ -67,7 +63,7 @@ public final class ArrayDescr {
      * <p>
      * This constructor corresponds to the NumPy function <CODE>PyArray_DescrFromType</CODE>.
      */
-    private ArrayDescr(final Types type) {
+    private ArrayDescr(final ArrayType type) {
         // TODO figure out if fTypeObj is useful for anything
         fKind = type.getKind();
         fType = type;
@@ -85,7 +81,7 @@ public final class ArrayDescr {
         // TODO look at <CODE>arraydescr_new</CODE> in NumPy for more stuff
 
         fKind = null;
-        fType = Types.VOID;
+        fType = ArrayType.VOID;
         fByteOrder = ByteOrder.NOT_APPLICABLE;
         // TODO set flags if any field contains object types
         hasobject = 0;
@@ -103,7 +99,7 @@ public final class ArrayDescr {
     }
 
 
-    public static ArrayDescr fromType(final Types type) {
+    public static ArrayDescr fromType(final ArrayType type) {
         if (BUILTIN_DESCRS.containsKey(type)) {
             return BUILTIN_DESCRS.get(type);
         }
@@ -139,7 +135,7 @@ public final class ArrayDescr {
 
         final ArrayDescr nonNullMintype;
         if (mintype == null) {
-            nonNullMintype = fromType(Types.BOOL);
+            nonNullMintype = fromType(ArrayType.BOOL);
         } else {
             nonNullMintype = mintype;
         }
@@ -165,16 +161,16 @@ public final class ArrayDescr {
 
     private static ArrayDescr findScalarType(final Object obj) {
         if (checkFloat(obj)) {
-            return fromType(Types.DOUBLE);
+            return fromType(ArrayType.DOUBLE);
         } else if (checkComplex(obj)) {
-            return fromType(Types.CDOUBLE);
+            return fromType(ArrayType.CDOUBLE);
         } else if (checkInt(obj)) {
             if (checkBool(obj)) {
-                return fromType(Types.BOOL);
+                return fromType(ArrayType.BOOL);
             }
-            return fromType(Types.INT);
+            return fromType(ArrayType.INT);
         } else if (checkLong(obj)) {
-            return fromType(Types.LONG);
+            return fromType(ArrayType.LONG);
         }
         // TODO look at supporting Types.OBJECT here
         return null;
@@ -232,7 +228,7 @@ public final class ArrayDescr {
         return fKind;
     }
 
-    public Types getType() {
+    public ArrayType getType() {
         return fType;
     }
 
@@ -274,7 +270,7 @@ public final class ArrayDescr {
         if (!getByteOrder().equals(typ.getByteOrder())) {
             return false;
         }
-        if (getType().equals(Types.VOID) || typ.getType().equals(Types.VOID)) {
+        if (getType().equals(ArrayType.VOID) || typ.getType().equals(ArrayType.VOID)) {
             // TODO check that fields are equivalent
 //            return getType().equals(typ.getType()) && false;
             throw new UnsupportedOperationException();

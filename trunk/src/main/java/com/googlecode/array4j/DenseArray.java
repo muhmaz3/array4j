@@ -6,7 +6,6 @@ import java.util.Arrays;
 import com.googlecode.array4j.Indexing.Index;
 import com.googlecode.array4j.kernel.Interface;
 import com.googlecode.array4j.kernel.KernelType;
-import com.googlecode.array4j.types.ArrayDescr;
 import com.googlecode.array4j.ufunc.AddUFunc;
 import com.googlecode.array4j.ufunc.UFunc;
 
