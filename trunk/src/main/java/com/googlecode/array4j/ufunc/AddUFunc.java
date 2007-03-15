@@ -8,7 +8,8 @@ final class AddUFunc extends AbstractUFunc {
     private static final int NOUT = 1;
 
     private static final Signature[] SIGNATURES = {
-        new Signature(ArrayType.DOUBLE, ArrayType.DOUBLE, ArrayType.DOUBLE)
+        new Signature(new ArrayType[]{ArrayType.DOUBLE, ArrayType.DOUBLE},
+            new ArrayType[]{ArrayType.DOUBLE})
     };
 
     public AddUFunc() {

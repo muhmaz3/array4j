@@ -1,7 +1,11 @@
 package com.googlecode.array4j.ufunc;
 
 import com.googlecode.array4j.ArrayDescr;
+import com.googlecode.array4j.ArrayType;
 import com.googlecode.array4j.DenseArray;
+import com.googlecode.array4j.ScalarKind;
+
+// TODO probably need extra functions for ufuncs that have multiple output arguments
 
 public interface UFunc {
     int nin();
@@ -9,6 +13,8 @@ public interface UFunc {
     int nout();
 
     int nargs();
+
+    void selectTypes(ArrayType[] argtypes, ScalarKind[] scalars, Object typetup);
 
     void call(DenseArray... args);
 

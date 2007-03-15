@@ -141,6 +141,15 @@ public final class DenseArray implements Array<DenseArray> {
         }
     }
 
+    /**
+     * This constructor corresponds to the NumPy function <CODE>PyArray_FromArray</CODE>.
+     */
+    public DenseArray(final DenseArray op, final ArrayDescr newtype, final int flags) {
+        // TODO implement PyArray_FromArray
+        // XXX busy here
+        throw new UnsupportedOperationException();
+    }
+
     private int arrayFillStrides(final int[] dims, final int sd, final int inflag) {
         final int nd = dims.length;
         int itemsize = sd;
@@ -660,6 +669,26 @@ public final class DenseArray implements Array<DenseArray> {
 
     public boolean isContiguous() {
         return Flags.CONTIGUOUS.and(fFlags);
+    }
+
+    public boolean isNotSwapped() {
+        return fDescr.isNativeByteOrder();
+    }
+
+    public boolean isByteSwapped() {
+        return !isNotSwapped();
+    }
+
+    public boolean flagSwap(final Flags flags) {
+        return flags.and(fFlags) && isNotSwapped();
+    }
+
+    public boolean isBehaved() {
+        return flagSwap(Flags.BEHAVED);
+    }
+
+    public boolean isBehavedRo() {
+        return flagSwap(Flags.ALIGNED);
     }
 
     public DenseArray addEquals(final Array<?> arr) {

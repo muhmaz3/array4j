@@ -47,20 +47,20 @@ public enum Flags {
     UPDATEIFCOPY(0x1000),
     /** This flag is for the array interface. */
     ARR_HAS_DESCR(0x0800),
-    BEHAVED (ALIGNED, WRITEABLE),
-    BEHAVED_NS (ALIGNED, WRITEABLE, NOTSWAPPED),
-    CARRAY (CONTIGUOUS, BEHAVED),
-    CARRAY_RO (CONTIGUOUS, ALIGNED),
-    FARRAY (FORTRAN, BEHAVED),
-    FARRAY_RO (FORTRAN, ALIGNED),
+    BEHAVED(ALIGNED, WRITEABLE),
+    BEHAVED_NS(ALIGNED, WRITEABLE, NOTSWAPPED),
+    CARRAY(CONTIGUOUS, BEHAVED),
+    CARRAY_RO(CONTIGUOUS, ALIGNED),
+    FARRAY(FORTRAN, BEHAVED),
+    FARRAY_RO(FORTRAN, ALIGNED),
     DEFAULT(CARRAY),
     IN_ARRAY(CARRAY_RO),
     OUT_ARRAY(CARRAY),
     INOUT_ARRAY(CARRAY, UPDATEIFCOPY),
     IN_FARRAY(FARRAY_RO),
     OUT_FARRAY(FARRAY),
-    INOUT_FARRAY (FARRAY, UPDATEIFCOPY),
-    UPDATE_ALL (CONTIGUOUS, FORTRAN, ALIGNED);
+    INOUT_FARRAY(FARRAY, UPDATEIFCOPY),
+    UPDATE_ALL(CONTIGUOUS, FORTRAN, ALIGNED);
 
     private int fValue;
 
@@ -79,6 +79,14 @@ public enum Flags {
     }
 
     public boolean and(final int value) {
-        return (fValue & value) != 0;
+        return (fValue & value) == value;
+    }
+
+    public static int or(final Flags...flags) {
+        int value = 0;
+        for (Flags flag : flags) {
+            value |= flag.getValue();
+        }
+        return value;
     }
 }

@@ -3,6 +3,7 @@ package com.googlecode.array4j.ufunc;
 import com.googlecode.array4j.ArrayDescr;
 import com.googlecode.array4j.ArrayType;
 import com.googlecode.array4j.DenseArray;
+import com.googlecode.array4j.ScalarKind;
 
 /**
  * This class corresponds to the <CODE>PyUFuncObject</CODE> struct in NumPy.
@@ -15,15 +16,12 @@ public abstract class AbstractUFunc implements UFunc {
     }
 
     protected static final class Signature {
-        private final ArrayType fin1;
+        private final ArrayType[] fin;
 
-        private final ArrayType fin2;
+        private final ArrayType[] fout;
 
-        private final ArrayType fout;
-
-        public Signature(final ArrayType in1, final ArrayType in2, final ArrayType out) {
-            this.fin1 = in1;
-            this.fin2 = in2;
+        public Signature(final ArrayType[] in, final ArrayType[] out) {
+            this.fin = in;
             this.fout = out;
         }
     }
@@ -73,6 +71,82 @@ public abstract class AbstractUFunc implements UFunc {
 
     public final int nargs() {
         return fNin + fNout;
+    }
+
+    /**
+     * Called to determine coercion. Can change argtypes.
+     */
+    public final void selectTypes(final ArrayType[] argtypes, final ScalarKind[] scalars, final Object typetup) {
+        int userdef = -1;
+        if (false) {
+            // TODO check if ufunc has a user loop
+        }
+
+        if (typetup != null) {
+            // TODO handle typetyp... something to do with the sig kwarg
+            throw new UnsupportedOperationException();
+        }
+
+        if (userdef > 0) {
+            throw new UnsupportedOperationException();
+        }
+
+        ArrayType starttype = argtypes[0];
+        /*
+         * If the first argument is a scalar we need to place the start type as
+         * the lowest type in the class
+         */
+        if (scalars[0] != ScalarKind.NOSCALAR) {
+            starttype = lowestType(starttype);
+        }
+
+        Signature selectedSig = null;
+        for (Signature sig : fTypes) {
+            if (starttype.compareTo(sig.fin[0]) > 0) {
+                continue;
+            } else {
+                boolean canCoerceAll = true;
+                for (int j = 0; j < nin(); j++) {
+                    if (!argtypes[j].canCoerceScalar(sig.fin[j], scalars[j])) {
+                        canCoerceAll = false;
+                        break;
+                    }
+                }
+                if (canCoerceAll) {
+                    selectedSig = sig;
+                    break;
+                }
+            }
+        }
+        if (selectedSig == null) {
+            throw new IllegalArgumentException("function not supported for these types, "
+                    + "and can't coerce safely to supported types");
+        }
+
+        for (int j = 0; j < nin(); j++) {
+            argtypes[j] = selectedSig.fin[j];
+        }
+        for (int j = nin(); j < nargs(); j++) {
+            argtypes[j] = selectedSig.fout[j - nin()];
+        }
+
+        // TODO set data pointer based on selected signature
+        // TODO set function based on selected signature
+    }
+
+    private static ArrayType lowestType(final ArrayType intype) {
+        switch(intype) {
+        case SHORT:
+        case INT:
+        case LONG:
+            return ArrayType.BYTE;
+        case DOUBLE:
+            return ArrayType.FLOAT;
+        case CDOUBLE:
+            return ArrayType.CFLOAT;
+        default:
+            return intype;
+        }
     }
 
     /**

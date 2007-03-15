@@ -209,4 +209,37 @@ public enum ArrayType {
             return false;
         }
     }
+
+    /**
+     * This code corresponds to the NumPy function <CODE>PyArray_CanCoerceScalar</CODE>.
+     */
+    public boolean canCoerceScalar(final ArrayType neededtype, final ScalarKind scalar) {
+        if (scalar.equals(ScalarKind.NOSCALAR)) {
+            return canCastSafely(neededtype);
+        }
+        final ArrayDescr from = ArrayDescr.fromType(this);
+        if (false) {
+            // TODO check cast function or something
+        }
+        switch (scalar) {
+        case BOOL:
+        case OBJECT:
+            return canCastSafely(neededtype);
+        default:
+            // TODO support user defined types?
+            switch (scalar) {
+            case INTPOS:
+                return neededtype.compareTo(BYTE) >= 0;
+            case INTNEG:
+                return neededtype.compareTo(BYTE) >= 0 && !neededtype.isUnsigned();
+            case FLOAT:
+                return neededtype.compareTo(FLOAT) >= 0;
+            case COMPLEX:
+                return neededtype.compareTo(CFLOAT) >= 0;
+            default:
+                /* should never get here... */
+                throw new AssertionError();
+            }
+        }
+    }
 }

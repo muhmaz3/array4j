@@ -4,8 +4,10 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Iterator;
 
+import com.googlecode.array4j.ArrayDescr;
 import com.googlecode.array4j.ArrayType;
 import com.googlecode.array4j.DenseArray;
+import com.googlecode.array4j.Flags;
 import com.googlecode.array4j.ScalarKind;
 
 public final class UFuncLoop implements Iterable<MultiArrayIterator> {
@@ -42,10 +44,7 @@ public final class UFuncLoop implements Iterable<MultiArrayIterator> {
 
     private final int[] fSteps;
 
-    // TODO check if these fields are useful for something
-    private int fBufCnt;
     private LoopMethod fMeth;
-    private int[] bufptr;
 
     public UFuncLoop(final UFunc ufunc, final DenseArray[] args) {
         this(ufunc, args, Error.DEFAULT_ERROR);
@@ -162,19 +161,18 @@ public final class UFuncLoop implements Iterable<MultiArrayIterator> {
         }
 
         /* Select an appropriate function for these argument types. */
-        selectTypes(argtypes, scalars, null);
+        final Object typetup = null;
+        fUfunc.selectTypes(argtypes, scalars, typetup);
 
-        if (false) {
-            if (false) {
-                fNotImplemented = true;
-            }
+        if (argtypes[1].equals(ArrayType.OBJECT) && nin() == 2 && nout() == 1) {
+            throw new UnsupportedOperationException();
         }
 
         /*
          * Create copies for some of the arrays if they are small enough and not
          * already contiguous.
          */
-        createCopies(mps);
+        createCopies(argtypes, mps);
 
         /* Create Iterators for the Inputs */
         for (int i = 0; i < nin; i++) {
@@ -220,7 +218,7 @@ public final class UFuncLoop implements Iterable<MultiArrayIterator> {
          * buffers
          */
 
-        fBufCnt = 0;
+//        fBufCnt = 0;
 //        obj = false
 
         /* Determine looping method needed */
@@ -337,60 +335,28 @@ public final class UFuncLoop implements Iterable<MultiArrayIterator> {
         return nargs;
     }
 
-    /**
-     * Called to determine coercion. Can change argtypes.
-     */
-    private void selectTypes(final ArrayType[] argtypes, final ScalarKind[] scalars, final Object typetup) {
-        int userdef = -1;
-        if (false) {
-            // TODO check if ufunc has a user loop
-        }
-
-        if (typetup != null) {
-            // TODO handle typetyp... something to do with the sig kwarg
-            throw new UnsupportedOperationException();
-        }
-
-        if (userdef > 0) {
-            throw new UnsupportedOperationException();
-        }
-
-        ArrayType starttype = argtypes[0];
-        /*
-         * If the first argument is a scalar we need to place the start type as
-         * the lowest type in the class
-         */
-        if (scalars[0] != ScalarKind.NOSCALAR) {
-            starttype = lowestType(starttype);
-        }
-
-        // TODO more code here
-    }
-
-    private static ArrayType lowestType(final ArrayType intype) {
-        switch(intype) {
-        case SHORT:
-        case INT:
-        case LONG:
-            return ArrayType.BYTE;
-        case DOUBLE:
-            return ArrayType.FLOAT;
-        case CDOUBLE:
-            return ArrayType.CFLOAT;
-        default:
-            return intype;
-        }
-    }
-
-    private void createCopies(final DenseArray[] mps) {
-        for (int i = 0; i < nin(); i++) {
+    private void createCopies(final ArrayType[] argtypes, final DenseArray[] mps) {
+        final int nin = nin();
+        for (int i = 0; i < nin; i++) {
             final int size = mps[i].size();
-            if (false) {
+            /*
+             * if the type of mps[i] is equivalent to argtypes[i] then set
+             * arg_types[i] equal to type of mps[i] for later checking....
+             */
+            if (!mps[i].dtype().type().equals(argtypes[i])) {
+                final ArrayDescr ntype = mps[i].dtype();
+                final ArrayDescr atype = ArrayDescr.fromType(argtypes[i]);
+                if (atype.isEquivalent(ntype)) {
+                    argtypes[i] = ntype.type();
+                }
             }
             if (size < fBufSize) {
-                if (false) {
-                    // create new array with FORCECAST | ALIGNED
-                    // TODO assign new array to mps[i]
+                if (!mps[i].isBehavedRo() || mps[i].dtype().type() != argtypes[i]) {
+                    final ArrayDescr ntype = mps[i].dtype();
+                    // NumPy code calls PyArray_FromAny which calls
+                    // PyArray_FromArray, which corresponds to the constructor
+                    // called here
+                    mps[i] = new DenseArray(mps[i], ntype, Flags.or(Flags.FORCECAST, Flags.ALIGNED));
                 }
             }
         }
