@@ -11,7 +11,7 @@ import com.googlecode.array4j.DenseArray;
  * <p>
  * Corresponds to <CODE>PyArrayMultiIterObject</CODE> in the NumPy C-API.
  */
-public final class MultiArrayIterator implements Iterator<MultiArrayIterator> {
+public final class MultiArrayIterator implements Iterable<MultiArrayIterator>, Iterator<MultiArrayIterator> {
     private int fSize;
 
     private int fIndex;
@@ -21,7 +21,20 @@ public final class MultiArrayIterator implements Iterator<MultiArrayIterator> {
     private final ArrayIterator[] fIters;
 
     public MultiArrayIterator(final int numiter) {
+        if (numiter < 2) {
+            throw new IllegalArgumentException("Need at least 2 array objects");
+        }
         this.fIters = new ArrayIterator[numiter];
+    }
+
+    public MultiArrayIterator(final int numiter, final DenseArray... arrs) {
+        this(numiter);
+        if (arrs.length > numiter) {
+            throw new IllegalArgumentException("Too many array objects");
+        }
+        for (int i = 0; i < arrs.length; i++) {
+            createArrayIterator(i, arrs[i]);
+        }
     }
 
     public boolean hasNext() {
@@ -46,8 +59,16 @@ public final class MultiArrayIterator implements Iterator<MultiArrayIterator> {
         throw new UnsupportedOperationException();
     }
 
+    public Iterator<MultiArrayIterator> iterator() {
+        return this;
+    }
+
     public void createArrayIterator(final int index, final DenseArray arr) {
         fIters[index] = new ArrayIterator(arr);
+    }
+
+    public ArrayIterator getIterator(final int index) {
+        return fIters[index];
     }
 
     public int numiter() {
@@ -56,6 +77,10 @@ public final class MultiArrayIterator implements Iterator<MultiArrayIterator> {
 
     public int size() {
         return fSize;
+    }
+
+    public int index() {
+        return fIndex;
     }
 
     public int[] shape() {
@@ -109,5 +134,43 @@ public final class MultiArrayIterator implements Iterator<MultiArrayIterator> {
         for (int i = 0; i < numiter; i++) {
             fIters[i].resetAfterBroadcast(this);
         }
+    }
+
+    /**
+     * Adjusts previously broadcasted iterators so that the axis with the
+     * smallest sum of iterator strides is not iterated over. Returns dimension
+     * which is smallest in the range <tt>[0, ndim())</tt>. A <tt>-1</tt>
+     * is returned if <tt>ndim() == 0</tt>.
+     * <p>
+     * This method corresponds to the NumPy function <CODE>PyArray_RemoveSmallest</CODE>.
+     */
+    public int removeSmallest() {
+        if (ndim() == 0) {
+            return -1;
+        }
+        final int ndim = ndim();
+        final int[] sumstrides = new int[ndim];
+        for (int i = 0; i < ndim; i++) {
+            for (int j = 0; j < fIters.length; j++) {
+                // TODO this should probably be += ... checking with the NumPy folks
+                sumstrides[i] = fIters[j].strides(j);
+            }
+        }
+        int axis = 0;
+        int smallest = sumstrides[0];
+        /* Find longest dimension */
+        for (int i = 1; i < ndim; i++) {
+            if (sumstrides[i] < smallest) {
+                axis = i;
+                smallest = sumstrides[i];
+            }
+        }
+
+        for (int i = 0; i < fIters.length; i++) {
+            fIters[i].removeAxis(axis);
+        }
+
+        fSize = fIters[0].size();
+        return axis;
     }
 }

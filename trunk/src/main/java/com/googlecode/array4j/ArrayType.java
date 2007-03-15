@@ -141,6 +141,13 @@ public enum ArrayType {
     }
 
     /**
+     * This method corresponds to the NumPy macro <CODE>PyTypeNum_ISNUMBER</CODE>.
+     */
+    public boolean isNumber() {
+        return compareTo(DOUBLE) <= 0;
+    }
+
+    /**
      * This code corresponds to the NumPy function <CODE>PyArray_CanCastSafely</CODE>.
      */
     public boolean canCastSafely(final ArrayType totype) {

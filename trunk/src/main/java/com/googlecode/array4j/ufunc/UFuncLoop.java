@@ -353,10 +353,7 @@ public final class UFuncLoop implements Iterable<MultiArrayIterator> {
             if (size < fBufSize) {
                 if (!mps[i].isBehavedRo() || mps[i].dtype().type() != argtypes[i]) {
                     final ArrayDescr ntype = mps[i].dtype();
-                    // NumPy code calls PyArray_FromAny which calls
-                    // PyArray_FromArray, which corresponds to the constructor
-                    // called here
-                    mps[i] = new DenseArray(mps[i], ntype, Flags.or(Flags.FORCECAST, Flags.ALIGNED));
+                    mps[i] = DenseArray.fromArray(mps[i], ntype, Flags.or(Flags.FORCECAST, Flags.ALIGNED));
                 }
             }
         }

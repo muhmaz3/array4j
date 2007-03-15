@@ -72,12 +72,24 @@ public final class ArrayIterator implements Iterator<ArrayIterator> {
         reset();
     }
 
+    public int size() {
+        return size;
+    }
+
     public int ndim() {
         return ao.ndim();
     }
 
     public int shape(final int index) {
         return ao.shape(index);
+    }
+
+    public int[] strides() {
+        return ao.strides();
+    }
+
+    public int strides(final int index) {
+        return ao.strides(index);
     }
 
     public boolean hasNext() {
@@ -214,5 +226,14 @@ public final class ArrayIterator implements Iterator<ArrayIterator> {
         final int[] newarr = new int[length];
         System.arraycopy(oldarr, 0, newarr, 0, oldarr.length);
         return newarr;
+    }
+
+    void removeAxis(final int axis) {
+        contiguous = false;
+        if (size != 0) {
+            size /= dimsm1[axis] + 1;
+        }
+        dimsm1[axis] = 0;
+        backstrides[axis] = 0;
     }
 }

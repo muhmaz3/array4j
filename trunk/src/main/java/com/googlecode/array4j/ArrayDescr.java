@@ -37,7 +37,7 @@ public final class ArrayDescr {
     private final int hasobject;
 
     /* element size for this type */
-    private final int fItemSize;
+    private int fItemSize;
 
     /* alignment needed for this type */
     private final int fAlignment;
@@ -80,6 +80,24 @@ public final class ArrayDescr {
         fFields = null;
         fKernelType = kernelType;
         fArrFuncs = type.getArrayFunctions(kernelType);
+    }
+
+    /**
+     * This constructor corresponds to NumPy function <CODE>PyArray_DescrNew</CODE>.
+     */
+    public ArrayDescr(final ArrayDescr base) {
+        fKind = base.fKind;
+        fType = base.fType;
+        fByteOrder = base.fByteOrder;
+        hasobject = base.hasobject;
+        fItemSize = base.fItemSize;
+        fAlignment = base.fAlignment;
+        // TODO fields
+        fKernelType = base.fKernelType;
+        fArrFuncs = base.fArrFuncs;
+//        if (base.fSubArray != null) {
+//        }
+        fSubArray = null;
     }
 
     public ArrayDescr(final Iterable<Field> fields, final boolean align) {
@@ -274,6 +292,10 @@ public final class ArrayDescr {
         return fItemSize;
     }
 
+    void setItemSize(final int itemsize) {
+        this.fItemSize = itemsize;
+    }
+
     public int alignment() {
         return fAlignment;
     }
@@ -326,5 +348,15 @@ public final class ArrayDescr {
 
     public ByteBuffer createBuffer(final int capacity) {
         return Interface.kernel(fKernelType).createBuffer(capacity);
+    }
+
+    /**
+     * This method corresponds to the NumPy function <CODE>PyArray_CanCastTo</CODE>.
+     */
+    public boolean canCastTo(final ArrayDescr to) {
+        final ArrayType fromtype = type();
+        final ArrayType totype = to.type();
+        // TODO Check String and Unicode more closely
+        return fromtype.canCastSafely(totype);
     }
 }

@@ -4,9 +4,23 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 import com.googlecode.array4j.Indexing.Index;
+import com.googlecode.array4j.kernel.Interface;
+import com.googlecode.array4j.ufunc.MultiArrayIterator;
 import com.googlecode.array4j.ufunc.UFuncs;
 
+// TODO change bitwise operations to use static ints instead of Flags.SOMEFLAG.getValue()
+
 public final class DenseArray implements Array<DenseArray> {
+    private static final int ENSURECOPY = Flags.ENSURECOPY.getValue();
+
+    private static final int CONTIGUOUS = Flags.CONTIGUOUS.getValue();
+
+    private static final int ALIGNED = Flags.ALIGNED.getValue();
+
+    private static final int FORTRAN = Flags.FORTRAN.getValue();
+
+    private static final int WRITEABLE = Flags.WRITEABLE.getValue();
+
     private static final int PSEUDO_INDEX = -1;
 
     private static final int RUBBER_INDEX = -2;
@@ -14,6 +28,8 @@ public final class DenseArray implements Array<DenseArray> {
     private static final int SINGLE_INDEX = -3;
 
     private static final int MAX_DIMS = 32;
+
+    private static final int BUFSIZE = 10000;
 
     private int[] fDimensions;
 
@@ -25,7 +41,7 @@ public final class DenseArray implements Array<DenseArray> {
 
     private final ArrayDescr fDescr;
 
-    private final Object fBase;
+    private DenseArray fBase;
 
     /**
      * Simple constructor.
@@ -141,13 +157,176 @@ public final class DenseArray implements Array<DenseArray> {
         }
     }
 
+    public static DenseArray fromArray(final DenseArray arr, final ArrayDescr dtype, final int flags) {
+        final String msg = "cannot copy back to a read-only array";
+
+        final ArrayDescr oldtype = arr.dtype();
+        ArrayDescr newtype;
+        if (dtype != null) {
+            newtype = dtype;
+        } else {
+            newtype = oldtype;
+        }
+
+        int itemsize = newtype.itemSize();
+        if (itemsize == 0) {
+            newtype = new ArrayDescr(newtype);
+            newtype.setItemSize(oldtype.itemSize());
+            itemsize = newtype.itemSize();
+        }
+
+        // Can't cast unless ndim-0 array, FORCECAST is specified or the cast is safe.
+        if (!Flags.FORCECAST.and(flags) && arr.ndim() != 0 && !oldtype.canCastTo(newtype)) {
+            throw new IllegalArgumentException("array cannot be safely cast to required type");
+        }
+
+        final DenseArray ret;
+
+        /* Don't copy if sizes are compatible */
+        if (Flags.ENSURECOPY.and(flags) || oldtype.isEquivalent(newtype)) {
+            final int arrflags = arr.fFlags;
+            final boolean copy = ((flags & ENSURECOPY) != 0)
+                    || (((flags & CONTIGUOUS) != 0) && ((arrflags & CONTIGUOUS) == 0))
+                    || (((flags & ALIGNED) != 0) && ((arrflags & ALIGNED) == 0))
+                    || (arr.ndim() > 1 && (((flags & FORTRAN) != 0) && ((arrflags & FORTRAN) == 0)))
+                    || (((flags & WRITEABLE) != 0) && ((arrflags & WRITEABLE) == 0));
+            if (copy) {
+                if (Flags.UPDATEIFCOPY.and(flags) && arr.isWriteable()) {
+                    throw new IllegalArgumentException(msg);
+                }
+                if (Flags.ENSUREARRAY.and(flags)) {
+                    // TODO do something with subtype
+                }
+                // TODO call some constructor
+                ret = null;
+                arr.copyInto(ret);
+                if (Flags.UPDATEIFCOPY.and(flags)) {
+                    ret.fFlags |= Flags.UPDATEIFCOPY.getValue();
+                    ret.fBase = arr;
+                    ret.fBase.fFlags &= ~Flags.WRITEABLE.getValue();
+                }
+            } else {
+                /*
+                 * If no copy then just increase the reference count and return
+                 * the input.
+                 */
+                if (Flags.ENSUREARRAY.and(flags) && !arr.checkExact()) {
+                    // TODO have to call some derived class's constructor here
+                    ret = null;
+                    ret.fBase = arr;
+                } else {
+                    ret = arr;
+                }
+            }
+        } else {
+            /*
+             * The desired output type is different than the input array type
+             * and copy was not specified
+             */
+            if (Flags.UPDATEIFCOPY.and(flags) && !arr.isWriteable()) {
+                throw new IllegalArgumentException(msg);
+            }
+            if (Flags.ENSUREARRAY.and(flags)) {
+                // TODO do something with subtype
+            }
+            ret = null;
+            arr.castTo(ret);
+            if (Flags.UPDATEIFCOPY.and(flags)) {
+                ret.fFlags |= Flags.UPDATEIFCOPY.getValue();
+                ret.fBase = arr;
+                ret.fBase.fFlags &= ~Flags.WRITEABLE.getValue();
+            }
+        }
+
+        return ret;
+    }
+
     /**
-     * This constructor corresponds to the NumPy function <CODE>PyArray_FromArray</CODE>.
+     * This method corresponds to the NumPy function <CODE>PyArray_CopyInto</CODE>.
      */
-    public DenseArray(final DenseArray op, final ArrayDescr newtype, final int flags) {
-        // TODO implement PyArray_FromArray
-        // XXX busy here
+    private void copyInto(final DenseArray ret) {
         throw new UnsupportedOperationException();
+    }
+
+    /**
+     * This method corresponds to the NumPy function <CODE>PyArray_CastTo</CODE>.
+     */
+    private void castTo(final DenseArray out) {
+        final int mpsize = size();
+        if (mpsize == 0) {
+            throw new UnsupportedOperationException();
+        }
+        if (!out.isWriteable()) {
+            throw new IllegalArgumentException("output array is not writeable");
+        }
+
+        // TODO get cast function
+
+        final boolean same = sameShape(out);
+        final boolean simple = same && ((isCArrayRO() && out.isCArray()) || isFArrayRO() && out.isFArray());
+        if (simple) {
+            // TODO call cast function
+        }
+
+        /*
+         * If the input or output is STRING, UNICODE, or VOID then getitem and
+         * setitem are used for the cast and byteswapping is handled by those
+         * methods
+         */
+        final boolean iswap = isByteSwapped() && !isFlexible();
+        final boolean oswap = out.isByteSwapped() && !out.isFlexible();
+
+        // TODO null needs to be castfunc
+        broadcastCast(out, null, iswap, oswap);
+    }
+
+    private void broadcastCast(final DenseArray out, final Object castfunc, final boolean iswap, final boolean oswap) {
+        final int delsize = out.itemSize();
+        final int selsize = itemSize();
+        final MultiArrayIterator multi = new MultiArrayIterator(2, out, this);
+        final ByteBuffer[] buffers = new ByteBuffer[2];
+
+        if (multi.size() != out.size()) {
+            throw new IllegalArgumentException("array dimensions are not compatible for copy");
+        }
+
+        Object icopyfunc;
+        Object ocopyfunc;
+
+        final int n;
+        final int maxdim;
+        final int ostrides;
+        final int istrides;
+        final int maxaxis = multi.removeSmallest();
+        if (maxaxis < 0) {
+            /* cast 1 0-d array to another */
+            n = 1;
+            maxdim = 1;
+            ostrides = delsize;
+            istrides = selsize;
+        } else {
+            maxdim = multi.shape(maxaxis);
+            n = Math.min(maxdim, BUFSIZE);
+            ostrides = multi.getIterator(0).strides(maxaxis);
+            istrides = multi.getIterator(1).strides(maxaxis);
+        }
+        buffers[0] = Interface.kernel().createBuffer(n * delsize);
+        buffers[1] = Interface.kernel().createBuffer(n * selsize);
+
+        for (MultiArrayIterator nextMulti : multi) {
+            stridedBufferedCast();
+        }
+    }
+
+    private void stridedBufferedCast() {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * This method corresponds to the NumPy macro <CODE>PyArray_SAMESHAPE</CODE>.
+     */
+    private boolean sameShape(final DenseArray arr) {
+        return Arrays.equals(fDimensions, arr.fDimensions);
     }
 
     private int arrayFillStrides(final int[] dims, final int sd, final int inflag) {
@@ -655,6 +834,22 @@ public final class DenseArray implements Array<DenseArray> {
         return true;
     }
 
+    /**
+     * Returns <tt>true</tt> if declaring class of instance is DenseArray.
+     * <p>
+     * This method corresponds to the NumPy function <CODE>PyArray_CheckExact</CODE>.
+     */
+    private boolean checkExact() {
+        return DenseArray.class.equals(getClass().getDeclaringClass());
+    }
+
+    /**
+     * This method corresponds to the NumPy macro <CODE>PyArray_ISNUMBER</CODE>.
+     */
+    public boolean isNumber() {
+        return fDescr.type().isNumber();
+    }
+
     public boolean isOneSegment() {
         return ndim() == 0 || Flags.CONTIGUOUS.and(fFlags) || Flags.FORTRAN.and(fFlags);
     }
@@ -671,6 +866,22 @@ public final class DenseArray implements Array<DenseArray> {
         return Flags.CONTIGUOUS.and(fFlags);
     }
 
+    public boolean isFArray() {
+        return flagSwap(Flags.FARRAY);
+    }
+
+    public boolean isFArrayRO() {
+        return flagSwap(Flags.FARRAY_RO);
+    }
+
+    public boolean isCArray() {
+        return flagSwap(Flags.CARRAY);
+    }
+
+    public boolean isCArrayRO() {
+        return flagSwap(Flags.CARRAY_RO);
+    }
+
     public boolean isNotSwapped() {
         return fDescr.isNativeByteOrder();
     }
@@ -679,8 +890,11 @@ public final class DenseArray implements Array<DenseArray> {
         return !isNotSwapped();
     }
 
-    public boolean flagSwap(final Flags flags) {
-        return flags.and(fFlags) && isNotSwapped();
+    /**
+     * This method corresponds to the NumPy macro <CODE>PyArray_ISFLEXIBLE</CODE>.
+     */
+    public boolean isFlexible() {
+        return fDescr.type().isFlexible();
     }
 
     public boolean isBehaved() {
@@ -689,6 +903,10 @@ public final class DenseArray implements Array<DenseArray> {
 
     public boolean isBehavedRo() {
         return flagSwap(Flags.ALIGNED);
+    }
+
+    private boolean flagSwap(final Flags flags) {
+        return flags.and(fFlags) && isNotSwapped();
     }
 
     public DenseArray addEquals(final Array<?> arr) {
