@@ -80,16 +80,26 @@ public final class ArrayIterator implements Iterator<ArrayIterator> {
         return ao.ndim();
     }
 
+    public int ndimMinus1() {
+        return ndm1;
+    }
+
     public int shape(final int index) {
+        // TODO might want iterator's shape instead of array's shape here
         return ao.shape(index);
     }
 
     public int[] strides() {
-        return ao.strides();
+        // TODO maybe return a copy here
+        return strides;
     }
 
     public int strides(final int index) {
-        return ao.strides(index);
+        return strides[index];
+    }
+
+    public boolean isContiguous() {
+        return contiguous;
     }
 
     public boolean hasNext() {
@@ -201,9 +211,7 @@ public final class ArrayIterator implements Iterator<ArrayIterator> {
         for (int j = 0; j < mitnd; j++) {
             dimsm1[j] = mit.shape(j) - 1;
             final int k = j + nd - mitnd;
-            /*
-             * If this dimension was added or shape of underlying array was 1
-             */
+            // If this dimension was added or shape of underlying array was 1
             if ((k < 0) || ao.shape(k) != mit.shape(j)) {
                 contiguous = false;
                 strides[j] = 0;
@@ -235,5 +243,18 @@ public final class ArrayIterator implements Iterator<ArrayIterator> {
         }
         dimsm1[axis] = 0;
         backstrides[axis] = 0;
+    }
+
+    /**
+     * Fix the iterator so the inner loop occurs over the largest dimension.
+     * <p>
+     * This can be done by setting the size to 1 in that dimension
+     */
+    void optimizeAxis(final int ldim) {
+        contiguous = false;
+        size /= dimsm1[ldim] + 1;
+        dimsm1[ldim] = 0;
+        backstrides[ldim] = 0;
+        // won't fix factors because we don't use goto1d so don't change them
     }
 }

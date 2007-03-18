@@ -180,7 +180,7 @@ public final class UFuncLoop implements Iterable<MultiArrayIterator> {
         }
 
         /* Broadcast the result over the input arguments. */
-        mit.broadcast(nin());
+        mit.broadcast(nin);
 
         /* Get any return arguments */
         for (int i = nin; i < nargs; i++) {
@@ -197,17 +197,35 @@ public final class UFuncLoop implements Iterable<MultiArrayIterator> {
         /* construct any missing return arrays and make output iterators */
         for (int i = nin; i < nargs; i++) {
             if (mps[i] == null) {
-                // TODO create a new array
+                mps[i] = null;
+                // TODO call something like the following constructor:
+//                PyArray_New(PyTypeObject *subtype, int nd, intp *dims, int type_num,
+//                        intp *strides, void *data, int itemsize, int flags,
+//                        PyObject *obj)
             } else {
                 /*
                  * reset types for outputs that are equivalent -- no sense
                  * casting uselessly
                  */
+                if (!mps[i].dtype().type().equals(argtypes[i])) {
+                    final ArrayDescr ntype = mps[i].dtype();
+                    final ArrayDescr atype = ArrayDescr.fromType(argtypes[i]);
+                    if (ntype.isEquivalent(atype)) {
+                        argtypes[i] = ntype.type();
+                    }
+                }
 
-            }
-
-            /* still not the same -- or will we have to use buffers? */
-            if (false) {
+                if (!mps[i].dtype().type().equals(argtypes[i]) || !mps[i].isBehavedRo()) {
+                    if (mit.size() < fBufSize) {
+                        /*
+                         * Copy the array to a temporary copy and set the
+                         * UPDATEIFCOPY flag
+                         */
+                        final ArrayDescr ntype = ArrayDescr.fromType(argtypes[i]);
+                        mps[i] = DenseArray.fromArray(mps[i], ntype,
+                                Flags.or(Flags.FORCECAST, Flags.ALIGNED, Flags.UPDATEIFCOPY));
+                    }
+                }
             }
 
             mit.createArrayIterator(i, mps[i]);
@@ -217,99 +235,77 @@ public final class UFuncLoop implements Iterable<MultiArrayIterator> {
          * If any of different type, or misaligned or swapped then must use
          * buffers
          */
-
 //        fBufCnt = 0;
 //        obj = false
 
         /* Determine looping method needed */
         fMeth = LoopMethod.NO_UFUNCLOOP;
 
-        // TODO
-//        if (fSize == 0) {
-//            return nargs;
-//        }
+        if (mit.size() == 0) {
+            return nargs;
+        }
 
         for (int i = 0; i < nargs; i++) {
             fNeedBuffer[i] = false;
-            if (false) {
+            if (!argtypes[i].equals(mps[i].dtype().type()) || !mps[i].isBehavedRo()) {
                 fMeth = LoopMethod.BUFFER_UFUNCLOOP;
                 fNeedBuffer[i] = true;
             }
-            if (false) {
+            // TODO enable this to support object arrays
+//            if (!obj && mps[i].dtype().type().equals(ArrayType.OBJECT)) {
 //                obj = true;
-            }
+//            }
         }
 
         if (fMeth.equals(LoopMethod.NO_UFUNCLOOP)) {
             fMeth = LoopMethod.ONE_UFUNCLOOP;
 
-            /* All correct type and BEHAVED */
-            /* Check for non-uniform stridedness */
+            /* All correct type and BEHAVED. Check for non-uniform stridedness. */
             for (int i = 0; i < nargs; i++) {
-
+                final ArrayIterator it = mit.getIterator(i);
+                if (!it.isContiguous()) {
+                    // may still have uniform stride if (broadcasted result) <= 1-d
+                    if (mps[i].ndim() != 0 && it.ndimMinus1() > 0) {
+                        fMeth = LoopMethod.NOBUFFER_UFUNCLOOP;
+                        break;
+                    }
+                }
             }
             if (fMeth.equals(LoopMethod.ONE_UFUNCLOOP)) {
                 for (int i = 0; i < nargs; i++) {
-                    // TODO set bufptr[i] to mps[i].data()
+                    fBuffer[i] = mps[i].getData();
                 }
             }
         }
 
-        // TODO more code here?
-        // TODO this bit is probably unnecessary
-//        fNumIter = nargs;
-
+        /* Fill in steps */
         if (!fMeth.equals(LoopMethod.ONE_UFUNCLOOP)) {
-            /* Fix iterators */
-
-            /*
-             * Optimize axis the iteration takes place over.
-             *
-             * The first thought was to have the loop go over the largest
-             * dimension to minimize the number of loops.
-             *
-             * However, on processors with slow memory bus and cache, the
-             * slowest loops occur when the memory access occurs for large
-             * strides.
-             *
-             * Thus, choose the axis for which strides of the last iterator is
-             * smallest but non-zero.
-             */
-            final int nd = mit.ndim();
-            final int[] stridesum = new int[0];
-            for (int i = 0; i < nd; i++) {
-                for (int j = 0; j < mit.numiter(); j++) {
-//                    stridesum[i] += fIters[j].strides(i);
-                }
-            }
-            int ldim = nd - 1;
-            int minsum = stridesum[nd - 1];
-            for (int i = nd - 2; i >= 0; i--) {
-                if (stridesum[i] < minsum) {
-                    ldim = i;
-                    minsum = stridesum[i];
-                }
-            }
+            final int ldim = mit.optimizeAxis();
             final int maxdim = mit.shape(ldim);
-//            fSize /= maxdim;
+            // TODO add these fields
 //            fBufCnt = maxdim;
 //            fLastDim = ldim;
 
-            /*
-             * Fix the iterators so the inner loop occurs over the largest
-             * dimensions -- This can be done by setting the size to 1 in that
-             * dimension (just in the iterators).
-             */
+            /* Set the steps to the strides in longest dimension */
             for (int i = 0; i < mit.numiter(); i++) {
+                fSteps[i] = mit.getIterator(i).strides(ldim);
             }
 
             /*
              * fix up steps where we will be copying data to buffers and
-             * calculate the ninnerloops and leftover values -- if step size is
+             * calculate the innerloops and leftover values -- if step size is
              * already zero that is not changed...
              */
             if (fMeth.equals(LoopMethod.BUFFER_UFUNCLOOP)) {
-
+                // TODO set these loop fields
+//                leftover = maxdim % fBufSize;
+//                ninnerloops = (maxdim / fBufSize) + 1;
+                for (int i = 0; i < nargs; i++) {
+                    if (fNeedBuffer[i] && fSteps[i] != 0) {
+                        fSteps[i] = mps[i].dtype().itemSize();
+                    }
+                    /* These are changed later if casting is needed */
+                }
             }
         } else {
             /* uniformly-strided case ONE_UFUNCLOOP */
@@ -329,7 +325,72 @@ public final class UFuncLoop implements Iterable<MultiArrayIterator> {
          * copied multiple times
          */
         if (fMeth.equals(LoopMethod.BUFFER_UFUNCLOOP)) {
-            // TODO more stuff to do here
+            // keeps track of bytes to allocate
+            int cntcast = 0;
+            int cnt = 0;
+            int scntcast = 0;
+            int scnt = 0;
+
+            /* compute the element size */
+            for (int i = 0; i < nargs; i++) {
+                if (!fNeedBuffer[i]) {
+                    continue;
+                }
+                if (!argtypes[i].equals(mps[i].dtype().type())) {
+                    final ArrayDescr descr = ArrayDescr.fromType(argtypes[i]);
+                    if (fSteps[i] != 0) {
+                        cntcast += descr.itemSize();
+                    } else {
+                        scntcast += descr.itemSize();
+                    }
+                    if (i < nin) {
+                        // TODO get cast function
+                        fCast[i] = null;
+                    } else {
+                        // TODO get cast function
+                        fCast[i] = null;
+                    }
+                    if (fCast[i] == null) {
+                        // TODO signal some kind of error here
+                        throw new UnsupportedOperationException();
+                    }
+                }
+                // TODO set loop field
+//                swap[i] = mps[i].isNotSwapped();
+                if (fSteps[i] != 0) {
+                    cnt += mps[i].dtype().itemSize();
+                } else {
+                    scnt += mps[i].dtype().itemSize();
+                }
+            }
+            final int scbufsize = 4 * 8;
+            final int memsize = fBufSize * (cnt + cntcast) + scbufsize * (scnt + scntcast);
+
+//            if (fObj) {
+//            }
+
+            for (int i = 0; i < nargs; i++) {
+                if (fNeedBuffer[i]) {
+                    continue;
+                }
+
+                // TODO need a few lines of code here
+
+                if (fCast[i] != null) {
+                    final ArrayDescr descr = ArrayDescr.fromType(argtypes[i]);
+                    if (fSteps[i] != 0) {
+//                        fSteps[i] = oldsize;
+                    }
+                } else {
+                    // TODO looks like we need bufptr and buffer
+                    fBuffer[i] = fBuffer[i];
+                }
+                if (false) {
+                    if (argtypes[i].equals(ArrayType.OBJECT)) {
+                        // TODO set objfunc flag to true
+                    }
+                }
+            }
         }
 
         return nargs;

@@ -66,6 +66,8 @@ public final class DenseArrayTest {
     public void testAddEquals() {
         final DenseArray arr1 = DoubleArray.arange(4).reshape(2, 2);
         final DenseArray arr2 = DoubleArray.arange(2);
+        assertTrue(arr1.isWriteable());
+        assertTrue(arr2.isWriteable());
         arr1.addEquals(arr2);
         assertEquals(0.0, arr1.get(0, 0));
         assertEquals(2.0, arr1.get(0, 1));

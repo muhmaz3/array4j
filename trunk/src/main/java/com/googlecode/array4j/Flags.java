@@ -79,7 +79,7 @@ public enum Flags {
     }
 
     public boolean and(final int value) {
-        return (fValue & value) == value;
+        return (value & fValue) == fValue;
     }
 
     public static int or(final Flags...flags) {

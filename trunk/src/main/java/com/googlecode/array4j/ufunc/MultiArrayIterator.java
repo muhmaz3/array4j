@@ -5,6 +5,7 @@ import java.util.NoSuchElementException;
 
 import com.googlecode.array4j.ArrayUtils;
 import com.googlecode.array4j.DenseArray;
+import com.sun.org.apache.bcel.internal.generic.FSTORE;
 
 /**
  * Iterator for broadcasting.
@@ -109,6 +110,7 @@ public final class MultiArrayIterator implements Iterable<MultiArrayIterator>, I
             fDimensions[i] = 1;
             for (int j = 0; j < numiter; j++) {
                 final ArrayIterator it = fIters[i];
+                // This prepends 1 to shapes not already equal to nd
                 final int k = i + it.ndim() - nd;
                 if (k >= 0) {
                     final int tmp = it.shape(k);
@@ -173,4 +175,46 @@ public final class MultiArrayIterator implements Iterable<MultiArrayIterator>, I
         fSize = fIters[0].size();
         return axis;
     }
+
+    /**
+     * Optimize axis the iteration takes place over.
+     * <p>
+     * The first thought was to have the loop go over the largest dimension to
+     * minimize the number of loops.
+     * <p>
+     * However, on processors with slow memory bus and cache, the slowest loops
+     * occur when the memory access occurs for large strides.
+     * <p>
+     * Thus, choose the axis for which strides of the last iterator is smallest
+     * but non-zero.
+     */
+    int optimizeAxis() {
+        final int nd = ndim();
+        final int[] stridesum = new int[nd];
+        for (int i = 0; i < nd; i++) {
+            stridesum[i] = 0;
+            for (int j = 0; j < fIters.length; j++) {
+                stridesum[i] += fIters[j].strides(i);
+            }
+        }
+
+        int ldim = nd - 1;
+        int minsum = stridesum[nd - 1];
+        for (int i = nd - 2; i >= 0; i--) {
+            if (stridesum[i] < minsum) {
+                ldim = i;
+                minsum = stridesum[i];
+            }
+        }
+
+        final int maxdim = fDimensions[ldim];
+        fSize /= maxdim;
+
+        for (int i = 0; i < fIters.length; i++) {
+            fIters[i].optimizeAxis(ldim);
+        }
+
+        return ldim;
+    }
+
 }
