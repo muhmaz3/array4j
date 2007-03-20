@@ -5,7 +5,6 @@ import java.util.NoSuchElementException;
 
 import com.googlecode.array4j.ArrayUtils;
 import com.googlecode.array4j.DenseArray;
-import com.sun.org.apache.bcel.internal.generic.FSTORE;
 
 /**
  * Iterator for broadcasting.
@@ -154,8 +153,7 @@ public final class MultiArrayIterator implements Iterable<MultiArrayIterator>, I
         final int[] sumstrides = new int[ndim];
         for (int i = 0; i < ndim; i++) {
             for (int j = 0; j < fIters.length; j++) {
-                // TODO this should probably be += ... checking with the NumPy folks
-                sumstrides[i] = fIters[j].strides(j);
+                sumstrides[i] += fIters[j].strides(j);
             }
         }
         int axis = 0;
@@ -216,5 +214,4 @@ public final class MultiArrayIterator implements Iterable<MultiArrayIterator>, I
 
         return ldim;
     }
-
 }

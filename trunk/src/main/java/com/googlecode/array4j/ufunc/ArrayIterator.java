@@ -183,6 +183,7 @@ public final class ArrayIterator implements Iterator<ArrayIterator> {
         index = 0;
         // reset dataptr to start of array
         dataptr = 0;
+        coordinates = resizeCopy(ndm1 + 1, coordinates);
         for (int i = 0; i < coordinates.length; i++) {
             coordinates[i] = 0;
         }
