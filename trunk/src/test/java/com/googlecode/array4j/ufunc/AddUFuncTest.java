@@ -14,13 +14,13 @@ public final class AddUFuncTest {
         final UFunc add = UFuncs.ADD;
         final DenseArray in = null;
         DenseArray out = null;
-        final DenseByteArray in2 = null;
-        DenseByteArray out2 = null;
-
-        out = add.call(DOUBLE_DTYPE, in, in2);
-        out2 = add.call(DenseByteArray.class, in, in2);
-        add.call(in, in, out);
-        add.call(in, in, out2);
+//        final DenseByteArray in2 = null;
+//        DenseByteArray out2 = null;
+//
+//        out = add.call(DOUBLE_DTYPE, in, in2);
+//        out2 = add.call(DenseByteArray.class, in, in2);
+//        add.call(in, in, out);
+//        add.call(in, in, out2);
     }
 
     @Test
@@ -29,14 +29,14 @@ public final class AddUFuncTest {
 
         final DenseArray in = null;
         DenseArray out;
-        DenseByteArray out2 = null;
-
-        out = add.accumulate(in);
-        out = add.accumulate(in, 0);
-        out = add.accumulate(in, DOUBLE_DTYPE);
-        out = add.accumulate(in, 0, DOUBLE_DTYPE);
-        out2 = add.accumulate(in, DenseByteArray.class);
-        out2 = add.accumulate(in, 0, DenseByteArray.class);
+//        DenseByteArray out2 = null;
+//
+//        out = add.accumulate(in);
+//        out = add.accumulate(in, 0);
+//        out = add.accumulate(in, DOUBLE_DTYPE);
+//        out = add.accumulate(in, 0, DOUBLE_DTYPE);
+//        out2 = add.accumulate(in, DenseByteArray.class);
+//        out2 = add.accumulate(in, 0, DenseByteArray.class);
     }
 
     @Test
@@ -45,14 +45,14 @@ public final class AddUFuncTest {
 
         final DenseArray in = null;
         DenseArray out;
-        DenseByteArray out2 = null;
-
-        out = add.reduce(in);
-        out = add.reduce(in, DOUBLE_DTYPE);
-        out = add.reduce(in, 0);
-        out = add.reduce(in, 0, DenseArray.class);
-        out2 = add.reduce(in, DenseByteArray.class);
-        out2 = add.reduce(in, 0, DenseByteArray.class);
+//        DenseByteArray out2 = null;
+//
+//        out = add.reduce(in);
+//        out = add.reduce(in, DOUBLE_DTYPE);
+//        out = add.reduce(in, 0);
+//        out = add.reduce(in, 0, DenseArray.class);
+//        out2 = add.reduce(in, DenseByteArray.class);
+//        out2 = add.reduce(in, 0, DenseByteArray.class);
     }
 
     @Test
@@ -77,10 +77,10 @@ public final class AddUFuncTest {
         final UFunc add = UFuncs.ADD;
         final DenseArray in1 = null;
         DenseArray out1;
-        final DenseByteArray in2 = null;
-        DenseByteArray out2;
-
-        out1 = add.outer(in1, in2, DOUBLE_DTYPE);
-        out2 = add.outer(in1, in1, DenseByteArray.class);
+//        final DenseByteArray in2 = null;
+//        DenseByteArray out2;
+//
+//        out1 = add.outer(in1, in2, DOUBLE_DTYPE);
+//        out2 = add.outer(in1, in1, DenseByteArray.class);
     }
 }

@@ -84,17 +84,14 @@ public final class UFuncLoop implements Iterable<MultiArrayIterator> {
         switch (fMeth) {
         case ONE_UFUNCLOOP:
             throw new UnsupportedOperationException();
-//            break;
         case NOBUFFER_UFUNCLOOP:
             for (MultiArrayIterator it : this) {
                 // TODO update bufptr from iter
                 // TODO call function
             }
-            throw new UnsupportedOperationException();
-//            break;
+            break;
         case BUFFER_UFUNCLOOP:
             throw new UnsupportedOperationException();
-//            break;
         default:
             throw new AssertionError();
         }

@@ -69,10 +69,10 @@ public final class DenseArrayTest {
         assertTrue(arr1.isWriteable());
         assertTrue(arr2.isWriteable());
         arr1.addEquals(arr2);
-        assertEquals(0.0, arr1.get(0, 0));
-        assertEquals(2.0, arr1.get(0, 1));
-        assertEquals(2.0, arr1.get(1, 0));
-        assertEquals(4.0, arr1.get(1, 1));
+        assertEquals(0.0, arr1.getDouble(0, 0));
+        assertEquals(2.0, arr1.getDouble(0, 1));
+        assertEquals(2.0, arr1.getDouble(1, 0));
+        assertEquals(4.0, arr1.getDouble(1, 1));
     }
 
 //    @Test
