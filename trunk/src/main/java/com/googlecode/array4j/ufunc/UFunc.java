@@ -10,6 +10,8 @@ import com.googlecode.array4j.ScalarKind;
 
 // TODO probably need extra functions for ufuncs that have multiple output arguments
 
+// TODO allow all functions to specify extobj and sig arguments
+
 public interface UFunc {
     int nin();
 
@@ -21,43 +23,13 @@ public interface UFunc {
 
     void call(ArrayFunctions functions, ByteBuffer[] bufptr, int[] dimensions, int[] steps, Object funcdata);
 
-    void call(DenseArray... args);
+    DenseArray[] call(DenseArray... args);
 
-    DenseArray call(ArrayDescr dtype, DenseArray... args);
+    DenseArray reduce(DenseArray arr, int axis, DenseArray out, ArrayDescr otype);
 
-    DenseArray reduce(DenseArray arr);
+    DenseArray accumulate(DenseArray arr, int axis, DenseArray out, ArrayDescr otype);
 
-    DenseArray reduce(DenseArray arr, ArrayDescr dtype);
-
-    DenseArray reduce(DenseArray arr, int axis);
-
-    DenseArray reduce(DenseArray arr, int axis, ArrayDescr dtype);
-
-    DenseArray accumulate(DenseArray arr);
-
-    DenseArray accumulate(DenseArray arr, ArrayDescr dtype);
-
-    DenseArray accumulate(DenseArray arr, int axis);
-
-    DenseArray accumulate(DenseArray arr, int axis, ArrayDescr dtype);
-
-    DenseArray reduceat(DenseArray arr);
-
-    DenseArray reduceat(DenseArray arr, ArrayDescr dtype);
-
-    DenseArray reduceat(DenseArray arr, int axis);
-
-    DenseArray reduceat(DenseArray arr, int axis, ArrayDescr dtype);
-
-    DenseArray reduceat(DenseArray arr, int[] indices);
-
-    DenseArray reduceat(DenseArray arr, int[] indices, ArrayDescr dtype);
-
-    DenseArray reduceat(DenseArray arr, int axis, int... indices);
-
-    DenseArray reduceat(DenseArray arr, int axis, int[] indices, ArrayDescr dtype);
+    DenseArray reduceat(DenseArray arr, int axis, int[] indices, DenseArray out, ArrayDescr otype);
 
     DenseArray outer(DenseArray arr1, DenseArray arr2);
-
-    DenseArray outer(DenseArray arr1, DenseArray arr2, ArrayDescr dtype);
 }

@@ -504,10 +504,20 @@ public final class DenseArray implements Array<DenseArray> {
         return newstrides;
     }
 
+    /**
+     * Reshape an array.
+     * <p>
+     * This method corresponds to the NumPy function <CODE>PyArray_Reshape</CODE>.
+     */
     public DenseArray reshape(final int... newdims) {
         return reshape(Order.C, newdims);
     }
 
+    /**
+     * Returns a new array with the new shape from the data in the old array.
+     * <p>
+     * This method corresponds to the NumPy function <CODE>PyArray_Newshape</CODE>.
+     */
     public DenseArray reshape(final Order order, final int... newdims) {
         final Order fortran = chooseOrder(order);
 

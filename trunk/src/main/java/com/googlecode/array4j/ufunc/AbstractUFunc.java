@@ -171,90 +171,100 @@ public abstract class AbstractUFunc implements UFunc {
      * This function corresponds to the NumPy functions <CODE>ufunc_generic_call</CODE>
      * and <CODE>PyUFunc_GenericFunction</CODE>.
      */
-    public final void call(final DenseArray... args) {
+    public final DenseArray[] call(final DenseArray... args) {
         final UFuncLoop loop = new UFuncLoop(this, args);
-        loop.execute();
+        return loop.execute();
     }
 
-    public final DenseArray call(final ArrayDescr dtype, final DenseArray... args) {
-        // TODO create output array from dtype
-        // TODO can we have multiple output arrays here?
-        // TODO if dtype is null, choose some sensible dtype
+    private void genericReduction(final DenseArray arr, final int axis, final ArrayDescr otype) {
+        if (nin() != 2) {
+            throw new UnsupportedOperationException("only supported for binary functions");
+        }
+        if (nout() != 1) {
+            throw new UnsupportedOperationException("only supported for functions returning a single value");
+        }
+
+        /* Check to see if input is zero-dimensional */
+        if (arr.ndim() == 0) {
+            throw new IllegalArgumentException("cannot operate on a scalar");
+        }
+
+        /* Check to see that type (and otype) is not FLEXIBLE */
+        if (arr.isFlexible() || (otype != null && otype.type().isFlexible())) {
+            // TODO need another flexibility check here
+            throw new IllegalArgumentException("cannot perform operation with flexible type");
+        }
+
+        int newaxis = axis;
+        if (newaxis < 0) {
+            newaxis += arr.ndim();
+        }
+        if (newaxis < 0 || newaxis >= arr.ndim()) {
+            throw new IllegalArgumentException("axis not in array");
+        }
+
+//        if (otype == NULL && out != NULL) {
+//            otype = out->descr;
+//            Py_INCREF(otype);
+//        }
+
+        if (otype == null) {
+            /*
+             * For integer types --- make sure at least a long is used for add
+             * and multiply reduction --- to avoid overflow
+             */
+            ArrayType typenum = arr.dtype().type();
+            if (typenum.compareTo(ArrayType.FLOAT) < 0 && false) {
+                if (typenum.isBool()) {
+                    typenum = ArrayType.INT;
+                } else if (arr.dtype().itemSize() < 0) {
+                    if (typenum.isUnsigned()) {
+                        throw new UnsupportedOperationException();
+                    } else {
+                        typenum  = ArrayType.INT;
+                    }
+                }
+                // TODO need to assign this dtype to something
+//                otype = ArrayDescr.fromType(typenum);
+            }
+        }
+    }
+
+    public final DenseArray reduce(final DenseArray arr, final int axis, final DenseArray out, final ArrayDescr otype) {
+        genericReduction(arr, axis, otype);
         return null;
     }
 
-    public final DenseArray reduce(final DenseArray arr) {
-        return reduce(arr, 0, null);
+    /**
+     * This method corresponds to the NumPy function <CODE>PyUFunc_Accumulate</CODE>.
+     */
+    public final DenseArray accumulate(final DenseArray arr, final int axis, final DenseArray out,
+            final ArrayDescr otype) {
+        genericReduction(arr, axis, otype);
+        final UFuncReduce loop = new UFuncReduce();
+        // TODO swithc on loop method and do something
+        return out;
     }
 
-    public final DenseArray reduce(final DenseArray arr, final ArrayDescr dtype) {
-        return reduce(arr, 0, dtype);
-    }
-
-    public final DenseArray reduce(final DenseArray arr, final int axis) {
-        return accumulate(arr, axis, null);
-    }
-
-    public final DenseArray reduce(final DenseArray arr, final int axis, final ArrayDescr dtype) {
-        // TODO if dtype is null, make it the same as arr's dtype
+    public final DenseArray reduceat(final DenseArray arr, final int axis, final int[] indices, final DenseArray out,
+            final ArrayDescr otype) {
+        genericReduction(arr, axis, otype);
         return null;
     }
 
-    public final DenseArray accumulate(final DenseArray arr) {
-        return reduce(arr, 0, null);
-    }
-
-    public final DenseArray accumulate(final DenseArray arr, final ArrayDescr dtype) {
-        return accumulate(arr, 0, dtype);
-    }
-
-    public final DenseArray accumulate(final DenseArray arr, final int axis) {
-        return accumulate(arr, axis, null);
-    }
-
-    public final DenseArray accumulate(final DenseArray arr, final int axis, final ArrayDescr dtype) {
-        // TODO if dtype is null, make it the same as arr's dtype
-        return null;
-    }
-
-    public final DenseArray reduceat(final DenseArray arr) {
-        return reduceat(arr, 0, null, null);
-    }
-
-    public final DenseArray reduceat(final DenseArray arr, final ArrayDescr dtype) {
-        return reduceat(arr, 0, null, dtype);
-    }
-
-    public final DenseArray reduceat(final DenseArray arr, final int axis) {
-        return reduceat(arr, axis, null, null);
-    }
-
-    public final DenseArray reduceat(final DenseArray arr, final int axis, final ArrayDescr dtype) {
-        return reduceat(arr, axis, null, dtype);
-    }
-
-    public final DenseArray reduceat(final DenseArray arr, final int[] indices) {
-        return reduceat(arr, 0, indices, null);
-    }
-
-    public final DenseArray reduceat(final DenseArray arr, final int[] indices, final ArrayDescr dtype) {
-        return reduceat(arr, 0, indices, dtype);
-    }
-
-    public final DenseArray reduceat(final DenseArray arr, final int axis, final int... indices) {
-        return reduceat(arr, axis, indices, null);
-    }
-
-    public final DenseArray reduceat(final DenseArray arr, final int axis, final int[] indices, final ArrayDescr dtype) {
-        // TODO if dtype is null, make it the same as arr's dtype
-        return null;
-    }
-
+    /**
+     * This method corresponds to the function <CODE>ufunc_outer</CODE> in NumPy.
+     */
     public final DenseArray outer(final DenseArray arr1, final DenseArray arr2) {
-        return outer(arr1, arr2, arr1.dtype());
-    }
-
-    public final DenseArray outer(final DenseArray arr1, final DenseArray arr2, final ArrayDescr dtype) {
-        return null;
+        if (nin() != 2) {
+            throw new UnsupportedOperationException("outer product only supported for binary functions");
+        }
+        // TODO make sure this is a copy
+        final int[] newshape = new int[arr1.ndim() + arr2.ndim()];
+        System.arraycopy(arr1.shape(), 0, newshape, 0, arr1.ndim());
+        System.arraycopy(arr2.shape(), 0, newshape, arr1.ndim(), arr2.ndim());
+        final DenseArray arrnew = arr1.reshape(newshape);
+        // TODO find out if any ufunc outers return more than one array
+        return call(arrnew, arr2)[0];
     }
 }

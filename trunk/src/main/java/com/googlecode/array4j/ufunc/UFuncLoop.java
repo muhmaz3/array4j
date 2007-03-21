@@ -83,7 +83,7 @@ public final class UFuncLoop implements Iterable<MultiArrayIterator> {
         constructArrays(args);
     }
 
-    public void execute() {
+    public DenseArray[] execute() {
         if (fNotImplemented) {
             throw new UnsupportedOperationException();
         }
@@ -103,6 +103,8 @@ public final class UFuncLoop implements Iterable<MultiArrayIterator> {
         default:
             throw new AssertionError();
         }
+        // TODO return output part of mps array here
+        return null;
     }
 
     public Iterator<MultiArrayIterator> iterator() {
