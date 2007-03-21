@@ -42,8 +42,6 @@ public abstract class AbstractUFunc implements UFunc {
 
     private final Identity fIdentity;
 
-//    private final Object[] functions;
-
     private final Object[] fData;
 
 //    private final boolean checkReturn;

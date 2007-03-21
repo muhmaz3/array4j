@@ -20,8 +20,6 @@ public final class UFuncLoop implements Iterable<MultiArrayIterator> {
         BUFFER_UFUNCLOOP;
     }
 
-    private int fIndex;
-
     private final UFunc fUfunc;
 
     /* Buffers for the loop */
@@ -37,8 +35,10 @@ public final class UFuncLoop implements Iterable<MultiArrayIterator> {
     private boolean fFirst;
 
     private final int fBufSize;
-    
+
     private int fBufCnt;
+
+    private boolean fObj;
 
     private final int fErrorMask;
 
@@ -59,7 +59,6 @@ public final class UFuncLoop implements Iterable<MultiArrayIterator> {
     }
 
     public UFuncLoop(final UFunc ufunc, final DenseArray[] args, final Error extobj) {
-        this.fIndex = 0;
         this.fUfunc = ufunc;
         final int nargs = nargs();
         this.fBuffer = new ByteBuffer[nargs];
@@ -91,10 +90,9 @@ public final class UFuncLoop implements Iterable<MultiArrayIterator> {
 
         switch (fMeth) {
         case ONE_UFUNCLOOP:
-            // TODO need to check bufptr call
-//            fUfunc.call(functions, iterator().next().bufptr(), fSteps, funcdata);
-//            break;
-            throw new UnsupportedOperationException();
+            final ByteBuffer[] bufptr = iterator().next().bufptr();
+            fUfunc.call(functions, bufptr, new int[]{fBufCnt}, fSteps, funcdata);
+            break;
         case NOBUFFER_UFUNCLOOP:
             for (MultiArrayIterator it : this) {
                 fUfunc.call(functions, it.bufptr(), new int[]{fBufCnt}, fSteps, funcdata);
@@ -112,11 +110,6 @@ public final class UFuncLoop implements Iterable<MultiArrayIterator> {
     }
 
     private int constructArrays(final DenseArray[] args) {
-        // TODO if input and output arrays don't all have dtypes with the same
-        // kernel (i. e. the same type of underlying buffer), use some kind of
-        // heuristic to decide if we should copy the Java arrays or the C arrays
-        // and call Java code or C code
-
         /* Check number of arguments */
         final int nargs = args.length;
         final int nin = nin();
@@ -248,7 +241,7 @@ public final class UFuncLoop implements Iterable<MultiArrayIterator> {
          * buffers
          */
         fBufCnt = 0;
-//        obj = false
+        fObj = false;
 
         /* Determine looping method needed */
         fMeth = LoopMethod.NO_UFUNCLOOP;
@@ -264,10 +257,9 @@ public final class UFuncLoop implements Iterable<MultiArrayIterator> {
                 fMeth = LoopMethod.BUFFER_UFUNCLOOP;
                 fNeedBuffer[i] = true;
             }
-            // TODO enable this to support object arrays
-//            if (!obj && mps[i].dtype().type().equals(ArrayType.OBJECT)) {
-//                obj = true;
-//            }
+            if (!fObj && mps[i].dtype().type().equals(ArrayType.OBJECT)) {
+                fObj = true;
+            }
         }
 
         if (fMeth.equals(LoopMethod.NO_UFUNCLOOP)) {
@@ -379,24 +371,23 @@ public final class UFuncLoop implements Iterable<MultiArrayIterator> {
             final int scbufsize = 4 * 8;
             final int memsize = fBufSize * (cnt + cntcast) + scbufsize * (scnt + scntcast);
 
-//            if (fObj) {
-//            }
+            if (fObj) {
+                throw new UnsupportedOperationException();
+            }
 
             for (int i = 0; i < nargs; i++) {
                 if (fNeedBuffer[i]) {
                     continue;
                 }
-
                 // TODO need a few lines of code here
-
                 if (fCast[i] != null) {
                     final ArrayDescr descr = ArrayDescr.fromType(argtypes[i]);
                     if (fSteps[i] != 0) {
-//                        fSteps[i] = oldsize;
+                        // TODO more code needed here
+                        throw new UnsupportedOperationException();
                     }
                 } else {
-                    // TODO looks like we need bufptr and buffer
-                    fBuffer[i] = fBuffer[i];
+                    // TODO check if any code is needed here
                 }
                 if (false) {
                     if (argtypes[i].equals(ArrayType.OBJECT)) {
