@@ -1,6 +1,9 @@
 package com.googlecode.array4j.ufunc;
 
+import java.nio.ByteBuffer;
+
 import com.googlecode.array4j.ArrayDescr;
+import com.googlecode.array4j.ArrayFunctions;
 import com.googlecode.array4j.ArrayType;
 import com.googlecode.array4j.DenseArray;
 import com.googlecode.array4j.ScalarKind;
@@ -14,7 +17,9 @@ public interface UFunc {
 
     int nargs();
 
-    void selectTypes(ArrayType[] argtypes, ScalarKind[] scalars, Object typetup);
+    Object[] selectTypes(ArrayType[] argtypes, ScalarKind[] scalars, Object typetup);
+
+    void call(ArrayFunctions functions, ByteBuffer[] bufptr, int[] dimensions, int[] steps, Object funcdata);
 
     void call(DenseArray... args);
 

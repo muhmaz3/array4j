@@ -6,4 +6,6 @@ public interface ArrayFunctions {
     void setitem(Object obj, ByteBuffer data, DenseArray arr);
 
     void fill(ByteBuffer data, int length);
+
+    void add(ByteBuffer[] bufptr, int[] dimensions, int[] steps, Object funcdata);
 }

@@ -1,6 +1,9 @@
 package com.googlecode.array4j.ufunc;
 
+import java.nio.ByteBuffer;
+
 import com.googlecode.array4j.ArrayDescr;
+import com.googlecode.array4j.ArrayFunctions;
 import com.googlecode.array4j.ArrayType;
 import com.googlecode.array4j.DenseArray;
 import com.googlecode.array4j.ScalarKind;
@@ -20,9 +23,16 @@ public abstract class AbstractUFunc implements UFunc {
 
         private final ArrayType[] fout;
 
-        public Signature(final ArrayType[] in, final ArrayType[] out) {
+        private final ArrayFunctions funcs;
+
+        public Signature(final ArrayType[] in, final ArrayType[] out, final ArrayFunctions funcs) {
             this.fin = in;
             this.fout = out;
+            this.funcs = funcs;
+        }
+
+        public ArrayFunctions getFunctions() {
+            return funcs;
         }
     }
 
@@ -76,7 +86,7 @@ public abstract class AbstractUFunc implements UFunc {
     /**
      * Called to determine coercion. Can change argtypes.
      */
-    public final void selectTypes(final ArrayType[] argtypes, final ScalarKind[] scalars, final Object typetup) {
+    public final Object[] selectTypes(final ArrayType[] argtypes, final ScalarKind[] scalars, final Object typetup) {
         int userdef = -1;
         if (false) {
             // TODO check if ufunc has a user loop
@@ -130,8 +140,13 @@ public abstract class AbstractUFunc implements UFunc {
             argtypes[j] = selectedSig.fout[j - nin()];
         }
 
-        // TODO set data pointer based on selected signature
-        // TODO set function based on selected signature
+
+        final Object[] func = new Object[2];
+        // TODO need to choose between java functions and native functions here
+        func[0] = selectedSig.getFunctions();
+        // TODO set function data if there is any
+        func[1] = null;
+        return func;
     }
 
     private static ArrayType lowestType(final ArrayType intype) {
@@ -148,6 +163,9 @@ public abstract class AbstractUFunc implements UFunc {
             return intype;
         }
     }
+
+    public abstract void call(ArrayFunctions functions, ByteBuffer[] bufptr, int[] dimensions, int[] steps,
+            Object funcdata);
 
     /**
      * Generic ufunc call.

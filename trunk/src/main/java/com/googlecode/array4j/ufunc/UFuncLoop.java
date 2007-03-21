@@ -5,10 +5,12 @@ import java.util.Arrays;
 import java.util.Iterator;
 
 import com.googlecode.array4j.ArrayDescr;
+import com.googlecode.array4j.ArrayFunctions;
 import com.googlecode.array4j.ArrayType;
 import com.googlecode.array4j.DenseArray;
 import com.googlecode.array4j.Flags;
 import com.googlecode.array4j.ScalarKind;
+import com.googlecode.array4j.kernel.Interface;
 
 public final class UFuncLoop implements Iterable<MultiArrayIterator> {
     private enum LoopMethod {
@@ -35,6 +37,8 @@ public final class UFuncLoop implements Iterable<MultiArrayIterator> {
     private boolean fFirst;
 
     private final int fBufSize;
+    
+    private int fBufCnt;
 
     private final int fErrorMask;
 
@@ -45,6 +49,10 @@ public final class UFuncLoop implements Iterable<MultiArrayIterator> {
     private final int[] fSteps;
 
     private LoopMethod fMeth;
+
+    private ArrayFunctions functions;
+
+    private Object funcdata;
 
     public UFuncLoop(final UFunc ufunc, final DenseArray[] args) {
         this(ufunc, args, Error.DEFAULT_ERROR);
@@ -83,11 +91,13 @@ public final class UFuncLoop implements Iterable<MultiArrayIterator> {
 
         switch (fMeth) {
         case ONE_UFUNCLOOP:
+            // TODO need to check bufptr call
+//            fUfunc.call(functions, iterator().next().bufptr(), fSteps, funcdata);
+//            break;
             throw new UnsupportedOperationException();
         case NOBUFFER_UFUNCLOOP:
             for (MultiArrayIterator it : this) {
-                // TODO update bufptr from iter
-                // TODO call function
+                fUfunc.call(functions, it.bufptr(), new int[]{fBufCnt}, fSteps, funcdata);
             }
             break;
         case BUFFER_UFUNCLOOP:
@@ -159,7 +169,11 @@ public final class UFuncLoop implements Iterable<MultiArrayIterator> {
 
         /* Select an appropriate function for these argument types. */
         final Object typetup = null;
-        fUfunc.selectTypes(argtypes, scalars, typetup);
+        // TODO selectTypes needs to know the kernel type of the arguments in
+        // order to select the right implementation of ArrayFunctions
+        final Object[] func = fUfunc.selectTypes(argtypes, scalars, typetup);
+        functions = (ArrayFunctions) func[0];
+        funcdata = func[1];
 
         if (argtypes[1].equals(ArrayType.OBJECT) && nin() == 2 && nout() == 1) {
             throw new UnsupportedOperationException();
@@ -199,6 +213,7 @@ public final class UFuncLoop implements Iterable<MultiArrayIterator> {
 //                PyArray_New(PyTypeObject *subtype, int nd, intp *dims, int type_num,
 //                        intp *strides, void *data, int itemsize, int flags,
 //                        PyObject *obj)
+                throw new UnsupportedOperationException();
             } else {
                 /*
                  * reset types for outputs that are equivalent -- no sense
@@ -232,7 +247,7 @@ public final class UFuncLoop implements Iterable<MultiArrayIterator> {
          * If any of different type, or misaligned or swapped then must use
          * buffers
          */
-//        fBufCnt = 0;
+        fBufCnt = 0;
 //        obj = false
 
         /* Determine looping method needed */
@@ -244,7 +259,8 @@ public final class UFuncLoop implements Iterable<MultiArrayIterator> {
 
         for (int i = 0; i < nargs; i++) {
             fNeedBuffer[i] = false;
-            if (!argtypes[i].equals(mps[i].dtype().type()) || !mps[i].isBehavedRo()) {
+            if (!argtypes[i].equals(mps[i].dtype().type()) || !mps[i].isBehavedRo()
+                    || !mps[i].dtype().kernelType().equals(Interface.defaultKernelType())) {
                 fMeth = LoopMethod.BUFFER_UFUNCLOOP;
                 fNeedBuffer[i] = true;
             }
@@ -279,8 +295,8 @@ public final class UFuncLoop implements Iterable<MultiArrayIterator> {
         if (!fMeth.equals(LoopMethod.ONE_UFUNCLOOP)) {
             final int ldim = mit.optimizeAxis();
             final int maxdim = mit.shape(ldim);
-            // TODO add these fields
-//            fBufCnt = maxdim;
+            fBufCnt = maxdim;
+            // TODO add this field
 //            fLastDim = ldim;
 
             /* Set the steps to the strides in longest dimension */
@@ -399,7 +415,7 @@ public final class UFuncLoop implements Iterable<MultiArrayIterator> {
             final int size = mps[i].size();
             /*
              * if the type of mps[i] is equivalent to argtypes[i] then set
-             * arg_types[i] equal to type of mps[i] for later checking....
+             * argtypes[i] equal to type of mps[i] for later checking....
              */
             if (!mps[i].dtype().type().equals(argtypes[i])) {
                 final ArrayDescr ntype = mps[i].dtype();

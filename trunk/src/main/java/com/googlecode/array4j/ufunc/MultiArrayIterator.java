@@ -1,5 +1,6 @@
 package com.googlecode.array4j.ufunc;
 
+import java.nio.ByteBuffer;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -35,6 +36,14 @@ public final class MultiArrayIterator implements Iterable<MultiArrayIterator>, I
         for (int i = 0; i < arrs.length; i++) {
             createArrayIterator(i, arrs[i]);
         }
+    }
+
+    public ByteBuffer[] bufptr() {
+        final ByteBuffer[] bufptr = new ByteBuffer[fIters.length];
+        for (int i = 0; i < fIters.length; i++) {
+            bufptr[i] = fIters[i].getData();
+        }
+        return bufptr;
     }
 
     public boolean hasNext() {

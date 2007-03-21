@@ -3,6 +3,8 @@ package com.googlecode.array4j.kernel;
 import java.nio.ByteBuffer;
 
 public final class Interface {
+    private static final KernelType DEFAULT_KERNEL_TYPE;
+
     private static final Kernel DEFAULT_KERNEL;
 
     private static final Kernel JAVA_KERNEL;
@@ -24,20 +26,26 @@ public final class Interface {
         }
         NATIVE_KERNEL = nativeKernel;
         if (nativeOk) {
+            DEFAULT_KERNEL_TYPE = KernelType.NATIVE;
             DEFAULT_KERNEL = NATIVE_KERNEL;
         } else {
+            DEFAULT_KERNEL_TYPE = KernelType.JAVA;
             DEFAULT_KERNEL = JAVA_KERNEL;
         }
     }
 
-    public static Kernel kernel() {
+    /** Returns the default kernel. */
+    public static Kernel defaultKernel() {
         return DEFAULT_KERNEL;
+    }
+
+    /** Returns the default kernel type. */
+    public static KernelType defaultKernelType() {
+        return DEFAULT_KERNEL_TYPE;
     }
 
     public static Kernel kernel(final KernelType kernelType) {
         switch (kernelType) {
-        case DEFAULT:
-            return DEFAULT_KERNEL;
         case JAVA:
             return JAVA_KERNEL;
         case NATIVE:

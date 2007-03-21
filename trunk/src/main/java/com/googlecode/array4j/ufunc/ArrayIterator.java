@@ -1,5 +1,6 @@
 package com.googlecode.array4j.ufunc;
 
+import java.nio.ByteBuffer;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -72,6 +73,10 @@ public final class ArrayIterator implements Iterator<ArrayIterator> {
         reset();
     }
 
+    public ByteBuffer getData() {
+        return ao.getDataOffset(dataptr);
+    }
+
     public int size() {
         return size;
     }
@@ -114,6 +119,9 @@ public final class ArrayIterator implements Iterator<ArrayIterator> {
     public ArrayIterator next() {
         if (index == size) {
             throw new NoSuchElementException();
+        } else if (index == 0) {
+            index++;
+            return this;
         }
         index++;
         if (ndm1 == 0) {

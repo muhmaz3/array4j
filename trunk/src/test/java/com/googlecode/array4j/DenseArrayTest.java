@@ -65,9 +65,17 @@ public final class DenseArrayTest {
     @Test
     public void testAddEquals() {
         final DenseArray arr1 = DoubleArray.arange(4).reshape(2, 2);
-        final DenseArray arr2 = DoubleArray.arange(2);
         assertTrue(arr1.isWriteable());
+        assertEquals(0.0, arr1.getDouble(0, 0));
+        assertEquals(1.0, arr1.getDouble(0, 1));
+        assertEquals(2.0, arr1.getDouble(1, 0));
+        assertEquals(3.0, arr1.getDouble(1, 1));
+
+        final DenseArray arr2 = DoubleArray.arange(2);
         assertTrue(arr2.isWriteable());
+        assertEquals(0.0, arr2.getDouble(0));
+        assertEquals(1.0, arr2.getDouble(1));
+
         arr1.addEquals(arr2);
         assertEquals(0.0, arr1.getDouble(0, 0));
         assertEquals(2.0, arr1.getDouble(0, 1));

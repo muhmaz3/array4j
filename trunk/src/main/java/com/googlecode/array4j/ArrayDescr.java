@@ -15,7 +15,7 @@ public final class ArrayDescr {
     static {
         final Map<ArrayType, ArrayDescr> descrs = new HashMap<ArrayType, ArrayDescr>();
         for (ArrayType type : ArrayType.values()) {
-            descrs.put(type, new ArrayDescr(type, KernelType.DEFAULT));
+            descrs.put(type, new ArrayDescr(type, Interface.defaultKernelType()));
         }
         BUILTIN_DESCRS = Collections.unmodifiableMap(descrs);
     }
@@ -101,7 +101,7 @@ public final class ArrayDescr {
     }
 
     public ArrayDescr(final Iterable<Field> fields, final boolean align) {
-        this(fields, align, KernelType.DEFAULT);
+        this(fields, align, Interface.defaultKernelType());
     }
 
     public ArrayDescr(final Iterable<Field> fields, final boolean align, final KernelType kernelType) {
@@ -358,5 +358,9 @@ public final class ArrayDescr {
         final ArrayType totype = to.type();
         // TODO Check String and Unicode more closely
         return fromtype.canCastSafely(totype);
+    }
+
+    public KernelType kernelType() {
+        return fKernelType;
     }
 }

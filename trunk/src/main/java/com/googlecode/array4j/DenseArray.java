@@ -310,8 +310,8 @@ public final class DenseArray implements Array<DenseArray> {
             ostrides = multi.getIterator(0).strides(maxaxis);
             istrides = multi.getIterator(1).strides(maxaxis);
         }
-        buffers[0] = Interface.kernel().createBuffer(n * delsize);
-        buffers[1] = Interface.kernel().createBuffer(n * selsize);
+        buffers[0] = Interface.defaultKernel().createBuffer(n * delsize);
+        buffers[1] = Interface.defaultKernel().createBuffer(n * selsize);
 
         for (MultiArrayIterator nextMulti : multi) {
             stridedBufferedCast();
@@ -951,6 +951,12 @@ public final class DenseArray implements Array<DenseArray> {
             fortran = Flags.EMPTY;
         }
         return fortran.getValue();
+    }
+
+    @Override
+    public String toString() {
+        // TODO look at arrayprint.py in NumPy for some ideas
+        throw new UnsupportedOperationException();
     }
 
     public double getDouble(final int... indexes) {
