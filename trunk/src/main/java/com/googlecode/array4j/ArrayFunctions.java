@@ -8,4 +8,8 @@ public interface ArrayFunctions {
     void fill(ByteBuffer data, int length);
 
     void add(ByteBuffer[] bufptr, int[] dimensions, int[] steps, Object funcdata);
+
+    void multiply(ByteBuffer[] bufptr, int[] dimensions, int[] steps, Object funcdata);
+
+    void square(ByteBuffer[] bufptr, int[] dimensions, int[] steps, Object funcdata);
 }

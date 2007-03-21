@@ -20,4 +20,8 @@ public interface Array<E extends Array> {
     E get(final Object... indexes);
 
     E addEquals(Array<?> arr);
+
+    E multiplyEquals(Array<?> arr);
+
+    E squareEquals();
 }

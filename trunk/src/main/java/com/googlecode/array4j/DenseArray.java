@@ -927,6 +927,19 @@ public final class DenseArray implements Array<DenseArray> {
         return this;
     }
 
+    public DenseArray multiplyEquals(final Array<?> arr) {
+        if (!(arr instanceof DenseArray)) {
+            throw new UnsupportedOperationException();
+        }
+        UFuncs.MULTIPLY.call(this, (DenseArray) arr, this);
+        return this;
+    }
+
+    public DenseArray squareEquals() {
+        UFuncs.SQUARE.call(this, this);
+        return this;
+    }
+
     private Order chooseOrder(final Order order) {
         if (order == Order.ANY) {
             if (isFortran()) {

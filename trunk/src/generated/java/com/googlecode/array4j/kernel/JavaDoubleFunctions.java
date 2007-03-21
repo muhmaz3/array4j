@@ -50,4 +50,45 @@ public final class JavaDoubleFunctions implements ArrayFunctions {
             op.position(oppos + os);
         }
     }
+
+    public void multiply(final ByteBuffer[] bufptr, final int[] dimensions, final int[] steps, final Object funcdata) {
+        final int is1 = steps[0];
+        final int is2 = steps[1];
+        final int os = steps[2];
+        final int n = dimensions[0];
+        final ByteBuffer i1 = bufptr[0];
+        final ByteBuffer i2 = bufptr[1];
+        final ByteBuffer op = bufptr[2];
+
+        for (int i = 0; i < n; i++) {
+            final int i1pos = i1.position();
+            final double d1 = i1.getDouble();
+            i1.position(i1pos + is1);
+
+            final int i2pos = i2.position();
+            final double d2 = i2.getDouble();
+            i2.position(i2pos + is2);
+
+            final int oppos = op.position();
+            op.putDouble(d1 * d2);
+            op.position(oppos + os);
+        }
+    }
+
+    public void square(final ByteBuffer[] bufptr, final int[] dimensions, final int[] steps, final Object funcdata) {
+        final int is1 = steps[0];
+        final int os = steps[1];
+        final int n = dimensions[0];
+        final ByteBuffer i1 = bufptr[0];
+        final ByteBuffer op = bufptr[1];
+
+        for (int i = 0; i < n; i++) {
+            final int i1pos = i1.position();
+            final double d1 = i1.getDouble();
+            i1.position(i1pos + is1);
+            final int oppos = op.position();
+            op.putDouble(d1 * d1);
+            op.position(oppos + os);
+        }
+    }
 }

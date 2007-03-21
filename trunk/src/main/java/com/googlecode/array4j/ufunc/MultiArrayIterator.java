@@ -117,7 +117,7 @@ public final class MultiArrayIterator implements Iterable<MultiArrayIterator>, I
         for (int i = 0; i < nd; i++) {
             fDimensions[i] = 1;
             for (int j = 0; j < numiter; j++) {
-                final ArrayIterator it = fIters[i];
+                final ArrayIterator it = fIters[j];
                 // This prepends 1 to shapes not already equal to nd
                 final int k = i + it.ndim() - nd;
                 if (k >= 0) {

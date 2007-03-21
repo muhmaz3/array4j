@@ -64,6 +64,14 @@ public abstract class AbstractUFunc implements UFunc {
         // type of elements in data
         this.fData = data;
         this.fTypes = signatures;
+        for (Signature sig : signatures) {
+            if (sig.fin.length != nin) {
+                throw new AssertionError();
+            }
+            if (sig.fout.length != nout) {
+                throw new AssertionError();
+            }
+        }
         this.fNin = nin;
         this.fNout = nout;
         this.fIdentity = identity;
@@ -259,7 +267,6 @@ public abstract class AbstractUFunc implements UFunc {
         if (nin() != 2) {
             throw new UnsupportedOperationException("outer product only supported for binary functions");
         }
-        // TODO make sure this is a copy
         final int[] newshape = new int[arr1.ndim() + arr2.ndim()];
         System.arraycopy(arr1.shape(), 0, newshape, 0, arr1.ndim());
         System.arraycopy(arr2.shape(), 0, newshape, arr1.ndim(), arr2.ndim());

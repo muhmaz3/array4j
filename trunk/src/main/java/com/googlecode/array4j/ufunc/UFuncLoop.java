@@ -91,7 +91,7 @@ public final class UFuncLoop implements Iterable<MultiArrayIterator> {
         switch (fMeth) {
         case ONE_UFUNCLOOP:
             final ByteBuffer[] bufptr = iterator().next().bufptr();
-            fUfunc.call(functions, bufptr, new int[]{fBufCnt}, fSteps, funcdata);
+            fUfunc.call(functions, bufptr, new int[]{mit.size()}, fSteps, funcdata);
             break;
         case NOBUFFER_UFUNCLOOP:
             for (MultiArrayIterator it : this) {
