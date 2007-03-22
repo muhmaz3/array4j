@@ -28,4 +28,12 @@ public interface Array<E extends Array> {
     E multiplyEquals(Array<?> arr);
 
     E squareEquals();
+
+    E sqrtEquals();
+
+    E ldexpEquals(Array<?> arr);
+
+    E logEquals();
+
+    E expEquals();
 }

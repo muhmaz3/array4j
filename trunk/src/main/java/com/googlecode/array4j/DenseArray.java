@@ -953,6 +953,16 @@ public final class DenseArray implements Array<DenseArray> {
         return this;
     }
 
+    public DenseArray logEquals() {
+        UFuncs.LOG.call(this, this);
+        return this;
+    }
+
+    public DenseArray expEquals() {
+        UFuncs.EXP.call(this, this);
+        return this;
+    }
+
     private Order chooseOrder(final Order order) {
         if (order == Order.ANY) {
             if (isFortran()) {

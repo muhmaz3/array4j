@@ -41,4 +41,10 @@ public final class JavaIntegerFunctions implements ArrayFunctions {
 
     public void sqrt(final ByteBuffer[] bufptr, final int[] dimensions, final int[] steps, final Object funcdata) {
     }
+
+    public void log(final ByteBuffer[] bufptr, final int[] dimensions, final int[] steps, final Object funcdata) {
+    }
+
+    public void exp(final ByteBuffer[] bufptr, final int[] dimensions, final int[] steps, final Object funcdata) {
+    }
 }

@@ -7,7 +7,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 public final class DenseArrayTest {
@@ -131,5 +130,27 @@ public final class DenseArrayTest {
         assertEquals(0.0, arr1.getDouble(0));
         assertEquals(2.0, arr1.getDouble(1));
         assertEquals(8.0, arr1.getDouble(2));
+    }
+
+    @Test
+    public void testLogEquals() {
+        final DenseArray arr1 = DoubleArray.arange(4).reshape(2, 2);
+        assertTrue(arr1.isWriteable());
+        arr1.logEquals();
+        assertEquals(Math.log(0.0), arr1.getDouble(0, 0));
+        assertEquals(Math.log(1.0), arr1.getDouble(0, 1));
+        assertEquals(Math.log(2.0), arr1.getDouble(1, 0));
+        assertEquals(Math.log(3.0), arr1.getDouble(1, 1));
+    }
+
+    @Test
+    public void testExpEquals() {
+        final DenseArray arr1 = DoubleArray.arange(4).reshape(2, 2);
+        assertTrue(arr1.isWriteable());
+        arr1.expEquals();
+        assertEquals(Math.exp(0.0), arr1.getDouble(0, 0));
+        assertEquals(Math.exp(1.0), arr1.getDouble(0, 1));
+        assertEquals(Math.exp(2.0), arr1.getDouble(1, 0));
+        assertEquals(Math.exp(3.0), arr1.getDouble(1, 1));
     }
 }

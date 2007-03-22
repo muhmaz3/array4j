@@ -11,6 +11,10 @@ public final class UFuncs {
 
     public static final UFunc LDEXP = new LdExpUFunc();
 
+    public static final UFunc LOG = new LogUFunc();
+
+    public static final UFunc EXP = new ExpUFunc();
+
     private UFuncs() {
     }
 }
