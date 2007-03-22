@@ -107,13 +107,18 @@ public final class DenseArrayTest {
         assertEquals(9.0, arr1.getDouble(1, 1));
     }
 
-//    @Test
-//    public void testAdd() {
-//        // arr1 and arr2 have to be declared with <?> for add to work
-//        final DoubleArray<?> arr1 = DenseDoubleArray.arange(4).reshape(2, 2);
-//        final DoubleArray<?> arr2 = DenseDoubleArray.arange(2);
-//        // TODO allowing this is probably unsafe, since the cast is checked
-//        // against the erased type
-//        final ByteArray<?> arr3 = arr1.add(arr2);
-//    }
+    @Test
+    public void testLdExpEquals() {
+        final DenseArray arr1 = DoubleArray.arange(3.0);
+        assertTrue(arr1.isWriteable());
+        final DenseArray arr2 = IntegerArray.arange(3);
+        assertTrue(arr2.isWriteable());
+        assertEquals(0, arr2.getInteger(0));
+        assertEquals(1, arr2.getInteger(1));
+        assertEquals(2, arr2.getInteger(2));
+        arr1.ldexpEquals(arr2);
+        assertEquals(0.0, arr1.getDouble(0));
+        assertEquals(2.0, arr1.getDouble(1));
+        assertEquals(8.0, arr1.getDouble(2));
+    }
 }

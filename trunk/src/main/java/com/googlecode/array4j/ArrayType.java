@@ -29,7 +29,7 @@ public enum ArrayType {
     },
     INT(ArrayKind.SIGNED, ByteOrder.NATIVE, 4) {
         public ArrayFunctions getArrayFunctions(final KernelType kernelType) {
-            return null;
+            return Interface.kernel(kernelType).getIntegerFunctions();
         }
     },
     LONG(ArrayKind.SIGNED, ByteOrder.NATIVE, 8) {

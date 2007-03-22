@@ -940,6 +940,14 @@ public final class DenseArray implements Array<DenseArray> {
         return this;
     }
 
+    public DenseArray ldexpEquals(final Array<?> arr) {
+        if (!(arr instanceof DenseArray)) {
+            throw new UnsupportedOperationException();
+        }
+        UFuncs.LDEXP.call(this, (DenseArray) arr, this);
+        return this;
+    }
+
     private Order chooseOrder(final Order order) {
         if (order == Order.ANY) {
             if (isFortran()) {
@@ -985,5 +993,10 @@ public final class DenseArray implements Array<DenseArray> {
     public double getDouble(final int... indexes) {
         // TODO byte swapping and all that
         return getData().getDouble(getOffsetFromIndexes(indexes));
+    }
+
+    public int getInteger(final int... indexes) {
+        // TODO byte swapping and all that
+        return getData().getInt(getOffsetFromIndexes(indexes));
     }
 }

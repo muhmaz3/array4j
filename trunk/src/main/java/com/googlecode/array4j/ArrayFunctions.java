@@ -12,4 +12,6 @@ public interface ArrayFunctions {
     void multiply(ByteBuffer[] bufptr, int[] dimensions, int[] steps, Object funcdata);
 
     void square(ByteBuffer[] bufptr, int[] dimensions, int[] steps, Object funcdata);
+
+    void ldexp(ByteBuffer[] bufptr, int[] dimensions, int[] steps, Object funcdata);
 }

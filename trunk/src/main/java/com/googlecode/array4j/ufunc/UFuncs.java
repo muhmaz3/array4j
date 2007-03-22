@@ -7,6 +7,8 @@ public final class UFuncs {
 
     public static final UFunc SQUARE = new SquareUFunc();
 
+    public static final UFunc LDEXP = new LdExpUFunc();
+
     private UFuncs() {
     }
 }

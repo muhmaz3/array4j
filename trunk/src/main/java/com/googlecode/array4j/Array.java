@@ -19,6 +19,10 @@ public interface Array<E extends Array> {
 
     E get(final Object... indexes);
 
+    double getDouble(int... indexes);
+
+    int getInteger(int... indexes);
+
     E addEquals(Array<?> arr);
 
     E multiplyEquals(Array<?> arr);

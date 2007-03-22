@@ -8,9 +8,7 @@ import com.googlecode.array4j.ArrayType;
 import com.googlecode.array4j.DenseArray;
 import com.googlecode.array4j.ScalarKind;
 
-// TODO probably need extra functions for ufuncs that have multiple output arguments
-
-// TODO allow all functions to specify extobj and sig arguments
+// TODO allow functions to specify extobj and sig arguments
 
 public interface UFunc {
     int nin();
