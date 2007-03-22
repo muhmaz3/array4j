@@ -38,4 +38,7 @@ public final class JavaIntegerFunctions implements ArrayFunctions {
 
     public void ldexp(final ByteBuffer[] bufptr, final int[] dimensions, final int[] steps, final Object funcdata) {
     }
+
+    public void sqrt(final ByteBuffer[] bufptr, final int[] dimensions, final int[] steps, final Object funcdata) {
+    }
 }

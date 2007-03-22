@@ -108,6 +108,17 @@ public final class DenseArrayTest {
     }
 
     @Test
+    public void testSqrtEquals() {
+        final DenseArray arr1 = DoubleArray.arange(4).reshape(2, 2);
+        assertTrue(arr1.isWriteable());
+        arr1.sqrtEquals();
+        assertEquals(0.0, arr1.getDouble(0, 0));
+        assertEquals(1.0, arr1.getDouble(0, 1));
+        assertEquals(Math.sqrt(2.0), arr1.getDouble(1, 0));
+        assertEquals(Math.sqrt(3.0), arr1.getDouble(1, 1));
+    }
+
+    @Test
     public void testLdExpEquals() {
         final DenseArray arr1 = DoubleArray.arange(3.0);
         assertTrue(arr1.isWriteable());

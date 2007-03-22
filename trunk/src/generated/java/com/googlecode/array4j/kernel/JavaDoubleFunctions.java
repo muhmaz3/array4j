@@ -115,4 +115,21 @@ public final class JavaDoubleFunctions implements ArrayFunctions {
             op.position(oppos + os);
         }
     }
+
+    public void sqrt(final ByteBuffer[] bufptr, final int[] dimensions, final int[] steps, final Object funcdata) {
+        final int is1 = steps[0];
+        final int os = steps[1];
+        final int n = dimensions[0];
+        final ByteBuffer i1 = bufptr[0];
+        final ByteBuffer op = bufptr[1];
+
+        for (int i = 0; i < n; i++) {
+            final int i1pos = i1.position();
+            final double x = i1.getDouble();
+            i1.position(i1pos + is1);
+            final int oppos = op.position();
+            op.putDouble(Math.sqrt(x));
+            op.position(oppos + os);
+        }
+    }
 }

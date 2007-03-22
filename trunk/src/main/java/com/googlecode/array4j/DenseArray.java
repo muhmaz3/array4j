@@ -940,6 +940,11 @@ public final class DenseArray implements Array<DenseArray> {
         return this;
     }
 
+    public DenseArray sqrtEquals() {
+        UFuncs.SQRT.call(this, this);
+        return this;
+    }
+
     public DenseArray ldexpEquals(final Array<?> arr) {
         if (!(arr instanceof DenseArray)) {
             throw new UnsupportedOperationException();
