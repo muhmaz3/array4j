@@ -1,6 +1,7 @@
 package com.googlecode.array4j.kernel;
 
 import java.nio.ByteBuffer;
+import java.nio.DoubleBuffer;
 import java.nio.IntBuffer;
 
 import com.googlecode.array4j.ArrayFunctions;
@@ -16,6 +17,10 @@ public final class JavaIntegerFunctions implements ArrayFunctions {
         for (int i = 2; i < length; i++) {
             buffer.put(start + i * delta);
         }
+    }
+
+    public double getitemDouble(final ByteBuffer data, final DenseArray arr) {
+        throw new UnsupportedOperationException();
     }
 
     public void setitem(final Object obj, final ByteBuffer data, final DenseArray arr) {

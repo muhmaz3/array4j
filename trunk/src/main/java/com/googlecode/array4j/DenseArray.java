@@ -1006,12 +1006,12 @@ public final class DenseArray implements Array<DenseArray> {
     }
 
     public double getDouble(final int... indexes) {
-        // TODO byte swapping and all that
-        return getData().getDouble(getOffsetFromIndexes(indexes));
+        final ArrayFunctions funcs = dtype().getArrayFunctions();
+        return funcs.getitemDouble(getDataOffset(getOffsetFromIndexes(indexes)), this);
     }
 
     public int getInteger(final int... indexes) {
-        // TODO byte swapping and all that
+        // TODO use getitem here
         return getData().getInt(getOffsetFromIndexes(indexes));
     }
 }

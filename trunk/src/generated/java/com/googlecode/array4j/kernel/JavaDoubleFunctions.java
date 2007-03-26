@@ -18,6 +18,12 @@ public final class JavaDoubleFunctions implements ArrayFunctions {
         }
     }
 
+    public double getitemDouble(final ByteBuffer data, final DenseArray arr) {
+        // TODO byte swapping, etc
+        final DoubleBuffer buffer = data.asDoubleBuffer();
+        return buffer.get();
+    }
+
     public void setitem(final Object obj, final ByteBuffer data, final DenseArray arr) {
         final DoubleBuffer buffer = data.asDoubleBuffer();
         if (obj instanceof Number) {
