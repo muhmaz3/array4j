@@ -117,6 +117,8 @@
 	<Files>
 		<File 
 			RelativePath=".\array4j.cpp"/>
+		<File 
+			RelativePath="..\..\generated\native\com_googlecode_array4j_kernel_NativeDoubleFunctions.h"/>
 	</Files>
 </VisualStudioProject>
 

@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 public final class DenseArrayTest {
@@ -81,6 +82,38 @@ public final class DenseArrayTest {
         assertEquals(2.0, arr1.getDouble(0, 1));
         assertEquals(2.0, arr1.getDouble(1, 0));
         assertEquals(4.0, arr1.getDouble(1, 1));
+    }
+
+    @Ignore
+    public void testAddEqualsSpeed() {
+        final int nvals = 96200000;
+        final int iters = 20;
+        long start;
+        long delta;
+
+        // benchmark
+        double[] vals = new double[nvals];
+        for (int i = 0; i < vals.length; i++) {
+            vals[i] = i;
+        }
+        start = System.currentTimeMillis();
+        for (int j = 0; j < iters; j++) {
+            for (int i = 0; i < vals.length; i++) {
+                vals[i] += vals[i];
+            }
+        }
+        delta = System.currentTimeMillis() - start;
+        System.out.println(delta / 1000.0 + " seconds");
+        vals = null;
+        System.gc();
+
+        final DenseArray arr1 = DoubleArray.arange(nvals);
+        start = System.currentTimeMillis();
+        for (int i = 0; i < iters; i++) {
+            arr1.addEquals(arr1);
+        }
+        delta = System.currentTimeMillis() - start;
+        System.out.println(delta / 1000.0 + " seconds");
     }
 
     @Test
