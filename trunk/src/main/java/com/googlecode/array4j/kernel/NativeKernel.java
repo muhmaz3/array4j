@@ -10,6 +10,10 @@ public final class NativeKernel implements Kernel {
         System.loadLibrary("array4j");
     }
 
+    private static final ArrayFunctions INTEGER_FUNCTIONS = null;
+
+    private static final ArrayFunctions DOUBLE_FUNCTIONS = new NativeDoubleFunctions();
+
     public static void init() {
     }
 
@@ -20,10 +24,10 @@ public final class NativeKernel implements Kernel {
     }
 
     public ArrayFunctions getIntegerFunctions() {
-        throw new UnsupportedOperationException();
+        return INTEGER_FUNCTIONS;
     }
 
     public ArrayFunctions getDoubleFunctions() {
-        throw new UnsupportedOperationException();
+        return DOUBLE_FUNCTIONS;
     }
 }
