@@ -26,17 +26,25 @@ public final class NativeDoubleFunctions implements ArrayFunctions {
 
     private native void setitemDouble(final double value, final ByteBuffer data, final int offset);
 
-    public void add(final ByteBuffer[] bufptr, final int[] dimensions, final int[] steps, final Object funcdata) {
+    private static int[] getOffsets(final ByteBuffer[] bufptr) {
         final int[] offsets = new int[bufptr.length];
         for (int i = 0; i < offsets.length; i++) {
             offsets[i] = bufptr[i].position();
         }
-        add(bufptr, offsets, dimensions, steps);
+        return offsets;
+    }
+
+    public void add(final ByteBuffer[] bufptr, final int[] dimensions, final int[] steps, final Object funcdata) {
+        add(bufptr, getOffsets(bufptr), dimensions, steps);
     }
 
     private native void add(ByteBuffer bufptr[], int[] offsets, int[] dimensions, int[] steps);
 
-    public native void multiply(ByteBuffer[] bufptr, int[] dimensions, int[] steps, Object funcdata);
+    public void multiply(final ByteBuffer[] bufptr, final int[] dimensions, final int[] steps, final Object funcdata) {
+        multiply(bufptr, getOffsets(bufptr), dimensions, steps);
+    }
+
+    private native void multiply(ByteBuffer bufptr[], int[] offsets, int[] dimensions, int[] steps);
 
     public native void square(ByteBuffer[] bufptr, int[] dimensions, int[] steps, final Object funcdata);
 
