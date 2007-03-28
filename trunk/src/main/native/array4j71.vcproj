@@ -127,13 +127,22 @@
 			<File
 				RelativePath=".\array4j.cpp">
 			</File>
+			<File
+				RelativePath=".\fftpack.c">
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
+				RelativePath="..\..\generated\native\com_googlecode_array4j_fft_FFT.h">
+			</File>
+			<File
 				RelativePath="..\..\generated\native\com_googlecode_array4j_kernel_NativeDoubleFunctions.h">
+			</File>
+			<File
+				RelativePath=".\fftpack.h">
 			</File>
 		</Filter>
 		<Filter

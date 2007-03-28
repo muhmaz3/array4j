@@ -1,6 +1,7 @@
 #include "com_googlecode_array4j_kernel_NativeDoubleFunctions.h"
+#include "com_googlecode_array4j_fft_FFT.h"
 
-#include <iostream>
+#include "fftpack.h"
 
 JNIEXPORT void JNICALL Java_com_googlecode_array4j_kernel_NativeDoubleFunctions_fill(JNIEnv* env, jobject, jobject data, jint length) {
     jdouble* const buffer = (jdouble*) env->GetDirectBufferAddress(data);
@@ -104,4 +105,21 @@ JNIEXPORT void JNICALL Java_com_googlecode_array4j_kernel_NativeDoubleFunctions_
     for (register jint i=0; i < n; i++, i1 += is1, i2 += is2, op += os) {
         *((jdouble *)op) = *((jdouble *)i1) * *((jdouble *)i2);
     }
+}
+
+JNIEXPORT void JNICALL Java_com_googlecode_array4j_fft_FFT_cfftf(JNIEnv* env, jclass, jint n, jobject op1, jobject op2) {
+    jdouble* const c = (jdouble*) env->GetDirectBufferAddress(op1);
+    jdouble* const wsave = (jdouble*) env->GetDirectBufferAddress(op2);
+    if (op1 == NULL || op2 == NULL) {
+        env->FatalError("invalid buffer");
+    }
+    cfftf(n, c, wsave);
+}
+
+JNIEXPORT void JNICALL Java_com_googlecode_array4j_fft_FFT_cffti(JNIEnv* env, jclass, jint n, jobject op1) {
+    jdouble* const wsave = (jdouble*) env->GetDirectBufferAddress(op1);
+    if (wsave == NULL) {
+        env->FatalError("invalid buffer");
+    }
+    cffti(n, wsave);
 }

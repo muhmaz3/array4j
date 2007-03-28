@@ -1,6 +1,7 @@
+Check argument names through the codebase. Numpy ap becomes a, op becomes o, op1 becomes o1, etc. In case we know
+o1 to be an array, use a1 instead.
+
 // TODO support something like NumPy's extobj and sig keyword arguments for ufuncs
-
-
 
 Code that was going to be useful for something:
 

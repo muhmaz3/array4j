@@ -363,4 +363,9 @@ public final class ArrayDescr {
     public KernelType kernelType() {
         return fKernelType;
     }
+
+    @Override
+    public String toString() {
+        return "ArrayDescr: " + fType.toString();
+    }
 }

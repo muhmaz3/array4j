@@ -205,7 +205,7 @@ public enum ArrayType {
         case FLOAT:
         case DOUBLE:
             if (totype.isComplex()) {
-                return (telsize >> 1) > felsize;
+                return (telsize >> 1) >= felsize;
             } else {
                 return totype.compareTo(fromtype) > 0;
             }

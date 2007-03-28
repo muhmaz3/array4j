@@ -1,12 +1,14 @@
 package com.googlecode.array4j;
 
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
 
 public final class ArrayDescrTest {
     @Test
-    public void test() {
-//        System.out.println(ArrayDescr.fromType(ArrayType.BOOL));
-//        System.out.println(ArrayDescr.valueOf(Types.CHAR));
-//        System.out.println(ArrayDescr.fromType(ArrayType.DOUBLE));
+    public void testCanCastTo() {
+        final ArrayDescr oldtype = ArrayDescr.fromType(ArrayType.DOUBLE);
+        final ArrayDescr newtype = ArrayDescr.fromType(ArrayType.CDOUBLE);
+        assertTrue(oldtype.canCastTo(newtype));
     }
 }

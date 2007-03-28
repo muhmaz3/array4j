@@ -52,13 +52,18 @@ public final class DenseArray implements Array<DenseArray> {
      * @param dims
      *            dimensions
      */
-    public DenseArray(final ArrayDescr descr, final int[] dims) {
+    public DenseArray(final ArrayDescr descr, final int... dims) {
         this(descr, dims, Flags.EMPTY.getValue());
+    }
+
+    public DenseArray(final ArrayType type, final int... dims) {
+        this(ArrayDescr.fromType(type), dims);
     }
 
     private DenseArray(final ArrayDescr descr, final int[] dims, final int flags) {
         this(descr, dims, null, null, flags, null);
     }
+
 
     /**
      * Array constructor.
@@ -239,6 +244,17 @@ public final class DenseArray implements Array<DenseArray> {
         }
 
         return ret;
+    }
+
+    /**
+     * This code corresponds to the NumPy function <CODE>PyArray_FromAny</CODE>.
+     */
+    public static DenseArray fromAny(final Object o, final ArrayDescr newtype, final int mindepth, final int maxdepth,
+            final int flags, final Object context) {
+        if (o instanceof DenseArray) {
+            return fromArray((DenseArray) o, newtype, flags);
+        }
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -599,7 +615,11 @@ public final class DenseArray implements Array<DenseArray> {
     }
 
     public int shape(final int index) {
-        return fDimensions[index];
+        int i = index;
+        if (i < 0) {
+            i += ndim();
+        }
+        return fDimensions[i];
     }
 
     public int[] strides() {
@@ -1013,5 +1033,80 @@ public final class DenseArray implements Array<DenseArray> {
     public int getInteger(final int... indexes) {
         // TODO use getitem here
         return getData().getInt(getOffsetFromIndexes(indexes));
+    }
+
+    /**
+     * This method corresponds to the NumPy function <CODE>PyArray_SwapAxes</CODE>.
+     */
+    public DenseArray swapaxes(final int axis1, final int axis2) {
+        int a1 = axis1;
+        int a2 = axis2;
+        if (a1 == a2) {
+            return this;
+        }
+        final int n = ndim();
+        if (n <= 1) {
+            return this;
+        }
+
+        if (a1 < 0) {
+            a1 += n;
+        }
+        if (a2 < 0) {
+            a2 += n;
+        }
+        if (a1 < 0 || a1 >= n) {
+            throw new IllegalArgumentException("bad axis1 argument to swapaxes");
+        }
+        if (a2 < 0 || a2 >= n) {
+            throw new IllegalArgumentException("bad axis2 argument to swapaxes");
+        }
+
+        // TODO implement this rest of swapaxes
+        throw new UnsupportedOperationException();
+    }
+
+    public DenseArray copy(final ArrayType type) {
+        return copy(type, 1, 0);
+    }
+
+    /**
+     * This method responds to the NumPy macro <CODE>PyArray_CopyFromObject</CODE>.
+     */
+    private DenseArray copy(final ArrayType type, final int mindepth, final int maxdepth) {
+        final ArrayDescr descr =  ArrayDescr.fromType(type);
+        final int flags = Flags.or(Flags.ENSURECOPY, Flags.DEFAULT, Flags.ENSUREARRAY);
+        return fromAny(this, descr, mindepth, maxdepth, flags, null);
+    }
+
+    /**
+     * This method corresponds to the NumPy function <CODE>PyArray_As1D</CODE>.
+     */
+    public ByteBuffer as1d(final ArrayType type) {
+        final ArrayDescr descr = ArrayDescr.fromType(type);
+        // TODO need to return something that indicates how big the array is
+        return asCArray(1, descr);
+    }
+
+    /**
+     * This method corresponds to the NumPy function <CODE>PyArray_AsCArray</CODE>.
+     */
+    public ByteBuffer asCArray(final int nd, final ArrayDescr descr) {
+        if ((nd < 1) || (nd > 3)) {
+            throw new IllegalArgumentException("C arrays of only 1-3 dimensions available");
+        }
+        final int flags = Flags.CARRAY.getValue();
+        final DenseArray a = fromAny(this, descr, nd, nd, flags, null);
+        switch (nd) {
+        case 1:
+            return a.getData();
+        case 2:
+            throw new UnsupportedOperationException();
+        case 3:
+            throw new UnsupportedOperationException();
+        default:
+            throw new AssertionError();
+        }
+        // TODO need to return something that indicates how big the array is
     }
 }
