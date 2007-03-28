@@ -22,9 +22,7 @@ public final class MultiArrayIterator implements Iterable<MultiArrayIterator>, I
     private final ArrayIterator[] fIters;
 
     public MultiArrayIterator(final int numiter) {
-        if (numiter < 2) {
-            throw new IllegalArgumentException("Need at least 2 array objects");
-        }
+        checkNumiter(numiter);
         this.fIters = new ArrayIterator[numiter];
     }
 
@@ -32,9 +30,7 @@ public final class MultiArrayIterator implements Iterable<MultiArrayIterator>, I
      * This constructor corresponds to the NumPy function <CODE>PyArray_MultiIterNew</CODE>.
      */
     public MultiArrayIterator(final int numiter, final DenseArray... arrs) {
-        if (numiter < 2) {
-            throw new IllegalArgumentException("Need at least 2 array objects");
-        }
+        checkNumiter(numiter);
         if (arrs.length > numiter) {
             throw new IllegalArgumentException("Too many array objects");
         }
@@ -44,6 +40,12 @@ public final class MultiArrayIterator implements Iterable<MultiArrayIterator>, I
         }
         broadcast(numiter);
         reset();
+    }
+
+    private static void checkNumiter(final int numiter) {
+        if (numiter < 2) {
+            throw new IllegalArgumentException("Need at least 2 array objects");
+        }
     }
 
     public ByteBuffer[] bufptr() {
@@ -177,7 +179,7 @@ public final class MultiArrayIterator implements Iterable<MultiArrayIterator>, I
         final int[] sumstrides = new int[ndim];
         for (int i = 0; i < ndim; i++) {
             for (int j = 0; j < fIters.length; j++) {
-                sumstrides[i] += fIters[j].strides(j);
+                sumstrides[i] += fIters[j].strides(i);
             }
         }
         int axis = 0;

@@ -394,6 +394,9 @@ public final class DenseArray implements Array<DenseArray> {
         }
     }
 
+    /**
+     * This method corresponds to the NumPy function <CODE>_strided_buffered_cast</CODE>.
+     */
     private void stridedBufferedCast() {
         throw new UnsupportedOperationException();
     }
