@@ -162,6 +162,9 @@ public final class DenseArray implements Array<DenseArray> {
         }
     }
 
+    /**
+     * This code corresponds to the NumPy function <CODE>PyArray_FromArray</CODE>.
+     */
     public static DenseArray fromArray(final DenseArray arr, final ArrayDescr dtype, final int flags) {
         final String msg = "cannot copy back to a read-only array";
 
@@ -202,8 +205,8 @@ public final class DenseArray implements Array<DenseArray> {
                 if (Flags.ENSUREARRAY.and(flags)) {
                     // TODO do something with subtype
                 }
-                // TODO call some constructor
-                ret = null;
+                final int newflags = arr.flags() & Flags.FORTRAN.getValue();
+                ret = new DenseArray(newtype, arr.shape(), null, null, newflags, arr);
                 arr.copyInto(ret);
                 if (Flags.UPDATEIFCOPY.and(flags)) {
                     ret.fFlags |= Flags.UPDATEIFCOPY.getValue();
@@ -260,8 +263,65 @@ public final class DenseArray implements Array<DenseArray> {
     /**
      * This method corresponds to the NumPy function <CODE>PyArray_CopyInto</CODE>.
      */
-    private void copyInto(final DenseArray ret) {
-        throw new UnsupportedOperationException();
+    private void copyInto(final DenseArray dest) {
+        copyInto(dest, this, true);
+    }
+
+    /**
+     * This method corresponds to the NumPy function <CODE>PyArray_MoveInto</CODE>.
+     */
+    private void moveInto(final DenseArray dest) {
+        copyInto(dest, this, false);
+    }
+
+    /**
+     * This code corresponds to the NumPy function <CODE>_array_copy_into</CODE>.
+     */
+    private static void copyInto(final DenseArray dest, final DenseArray src, final boolean usecopy) {
+        if (!dest.dtype().isEquivalent(src.dtype())) {
+            dest.castTo(src);
+        }
+
+        if (!dest.isWriteable()) {
+            throw new IllegalArgumentException("cannot write to array");
+        }
+
+        final boolean same = dest.sameShape(src);
+        final boolean simple = same && (src.isCArrayRO() && dest.isCArray()) || (src.isFArrayRO() && dest.isFArray());
+
+        if (simple) {
+            if (usecopy) {
+                // TODO probably want to call a kernel method here
+                final byte[] buffer = new byte[dest.nbytes()];
+                dest.getData().get(buffer);
+                src.getData().put(buffer);
+            } else {
+                // TODO memmove
+                throw new UnsupportedOperationException();
+            }
+        }
+
+        final boolean swapped = dest.isNotSwapped() != src.isNotSwapped();
+
+        if (src.ndim() == 0) {
+            // TODO _copy_from0d
+        }
+
+        if (dest.isAligned() && src.isAligned()) {
+            // TODO _strided_byte_copy
+        } else if (usecopy) {
+            // TODO _unaligned_strided_byte_copy
+        } else {
+            // TODO _unaligned_strided_byte_move
+        }
+
+        if (same) {
+            // TODO _copy_from_same_shape
+            throw new UnsupportedOperationException();
+        } else {
+            // TODO _broadcast_copy
+            throw new UnsupportedOperationException();
+        }
     }
 
     /**
@@ -894,6 +954,10 @@ public final class DenseArray implements Array<DenseArray> {
 
     public boolean isContiguous() {
         return Flags.CONTIGUOUS.and(fFlags);
+    }
+
+    public boolean isAligned() {
+        throw new UnsupportedOperationException();
     }
 
     public boolean isFArray() {

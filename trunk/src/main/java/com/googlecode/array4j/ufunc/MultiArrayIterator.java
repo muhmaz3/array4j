@@ -28,14 +28,22 @@ public final class MultiArrayIterator implements Iterable<MultiArrayIterator>, I
         this.fIters = new ArrayIterator[numiter];
     }
 
+    /**
+     * This constructor corresponds to the NumPy function <CODE>PyArray_MultiIterNew</CODE>.
+     */
     public MultiArrayIterator(final int numiter, final DenseArray... arrs) {
-        this(numiter);
+        if (numiter < 2) {
+            throw new IllegalArgumentException("Need at least 2 array objects");
+        }
         if (arrs.length > numiter) {
             throw new IllegalArgumentException("Too many array objects");
         }
+        this.fIters = new ArrayIterator[numiter];
         for (int i = 0; i < arrs.length; i++) {
             createArrayIterator(i, arrs[i]);
         }
+        broadcast(numiter);
+        reset();
     }
 
     public ByteBuffer[] bufptr() {
@@ -44,6 +52,13 @@ public final class MultiArrayIterator implements Iterable<MultiArrayIterator>, I
             bufptr[i] = fIters[i].getData();
         }
         return bufptr;
+    }
+
+    public void reset() {
+        fIndex = 0;
+        for (ArrayIterator it : fIters) {
+            it.reset();
+        }
     }
 
     public boolean hasNext() {
