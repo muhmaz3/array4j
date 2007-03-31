@@ -5,6 +5,7 @@
 		<mkdir dir="src/generated/native" />
 		<javah destdir="${src.generated.native}" classpath="bin">
 			<class name="com.googlecode.array4j.kernel.NativeDoubleFunctions" />
+			<class name="com.googlecode.array4j.kernel.NativeComplexDoubleFunctions" />
 			<class name="com.googlecode.array4j.fft.FFT" />
 		</javah>
 	</target>

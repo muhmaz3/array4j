@@ -5,8 +5,10 @@ import java.util.Arrays;
 
 import com.googlecode.array4j.Indexing.Index;
 import com.googlecode.array4j.kernel.Interface;
+import com.googlecode.array4j.ufunc.CopySwapNFunction;
 import com.googlecode.array4j.ufunc.MultiArrayIterator;
 import com.googlecode.array4j.ufunc.UFuncs;
+import com.googlecode.array4j.ufunc.VectorUnaryFunction;
 
 // TODO change bitwise operations to use static ints instead of Flags.SOMEFLAG.getValue()
 
@@ -280,6 +282,7 @@ public final class DenseArray implements Array<DenseArray> {
     private static void copyInto(final DenseArray dest, final DenseArray src, final boolean usecopy) {
         if (!dest.dtype().isEquivalent(src.dtype())) {
             dest.castTo(src);
+            return;
         }
 
         if (!dest.isWriteable()) {
@@ -336,7 +339,7 @@ public final class DenseArray implements Array<DenseArray> {
             throw new IllegalArgumentException("output array is not writeable");
         }
 
-        // TODO get cast function
+        final VectorUnaryFunction castfunc = dtype().getCastFunc(out.dtype().type());
 
         final boolean same = sameShape(out);
         final boolean simple = same && ((isCArrayRO() && out.isCArray()) || isFArrayRO() && out.isFArray());
@@ -352,11 +355,11 @@ public final class DenseArray implements Array<DenseArray> {
         final boolean iswap = isByteSwapped() && !isFlexible();
         final boolean oswap = out.isByteSwapped() && !out.isFlexible();
 
-        // TODO null needs to be castfunc
-        broadcastCast(out, null, iswap, oswap);
+        broadcastCast(out, castfunc, iswap, oswap);
     }
 
-    private void broadcastCast(final DenseArray out, final Object castfunc, final boolean iswap, final boolean oswap) {
+    private void broadcastCast(final DenseArray out, final VectorUnaryFunction castfunc, final boolean iswap,
+            final boolean oswap) {
         final int delsize = out.itemSize();
         final int selsize = itemSize();
         final MultiArrayIterator multi = new MultiArrayIterator(2, out, this);
@@ -366,8 +369,8 @@ public final class DenseArray implements Array<DenseArray> {
             throw new IllegalArgumentException("array dimensions are not compatible for copy");
         }
 
-        Object icopyfunc;
-        Object ocopyfunc;
+        final CopySwapNFunction icopyfunc = dtype().getCopySwapN();
+        final CopySwapNFunction ocopyfunc = out.dtype().getCopySwapN();
 
         final int n;
         final int maxdim;
@@ -386,19 +389,43 @@ public final class DenseArray implements Array<DenseArray> {
             ostrides = multi.getIterator(0).strides(maxaxis);
             istrides = multi.getIterator(1).strides(maxaxis);
         }
+
+        // TODO allocate of buffers can be moved to stridedBufferedCast
         buffers[0] = Interface.defaultKernel().createBuffer(n * delsize);
         buffers[1] = Interface.defaultKernel().createBuffer(n * selsize);
 
         for (MultiArrayIterator nextMulti : multi) {
-            stridedBufferedCast();
+            final ByteBuffer[] bufptrs = nextMulti.bufptr();
+            stridedBufferedCast(bufptrs[0], ostrides, delsize, oswap, ocopyfunc, bufptrs[1], istrides, selsize, iswap,
+                    icopyfunc, maxdim, buffers, n, castfunc, out, this);
         }
     }
 
     /**
      * This method corresponds to the NumPy function <CODE>_strided_buffered_cast</CODE>.
      */
-    private void stridedBufferedCast() {
-        throw new UnsupportedOperationException();
+    private void stridedBufferedCast(final ByteBuffer dbuf, final int dstride, final int delsize, final boolean dswap,
+            final CopySwapNFunction dcopyfunc, final ByteBuffer sbuf, final int sstride, final int selsize,
+            final boolean sswap, final CopySwapNFunction scopyfunc, final int n, final ByteBuffer[] buffers,
+            final int bufsize, final VectorUnaryFunction castfunc, final DenseArray dest, final DenseArray src) {
+        if (n <= bufsize) {
+            // 1. copy input to buffer and swap
+//            scopyfunc.copySwapN(buffers[1], selsize, sbuf, sstride, n, sswap, src);
+            // 2. cast input to output
+//            castfunc.call(buffers[1], buffers[0], n, src, dest);
+            // 3. swap output if necessary and copy from output buffer
+//            dcopyfunc.copySwapN(dbuf, dstride, buffers[0], delsize, n, dswap, dest);
+            return;
+        }
+
+        int i = 0;
+        int count = n;
+        while (count > 0) {
+            final int newn = Math.min(count, bufsize);
+
+            i += newn;
+            count -= bufsize;
+        }
     }
 
     /**
@@ -1148,10 +1175,12 @@ public final class DenseArray implements Array<DenseArray> {
 
     /**
      * This method corresponds to the NumPy function <CODE>PyArray_As1D</CODE>.
+     * <p>
+     * {@link ArrayType#getElementsInBuffer(ByteBuffer)} can be used to
+     * determine the number of elements in the returned buffer.
      */
     public ByteBuffer as1d(final ArrayType type) {
         final ArrayDescr descr = ArrayDescr.fromType(type);
-        // TODO need to return something that indicates how big the array is
         return asCArray(1, descr);
     }
 
@@ -1174,6 +1203,7 @@ public final class DenseArray implements Array<DenseArray> {
         default:
             throw new AssertionError();
         }
-        // TODO need to return something that indicates how big the array is
+        // TODO need a way to figure out how many elements the buffer contains,
+        // i.e. something like getElementsInBuffer for ArrayDescr
     }
 }

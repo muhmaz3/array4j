@@ -2,7 +2,10 @@ package com.googlecode.array4j;
 
 import java.nio.ByteBuffer;
 
-public interface ArrayFunctions {
+import com.googlecode.array4j.ufunc.CopySwapNFunction;
+import com.googlecode.array4j.ufunc.VectorUnaryFunction;
+
+public interface ArrayFunctions extends CopySwapNFunction {
     void fill(ByteBuffer data, int length);
 
     double getitemDouble(ByteBuffer data, DenseArray arr);
@@ -22,4 +25,8 @@ public interface ArrayFunctions {
     void log(ByteBuffer[] bufptr, int[] dimensions, int[] steps, Object funcdata);
 
     void exp(ByteBuffer[] bufptr, int[] dimensions, int[] steps, Object funcdata);
+
+    VectorUnaryFunction getCastFunc(ArrayType type);
+
+    CopySwapNFunction getCopySwapN();
 }

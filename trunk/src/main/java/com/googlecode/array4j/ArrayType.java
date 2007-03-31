@@ -1,5 +1,7 @@
 package com.googlecode.array4j;
 
+import java.nio.ByteBuffer;
+
 import com.googlecode.array4j.kernel.Interface;
 import com.googlecode.array4j.kernel.KernelType;
 
@@ -54,7 +56,7 @@ public enum ArrayType {
     },
     CDOUBLE(ArrayKind.COMPLEX, ByteOrder.NATIVE, 2 * 8) {
         public ArrayFunctions getArrayFunctions(final KernelType kernelType) {
-            return null;
+            return Interface.kernel(kernelType).getComplexDoubleFunctions();
         }
     },
     OBJECT(null, ByteOrder.NOT_APPLICABLE, -1) {
@@ -248,5 +250,12 @@ public enum ArrayType {
                 throw new AssertionError();
             }
         }
+    }
+
+    public int getElementsInBuffer(final ByteBuffer data) {
+        if (data.capacity() % fElSize != 0) {
+            throw new IllegalArgumentException("buffer contains incomplete elements");
+        }
+        return data.capacity() / fElSize;
     }
 }

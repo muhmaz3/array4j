@@ -197,6 +197,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\generated\native\com_googlecode_array4j_kernel_NativeComplexDoubleFunctions.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\generated\native\com_googlecode_array4j_kernel_NativeDoubleFunctions.h"
 				>
 			</File>

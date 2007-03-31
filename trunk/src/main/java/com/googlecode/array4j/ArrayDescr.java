@@ -8,6 +8,9 @@ import java.util.Map;
 
 import com.googlecode.array4j.kernel.Interface;
 import com.googlecode.array4j.kernel.KernelType;
+import com.googlecode.array4j.ufunc.CastFunction;
+import com.googlecode.array4j.ufunc.CopySwapNFunction;
+import com.googlecode.array4j.ufunc.VectorUnaryFunction;
 
 public final class ArrayDescr {
     private static final Map<ArrayType, ArrayDescr> BUILTIN_DESCRS;
@@ -367,5 +370,16 @@ public final class ArrayDescr {
     @Override
     public String toString() {
         return "ArrayDescr: " + fType.toString();
+    }
+
+    /**
+     * This method corresponds to the NumPy function <CODE>PyArray_GetCastFunc</CODE>.
+     */
+    public VectorUnaryFunction getCastFunc(final ArrayType type) {
+        return new CastFunction(type, fArrFuncs);
+    }
+
+    public CopySwapNFunction getCopySwapN() {
+        return fArrFuncs.getCopySwapN();
     }
 }

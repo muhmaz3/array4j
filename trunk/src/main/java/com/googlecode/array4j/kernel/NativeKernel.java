@@ -14,6 +14,8 @@ public final class NativeKernel implements Kernel {
 
     private static final ArrayFunctions DOUBLE_FUNCTIONS = new NativeDoubleFunctions();
 
+    private static final ArrayFunctions DOUBLE_COMPLEX_FUNCTIONS = new NativeComplexDoubleFunctions();
+
     public static void init() {
     }
 
@@ -29,5 +31,9 @@ public final class NativeKernel implements Kernel {
 
     public ArrayFunctions getDoubleFunctions() {
         return DOUBLE_FUNCTIONS;
+    }
+
+    public ArrayFunctions getComplexDoubleFunctions() {
+        return DOUBLE_COMPLEX_FUNCTIONS;
     }
 }

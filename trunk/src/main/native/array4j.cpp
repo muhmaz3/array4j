@@ -107,13 +107,13 @@ JNIEXPORT void JNICALL Java_com_googlecode_array4j_kernel_NativeDoubleFunctions_
     }
 }
 
-JNIEXPORT void JNICALL Java_com_googlecode_array4j_fft_FFT_cfftf(JNIEnv* env, jclass, jint n, jobject op1, jobject op2) {
+JNIEXPORT void JNICALL Java_com_googlecode_array4j_fft_FFT_cfftf(JNIEnv* env, jclass, jint n, jobject op1, jint offset, jobject op2) {
     jdouble* const c = (jdouble*) env->GetDirectBufferAddress(op1);
     jdouble* const wsave = (jdouble*) env->GetDirectBufferAddress(op2);
     if (op1 == NULL || op2 == NULL) {
         env->FatalError("invalid buffer");
     }
-    cfftf(n, c, wsave);
+    cfftf(n, &c[offset], wsave);
 }
 
 JNIEXPORT void JNICALL Java_com_googlecode_array4j_fft_FFT_cffti(JNIEnv* env, jclass, jint n, jobject op1) {

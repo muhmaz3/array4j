@@ -8,14 +8,12 @@ import com.googlecode.array4j.DenseArray;
 import com.googlecode.array4j.ufunc.CopySwapNFunction;
 import com.googlecode.array4j.ufunc.VectorUnaryFunction;
 
-public final class NativeDoubleFunctions implements ArrayFunctions {
+public final class NativeComplexDoubleFunctions implements ArrayFunctions {
     public native void fill(ByteBuffer data, int length);
 
     public double getitemDouble(final ByteBuffer data, final DenseArray arr) {
-        return getitemDouble(data, data.position());
+        throw new UnsupportedOperationException();
     }
-
-    private native double getitemDouble(ByteBuffer data, int offset);
 
     public void setitem(final Object obj, final ByteBuffer data, final DenseArray arr) {
         if (obj instanceof Number) {

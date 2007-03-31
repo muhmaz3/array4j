@@ -23,4 +23,8 @@ public final class JavaKernel implements Kernel {
     public ArrayFunctions getDoubleFunctions() {
         return DOUBLE_FUNCTIONS;
     }
+
+    public ArrayFunctions getComplexDoubleFunctions() {
+        throw new UnsupportedOperationException();
+    }
 }

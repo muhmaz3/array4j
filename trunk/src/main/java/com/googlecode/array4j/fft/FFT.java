@@ -51,10 +51,8 @@ public final class FFT {
     private static DenseArray cfftf(final DenseArray op1, final DenseArray op2) {
         final DenseArray data = op1.copy(ArrayType.CDOUBLE);
 
-        //  TODO nsave should contain number of elements in wsave
-        final int nsave = 0;
         final ByteBuffer wsave = op2.as1d(ArrayType.DOUBLE);
-
+        final int nsave = ArrayType.DOUBLE.getElementsInBuffer(wsave);
         final int npts = data.shape(data.ndim() - 1);
         if (nsave != npts * 4 + 15) {
             throw new AssertionError("invalid work array for fft size");

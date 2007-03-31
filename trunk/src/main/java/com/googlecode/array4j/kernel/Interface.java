@@ -22,6 +22,7 @@ public final class Interface {
             nativeKernel = new NativeKernel();
             nativeOk = true;
         } catch (final UnsatisfiedLinkError e) {
+            System.out.println(e.getMessage());
             nativeKernel = null;
         }
         NATIVE_KERNEL = nativeKernel;

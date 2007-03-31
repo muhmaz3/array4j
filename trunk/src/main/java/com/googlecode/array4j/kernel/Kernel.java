@@ -10,4 +10,6 @@ public interface Kernel {
     ArrayFunctions getIntegerFunctions();
 
     ArrayFunctions getDoubleFunctions();
+
+    ArrayFunctions getComplexDoubleFunctions();
 }
