@@ -1,0 +1,294 @@
+Check argument names through the codebase. Numpy ap becomes a, op becomes o, op1 becomes o1, etc. In case we know
+o1 to be an array, use a1 instead.
+
+// TODO support something like NumPy's extobj and sig keyword arguments for ufuncs
+
+Code that was going to be useful for something:
+
+//    private void foo(final Class<? extends GenericType<?>> dtypeClass) {
+//    }
+//
+//    private <T extends ArrayType<T>> void foo(final T dtype) {
+//    }
+
+Some indexing tests:
+
+    @Ignore
+    public void test() {
+//        final ByteArray arr = new ByteArray(10);
+        final ByteArray arr = null;
+
+        arr.get(10);
+
+        // TODO figure out how to do: arr[1:, 1:] and arr[-1:,-1:]
+
+        // arr[:, ...]
+        arr.get(slice(), ellipsis());
+
+        // arr[10, ...]
+        arr.get(10, ellipsis());
+
+        // arr[10, 20, 30]
+        arr.get(10, 20, 30);
+
+        // two ways to force array return even when using only integer indexes
+        arr.get(new Object[]{10, 20, 30});
+        arr.get(10, 20, 30, ellipsis());
+        arr.getArray(10, 20, 30);
+
+        // arr[10, 20, 30] (not fancy indexing)
+        arr.get(new int[]{10, 20, 30});
+
+        // arr[newaxis, 10, 20, ...]
+        arr.get(newaxis(), 10, 20, ellipsis());
+
+        // arr[..., ::2]
+        arr.get(ellipsis(), sliceStep(2));
+
+        // fancy indexing (returns a copy)
+        arr.get(new int[]{3, 1, 2}, ellipsis());
+    }
+
+
+we want any function that accepts an array to accept a matrix, so interfaces are derived in this way,
+but we'll make a base class that throws UnsupportedOperationException for the array functions which
+we can't support in odd-shaped/sparse cases.
+
+
+//    RowVector getRow(int index);
+//
+//    RowVector row(int index);
+//
+//    RowVector[] getRows(int... indexes);
+//
+//    ColumnVector getColumn(int index);
+//
+//    ColumnVector column(int index);
+//
+//    ColumnVector[] getColumns(int... indexes);
+
+
+Look at using buffers' asReadOnlyBuffer methods when making read-only arrays
+
+
+Old reflection code:
+
+    private final Constructor<? extends DenseArray> bufferShapeConstructor;
+
+    private final Constructor<? extends DenseArray> shapeConstructor;
+
+    public DenseArray(final DoubleBuffer buffer, final int[] shape) {
+        // ...
+        try {
+            this.bufferShapeConstructor = getClass().getConstructor(DoubleBuffer.class, int[].class);
+            this.shapeConstructor = getClass().getConstructor(int[].class);
+        } catch (final SecurityException e) {
+            throw new RuntimeException(e);
+        } catch (final NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    private E callConstructor(final Constructor<? extends DenseArray> constructor, final Object... args) {
+        try {
+            return (E) constructor.newInstance(args);
+        } catch (final IllegalArgumentException e) {
+            throw new RuntimeException(e);
+        } catch (final InstantiationException e) {
+            throw new RuntimeException(e);
+        } catch (final IllegalAccessException e) {
+            throw new RuntimeException(e);
+        } catch (final InvocationTargetException e) {
+            final Throwable t = e.getTargetException();
+            if (t instanceof RuntimeException) {
+                throw (RuntimeException) t;
+            }
+            // This should never happen unless the constructors start throwing
+            // checked exceptions, in which case this method must be changed to
+            // also throw the same checked exceptions.
+            throw new AssertionError();
+        }
+    }
+    
+    
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+Kernel type is currently set on array separate from its descr.
+array descr in numpy has a function table.
+Our function table could depend on the kernel type
+
+
+C-ism: get rid of nulls and just pass 0 length arrays instead
+
+Many of the for loops can probably be replaced with enhanced for loops
+
+Look at the difference between 
+
+    (ByteBuffer) fData.position(0)
+    
+and
+
+    (ByteBuffer) fData.duplicate().rewind()
+    
+with regards to thread safety when sharing arrays.
+
+=== UFUNCLOOOP STUFF ===
+
+
+    // TODO bufsize
+    // TODO errormask
+    // TODO errobj
+
+
+//    private int index = 0;
+//
+//    private UFunc ufunc;
+//
+//    private Object[] buffer;
+//
+//    private Object[] iters;
+//
+//    private Object[] cast;
+//
+//    private Object errobj;
+//
+//    private Object funcdata;
+//
+//    private Object meth; // ONE_UFUNCLOOP or NOBUFFER_UFUNCLOOP or BUFFER_UFUNCLOOP
+
+
+
+        // construct_loop
+        for (int i = 0; i < ufunc.nargs(); i++) {
+
+            // set stuff to null
+        }
+
+        // construct arrays
+        // loop over actual arguments, which is 2 or 3...
+//        if ((nargs < self->nin) || (nargs > self->nargs)) {
+//            throw new IllegalArgumentException("invalid number of arguments");
+//        }
+
+        /* Get each input argument */
+        int nin = 0;
+        for (int i = 0; i < nin; i++) {
+            // convert to array
+            // do some dimensionality checks for scalars and whatnot
+
+        }
+
+        /* Select an appropriate function for these argument types. */
+
+        // TODO array priority stuff
+
+        /*
+         * Create copies for some of the arrays if they are small enough and not
+         * already contiguous
+         */
+        // TODO create copies
+
+        /* Create Iterators for the Inputs */
+        for (int i = 0; i < nin; i++) {
+            /* <CODE>PyArray_IterNew</CODE> */
+        }
+
+        /* Broadcast the result */
+        /* <CODE>PyArray_Broadcast</CODE> */
+
+        /* Get any return arguments */
+
+        // clear fp flags
+
+
+=== END OF  UFUNCLOOOP STUFF ===
+
+Check if two views of the same array can be used in different threads in read-only mode?
+Here we'll want separate buffers probably. This should be happening with the slice scheme we currently have in create.
+
+// TODO investigate PyArray_Where
+
+/*
+ * NumPy's get algorithm:
+ * <CODE>
+ * if (op is integer) {
+ *     array_item_nice:
+ *     if (nd == 1) {
+ *         return array scalar using index2ptr
+ *     } else {
+ *         use index2ptr to get get pointer to data
+ *         returned array has nd - 1; first dimension and stride are stripped off
+ *         return array_big_item(i) through PyArray_Return
+ *     }
+ * }
+ * if (op is tuple with exactly nd elements) {
+ *     return array scalar using PyArray_GetPtr to get value
+ * }
+ *
+ * else: call array_subscript with op, which does:
+ *     if (PyString_Check(op) || PyUnicode_Check(op)) {
+ *         look for a field named op
+ *     }
+ *     if nd == 0 {
+ *         if op == ellipsis
+ *             return self (for array scalars)
+ *         if op == None
+ *             return self with a new axis
+ *         if op is a tuple
+ *             if tuple is empty
+ *                 return self
+ *             if ((nd = count_new_axes_0d(op)) == -1)
+ *                 return NULL;
+ *             return add_new_axes_0d(self, nd);
+ *     }
+ *     check if op implies fancy indexing
+ *     if (op is fancy) {
+ *         ...
+ *     }
+ *     else: call array_subscript_simple, which does:
+ *         if (op can be converted to intp) {
+ *             return array_big_item(op as intp)
+ *         }
+ *         // this can return an error
+ *         calculate nd = parse_index(self, op, dimensions, strides, &offset)
+ *         parse_index does:
+ *             if op is slice, ellipsis or None:
+ *                 incref op
+ *                 set n = 1
+ *                 set is_slice to 1
+ *             else:
+ *                 if op is not a sequence, throw
+ *                 n = sequence length of op
+ *                 is_slice = 0
+ *             for (int i : 0 -> i < n)
+ *                 if (!is_slice)
+ *                     check that i is a valid index into op (which is a known to be a sequence)
+ *                 start = parse_subindex(op1, &step_size, &n_steps, XXX conditional)
+ *                 if start == -1: break
+ *                 XXX big conditional
+ *             XXX another conditional
+ *
+ *
+ *
+ *         return array with new nd, same dimensions, same strides, data pointer at: data+offset
+ *
+ * if array_subscript returned array with nd == 0:
+ *     do various checks related to op being an ellipsis
+ *     return an array scalar in some cases
+ *
+ * </CODE>
+ */
+ 

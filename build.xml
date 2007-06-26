@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project default="generate">
+	<property name="src.generated.native" value="src/generated/native"/>
+	<target name="generate">
+		<mkdir dir="src/generated/native" />
+		<javah destdir="${src.generated.native}" classpath="bin">
+			<class name="com.googlecode.array4j.kernel.NativeDoubleFunctions" />
+			<class name="com.googlecode.array4j.kernel.NativeComplexDoubleFunctions" />
+			<class name="com.googlecode.array4j.fft.FFT" />
+		</javah>
+	</target>
+</project>
