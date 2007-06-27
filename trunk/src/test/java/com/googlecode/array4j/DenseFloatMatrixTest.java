@@ -1,8 +1,5 @@
 package com.googlecode.array4j;
 
-import com.googlecode.array4j.DenseFloatMatrix;
-import com.googlecode.array4j.FloatMatrix;
-import com.googlecode.array4j.Orientation;
 
 public final class DenseFloatMatrixTest extends AbstractFloatMatrixTest {
     private static class DenseFloatMatrixFactory implements FloatMatrixFactory {

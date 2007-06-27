@@ -3,11 +3,6 @@ package com.googlecode.array4j;
 import java.io.PrintStream;
 import java.util.Arrays;
 
-import com.googlecode.array4j.DenseFloatVector;
-import com.googlecode.array4j.FloatMatrix;
-import com.googlecode.array4j.FloatVector;
-import com.googlecode.array4j.Orientation;
-
 import junit.framework.TestCase;
 
 public abstract class AbstractFloatMatrixTest extends TestCase {
