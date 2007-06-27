@@ -1,9 +1,5 @@
 package com.googlecode.array4j;
 
-import com.googlecode.array4j.DirectFloatMatrix;
-import com.googlecode.array4j.FloatMatrix;
-import com.googlecode.array4j.Orientation;
-
 public final class DirectFloatMatrixTest extends AbstractFloatMatrixTest {
     private static class DirectFloatMatrixFactory implements FloatMatrixFactory {
         public FloatMatrix<?, ?> createMatrix(final int rows, final int columns) {

@@ -6,9 +6,6 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-import com.googlecode.array4j.DenseFloatVector;
-import com.googlecode.array4j.Orientation;
-
 // TODO test DenseFloatVector as a FloatMatrix to make sure it doesn't break anything
 
 public final class DenseFloatVectorTest {

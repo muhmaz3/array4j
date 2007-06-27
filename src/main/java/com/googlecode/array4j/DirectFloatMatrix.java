@@ -25,6 +25,8 @@ public final class DirectFloatMatrix extends AbstractDenseMatrix<DirectFloatMatr
 
     final FloatBuffer data;
 
+    private final transient DenseFloatSupport<DirectFloatMatrix, DirectFloatVector> floatSupport;
+
     public DirectFloatMatrix(final float[] data, final int rows, final int columns, final int offset, final int stride,
             final Orientation orientation) {
         this(createBuffer(data), rows, columns, offset, stride, orientation);
@@ -39,6 +41,8 @@ public final class DirectFloatMatrix extends AbstractDenseMatrix<DirectFloatMatr
         super(rows, columns, offset, stride, orientation);
         this.data = data;
         checkPostcondition(getData().remaining() >= size);
+        // TODO don't copy data here
+        this.floatSupport = new DenseFloatSupport<DirectFloatMatrix, DirectFloatVector>(this, toArray());
     }
 
     public DirectFloatMatrix(final int rows, final int columns) {
@@ -75,6 +79,14 @@ public final class DirectFloatMatrix extends AbstractDenseMatrix<DirectFloatMatr
 
     private FloatBuffer getData() {
         return (FloatBuffer) ((FloatBuffer) data.rewind()).position(offset);
+    }
+
+    public void setColumn(final int column, final FloatVector columnVector) {
+        floatSupport.setColumn(column, columnVector);
+    }
+
+    public void setRow(final int row, final FloatVector rowVector) {
+        floatSupport.setRow(row, rowVector);
     }
 
     public float[] toArray() {

@@ -1,7 +1,5 @@
 package com.googlecode.array4j;
 
-import com.googlecode.array4j.DenseFloatVector;
-
 import junit.framework.TestCase;
 
 public final class DenseFloatBLASTest extends TestCase {
