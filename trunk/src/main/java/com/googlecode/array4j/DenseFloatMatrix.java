@@ -1,23 +1,26 @@
 package com.googlecode.array4j;
 
-public final class DenseFloatMatrix extends AbstractDenseMatrix<DenseFloatMatrix, DenseFloatVector> implements
+import com.googlecode.array4j.internal.ToArraysConverter;
+
+public final class DenseFloatMatrix extends AbstractDenseMatrix<DenseFloatMatrix, DenseFloatVector, float[]> implements
         FloatMatrix<DenseFloatMatrix, DenseFloatVector>, DenseMatrix<DenseFloatMatrix, DenseFloatVector> {
     private final float[] data;
 
     private final transient DenseFloatSupport<DenseFloatMatrix, DenseFloatVector> floatSupport;
-
-    private final transient ToArraysConverter<float[]> arraysConverter;
 
     public DenseFloatMatrix(final float[] data, final int rows, final int columns, final int offset, final int stride,
             final Orientation orientation) {
         super(rows, columns, offset, stride, orientation);
         checkArgument(data != null);
         checkArgument(size == 0 || offset < data.length);
-//        checkArgument(size <= 1 || data.length >= offset + stride * rows * columns);
+//         checkArgument(size <= 1 || data.length >= offset + stride * rows * columns);
         checkArgument(size <= 1 || data.length >= stride * size);
         this.data = data;
         this.floatSupport = new DenseFloatSupport<DenseFloatMatrix, DenseFloatVector>(this, data);
-        this.arraysConverter = new ToArraysConverter<float[]>() {
+    }
+
+    protected ToArraysConverter<DenseFloatMatrix, float[]> createArraysConverter() {
+        return new ToArraysConverter<DenseFloatMatrix, float[]>(this) {
             @Override
             protected float[] createArray(final int length) {
                 return new float[length];
@@ -40,15 +43,11 @@ public final class DenseFloatMatrix extends AbstractDenseMatrix<DenseFloatMatrix
     }
 
     public DenseFloatMatrix(final int rows, final int columns) {
-        this(rows, columns, Orientation.ROW);
+        this(rows, columns, Orientation.DEFAULT);
     }
 
     public DenseFloatMatrix(final int rows, final int columns, final Orientation orientation) {
         this(new float[rows * columns], rows, columns, 0, 1, orientation);
-    }
-
-    public DenseFloatVector column(final int column) {
-        return matrixSupport.column(column);
     }
 
     public DenseFloatVector createColumnVector() {
@@ -83,10 +82,6 @@ public final class DenseFloatMatrix extends AbstractDenseMatrix<DenseFloatMatrix
         return true;
     }
 
-    public DenseFloatVector row(final int row) {
-        return matrixSupport.row(row);
-    }
-
     public void setColumn(final int column, final FloatVector columnVector) {
         floatSupport.setColumn(column, columnVector);
     }
@@ -97,14 +92,6 @@ public final class DenseFloatMatrix extends AbstractDenseMatrix<DenseFloatMatrix
 
     public float[] toArray() {
         return floatSupport.toArray();
-    }
-
-    public float[][] toColumnArrays() {
-        return arraysConverter.toArrays(columns, rows, false);
-    }
-
-    public float[][] toRowArrays() {
-        return arraysConverter.toArrays(rows, columns, true);
     }
 
     @Override

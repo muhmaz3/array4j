@@ -14,5 +14,9 @@ public enum Orientation {
         }
     };
 
+    public static final Orientation DEFAULT = ROW;
+
+    public static final Orientation DEFAULT_FOR_VECTOR = COLUMN;
+
     public abstract Orientation transpose();
 }

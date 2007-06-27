@@ -1,42 +1,10 @@
 package com.googlecode.array4j;
 
-public abstract class AbstractDenseMatrix<M extends DenseMatrix, V extends DenseVector> extends AbstractMatrix<M, V>
-        implements DenseMatrix<M, V> {
-    protected abstract class ToArraysConverter<A> {
-        protected abstract A createArray(int length);
+import com.googlecode.array4j.internal.ToArraysConverter;
 
-        protected abstract A[] createArrayArray(int length);
-
-        protected abstract void set(int srcPos, A dest, int destPos);
-
-        public final A[] toArrays(final int m, final int n, final boolean rows) {
-            A[] arrs = createArrayArray(m);
-            for (int i = 0; i < m; i++) {
-                arrs[i] = createArray(n);
-            }
-            for (int i = 0; i < m; i++) {
-                A arr = arrs[i];
-                for (int j = 0; j < n; j++) {
-                    int position = offset;
-                    if (rows) {
-                        if (orientation.equals(Orientation.ROW)) {
-                            position += (i * n + j) * stride;
-                        } else {
-                            position += (j * m + i) * stride;
-                        }
-                    } else {
-                        if (orientation.equals(Orientation.COLUMN)) {
-                            position += (i * n + j) * stride;
-                        } else {
-                            position += (j * m + i) * stride;
-                        }
-                    }
-                    set(position, arr, j);
-                }
-            }
-            return arrs;
-        }
-    }
+public abstract class AbstractDenseMatrix<M extends DenseMatrix, V extends DenseVector, ValueArray> extends
+        AbstractMatrix<M, V> implements DenseMatrix<M, V> {
+    private final transient ToArraysConverter<M, ValueArray> arraysConverter;
 
     protected final transient DenseMatrixSupport<M, V> matrixSupport;
 
@@ -53,6 +21,14 @@ public abstract class AbstractDenseMatrix<M extends DenseMatrix, V extends Dense
         this.stride = stride;
         this.orientation = orientation;
         this.matrixSupport = new DenseMatrixSupport<M, V>(this);
+        // only create the arrays converter after the other fields have been set
+        this.arraysConverter = createArraysConverter();
+    }
+
+    protected abstract ToArraysConverter<M, ValueArray> createArraysConverter();
+
+    public final V column(final int column) {
+        return matrixSupport.column(column);
     }
 
     public final DenseMatrixSupport<M, V> getMatrixSupport() {
@@ -66,8 +42,20 @@ public abstract class AbstractDenseMatrix<M extends DenseMatrix, V extends Dense
     public final Orientation orientation() {
         return orientation;
     }
-    
+
+    public final V row(final int row) {
+        return matrixSupport.row(row);
+    }
+
     public final int stride() {
         return stride;
+    }
+
+    public final ValueArray[] toColumnArrays() {
+        return arraysConverter.toArrays(columns, rows, false);
+    }
+
+    public final ValueArray[] toRowArrays() {
+        return arraysConverter.toArrays(rows, columns, true);
     }
 }

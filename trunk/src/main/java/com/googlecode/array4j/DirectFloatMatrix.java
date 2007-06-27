@@ -5,20 +5,40 @@ import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.util.Arrays;
 
-import com.googlecode.array4j.AbstractDenseMatrix.ToArraysConverter;
+import com.googlecode.array4j.internal.ToArraysConverter;
 
-
-public final class DirectFloatMatrix extends AbstractDenseMatrix<DirectFloatMatrix, DirectFloatVector> implements
-        FloatMatrix<DirectFloatMatrix, DirectFloatVector>, DenseMatrix<DirectFloatMatrix, DirectFloatVector> {
+public final class DirectFloatMatrix extends AbstractDenseMatrix<DirectFloatMatrix, DirectFloatVector, float[]>
+        implements FloatMatrix<DirectFloatMatrix, DirectFloatVector>, DenseMatrix<DirectFloatMatrix, DirectFloatVector> {
     private static final int FLOAT_SIZE = Float.SIZE >>> 3;
 
-    private final transient ToArraysConverter<float[]> arraysConverter;
+    static FloatBuffer createBuffer(final float[] values) {
+        FloatBuffer buffer = createBuffer(values.length * FLOAT_SIZE);
+        buffer.put(values);
+        return buffer;
+    }
+
+    static FloatBuffer createBuffer(final int size) {
+        ByteBuffer buffer = ByteBuffer.allocateDirect(size * FLOAT_SIZE);
+        buffer.order(ByteOrder.nativeOrder());
+        return buffer.asFloatBuffer();
+    }
 
     final FloatBuffer data;
 
+    public DirectFloatMatrix(final float[] data, final int rows, final int columns, final int offset, final int stride,
+            final Orientation orientation) {
+        this(createBuffer(data), rows, columns, offset, stride, orientation);
+    }
+
     public DirectFloatMatrix(final float[] values, final int rows, final int columns, final Orientation orientation) {
-        this(rows, columns, orientation);
-        getData().put(values);
+        this(values, rows, columns, 0, 1, orientation);
+    }
+
+    private DirectFloatMatrix(final FloatBuffer data, final int rows, final int columns, final int offset,
+            final int stride, final Orientation orientation) {
+        super(rows, columns, offset, stride, orientation);
+        this.data = data;
+        checkPostcondition(getData().remaining() >= size);
     }
 
     public DirectFloatMatrix(final int rows, final int columns) {
@@ -26,25 +46,11 @@ public final class DirectFloatMatrix extends AbstractDenseMatrix<DirectFloatMatr
     }
 
     public DirectFloatMatrix(final int rows, final int columns, final Orientation orientation) {
-        super(rows, columns, 0, 1, orientation);
-        ByteBuffer buffer = ByteBuffer.allocateDirect(size * FLOAT_SIZE);
-        buffer.order(ByteOrder.nativeOrder());
-        this.data = buffer.asFloatBuffer();
-        this.arraysConverter = createArraysConverter();
+        this(createBuffer(rows * columns), rows, columns, 0, 1, orientation);
     }
 
-    public DirectFloatMatrix(final float[] data, final int rows, final int columns, final int offset, final int stride,
-            final Orientation orientation) {
-        super(rows, columns, offset, stride, orientation);
-        ByteBuffer buffer = ByteBuffer.allocateDirect(size * FLOAT_SIZE);
-        buffer.order(ByteOrder.nativeOrder());
-        this.data = buffer.asFloatBuffer();
-        this.data.put(data);
-        this.arraysConverter = createArraysConverter();
-    }
-
-    private ToArraysConverter<float[]> createArraysConverter() {
-        return new ToArraysConverter<float[]>() {
+    protected ToArraysConverter<DirectFloatMatrix, float[]> createArraysConverter() {
+        return new ToArraysConverter<DirectFloatMatrix, float[]>(this) {
             @Override
             protected float[] createArray(final int length) {
                 return new float[length];
@@ -62,12 +68,13 @@ public final class DirectFloatMatrix extends AbstractDenseMatrix<DirectFloatMatr
         };
     }
 
-    private FloatBuffer getData() {
-        return (FloatBuffer) data.rewind();
+    public DirectFloatVector createSharingVector(final int size, final int offset, final int stride,
+            final Orientation orientation) {
+        return new DirectFloatVector(getData(), size, offset, stride, orientation);
     }
 
-    public DirectFloatVector row(final int row) {
-        return null;
+    private FloatBuffer getData() {
+        return (FloatBuffer) ((FloatBuffer) data.rewind()).position(offset);
     }
 
     public float[] toArray() {
@@ -76,6 +83,7 @@ public final class DirectFloatMatrix extends AbstractDenseMatrix<DirectFloatMatr
             return arr;
         }
         if (stride == 0) {
+            // TODO should getData take care of positioning the buffer at offset?
             Arrays.fill(arr, getData().get(offset));
             return arr;
         }
@@ -86,11 +94,8 @@ public final class DirectFloatMatrix extends AbstractDenseMatrix<DirectFloatMatr
         return arr;
     }
 
-    public float[][] toColumnArrays() {
-        return arraysConverter.toArrays(columns, rows, false);
-    }
-
-    public float[][] toRowArrays() {
-        return arraysConverter.toArrays(rows, columns, true);
+    public DirectFloatMatrix transpose() {
+        // interchange columns and rows and change orientation
+        return new DirectFloatMatrix(getData(), columns, rows, offset, stride, orientation.transpose());
     }
 }

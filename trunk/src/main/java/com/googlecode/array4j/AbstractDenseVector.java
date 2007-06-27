@@ -1,7 +1,7 @@
 package com.googlecode.array4j;
 
-public abstract class AbstractDenseVector<V extends DenseVector> extends AbstractDenseMatrix<V, V> implements
-        DenseVector<V>, Vector<V> {
+public abstract class AbstractDenseVector<V extends DenseVector, ValueArray> extends
+        AbstractDenseMatrix<V, V, ValueArray> implements DenseVector<V>, Vector<V> {
     final Orientation orientation;
 
     public AbstractDenseVector(final int size, final int offset, final int stride, final Orientation orientation) {
