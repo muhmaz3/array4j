@@ -1,13 +1,13 @@
 package com.googlecode.array4j;
 
 public abstract class AbstractArray<A extends Array> {
-    protected static final void assertPost(final boolean condition) {
+    protected static final void checkPostcondition(final boolean condition) {
         if (!condition) {
             throw new AssertionError("postcondition failed");
         }
     }
 
-    protected static final void assertPost(final boolean condition, final String message) {
+    protected static final void checkPostcondition(final boolean condition, final String message) {
         if (!condition) {
             throw new AssertionError(String.format("postcondition failed: %s", message));
         }

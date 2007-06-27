@@ -2,8 +2,10 @@ package com.googlecode.array4j;
 
 import java.util.Arrays;
 
-public final class DenseComplexFloatVector extends AbstractDenseVector<DenseComplexFloatVector> implements
-        ComplexFloatVector<DenseComplexFloatVector>, DenseVector<DenseComplexFloatVector> {
+import com.googlecode.array4j.internal.ToArraysConverter;
+
+public final class DenseComplexFloatVector extends AbstractDenseVector<DenseComplexFloatVector, ComplexFloat[]>
+        implements ComplexFloatVector<DenseComplexFloatVector>, DenseVector<DenseComplexFloatVector> {
     private final transient DenseComplexFloatSupport<DenseComplexFloatVector, DenseComplexFloatVector> complexSupport;
 
     private final float[] data;
@@ -20,10 +22,6 @@ public final class DenseComplexFloatVector extends AbstractDenseVector<DenseComp
         this(new float[2 * size], size, 0, 1, orientation);
     }
 
-    public DenseComplexFloatVector column(final int column) {
-        return matrixSupport.column(column);
-    }
-
     void copyTo(final float[] target, final int targetOffset, final int targetStride) {
         for (int i = 0; i < size; i++) {
             int srcpos = targetOffset + i * targetStride;
@@ -31,6 +29,12 @@ public final class DenseComplexFloatVector extends AbstractDenseVector<DenseComp
             target[srcpos] = data[targetpos];
             target[srcpos + 1] = data[targetpos + 1];
         }
+    }
+
+    @Override
+    protected ToArraysConverter<DenseComplexFloatVector, ComplexFloat[]> createArraysConverter() {
+        // TODO Auto-generated method stub
+        return null;
     }
 
     public DenseComplexFloatVector createColumnVector() {
@@ -46,10 +50,6 @@ public final class DenseComplexFloatVector extends AbstractDenseVector<DenseComp
         return new DenseComplexFloatVector(data, size, offset, stride, orientation);
     }
 
-    public DenseComplexFloatVector row(final int row) {
-        return matrixSupport.row(row);
-    }
-
     public void setColumn(final int column, final ComplexFloatVector columnVector) {
         complexSupport.setColumn(column, columnVector);
     }
@@ -60,14 +60,6 @@ public final class DenseComplexFloatVector extends AbstractDenseVector<DenseComp
 
     public ComplexFloat[] toArray() {
         return complexSupport.toArray();
-    }
-
-    public ComplexFloat[][] toColumnArrays() {
-        return complexSupport.toColumnArrays();
-    }
-
-    public ComplexFloat[][] toRowArrays() {
-        return complexSupport.toRowArrays();
     }
 
     @Override

@@ -2,13 +2,13 @@ package com.googlecode.array4j;
 
 import java.util.Arrays;
 
-public final class DenseFloatVector extends AbstractDenseVector<DenseFloatVector> implements
+import com.googlecode.array4j.internal.ToArraysConverter;
+
+public final class DenseFloatVector extends AbstractDenseVector<DenseFloatVector, float[]> implements
         FloatVector<DenseFloatVector>, DenseVector<DenseFloatVector> {
     final float[] data;
 
     private final transient DenseFloatSupport<DenseFloatVector, DenseFloatVector> floatSupport;
-
-    private final transient ToArraysConverter<float[]> arraysConverter;
 
     public DenseFloatVector() {
         this(0);
@@ -26,7 +26,28 @@ public final class DenseFloatVector extends AbstractDenseVector<DenseFloatVector
         checkArgument(data.length >= size * stride);
         this.data = data;
         this.floatSupport = new DenseFloatSupport<DenseFloatVector, DenseFloatVector>(this, data);
-        this.arraysConverter = new ToArraysConverter<float[]>() {
+    }
+
+    public DenseFloatVector(final int size) {
+        this(size, Orientation.DEFAULT_FOR_VECTOR);
+    }
+
+    public DenseFloatVector(final int size, final Orientation orientation) {
+        this(new float[size], size, 0, 1, orientation);
+    }
+
+    public DenseFloatVector(final Orientation orientation, final float... values) {
+        this(values, values.length, 0, 1, orientation);
+    }
+
+    void copyTo(final float[] target, final int targetOffset, final int targetStride) {
+        for (int i = 0; i < size; i++) {
+            target[targetOffset + i * targetStride] = data[offset + i * stride];
+        }
+    }
+
+    protected ToArraysConverter<DenseFloatVector, float[]> createArraysConverter() {
+        return new ToArraysConverter<DenseFloatVector, float[]>(this) {
             @Override
             protected float[] createArray(final int length) {
                 return new float[length];
@@ -42,28 +63,6 @@ public final class DenseFloatVector extends AbstractDenseVector<DenseFloatVector
                 dest[destPos] = data[srcPos];
             }
         };
-    }
-
-    public DenseFloatVector(final int size) {
-        this(size, Orientation.ROW);
-    }
-
-    public DenseFloatVector(final int size, final Orientation orientation) {
-        this(new float[size], size, 0, 1, orientation);
-    }
-
-    public DenseFloatVector(final Orientation orientation, final float... values) {
-        this(values, values.length, 0, 1, orientation);
-    }
-
-    public DenseFloatVector column(final int column) {
-        return matrixSupport.column(column);
-    }
-
-    void copyTo(final float[] target, final int targetOffset, final int targetStride) {
-        for (int i = 0; i < size; i++) {
-            target[targetOffset + i * targetStride] = data[offset + i * stride];
-        }
     }
 
     public DenseFloatVector createColumnVector() {
@@ -98,10 +97,6 @@ public final class DenseFloatVector extends AbstractDenseVector<DenseFloatVector
         return true;
     }
 
-    public DenseFloatVector row(final int row) {
-        return matrixSupport.row(row);
-    }
-
     public void setColumn(final int column, final FloatVector columnVector) {
         floatSupport.setColumn(column, columnVector);
     }
@@ -112,14 +107,6 @@ public final class DenseFloatVector extends AbstractDenseVector<DenseFloatVector
 
     public float[] toArray() {
         return floatSupport.toArray();
-    }
-
-    public float[][] toColumnArrays() {
-        return arraysConverter.toArrays(columns, rows, false);
-    }
-
-    public float[][] toRowArrays() {
-        return arraysConverter.toArrays(rows, columns, true);
     }
 
     @Override
