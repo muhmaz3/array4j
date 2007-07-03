@@ -1,7 +1,7 @@
 package com.googlecode.array4j;
 
-public abstract class AbstractDenseVector<V extends DenseVector<V>, S extends DenseMatrixSupport<V, V>, ValueArray> extends
-        AbstractDenseMatrix<V, V, S, ValueArray> implements DenseVector<V>, Vector<V> {
+public abstract class AbstractDenseVector<V extends DenseVector<V>, S extends DenseMatrixSupport<V, V, ValueArray>, ValueArray>
+        extends AbstractDenseMatrix<V, V, S, ValueArray> implements DenseVector<V>, Vector<V> {
     private static int columns(final int size, final Orientation orientation) {
         checkArgument(size >= 0);
         if (orientation.equals(Orientation.ROW)) {

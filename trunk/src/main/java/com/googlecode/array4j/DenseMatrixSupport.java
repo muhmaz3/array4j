@@ -1,6 +1,6 @@
 package com.googlecode.array4j;
 
-public abstract class DenseMatrixSupport<M extends DenseMatrix<M, V>, V extends DenseVector<V>> {
+public abstract class DenseMatrixSupport<M extends DenseMatrix<M, V>, V extends DenseVector<V>, ValueArray> {
     /** Stride between elements in a column. */
     protected final int columnStride;
 
@@ -71,4 +71,6 @@ public abstract class DenseMatrixSupport<M extends DenseMatrix<M, V>, V extends 
     }
 
     protected abstract void setRowImpl(int row, FloatVector<?> rowVector);
+    
+    protected abstract ValueArray[] toArrays(int m, int n, boolean rows);
 }

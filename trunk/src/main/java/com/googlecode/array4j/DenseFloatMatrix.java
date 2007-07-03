@@ -1,7 +1,5 @@
 package com.googlecode.array4j;
 
-import com.googlecode.array4j.internal.ToArraysConverter;
-
 public final class DenseFloatMatrix
         extends
         AbstractDenseMatrix<DenseFloatMatrix, DenseFloatVector, DenseFloatSupport<DenseFloatMatrix, DenseFloatVector>, float[]>
@@ -28,26 +26,6 @@ public final class DenseFloatMatrix
 
     public DenseFloatMatrix(final int rows, final int columns, final Orientation orientation) {
         this(new float[rows * columns], rows, columns, 0, 1, orientation);
-    }
-
-    @Override
-    protected ToArraysConverter<DenseFloatMatrix, float[]> createArraysConverter() {
-        return new ToArraysConverter<DenseFloatMatrix, float[]>(this) {
-            @Override
-            protected float[] createArray(final int length) {
-                return new float[length];
-            }
-
-            @Override
-            protected float[][] createArrayArray(final int length) {
-                return new float[length][];
-            }
-
-            @Override
-            protected void set(final int srcPos, final float[] dest, final int destPos) {
-                dest[destPos] = data[srcPos];
-            }
-        };
     }
 
     public DenseFloatVector createColumnVector() {

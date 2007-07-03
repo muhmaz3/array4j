@@ -4,8 +4,6 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 
-import com.googlecode.array4j.internal.ToArraysConverter;
-
 public final class DirectFloatMatrix
         extends
         AbstractDenseMatrix<DirectFloatMatrix, DirectFloatVector, DirectFloatSupport<DirectFloatMatrix, DirectFloatVector>, float[]>
@@ -49,26 +47,6 @@ public final class DirectFloatMatrix
 
     public DirectFloatMatrix(final int rows, final int columns, final Orientation orientation) {
         this(createBuffer(rows * columns), rows, columns, 0, 1, orientation);
-    }
-
-    @Override
-    protected ToArraysConverter<DirectFloatMatrix, float[]> createArraysConverter() {
-        return new ToArraysConverter<DirectFloatMatrix, float[]>(this) {
-            @Override
-            protected float[] createArray(final int length) {
-                return new float[length];
-            }
-
-            @Override
-            protected float[][] createArrayArray(final int length) {
-                return new float[length][];
-            }
-
-            @Override
-            protected void set(final int srcPos, final float[] dest, final int destPos) {
-                dest[destPos] = data.get(srcPos);
-            }
-        };
     }
 
     public DirectFloatVector createColumnVector() {
