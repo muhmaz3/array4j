@@ -40,35 +40,35 @@ public abstract class DenseMatrixSupport<M extends DenseMatrix<M, V>, V extends 
         }
     }
 
-    protected abstract V createSharingVector(int size, int offset, int stride, Orientation orientation);
-
     public final V column(final int column) {
         checkColumnIndex(column);
-        return createSharingVector(matrix.rows(), columnOffset(column), rowStride, Orientation.COLUMN);
-    }
-
-    public final V row(final int row) {
-        checkRowIndex(row);
-        return createSharingVector(matrix.columns(), rowOffset(row), columnStride, Orientation.ROW);
+        return matrix.createVector(matrix.rows(), columnOffset(column), rowStride, Orientation.COLUMN);
     }
 
     public final int columnOffset(final int column) {
         return matrix.offset() + column * columnStride;
     }
 
+    public final V row(final int row) {
+        checkRowIndex(row);
+        return matrix.createVector(matrix.columns(), rowOffset(row), columnStride, Orientation.ROW);
+    }
+
     public final int rowOffset(final int row) {
         return matrix.offset() + row * rowStride;
     }
 
+    public void setColumn(int column, FloatVector<?> columnVector) {
+        checkColumnIndex(column);
+        setColumnImpl(column, columnVector);
+    }
+
     protected abstract void setColumnImpl(int column, FloatVector<?> columnVector);
 
-    protected abstract void setRowImpl(int row, FloatVector<?> rowVector);
-
-    public void setColumn(int column, FloatVector<?> columnVector) {
-        // TODO Auto-generated method stub
-    }
-
     public void setRow(int row, FloatVector<?> rowVector) {
-        // TODO Auto-generated method stub
+        checkRowIndex(row);
+        setRowImpl(row, rowVector);
     }
+
+    protected abstract void setRowImpl(int row, FloatVector<?> rowVector);
 }

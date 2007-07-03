@@ -2,11 +2,11 @@ package com.googlecode.array4j;
 
 import java.util.Iterator;
 
-public abstract class AbstractMatrix<M extends Matrix<M, V>, V extends Vector<V>> extends AbstractArray<M> implements
-        Matrix<M, V> {
-    final int rows;
-
+public abstract class AbstractMatrix<M extends Matrix<M, V>, V extends Vector<V>> extends AbstractArray<M>
+        implements Matrix<M, V> {
     final int columns;
+
+    final int rows;
 
     public AbstractMatrix(final int rows, final int columns) {
         super(rows * columns);
@@ -14,10 +14,6 @@ public abstract class AbstractMatrix<M extends Matrix<M, V>, V extends Vector<V>
         checkArgument(columns >= 0);
         this.rows = rows;
         this.columns = columns;
-    }
-
-    public final int rows() {
-        return rows;
     }
 
     public final int columns() {
@@ -44,6 +40,10 @@ public abstract class AbstractMatrix<M extends Matrix<M, V>, V extends Vector<V>
                 };
             }
         };
+    }
+
+    public final int rows() {
+        return rows;
     }
 
     public final Iterable<V> rowsIterator() {

@@ -46,10 +46,4 @@ public final class DenseFloatSupport<M extends DenseMatrix<M, V> & FloatMatrix<M
         }
         return arr;
     }
-
-    @Override
-    protected V createSharingVector(int size, int offset, int stride, Orientation orientation) {
-//        return new DenseFloatVector(data, size, offset, stride, orientation);
-        return null;
-    }
 }

@@ -6,7 +6,9 @@ import java.nio.FloatBuffer;
 
 import com.googlecode.array4j.internal.ToArraysConverter;
 
-public final class DirectFloatMatrix extends AbstractDenseMatrix<DirectFloatMatrix, DirectFloatVector, float[]>
+public final class DirectFloatMatrix
+        extends
+        AbstractDenseMatrix<DirectFloatMatrix, DirectFloatVector, DirectFloatSupport<DirectFloatMatrix, DirectFloatVector>, float[]>
         implements FloatMatrix<DirectFloatMatrix, DirectFloatVector>, DenseMatrix<DirectFloatMatrix, DirectFloatVector> {
     private static final int FLOAT_SIZE = Float.SIZE >>> 3;
 
@@ -24,8 +26,6 @@ public final class DirectFloatMatrix extends AbstractDenseMatrix<DirectFloatMatr
 
     final FloatBuffer data;
 
-    private final transient DirectFloatSupport<DirectFloatMatrix, DirectFloatVector> support;
-
     public DirectFloatMatrix(final float[] data, final int rows, final int columns, final int offset, final int stride,
             final Orientation orientation) {
         this(createBuffer(data), rows, columns, offset, stride, orientation);
@@ -39,8 +39,8 @@ public final class DirectFloatMatrix extends AbstractDenseMatrix<DirectFloatMatr
             final int stride, final Orientation orientation) {
         super(rows, columns, offset, stride, orientation);
         this.data = data;
+        this.support = new DirectFloatSupport<DirectFloatMatrix, DirectFloatVector>(this, data);
         checkPostcondition(getData().remaining() >= size);
-        this.support = new DirectFloatSupport<DirectFloatMatrix, DirectFloatVector>(this);
     }
 
     public DirectFloatMatrix(final int rows, final int columns) {
@@ -71,6 +71,20 @@ public final class DirectFloatMatrix extends AbstractDenseMatrix<DirectFloatMatr
         };
     }
 
+    public DirectFloatVector createColumnVector() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public DirectFloatVector createRowVector() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public DirectFloatVector createVector(int size, int offset, int stride, Orientation orientation) {
+        return new DirectFloatVector(getData(), size, offset, stride, orientation);
+    }
+
     private FloatBuffer getData() {
         return (FloatBuffer) ((FloatBuffer) data.rewind()).position(offset);
     }
@@ -90,15 +104,5 @@ public final class DirectFloatMatrix extends AbstractDenseMatrix<DirectFloatMatr
     public DirectFloatMatrix transpose() {
         // interchange columns and rows and change orientation
         return new DirectFloatMatrix(getData(), columns, rows, offset, stride, orientation.transpose());
-    }
-
-    public DirectFloatVector createColumnVector() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    public DirectFloatVector createRowVector() {
-        // TODO Auto-generated method stub
-        return null;
     }
 }

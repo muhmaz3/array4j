@@ -9,6 +9,16 @@ import org.junit.Test;
 // TODO test DenseFloatVector as a FloatMatrix to make sure it doesn't break anything
 
 public final class DenseFloatVectorTest {
+    @Test(expected=IllegalArgumentException.class)
+    public void testConstructorDataTooSmall() {
+        new DenseFloatVector(new float[1], 2, 0, 1, Orientation.ROW);
+    }
+
+    @Test(expected=NegativeArraySizeException.class)
+    public void testConstructorNegativeSize() {
+        new DenseFloatVector(-1);
+    }
+
     @Test
     public void testConstructors() {
        new DenseFloatVector();
@@ -20,16 +30,6 @@ public final class DenseFloatVectorTest {
        // a really long constant vector
        new DenseFloatVector(new float[1], Integer.MAX_VALUE, 0, 0, Orientation.ROW);
        // TODO test for overflows in checkArgument checks
-    }
-
-    @Test(expected=NegativeArraySizeException.class)
-    public void testConstructorNegativeSize() {
-        new DenseFloatVector(-1);
-    }
-
-    @Test(expected=IllegalArgumentException.class)
-    public void testConstructorDataTooSmall() {
-        new DenseFloatVector(new float[1], 2, 0, 1, Orientation.ROW);
     }
 
     @Test
