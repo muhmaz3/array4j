@@ -58,19 +58,25 @@ public abstract class DenseMatrixSupport<M extends DenseMatrix<M, V>, V extends 
         return matrix.offset() + row * rowStride;
     }
 
-    public void setColumn(int column, FloatVector<?> columnVector) {
+    public final void setColumn(final int column, final FloatVector<?> columnVector) {
         checkColumnIndex(column);
+        if (columnVector == null) {
+            throw new NullPointerException();
+        }
         setColumnImpl(column, columnVector);
     }
 
     protected abstract void setColumnImpl(int column, FloatVector<?> columnVector);
 
-    public void setRow(int row, FloatVector<?> rowVector) {
+    public final void setRow(final int row, final FloatVector<?> rowVector) {
         checkRowIndex(row);
+        if (rowVector == null) {
+            throw new NullPointerException();
+        }
         setRowImpl(row, rowVector);
     }
 
     protected abstract void setRowImpl(int row, FloatVector<?> rowVector);
-    
+
     protected abstract ValueArray[] toArrays(int m, int n, boolean rows);
 }

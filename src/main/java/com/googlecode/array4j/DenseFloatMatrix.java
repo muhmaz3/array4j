@@ -36,6 +36,16 @@ public final class DenseFloatMatrix
         return new DenseFloatVector(columns, Orientation.ROW);
     }
 
+    public DenseFloatVector createColumnVector(final float... values) {
+        checkArgument(values.length == rows);
+        return new DenseFloatVector(Orientation.COLUMN, values);
+    }
+
+    public DenseFloatVector createRowVector(final float... values) {
+        checkArgument(values.length == columns);
+        return new DenseFloatVector(Orientation.ROW, values);
+    }
+
     public DenseFloatVector createVector(int size, int offset, int stride, Orientation orientation) {
         return new DenseFloatVector(data, size, offset, stride, orientation);
     }
@@ -57,6 +67,10 @@ public final class DenseFloatMatrix
             }
         }
         return true;
+    }
+
+    public float[] getData() {
+        return data;
     }
 
     public void setColumn(final int column, final FloatVector<?> columnVector) {

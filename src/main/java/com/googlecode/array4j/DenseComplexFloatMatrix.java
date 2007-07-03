@@ -1,13 +1,11 @@
 package com.googlecode.array4j;
 
-import com.googlecode.array4j.internal.ToArraysConverter;
 
-public final class DenseComplexFloatMatrix extends
-        AbstractDenseMatrix<DenseComplexFloatMatrix, DenseComplexFloatVector, ComplexFloat[]> implements
-        ComplexFloatMatrix<DenseComplexFloatMatrix, DenseComplexFloatVector>,
+public final class DenseComplexFloatMatrix
+        extends
+        AbstractDenseMatrix<DenseComplexFloatMatrix, DenseComplexFloatVector, DenseComplexFloatSupport<DenseComplexFloatMatrix, DenseComplexFloatVector>, ComplexFloat[]>
+        implements ComplexFloatMatrix<DenseComplexFloatMatrix, DenseComplexFloatVector>,
         DenseMatrix<DenseComplexFloatMatrix, DenseComplexFloatVector> {
-    private final transient DenseComplexFloatSupport<DenseComplexFloatMatrix, DenseComplexFloatVector> complexSupport;
-
     private final float[] data;
 
     public DenseComplexFloatMatrix(float[] data, int rows, int columns, int offset, int stride, Orientation orientation) {
@@ -17,7 +15,7 @@ public final class DenseComplexFloatMatrix extends
         // TODO might need to add an offset here
         checkArgument(size <= 1 || data.length >= 2 * stride * size);
         this.data = data;
-        this.complexSupport = new DenseComplexFloatSupport<DenseComplexFloatMatrix, DenseComplexFloatVector>(this, data);
+        this.support = new DenseComplexFloatSupport<DenseComplexFloatMatrix, DenseComplexFloatVector>(this, data);
     }
 
     public DenseComplexFloatMatrix(final int rows, final int columns) {
@@ -28,39 +26,37 @@ public final class DenseComplexFloatMatrix extends
         this(new float[2 * rows * columns], rows, columns, 0, 1, orientation);
     }
 
-    @Override
-    protected ToArraysConverter<DenseComplexFloatMatrix, ComplexFloat[]> createArraysConverter() {
+    public DenseComplexFloatVector createColumnVector() {
         // TODO Auto-generated method stub
         return null;
     }
 
-    public DenseComplexFloatVector createColumnVector() {
-        return new DenseComplexFloatVector(rows, Orientation.COLUMN);
-    }
-
     public DenseComplexFloatVector createRowVector() {
-        return new DenseComplexFloatVector(columns, Orientation.ROW);
+        // TODO Auto-generated method stub
+        return null;
     }
 
-    public DenseComplexFloatVector createSharingVector(final int size, final int offset, final int stride,
-            final Orientation orientation) {
-        return new DenseComplexFloatVector(data, size, offset, stride, orientation);
+    public DenseComplexFloatVector createVector(int size, int offset, int stride, Orientation orientation) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
-    public void setColumn(final int column, final ComplexFloatVector<?> columnVector) {
-        complexSupport.setColumn(column, columnVector);
+    public void setColumn(int column, ComplexFloatVector<?> columnVector) {
+        // TODO Auto-generated method stub
     }
 
-    public void setRow(final int row, final ComplexFloatVector<?> rowVector) {
-        complexSupport.setRow(row, rowVector);
+    public void setRow(int row, ComplexFloatVector<?> rowVector) {
+        // TODO Auto-generated method stub
+
     }
 
     public ComplexFloat[] toArray() {
-        return complexSupport.toArray();
+        // TODO Auto-generated method stub
+        return null;
     }
 
     public DenseComplexFloatMatrix transpose() {
-        // interchange columns and rows and change orientation
-        return new DenseComplexFloatMatrix(data, columns, rows, offset, stride, orientation.transpose());
+        // TODO Auto-generated method stub
+        return null;
     }
 }

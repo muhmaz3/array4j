@@ -6,6 +6,6 @@ public interface DenseMatrix<M extends DenseMatrix<M, V>, V extends DenseVector<
     int offset();
 
     Orientation orientation();
-    
+
     int stride();
 }

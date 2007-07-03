@@ -8,4 +8,8 @@ public interface FloatMatrix<M extends FloatMatrix<M, V>, V extends FloatVector<
     float[][] toColumnArrays();
 
     float[][] toRowArrays();
+
+    V createColumnVector(float... values);
+
+    V createRowVector(float... values);
 }
