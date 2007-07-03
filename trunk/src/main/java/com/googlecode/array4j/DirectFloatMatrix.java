@@ -59,6 +59,16 @@ public final class DirectFloatMatrix
         return null;
     }
 
+    public DirectFloatVector createColumnVector(final float... values) {
+        checkArgument(values.length == rows);
+        return new DirectFloatVector(Orientation.COLUMN, values);
+    }
+
+    public DirectFloatVector createRowVector(final float... values) {
+        checkArgument(values.length == columns);
+        return new DirectFloatVector(Orientation.ROW, values);
+    }
+
     public DirectFloatVector createVector(int size, int offset, int stride, Orientation orientation) {
         return new DirectFloatVector(getData(), size, offset, stride, orientation);
     }

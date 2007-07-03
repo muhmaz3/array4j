@@ -23,6 +23,11 @@ public final class DirectFloatVector extends
         this(DirectFloatMatrix.createBuffer(size), size, offset, stride, orientation);
     }
 
+    public DirectFloatVector(final Orientation orientation, final float[] values) {
+        this(values.length, 0, 1, orientation);
+        getData().put(values);
+    }
+
     public DirectFloatVector createColumnVector() {
         // TODO Auto-generated method stub
         return null;
@@ -31,6 +36,16 @@ public final class DirectFloatVector extends
     public DirectFloatVector createRowVector() {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    public DirectFloatVector createColumnVector(final float... values) {
+        checkArgument(values.length == rows);
+        return new DirectFloatVector(Orientation.COLUMN, values);
+    }
+
+    public DirectFloatVector createRowVector(final float... values) {
+        checkArgument(values.length == columns);
+        return new DirectFloatVector(Orientation.ROW, values);
     }
 
     public DirectFloatVector createVector(int size, int offset, int stride, Orientation orientation) {

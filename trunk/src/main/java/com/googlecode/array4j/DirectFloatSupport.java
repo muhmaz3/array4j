@@ -37,13 +37,19 @@ public final class DirectFloatSupport<M extends DenseMatrix<M, V> & FloatMatrix<
     }
 
     @Override
-    protected void setColumnImpl(int column, FloatVector<?> columnVector) {
-        // TODO Auto-generated method stub
+    protected void setColumnImpl(final int column, final FloatVector<?> columnVector) {
+        if (!(columnVector instanceof DirectFloatVector)) {
+            throw new UnsupportedOperationException();
+        }
+        DirectFloatVector directColVec = (DirectFloatVector) columnVector;
     }
 
     @Override
-    protected void setRowImpl(int row, FloatVector<?> rowVector) {
-        // TODO Auto-generated method stub
+    protected void setRowImpl(final int row, final FloatVector<?> rowVector) {
+        if (!(rowVector instanceof DirectFloatVector)) {
+            throw new UnsupportedOperationException();
+        }
+        DirectFloatVector directRowVec = (DirectFloatVector) rowVector;
     }
 
     public float[] toArray() {
@@ -66,7 +72,7 @@ public final class DirectFloatSupport<M extends DenseMatrix<M, V> & FloatMatrix<
     }
 
     @Override
-    protected float[][] toArrays(int m, int n, boolean rows) {
+    protected float[][] toArrays(final int m, final int n, final boolean rows) {
         return arraysConverter.toArrays(m, n, rows);
     }
 }
