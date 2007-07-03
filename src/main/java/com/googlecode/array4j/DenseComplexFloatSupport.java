@@ -24,8 +24,6 @@ public final class DenseComplexFloatSupport<M extends DenseMatrix<M, V> & Comple
 
     public DenseComplexFloatSupport(final M matrix, final float[] data) {
         this.matrix = matrix;
-        // TODO might be able to get rid of this...
-        this.matrixSupport = matrix.getMatrixSupport();
         this.data = data;
         this.size = matrix.size();
         this.rows = matrix.rows();
@@ -103,7 +101,7 @@ public final class DenseComplexFloatSupport<M extends DenseMatrix<M, V> & Comple
         denseColVec.copyTo(data, matrixSupport.columnOffset(column), matrixSupport.rowStride);
     }
 
-    public void setRow(final int row, final ComplexFloatVector rowVector) {
+    public void setRow(final int row, final ComplexFloatVector<?> rowVector) {
         matrixSupport.checkRowIndex(row);
         if (!rowVector.isRowVector() || columns != rowVector.size()) {
             throw new IllegalArgumentException();

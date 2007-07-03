@@ -6,14 +6,14 @@ public final class FloatMatrixUtils {
 
     public static FloatVector<?> rowMean(final FloatMatrix<?, ?> matrix) {
         FloatVector<?> mean = matrix.createRowVector();
-        for (FloatVector row : matrix.rowsIterator()) {
+        for (FloatVector<?> row : matrix.rowsIterator()) {
         }
         return mean;
     }
 
     public static FloatVector<?> columnMean(final FloatMatrix<?, ?> matrix) {
         FloatVector<?> mean = matrix.createColumnVector();
-        for (FloatVector column : matrix.columnsIterator()) {
+        for (FloatVector<?> column : matrix.columnsIterator()) {
         }
         return mean;
     }
