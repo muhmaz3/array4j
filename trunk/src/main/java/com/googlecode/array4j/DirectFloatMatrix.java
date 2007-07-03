@@ -54,14 +54,14 @@ public final class DirectFloatMatrix
         return null;
     }
 
-    public DirectFloatVector createRowVector() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
     public DirectFloatVector createColumnVector(final float... values) {
         checkArgument(values.length == rows);
         return new DirectFloatVector(Orientation.COLUMN, values);
+    }
+
+    public DirectFloatVector createRowVector() {
+        // TODO Auto-generated method stub
+        return null;
     }
 
     public DirectFloatVector createRowVector(final float... values) {

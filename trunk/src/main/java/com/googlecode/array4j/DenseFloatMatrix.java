@@ -32,13 +32,13 @@ public final class DenseFloatMatrix
         return new DenseFloatVector(rows, Orientation.COLUMN);
     }
 
-    public DenseFloatVector createRowVector() {
-        return new DenseFloatVector(columns, Orientation.ROW);
-    }
-
     public DenseFloatVector createColumnVector(final float... values) {
         checkArgument(values.length == rows);
         return new DenseFloatVector(Orientation.COLUMN, values);
+    }
+
+    public DenseFloatVector createRowVector() {
+        return new DenseFloatVector(columns, Orientation.ROW);
     }
 
     public DenseFloatVector createRowVector(final float... values) {
