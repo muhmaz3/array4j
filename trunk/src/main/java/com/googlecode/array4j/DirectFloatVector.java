@@ -4,18 +4,17 @@ import java.nio.FloatBuffer;
 
 import com.googlecode.array4j.internal.ToArraysConverter;
 
-public final class DirectFloatVector extends AbstractDenseVector<DirectFloatVector, float[]> implements
-        FloatVector<DirectFloatVector>, DenseVector<DirectFloatVector> {
+public final class DirectFloatVector extends
+        AbstractDenseVector<DirectFloatVector, DirectFloatSupport<DirectFloatVector, DirectFloatVector>, float[]>
+        implements FloatVector<DirectFloatVector>, DenseVector<DirectFloatVector> {
     private final FloatBuffer data;
-
-    private final transient DirectFloatSupport<DirectFloatVector, DirectFloatVector> support;
 
     DirectFloatVector(final FloatBuffer data, final int size, final int offset, final int stride,
             final Orientation orientation) {
         super(size, offset, stride, orientation);
         this.data = data;
+        this.support = new DirectFloatSupport<DirectFloatVector, DirectFloatVector>(this, data);
         checkPostcondition(getData().remaining() >= size);
-        this.support = new DirectFloatSupport<DirectFloatVector, DirectFloatVector>(this);
     }
 
     public DirectFloatVector(final int size) {
@@ -46,6 +45,20 @@ public final class DirectFloatVector extends AbstractDenseVector<DirectFloatVect
         };
     }
 
+    public DirectFloatVector createColumnVector() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public DirectFloatVector createRowVector() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public DirectFloatVector createVector(int size, int offset, int stride, Orientation orientation) {
+        return new DirectFloatVector(getData(), size, offset, stride, orientation);
+    }
+
     private FloatBuffer getData() {
         // TODO code duplicated from DirectFloatMatrix.getData
         return (FloatBuffer) ((FloatBuffer) data.rewind()).position(offset);
@@ -60,18 +73,7 @@ public final class DirectFloatVector extends AbstractDenseVector<DirectFloatVect
     }
 
     public float[] toArray() {
-//        return DirectFloatSupport.toArray();
-        return null;
-    }
-
-    public DirectFloatVector createColumnVector() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    public DirectFloatVector createRowVector() {
-        // TODO Auto-generated method stub
-        return null;
+        return support.toArray();
     }
 
     public DirectFloatVector transpose() {

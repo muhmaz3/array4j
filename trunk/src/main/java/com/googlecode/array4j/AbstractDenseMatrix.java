@@ -2,8 +2,8 @@ package com.googlecode.array4j;
 
 import com.googlecode.array4j.internal.ToArraysConverter;
 
-public abstract class AbstractDenseMatrix<M extends DenseMatrix<M, V>, V extends DenseVector<V>, ValueArray> extends
-        AbstractMatrix<M, V> implements DenseMatrix<M, V> {
+public abstract class AbstractDenseMatrix<M extends DenseMatrix<M, V>, V extends DenseVector<V>, S extends DenseMatrixSupport<M, V>, ValueArray>
+        extends AbstractMatrix<M, V> implements DenseMatrix<M, V> {
     private final transient ToArraysConverter<M, ValueArray> arraysConverter;
 
     final int offset;
@@ -11,6 +11,8 @@ public abstract class AbstractDenseMatrix<M extends DenseMatrix<M, V>, V extends
     final Orientation orientation;
 
     final int stride;
+
+    protected transient S support;
 
     public AbstractDenseMatrix(final int rows, final int columns, final int offset, final int stride,
             final Orientation orientation) {
@@ -22,12 +24,11 @@ public abstract class AbstractDenseMatrix<M extends DenseMatrix<M, V>, V extends
         this.arraysConverter = createArraysConverter();
     }
 
-    protected abstract ToArraysConverter<M, ValueArray> createArraysConverter();
-
     public final V column(final int column) {
-//        return matrixSupport.column(column);
-        return null;
+        return support.column(column);
     }
+
+    protected abstract ToArraysConverter<M, ValueArray> createArraysConverter();
 
     public final int offset() {
         return offset;
@@ -38,8 +39,7 @@ public abstract class AbstractDenseMatrix<M extends DenseMatrix<M, V>, V extends
     }
 
     public final V row(final int row) {
-//        return matrixSupport.row(row);
-        return null;
+        return support.row(row);
     }
 
     public final int stride() {

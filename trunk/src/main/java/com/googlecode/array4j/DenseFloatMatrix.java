@@ -2,21 +2,32 @@ package com.googlecode.array4j;
 
 import com.googlecode.array4j.internal.ToArraysConverter;
 
-public final class DenseFloatMatrix extends AbstractDenseMatrix<DenseFloatMatrix, DenseFloatVector, float[]> implements
-        FloatMatrix<DenseFloatMatrix, DenseFloatVector>, DenseMatrix<DenseFloatMatrix, DenseFloatVector> {
+public final class DenseFloatMatrix
+        extends
+        AbstractDenseMatrix<DenseFloatMatrix, DenseFloatVector, DenseFloatSupport<DenseFloatMatrix, DenseFloatVector>, float[]>
+        implements FloatMatrix<DenseFloatMatrix, DenseFloatVector>, DenseMatrix<DenseFloatMatrix, DenseFloatVector> {
     private final float[] data;
-
-    private final transient DenseFloatSupport<DenseFloatMatrix, DenseFloatVector> support;
 
     public DenseFloatMatrix(final float[] data, final int rows, final int columns, final int offset, final int stride,
             final Orientation orientation) {
         super(rows, columns, offset, stride, orientation);
         checkArgument(data != null);
         checkArgument(size == 0 || offset < data.length);
-//         checkArgument(size <= 1 || data.length >= offset + stride * rows * columns);
         checkArgument(size <= 1 || data.length >= stride * size);
         this.data = data;
         this.support = new DenseFloatSupport<DenseFloatMatrix, DenseFloatVector>(this, data);
+    }
+
+    public DenseFloatMatrix(final float[] values, final int rows, final int columns, final Orientation orientation) {
+        this(values, rows, columns, 0, 1, orientation);
+    }
+
+    public DenseFloatMatrix(final int rows, final int columns) {
+        this(rows, columns, Orientation.DEFAULT);
+    }
+
+    public DenseFloatMatrix(final int rows, final int columns, final Orientation orientation) {
+        this(new float[rows * columns], rows, columns, 0, 1, orientation);
     }
 
     @Override
@@ -39,24 +50,16 @@ public final class DenseFloatMatrix extends AbstractDenseMatrix<DenseFloatMatrix
         };
     }
 
-    public DenseFloatMatrix(final float[] values, final int rows, final int columns, final Orientation orientation) {
-        this(values, rows, columns, 0, 1, orientation);
-    }
-
-    public DenseFloatMatrix(final int rows, final int columns) {
-        this(rows, columns, Orientation.DEFAULT);
-    }
-
-    public DenseFloatMatrix(final int rows, final int columns, final Orientation orientation) {
-        this(new float[rows * columns], rows, columns, 0, 1, orientation);
-    }
-
     public DenseFloatVector createColumnVector() {
         return new DenseFloatVector(rows, Orientation.COLUMN);
     }
 
     public DenseFloatVector createRowVector() {
         return new DenseFloatVector(columns, Orientation.ROW);
+    }
+
+    public DenseFloatVector createVector(int size, int offset, int stride, Orientation orientation) {
+        return new DenseFloatVector(data, size, offset, stride, orientation);
     }
 
     @Override

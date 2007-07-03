@@ -4,11 +4,10 @@ import java.util.Arrays;
 
 import com.googlecode.array4j.internal.ToArraysConverter;
 
-public final class DenseFloatVector extends AbstractDenseVector<DenseFloatVector, float[]> implements
+public final class DenseFloatVector extends
+        AbstractDenseVector<DenseFloatVector, DenseFloatSupport<DenseFloatVector, DenseFloatVector>, float[]> implements
         FloatVector<DenseFloatVector>, DenseVector<DenseFloatVector> {
     final float[] data;
-
-    private final transient DenseFloatSupport<DenseFloatVector, DenseFloatVector> support;
 
     public DenseFloatVector() {
         this(0);
@@ -74,6 +73,10 @@ public final class DenseFloatVector extends AbstractDenseVector<DenseFloatVector
         return new DenseFloatVector(rows, Orientation.ROW);
     }
 
+    public DenseFloatVector createVector(int size, int offset, int stride, Orientation orientation) {
+        return new DenseFloatVector(data, size, offset, stride, orientation);
+    }
+
     @Override
     public boolean equals(final Object obj) {
         // TODO possibly allow any FloatMatrix instance
@@ -94,11 +97,11 @@ public final class DenseFloatVector extends AbstractDenseVector<DenseFloatVector
     }
 
     public void setColumn(final int column, final FloatVector<?> columnVector) {
-        // support.setColumn(column, columnVector);
+         support.setColumn(column, columnVector);
     }
 
     public void setRow(final int row, final FloatVector<?> rowVector) {
-        // support.setRow(row, rowVector);
+         support.setRow(row, rowVector);
     }
 
     public float[] toArray() {

@@ -43,48 +43,6 @@ public final class DenseComplexFloatSupport<M extends DenseMatrix<M, V> & Comple
         return new ComplexFloat[length][];
     }
 
-    @Override
-    public ComplexFloat[][] toRowArrays() {
-        ComplexFloat[][] rowsArr = createArrayArray(rows);
-        for (int row = 0; row < rows; row++) {
-            rowsArr[row] = createArray(columns);
-        }
-        for (int row = 0; row < rows; row++) {
-            ComplexFloat[] rowArr = rowsArr[row];
-            for (int column = 0; column < columns; column++) {
-                int position = offset;
-                if (orientation.equals(Orientation.ROW)) {
-                    position += (row * columns + column) * stride;
-                } else {
-                    position += offset + (column * rows + row) * stride;
-                }
-                rowArr[column] = new ComplexFloat(position, position + 1);
-            }
-        }
-        return rowsArr;
-    }
-
-    @Override
-    public ComplexFloat[][] toColumnArrays() {
-        ComplexFloat[][] columnsArr = createArrayArray(columns);
-        for (int column = 0; column < columns; column++) {
-            columnsArr[column] = createArray(rows);
-        }
-        for (int column = 0; column < columns; column++) {
-            ComplexFloat[] columnArr = columnsArr[column];
-            for (int row = 0; row < rows; row++) {
-                int position = offset;
-                if (orientation.equals(Orientation.COLUMN)) {
-                    position += (column * rows + row) * stride;
-                } else {
-                    position += (row * columns + column) * stride;
-                }
-                columnArr[row] = new ComplexFloat(position, position + 1);
-            }
-        }
-        return columnsArr;
-    }
-
     public void setColumn(final int column, final ComplexFloatVector columnVector) {
         matrixSupport.checkColumnIndex(column);
         if (!columnVector.isColumnVector() || rows != columnVector.size()) {
@@ -132,5 +90,47 @@ public final class DenseComplexFloatSupport<M extends DenseMatrix<M, V> & Comple
             arr[j] = new ComplexFloat(data[i], data[i + 1]);
         }
         return arr;
+    }
+
+    @Override
+    public ComplexFloat[][] toColumnArrays() {
+        ComplexFloat[][] columnsArr = createArrayArray(columns);
+        for (int column = 0; column < columns; column++) {
+            columnsArr[column] = createArray(rows);
+        }
+        for (int column = 0; column < columns; column++) {
+            ComplexFloat[] columnArr = columnsArr[column];
+            for (int row = 0; row < rows; row++) {
+                int position = offset;
+                if (orientation.equals(Orientation.COLUMN)) {
+                    position += (column * rows + row) * stride;
+                } else {
+                    position += (row * columns + column) * stride;
+                }
+                columnArr[row] = new ComplexFloat(position, position + 1);
+            }
+        }
+        return columnsArr;
+    }
+
+    @Override
+    public ComplexFloat[][] toRowArrays() {
+        ComplexFloat[][] rowsArr = createArrayArray(rows);
+        for (int row = 0; row < rows; row++) {
+            rowsArr[row] = createArray(columns);
+        }
+        for (int row = 0; row < rows; row++) {
+            ComplexFloat[] rowArr = rowsArr[row];
+            for (int column = 0; column < columns; column++) {
+                int position = offset;
+                if (orientation.equals(Orientation.ROW)) {
+                    position += (row * columns + column) * stride;
+                } else {
+                    position += offset + (column * rows + row) * stride;
+                }
+                rowArr[column] = new ComplexFloat(position, position + 1);
+            }
+        }
+        return rowsArr;
     }
 }
