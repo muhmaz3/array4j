@@ -7,6 +7,10 @@ public final class DirectFloatVector extends
         implements FloatVector<DirectFloatVector>, DenseVector<DirectFloatVector> {
     private final FloatBuffer data;
 
+    public DirectFloatVector(final float... values) {
+        this(Orientation.DEFAULT_FOR_VECTOR, values);
+    }
+
     DirectFloatVector(final FloatBuffer data, final int size, final int offset, final int stride,
             final Orientation orientation) {
         super(size, offset, stride, orientation);
@@ -33,14 +37,14 @@ public final class DirectFloatVector extends
         return null;
     }
 
-    public DirectFloatVector createRowVector() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
     public DirectFloatVector createColumnVector(final float... values) {
         checkArgument(values.length == rows);
         return new DirectFloatVector(Orientation.COLUMN, values);
+    }
+
+    public DirectFloatVector createRowVector() {
+        // TODO Auto-generated method stub
+        return null;
     }
 
     public DirectFloatVector createRowVector(final float... values) {
@@ -52,7 +56,7 @@ public final class DirectFloatVector extends
         return new DirectFloatVector(getData(), size, offset, stride, orientation);
     }
 
-    private FloatBuffer getData() {
+    public FloatBuffer getData() {
         // TODO code duplicated from DirectFloatMatrix.getData
         return (FloatBuffer) ((FloatBuffer) data.rewind()).position(offset);
     }

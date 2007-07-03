@@ -10,10 +10,10 @@ extern "C" {
 /*
  * Class:     com_googlecode_array4j_blas_DirectFloatBLAS_KernelImpl
  * Method:    sdot
- * Signature: ()F
+ * Signature: (ILjava/nio/FloatBuffer;ILjava/nio/FloatBuffer;I)F
  */
 JNIEXPORT jfloat JNICALL Java_com_googlecode_array4j_blas_DirectFloatBLAS_00024KernelImpl_sdot
-  (JNIEnv *, jobject);
+  (JNIEnv *, jobject, jint, jobject, jint, jobject, jint);
 
 #ifdef __cplusplus
 }

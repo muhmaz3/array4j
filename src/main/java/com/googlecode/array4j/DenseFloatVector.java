@@ -12,7 +12,7 @@ public final class DenseFloatVector extends
     }
 
     public DenseFloatVector(final float... values) {
-        this(Orientation.ROW, values);
+        this(Orientation.DEFAULT_FOR_VECTOR, values);
     }
 
     public DenseFloatVector(final float[] data, final int size, final int offset, final int stride,
@@ -47,13 +47,13 @@ public final class DenseFloatVector extends
         return new DenseFloatVector(rows, Orientation.COLUMN);
     }
 
-    public DenseFloatVector createRowVector() {
-        return new DenseFloatVector(rows, Orientation.ROW);
-    }
-
     public DenseFloatVector createColumnVector(final float... values) {
         checkArgument(values.length == rows);
         return new DenseFloatVector(Orientation.COLUMN, values);
+    }
+
+    public DenseFloatVector createRowVector() {
+        return new DenseFloatVector(rows, Orientation.ROW);
     }
 
     public DenseFloatVector createRowVector(final float... values) {

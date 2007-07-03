@@ -1,10 +1,12 @@
 package com.googlecode.array4j.blas;
 
+import java.nio.FloatBuffer;
+
 import com.googlecode.array4j.DirectFloatVector;
 
 public final class DirectFloatBLAS {
     private interface Kernel {
-        float sdot();
+        float sdot(int n, FloatBuffer x, int incx, FloatBuffer y, int incy);
     }
 
     private static class KernelImpl implements Kernel {
@@ -12,7 +14,7 @@ public final class DirectFloatBLAS {
             System.loadLibrary("array4j");
         }
 
-        public native float sdot();
+        public native float sdot(int n, FloatBuffer x, int incx, FloatBuffer y, int incy);
     }
 
     private static class SynchronizedKernel implements Kernel {
@@ -22,8 +24,8 @@ public final class DirectFloatBLAS {
             this.kernel = kernel;
         }
 
-        public synchronized float sdot() {
-            return kernel.sdot();
+        public synchronized float sdot(int n, FloatBuffer x, int incx, FloatBuffer y, int incy) {
+            return kernel.sdot(n, x, incx, y, incy);
         }
     }
 
@@ -39,10 +41,10 @@ public final class DirectFloatBLAS {
     }
 
     public static float dot(final DirectFloatVector x, final DirectFloatVector y) {
-//        if (x.size() != y.size()) {
-//            throw new IllegalArgumentException();
-//        }
-        return KERNEL.sdot();
+        if (x.size() != y.size()) {
+            throw new IllegalArgumentException();
+        }
+        return KERNEL.sdot(x.size(), x.getData(), x.stride(), y.getData(), y.stride());
     }
 
     private DirectFloatBLAS() {
