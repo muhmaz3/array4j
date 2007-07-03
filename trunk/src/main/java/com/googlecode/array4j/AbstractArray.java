@@ -1,6 +1,6 @@
 package com.googlecode.array4j;
 
-public abstract class AbstractArray<A extends Array> {
+public abstract class AbstractArray<A extends Array<A>> {
     protected static final void checkPostcondition(final boolean condition) {
         if (!condition) {
             throw new AssertionError("postcondition failed");

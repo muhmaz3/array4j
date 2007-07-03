@@ -209,10 +209,10 @@ public abstract class AbstractFloatMatrixTest extends TestCase {
         FloatMatrix<?, ?> colMatrix = createColumnMatrixRange(rows, columns);
         for (int column = 0; column < columns; column++) {
             rowMatrix.setColumn(column, new DenseFloatVector(Orientation.COLUMN, values[column]));
-            assertTrue(Arrays.equals(values[column], rowMatrix.column(column).toArray()));
+            assertTrue("Columns must be equal", Arrays.equals(values[column], rowMatrix.column(column).toArray()));
 
             colMatrix.setColumn(column, new DenseFloatVector(Orientation.COLUMN, values[column]));
-            assertTrue(Arrays.equals(values[column], colMatrix.column(column).toArray()));
+            assertTrue("Columns must be equal", Arrays.equals(values[column], colMatrix.column(column).toArray()));
         }
     }
 
@@ -226,10 +226,12 @@ public abstract class AbstractFloatMatrixTest extends TestCase {
         FloatMatrix<?, ?> colMatrix = createColumnMatrixRange(rows, columns);
         for (int row = 0; row < rows; row++) {
             rowMatrix.setRow(row, new DenseFloatVector(values[row]));
-            assertTrue(Arrays.equals(values[row], rowMatrix.row(row).toArray()));
+            System.out.println(Arrays.toString(values[row]));
+            System.out.println(Arrays.toString(rowMatrix.row(row).toArray()));
+            assertTrue("Rows must be equal", Arrays.equals(values[row], rowMatrix.row(row).toArray()));
 
             colMatrix.setRow(row, new DenseFloatVector(values[row]));
-            assertTrue(Arrays.equals(values[row], colMatrix.row(row).toArray()));
+            assertTrue("Rows must be equal", Arrays.equals(values[row], colMatrix.row(row).toArray()));
         }
     }
 

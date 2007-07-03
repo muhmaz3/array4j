@@ -35,12 +35,12 @@ public final class DenseFloatVectorTest {
     @Test
     public void testTranspose() {
         DenseFloatVector vector = new DenseFloatVector(10);
-        assertTrue(vector.isRowVector());
+        assertTrue("Vector must be a column vector by default", vector.isColumnVector());
         DenseFloatVector transposedVector = vector.transpose();
-        assertTrue(transposedVector.isColumnVector());
+        assertTrue(transposedVector.isRowVector());
         assertFalse(vector.equals(transposedVector));
         DenseFloatVector originalVector = transposedVector.transpose();
-        assertTrue(originalVector.isRowVector());
+        assertTrue(originalVector.isColumnVector());
         assertEquals(vector, originalVector);
     }
 }

@@ -1,6 +1,6 @@
 package com.googlecode.array4j;
 
-public interface Matrix<M extends Matrix, V extends Vector> extends Array<M> {
+public interface Matrix<M extends Matrix<M, V>, V extends Vector<V>> extends Array<M> {
     int rows();
 
     int columns();

@@ -47,11 +47,11 @@ public final class DenseComplexFloatMatrix extends
         return new DenseComplexFloatVector(data, size, offset, stride, orientation);
     }
 
-    public void setColumn(final int column, final ComplexFloatVector columnVector) {
+    public void setColumn(final int column, final ComplexFloatVector<?> columnVector) {
         complexSupport.setColumn(column, columnVector);
     }
 
-    public void setRow(final int row, final ComplexFloatVector rowVector) {
+    public void setRow(final int row, final ComplexFloatVector<?> rowVector) {
         complexSupport.setRow(row, rowVector);
     }
 

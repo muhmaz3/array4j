@@ -2,7 +2,7 @@ package com.googlecode.array4j;
 
 import java.util.Iterator;
 
-public abstract class AbstractMatrix<M extends Matrix, V extends Vector> extends AbstractArray<M> implements
+public abstract class AbstractMatrix<M extends Matrix<M, V>, V extends Vector<V>> extends AbstractArray<M> implements
         Matrix<M, V> {
     final int rows;
 

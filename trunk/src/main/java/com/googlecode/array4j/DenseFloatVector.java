@@ -8,7 +8,7 @@ public final class DenseFloatVector extends AbstractDenseVector<DenseFloatVector
         FloatVector<DenseFloatVector>, DenseVector<DenseFloatVector> {
     final float[] data;
 
-    private final transient DenseFloatSupport<DenseFloatVector, DenseFloatVector> floatSupport;
+    private final transient DenseFloatSupport<DenseFloatVector, DenseFloatVector> support;
 
     public DenseFloatVector() {
         this(0);
@@ -25,7 +25,7 @@ public final class DenseFloatVector extends AbstractDenseVector<DenseFloatVector
         checkArgument(size == 0 || offset < data.length);
         checkArgument(data.length >= size * stride);
         this.data = data;
-        this.floatSupport = new DenseFloatSupport<DenseFloatVector, DenseFloatVector>(this, data);
+        this.support = new DenseFloatSupport<DenseFloatVector, DenseFloatVector>(this, data);
     }
 
     public DenseFloatVector(final int size) {
@@ -46,6 +46,7 @@ public final class DenseFloatVector extends AbstractDenseVector<DenseFloatVector
         }
     }
 
+    @Override
     protected ToArraysConverter<DenseFloatVector, float[]> createArraysConverter() {
         return new ToArraysConverter<DenseFloatVector, float[]>(this) {
             @Override
@@ -73,11 +74,6 @@ public final class DenseFloatVector extends AbstractDenseVector<DenseFloatVector
         return new DenseFloatVector(rows, Orientation.ROW);
     }
 
-    public DenseFloatVector createSharingVector(final int size, final int offset, final int stride,
-            final Orientation orientation) {
-        return new DenseFloatVector(data, size, offset, stride, orientation);
-    }
-
     @Override
     public boolean equals(final Object obj) {
         // TODO possibly allow any FloatMatrix instance
@@ -97,16 +93,16 @@ public final class DenseFloatVector extends AbstractDenseVector<DenseFloatVector
         return true;
     }
 
-    public void setColumn(final int column, final FloatVector columnVector) {
-        floatSupport.setColumn(column, columnVector);
+    public void setColumn(final int column, final FloatVector<?> columnVector) {
+        // support.setColumn(column, columnVector);
     }
 
-    public void setRow(final int row, final FloatVector rowVector) {
-        floatSupport.setRow(row, rowVector);
+    public void setRow(final int row, final FloatVector<?> rowVector) {
+        // support.setRow(row, rowVector);
     }
 
     public float[] toArray() {
-        return floatSupport.toArray();
+        return support.toArray();
     }
 
     @Override

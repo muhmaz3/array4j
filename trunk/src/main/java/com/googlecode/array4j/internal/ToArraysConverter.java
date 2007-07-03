@@ -3,7 +3,7 @@ package com.googlecode.array4j.internal;
 import com.googlecode.array4j.DenseMatrix;
 import com.googlecode.array4j.Orientation;
 
-public abstract class ToArraysConverter<M extends DenseMatrix, A> {
+public abstract class ToArraysConverter<M extends DenseMatrix<?, ?>, A> {
     private final int offset;
 
     private final Orientation orientation;

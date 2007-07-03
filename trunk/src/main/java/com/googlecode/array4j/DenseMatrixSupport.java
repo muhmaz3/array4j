@@ -1,10 +1,10 @@
 package com.googlecode.array4j;
 
-public final class DenseMatrixSupport<M extends DenseMatrix, V extends DenseVector> {
+public abstract class DenseMatrixSupport<M extends DenseMatrix<M, V>, V extends DenseVector<V>> {
     /** Stride between elements in a column. */
     protected final int columnStride;
 
-    private final DenseMatrix<M, V> matrix;
+    protected final DenseMatrix<M, V> matrix;
 
     /** Stride between elements in a row. */
     protected final int rowStride;
@@ -24,7 +24,7 @@ public final class DenseMatrixSupport<M extends DenseMatrix, V extends DenseVect
         }
     }
 
-    public void checkColumnIndex(final int column) {
+    public final void checkColumnIndex(final int column) {
         int columns = matrix.columns();
         if (column < 0 || column >= columns) {
             throw new IndexOutOfBoundsException(
@@ -32,7 +32,7 @@ public final class DenseMatrixSupport<M extends DenseMatrix, V extends DenseVect
         }
     }
 
-    public void checkRowIndex(final int row) {
+    public final void checkRowIndex(final int row) {
         int rows = matrix.rows();
         if (row < 0 || row >= rows) {
             throw new IndexOutOfBoundsException(
@@ -40,21 +40,35 @@ public final class DenseMatrixSupport<M extends DenseMatrix, V extends DenseVect
         }
     }
 
-    public V column(final int column) {
+    protected abstract V createSharingVector(int size, int offset, int stride, Orientation orientation);
+
+    public final V column(final int column) {
         checkColumnIndex(column);
-        return matrix.createSharingVector(matrix.rows(), columnOffset(column), rowStride, Orientation.COLUMN);
+        return createSharingVector(matrix.rows(), columnOffset(column), rowStride, Orientation.COLUMN);
     }
 
-    public int columnOffset(final int column) {
+    public final V row(final int row) {
+        checkRowIndex(row);
+        return createSharingVector(matrix.columns(), rowOffset(row), columnStride, Orientation.ROW);
+    }
+
+    public final int columnOffset(final int column) {
         return matrix.offset() + column * columnStride;
     }
 
-    public V row(final int row) {
-        checkRowIndex(row);
-        return matrix.createSharingVector(matrix.columns(), rowOffset(row), columnStride, Orientation.ROW);
+    public final int rowOffset(final int row) {
+        return matrix.offset() + row * rowStride;
     }
 
-    public int rowOffset(final int row) {
-        return matrix.offset() + row * rowStride;
+    protected abstract void setColumnImpl(int column, FloatVector<?> columnVector);
+
+    protected abstract void setRowImpl(int row, FloatVector<?> rowVector);
+
+    public void setColumn(int column, FloatVector<?> columnVector) {
+        // TODO Auto-generated method stub
+    }
+
+    public void setRow(int row, FloatVector<?> rowVector) {
+        // TODO Auto-generated method stub
     }
 }
