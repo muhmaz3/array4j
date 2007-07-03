@@ -2,13 +2,33 @@ package com.googlecode.array4j;
 
 import java.util.Arrays;
 
+import com.googlecode.array4j.internal.ToArraysConverter;
+
 public final class DenseFloatSupport<M extends DenseMatrix<M, V> & FloatMatrix<M, V>, V extends DenseVector<V> & FloatVector<V>>
-        extends DenseMatrixSupport<M, V> {
+        extends DenseMatrixSupport<M, V, float[]> {
+    private final ToArraysConverter<M, float[]> arraysConverter;
+
     private final float[] data;
 
     public DenseFloatSupport(final M matrix, final float[] data) {
         super(matrix);
         this.data = data;
+        this.arraysConverter = new ToArraysConverter<M, float[]>(matrix) {
+            @Override
+            protected float[] createArray(final int length) {
+                return new float[length];
+            }
+
+            @Override
+            protected float[][] createArrayArray(final int length) {
+                return new float[length][];
+            }
+
+            @Override
+            protected void set(final int srcPos, final float[] dest, final int destPos) {
+                dest[destPos] = DenseFloatSupport.this.data[srcPos];
+            }
+        };
     }
 
     public void setColumnImpl(final int column, final FloatVector<?> columnVector) {
@@ -45,5 +65,10 @@ public final class DenseFloatSupport<M extends DenseMatrix<M, V> & FloatMatrix<M
             arr[j] = data[i];
         }
         return arr;
+    }
+
+    @Override
+    protected float[][] toArrays(int m, int n, boolean rows) {
+        return arraysConverter.toArrays(m, n, rows);
     }
 }

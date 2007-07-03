@@ -1,11 +1,7 @@
 package com.googlecode.array4j;
 
-import com.googlecode.array4j.internal.ToArraysConverter;
-
-public abstract class AbstractDenseMatrix<M extends DenseMatrix<M, V>, V extends DenseVector<V>, S extends DenseMatrixSupport<M, V>, ValueArray>
+public abstract class AbstractDenseMatrix<M extends DenseMatrix<M, V>, V extends DenseVector<V>, S extends DenseMatrixSupport<M, V, ValueArray>, ValueArray>
         extends AbstractMatrix<M, V> implements DenseMatrix<M, V> {
-    private final transient ToArraysConverter<M, ValueArray> arraysConverter;
-
     final int offset;
 
     final Orientation orientation;
@@ -20,15 +16,11 @@ public abstract class AbstractDenseMatrix<M extends DenseMatrix<M, V>, V extends
         this.offset = offset;
         this.stride = stride;
         this.orientation = orientation;
-        // only create the arrays converter after other fields have been set
-        this.arraysConverter = createArraysConverter();
     }
 
     public final V column(final int column) {
         return support.column(column);
     }
-
-    protected abstract ToArraysConverter<M, ValueArray> createArraysConverter();
 
     public final int offset() {
         return offset;
@@ -47,10 +39,10 @@ public abstract class AbstractDenseMatrix<M extends DenseMatrix<M, V>, V extends
     }
 
     public final ValueArray[] toColumnArrays() {
-        return arraysConverter.toArrays(columns, rows, false);
+        return support.toArrays(columns, rows, false);
     }
 
     public final ValueArray[] toRowArrays() {
-        return arraysConverter.toArrays(rows, columns, true);
+        return support.toArrays(rows, columns, true);
     }
 }

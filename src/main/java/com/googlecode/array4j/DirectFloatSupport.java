@@ -3,13 +3,33 @@ package com.googlecode.array4j;
 import java.nio.FloatBuffer;
 import java.util.Arrays;
 
+import com.googlecode.array4j.internal.ToArraysConverter;
+
 public final class DirectFloatSupport<M extends DenseMatrix<M, V> & FloatMatrix<M, V>, V extends DenseVector<V> & FloatVector<V>>
-        extends DenseMatrixSupport<M, V> {
+        extends DenseMatrixSupport<M, V, float[]> {
+    private final ToArraysConverter<M, float[]> arraysConverter;
+
     private final FloatBuffer data;
 
     public DirectFloatSupport(final M matrix, final FloatBuffer data) {
         super(matrix);
         this.data = data;
+        this.arraysConverter = new ToArraysConverter<M, float[]>(matrix) {
+            @Override
+            protected float[] createArray(final int length) {
+                return new float[length];
+            }
+
+            @Override
+            protected float[][] createArrayArray(final int length) {
+                return new float[length][];
+            }
+
+            @Override
+            protected void set(final int srcPos, final float[] dest, final int destPos) {
+                dest[destPos] = getData().get(srcPos);
+            }
+        };
     }
 
     private FloatBuffer getData() {
@@ -43,5 +63,10 @@ public final class DirectFloatSupport<M extends DenseMatrix<M, V> & FloatMatrix<
             arr[j] = src.get(i);
         }
         return arr;
+    }
+
+    @Override
+    protected float[][] toArrays(int m, int n, boolean rows) {
+        return arraysConverter.toArrays(m, n, rows);
     }
 }

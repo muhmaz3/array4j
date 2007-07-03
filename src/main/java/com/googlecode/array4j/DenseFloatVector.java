@@ -2,8 +2,6 @@ package com.googlecode.array4j;
 
 import java.util.Arrays;
 
-import com.googlecode.array4j.internal.ToArraysConverter;
-
 public final class DenseFloatVector extends
         AbstractDenseVector<DenseFloatVector, DenseFloatSupport<DenseFloatVector, DenseFloatVector>, float[]> implements
         FloatVector<DenseFloatVector>, DenseVector<DenseFloatVector> {
@@ -43,26 +41,6 @@ public final class DenseFloatVector extends
         for (int i = 0; i < size; i++) {
             target[targetOffset + i * targetStride] = data[offset + i * stride];
         }
-    }
-
-    @Override
-    protected ToArraysConverter<DenseFloatVector, float[]> createArraysConverter() {
-        return new ToArraysConverter<DenseFloatVector, float[]>(this) {
-            @Override
-            protected float[] createArray(final int length) {
-                return new float[length];
-            }
-
-            @Override
-            protected float[][] createArrayArray(final int length) {
-                return new float[length][];
-            }
-
-            @Override
-            protected void set(final int srcPos, final float[] dest, final int destPos) {
-                dest[destPos] = data[srcPos];
-            }
-        };
     }
 
     public DenseFloatVector createColumnVector() {
