@@ -16,7 +16,7 @@ public final class DirectFloatMatrix
         return buffer;
     }
 
-    static FloatBuffer createBuffer(final int size) {
+    public static FloatBuffer createBuffer(final int size) {
         final ByteBuffer buffer = ByteBuffer.allocateDirect(size * FLOAT_SIZE);
         buffer.order(ByteOrder.nativeOrder());
         return buffer.asFloatBuffer();
@@ -50,8 +50,7 @@ public final class DirectFloatMatrix
     }
 
     public DirectFloatVector createColumnVector() {
-        // TODO Auto-generated method stub
-        return null;
+        return new DirectFloatVector(rows, Orientation.COLUMN);
     }
 
     public DirectFloatVector createColumnVector(final float... values) {
@@ -60,8 +59,7 @@ public final class DirectFloatMatrix
     }
 
     public DirectFloatVector createRowVector() {
-        // TODO Auto-generated method stub
-        return null;
+        return new DirectFloatVector(columns, Orientation.ROW);
     }
 
     public DirectFloatVector createRowVector(final float... values) {
@@ -75,7 +73,7 @@ public final class DirectFloatMatrix
     }
 
     private FloatBuffer getData() {
-        return (FloatBuffer) ((FloatBuffer) data.rewind()).position(offset);
+        return (FloatBuffer) data.rewind();
     }
 
     public void setColumn(final int column, final FloatVector<?> columnVector) {

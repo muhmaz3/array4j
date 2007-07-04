@@ -1,5 +1,7 @@
 package com.googlecode.array4j;
 
+import java.nio.FloatBuffer;
+
 public final class DirectFloatMatrixFactory implements FloatMatrixFactory<DirectFloatMatrix, DirectFloatVector> {
     public DirectFloatMatrix createMatrix(final float[] data, final int rows, final int columns, final int offset,
             final int stride, final Orientation orientation) {
@@ -21,5 +23,15 @@ public final class DirectFloatMatrixFactory implements FloatMatrixFactory<Direct
 
     public DirectFloatVector createRowVector(final float... values) {
         return new DirectFloatVector(Orientation.ROW, values);
+    }
+
+    public DirectFloatVector createVector(final float[] values, final int size, final int offset, final int stride,
+            final Orientation orientation) {
+        FloatBuffer data = DirectFloatMatrix.createBuffer(values);
+        return new DirectFloatVector(data, size, offset, stride, orientation);
+    }
+
+    public DirectFloatVector createVector(final int size, final Orientation orientation) {
+        return new DirectFloatVector(size, orientation);
     }
 }

@@ -66,7 +66,6 @@ public final class DirectFloatVector extends
     }
 
     public FloatBuffer getData() {
-//        return (FloatBuffer) ((FloatBuffer) data.rewind()).position(offset);
         return (FloatBuffer) data.rewind();
     }
 
