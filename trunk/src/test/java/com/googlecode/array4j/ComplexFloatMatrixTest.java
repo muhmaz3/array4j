@@ -2,7 +2,8 @@ package com.googlecode.array4j;
 
 import junit.framework.TestCase;
 
-public final class DenseComplexFloatMatrixTest extends TestCase {
+//@RunWith(value = Parameterized.class)
+public final class ComplexFloatMatrixTest extends TestCase {
     public void test() {
         final DenseComplexFloatMatrix matrix = new DenseComplexFloatMatrix(3, 2);
 

@@ -109,12 +109,14 @@ public final class FloatMatrixTest<M extends FloatMatrix<M, V>, V extends FloatV
         matrix = createRowMatrixRange(rows, columns);
         matrixColumns = matrix.toColumnArrays();
         for (int column = 0; column < columns; column++) {
+            assertTrue(matrix.column(column).isColumnVector());
             assertTrue(Arrays.equals(matrixColumns[column], matrix.column(column).toArray()));
         }
 
         matrix = createColumnMatrixRange(rows, columns);
         matrixColumns = matrix.toColumnArrays();
         for (int column = 0; column < columns; column++) {
+            assertTrue(matrix.column(column).isColumnVector());
             assertTrue(Arrays.equals(matrixColumns[column], matrix.column(column).toArray()));
         }
     }
@@ -174,12 +176,14 @@ public final class FloatMatrixTest<M extends FloatMatrix<M, V>, V extends FloatV
         final int columns = 3;
         final FloatMatrix<?, ?> matrix = createRowMatrixRange(rows, columns);
         for (final FloatVector<?> rowVector : matrix.rowsIterator()) {
+            assertTrue(rowVector.isRowVector());
             assertEquals(columns, rowVector.size());
             assertEquals(1, rowVector.rows());
             assertEquals(columns, rowVector.columns());
         }
 
         for (final FloatVector<?> columnVector : matrix.columnsIterator()) {
+            assertTrue(columnVector.isColumnVector());
             assertEquals(rows, columnVector.size());
             assertEquals(rows, columnVector.rows());
             assertEquals(1, columnVector.columns());
@@ -196,12 +200,14 @@ public final class FloatMatrixTest<M extends FloatMatrix<M, V>, V extends FloatV
         matrix = createRowMatrixRange(rows, columns);
         matrixRows = matrix.toRowArrays();
         for (int row = 0; row < rows; row++) {
+            assertTrue(matrix.row(row).isRowVector());
             assertTrue(Arrays.equals(matrixRows[row], matrix.row(row).toArray()));
         }
 
         matrix = createColumnMatrixRange(rows, columns);
         matrixRows = matrix.toRowArrays();
         for (int row = 0; row < rows; row++) {
+            assertTrue(matrix.row(row).isRowVector());
             assertTrue(Arrays.equals(matrixRows[row], matrix.row(row).toArray()));
         }
     }

@@ -10,4 +10,8 @@ public interface FloatMatrixFactory<M extends FloatMatrix<M, V>, V extends Float
     M createMatrix(int rows, int columns, Orientation orientation);
 
     V createRowVector(float... values);
+
+    V createVector(float[] data, int size, int offset, int stride, Orientation orientation);
+
+    V createVector(int size, Orientation orientation);
 }

@@ -22,4 +22,13 @@ public final class DenseFloatMatrixFactory implements FloatMatrixFactory<DenseFl
     public DenseFloatVector createRowVector(final float... values) {
         return new DenseFloatVector(Orientation.ROW, values);
     }
+
+    public DenseFloatVector createVector(final float[] data, final int size, final int offset, final int stride,
+            final Orientation orientation) {
+        return new DenseFloatVector(data, size, offset, stride, orientation);
+    }
+
+    public DenseFloatVector createVector(final int size, final Orientation orientation) {
+        return new DenseFloatVector(size, orientation);
+    }
 }

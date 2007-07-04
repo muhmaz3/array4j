@@ -24,9 +24,9 @@ public final class FloatBLASTest<M extends FloatMatrix<M, V>, V extends FloatVec
                 {DirectFloatBLAS.INSTANCE, new DirectFloatMatrixFactory()}});
     }
 
-    private final FloatMatrixFactory<M, V> factory;
-
     private final FloatBLAS<M, V> blas;
+
+    private final FloatMatrixFactory<M, V> factory;
 
     public FloatBLASTest(final FloatBLAS<M, V> blas, final FloatMatrixFactory<M, V> factory) {
         this.blas = blas;
