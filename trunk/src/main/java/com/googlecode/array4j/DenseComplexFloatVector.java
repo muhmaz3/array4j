@@ -28,16 +28,17 @@ public final class DenseComplexFloatVector
         return null;
     }
 
-    public DenseComplexFloatVector createVector(int size, int offset, int stride, Orientation orientation) {
+    public DenseComplexFloatVector createVector(final int size, final int offset, final int stride,
+            final Orientation orientation) {
         return new DenseComplexFloatVector(data, size, offset, stride, orientation);
     }
 
-    public void setColumn(int column, ComplexFloatVector<?> columnVector) {
+    public void setColumn(final int column, final ComplexFloatVector<?> columnVector) {
         // TODO Auto-generated method stub
 
     }
 
-    public void setRow(int row, ComplexFloatVector<?> rowVector) {
+    public void setRow(final int row, final ComplexFloatVector<?> rowVector) {
         // TODO Auto-generated method stub
 
     }

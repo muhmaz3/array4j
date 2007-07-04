@@ -24,7 +24,7 @@ public final class DirectFloatBLAS {
             this.kernel = kernel;
         }
 
-        public synchronized float sdot(int n, FloatBuffer x, int incx, FloatBuffer y, int incy) {
+        public synchronized float sdot(final int n, final FloatBuffer x, final int incx, final FloatBuffer y, final int incy) {
             return kernel.sdot(n, x, incx, y, incy);
         }
     }
@@ -32,7 +32,7 @@ public final class DirectFloatBLAS {
     private static final Kernel KERNEL;
 
     static {
-        String ompNumThreads = System.getenv("OMP_NUM_THREADS");
+        final String ompNumThreads = System.getenv("OMP_NUM_THREADS");
         if (ompNumThreads != null && Integer.valueOf(ompNumThreads) > 1) {
             KERNEL = new SynchronizedKernel(new KernelImpl());
         } else {

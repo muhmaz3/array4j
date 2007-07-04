@@ -33,7 +33,8 @@ public final class DirectFloatSupport<M extends DenseMatrix<M, V> & FloatMatrix<
     }
 
     private FloatBuffer getData() {
-        return (FloatBuffer) ((FloatBuffer) data.rewind()).position(matrix.offset());
+//        return (FloatBuffer) ((FloatBuffer) data.rewind()).position(matrix.offset());
+        return (FloatBuffer) data.rewind();
     }
 
     @Override
@@ -41,7 +42,8 @@ public final class DirectFloatSupport<M extends DenseMatrix<M, V> & FloatMatrix<
         if (!(columnVector instanceof DirectFloatVector)) {
             throw new UnsupportedOperationException();
         }
-        DirectFloatVector directColVec = (DirectFloatVector) columnVector;
+        final DirectFloatVector directColVec = (DirectFloatVector) columnVector;
+        directColVec.copyTo(getData(), columnOffset(column), rowStride);
     }
 
     @Override
@@ -49,22 +51,23 @@ public final class DirectFloatSupport<M extends DenseMatrix<M, V> & FloatMatrix<
         if (!(rowVector instanceof DirectFloatVector)) {
             throw new UnsupportedOperationException();
         }
-        DirectFloatVector directRowVec = (DirectFloatVector) rowVector;
+        final DirectFloatVector directRowVec = (DirectFloatVector) rowVector;
+        directRowVec.copyTo(getData(), rowOffset(row), columnStride);
     }
 
     public float[] toArray() {
         final int size = matrix.size();
         final int offset = matrix.offset();
         final int stride = matrix.stride();
-        float[] arr = new float[size];
+        final float[] arr = new float[size];
         if (size == 0) {
             return arr;
         }
         if (stride == 0) {
-            Arrays.fill(arr, getData().get(0));
+            Arrays.fill(arr, getData().get(offset));
             return arr;
         }
-        FloatBuffer src = getData();
+        final FloatBuffer src = getData();
         for (int i = offset, j = 0; j < size; i += stride, j++) {
             arr[j] = src.get(i);
         }
