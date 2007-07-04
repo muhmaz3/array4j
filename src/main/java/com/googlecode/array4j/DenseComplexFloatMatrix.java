@@ -8,7 +8,7 @@ public final class DenseComplexFloatMatrix
         DenseMatrix<DenseComplexFloatMatrix, DenseComplexFloatVector> {
     private final float[] data;
 
-    public DenseComplexFloatMatrix(float[] data, int rows, int columns, int offset, int stride, Orientation orientation) {
+    public DenseComplexFloatMatrix(final float[] data, final int rows, final int columns, final int offset, final int stride, final Orientation orientation) {
         super(rows, columns, offset, stride, orientation);
         checkArgument(data != null);
         checkArgument(size == 0 || offset + 1 < data.length);
@@ -36,16 +36,16 @@ public final class DenseComplexFloatMatrix
         return null;
     }
 
-    public DenseComplexFloatVector createVector(int size, int offset, int stride, Orientation orientation) {
+    public DenseComplexFloatVector createVector(final int size, final int offset, final int stride, final Orientation orientation) {
         // TODO Auto-generated method stub
         return null;
     }
 
-    public void setColumn(int column, ComplexFloatVector<?> columnVector) {
+    public void setColumn(final int column, final ComplexFloatVector<?> columnVector) {
         // TODO Auto-generated method stub
     }
 
-    public void setRow(int row, ComplexFloatVector<?> rowVector) {
+    public void setRow(final int row, final ComplexFloatVector<?> rowVector) {
         // TODO Auto-generated method stub
 
     }

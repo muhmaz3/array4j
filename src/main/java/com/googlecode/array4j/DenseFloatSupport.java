@@ -31,29 +31,31 @@ public final class DenseFloatSupport<M extends DenseMatrix<M, V> & FloatMatrix<M
         };
     }
 
+    @Override
     public void setColumnImpl(final int column, final FloatVector<?> columnVector) {
         if (!(columnVector instanceof DenseFloatVector)) {
             // TODO support any FloatVector instance here, maybe with a special
             // case for the DirectFloatVector
             throw new UnsupportedOperationException();
         }
-        DenseFloatVector denseColVec = (DenseFloatVector) columnVector;
+        final DenseFloatVector denseColVec = (DenseFloatVector) columnVector;
         denseColVec.copyTo(data, columnOffset(column), rowStride);
     }
 
+    @Override
     public void setRowImpl(final int row, final FloatVector<?> rowVector) {
         if (!(rowVector instanceof DenseFloatVector)) {
             // TODO support any FloatVector instance here, maybe with a special
             // case for the DirectFloatVector
             throw new UnsupportedOperationException();
         }
-        DenseFloatVector denseRowVec = (DenseFloatVector) rowVector;
+        final DenseFloatVector denseRowVec = (DenseFloatVector) rowVector;
         denseRowVec.copyTo(data, rowOffset(row), columnStride);
     }
 
     public float[] toArray() {
         final int size = matrix.size();
-        float[] arr = new float[size];
+        final float[] arr = new float[size];
         if (size == 0) {
             return arr;
         }
@@ -68,7 +70,7 @@ public final class DenseFloatSupport<M extends DenseMatrix<M, V> & FloatMatrix<M
     }
 
     @Override
-    protected float[][] toArrays(int m, int n, boolean rows) {
+    protected float[][] toArrays(final int m, final int n, final boolean rows) {
         return arraysConverter.toArrays(m, n, rows);
     }
 }

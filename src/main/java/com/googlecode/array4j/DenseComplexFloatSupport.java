@@ -7,19 +7,19 @@ public final class DenseComplexFloatSupport<M extends DenseMatrix<M, V> & Comple
     }
 
     @Override
-    protected void setColumnImpl(int column, FloatVector<?> columnVector) {
+    protected void setColumnImpl(final int column, final FloatVector<?> columnVector) {
         // TODO Auto-generated method stub
 
     }
 
     @Override
-    protected void setRowImpl(int row, FloatVector<?> rowVector) {
+    protected void setRowImpl(final int row, final FloatVector<?> rowVector) {
         // TODO Auto-generated method stub
 
     }
 
     @Override
-    protected ComplexFloat[][] toArrays(int m, int n, boolean rows) {
+    protected ComplexFloat[][] toArrays(final int m, final int n, final boolean rows) {
         // TODO Auto-generated method stub
         return null;
     }

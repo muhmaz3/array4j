@@ -61,7 +61,8 @@ public final class DenseFloatVector extends
         return new DenseFloatVector(Orientation.ROW, values);
     }
 
-    public DenseFloatVector createVector(int size, int offset, int stride, Orientation orientation) {
+    public DenseFloatVector createVector(final int size, final int offset, final int stride,
+            final Orientation orientation) {
         return new DenseFloatVector(data, size, offset, stride, orientation);
     }
 
@@ -71,7 +72,7 @@ public final class DenseFloatVector extends
         if (obj == null || !(obj instanceof DenseFloatVector)) {
             return false;
         }
-        DenseFloatVector other = (DenseFloatVector) obj;
+        final DenseFloatVector other = (DenseFloatVector) obj;
         // TODO orientation is ignored... do we want that?
         if (size != other.size || !orientation.equals(other.orientation)) {
             return false;

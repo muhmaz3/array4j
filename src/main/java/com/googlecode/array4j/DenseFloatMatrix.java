@@ -46,7 +46,8 @@ public final class DenseFloatMatrix
         return new DenseFloatVector(Orientation.ROW, values);
     }
 
-    public DenseFloatVector createVector(int size, int offset, int stride, Orientation orientation) {
+    public DenseFloatVector createVector(final int size, final int offset, final int stride,
+            final Orientation orientation) {
         return new DenseFloatVector(data, size, offset, stride, orientation);
     }
 
@@ -56,7 +57,7 @@ public final class DenseFloatMatrix
         if (obj == null || !(obj instanceof DenseFloatMatrix)) {
             return false;
         }
-        DenseFloatMatrix other = (DenseFloatMatrix) obj;
+        final DenseFloatMatrix other = (DenseFloatMatrix) obj;
         // TODO orientation is ignored... do we want that?
         if (rows != other.rows || columns != other.columns) {
             return false;
@@ -87,10 +88,11 @@ public final class DenseFloatMatrix
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
+        final StringBuilder builder = new StringBuilder();
         builder.append(String.format("%d x %d\n", rows, columns));
-        for (DenseFloatVector row : rowsIterator()) {
+        for (final DenseFloatVector row : rowsIterator()) {
             builder.append(row);
+            // TODO don't append newline after last row
             builder.append("\n");
         }
         return builder.toString();

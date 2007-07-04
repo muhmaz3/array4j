@@ -11,13 +11,13 @@ public final class DirectFloatMatrix
     private static final int FLOAT_SIZE = Float.SIZE >>> 3;
 
     static FloatBuffer createBuffer(final float[] values) {
-        FloatBuffer buffer = createBuffer(values.length * FLOAT_SIZE);
+        final FloatBuffer buffer = createBuffer(values.length * FLOAT_SIZE);
         buffer.put(values);
         return buffer;
     }
 
     static FloatBuffer createBuffer(final int size) {
-        ByteBuffer buffer = ByteBuffer.allocateDirect(size * FLOAT_SIZE);
+        final ByteBuffer buffer = ByteBuffer.allocateDirect(size * FLOAT_SIZE);
         buffer.order(ByteOrder.nativeOrder());
         return buffer.asFloatBuffer();
     }
@@ -69,7 +69,8 @@ public final class DirectFloatMatrix
         return new DirectFloatVector(Orientation.ROW, values);
     }
 
-    public DirectFloatVector createVector(int size, int offset, int stride, Orientation orientation) {
+    public DirectFloatVector createVector(final int size, final int offset, final int stride,
+            final Orientation orientation) {
         return new DirectFloatVector(getData(), size, offset, stride, orientation);
     }
 

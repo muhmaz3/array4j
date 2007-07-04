@@ -25,7 +25,7 @@ public abstract class DenseMatrixSupport<M extends DenseMatrix<M, V>, V extends 
     }
 
     public final void checkColumnIndex(final int column) {
-        int columns = matrix.columns();
+        final int columns = matrix.columns();
         if (column < 0 || column >= columns) {
             throw new IndexOutOfBoundsException(
                     String.format("Column index out of bounds [0,%d): %d", columns, column));
@@ -33,7 +33,7 @@ public abstract class DenseMatrixSupport<M extends DenseMatrix<M, V>, V extends 
     }
 
     public final void checkRowIndex(final int row) {
-        int rows = matrix.rows();
+        final int rows = matrix.rows();
         if (row < 0 || row >= rows) {
             throw new IndexOutOfBoundsException(
                     String.format("Row index out of bounds [0,%d): %d", rows, row));

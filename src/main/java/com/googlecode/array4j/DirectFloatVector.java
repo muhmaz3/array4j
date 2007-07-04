@@ -32,9 +32,18 @@ public final class DirectFloatVector extends
         getData().put(values);
     }
 
+    public DirectFloatVector(final int size, final Orientation orientation) {
+        this(size, 0, 1, orientation);
+    }
+
+    void copyTo(final FloatBuffer target, final int targetOffset, final int targetStride) {
+        for (int i = 0; i < size; i++) {
+            target.put(targetOffset + i * targetStride, getData().get(i * stride));
+        }
+    }
+
     public DirectFloatVector createColumnVector() {
-        // TODO Auto-generated method stub
-        return null;
+        return new DirectFloatVector(rows, Orientation.COLUMN);
     }
 
     public DirectFloatVector createColumnVector(final float... values) {
@@ -43,8 +52,7 @@ public final class DirectFloatVector extends
     }
 
     public DirectFloatVector createRowVector() {
-        // TODO Auto-generated method stub
-        return null;
+        return new DirectFloatVector(columns, Orientation.ROW);
     }
 
     public DirectFloatVector createRowVector(final float... values) {
@@ -52,13 +60,14 @@ public final class DirectFloatVector extends
         return new DirectFloatVector(Orientation.ROW, values);
     }
 
-    public DirectFloatVector createVector(int size, int offset, int stride, Orientation orientation) {
+    public DirectFloatVector createVector(final int size, final int offset, final int stride,
+            final Orientation orientation) {
         return new DirectFloatVector(getData(), size, offset, stride, orientation);
     }
 
     public FloatBuffer getData() {
-        // TODO code duplicated from DirectFloatMatrix.getData
-        return (FloatBuffer) ((FloatBuffer) data.rewind()).position(offset);
+//        return (FloatBuffer) ((FloatBuffer) data.rewind()).position(offset);
+        return (FloatBuffer) data.rewind();
     }
 
     public void setColumn(final int column, final FloatVector<?> columnVector) {

@@ -19,7 +19,7 @@ public final class ComplexFloat implements Complex<ComplexFloat> {
         if (obj == null || !(obj instanceof ComplexFloat)) {
             return false;
         }
-        ComplexFloat other = (ComplexFloat) obj;
+        final ComplexFloat other = (ComplexFloat) obj;
         return real == other.real && imag == other.imag;
     }
 

@@ -23,12 +23,12 @@ public abstract class ToArraysConverter<M extends DenseMatrix<M, ?>, A> {
     protected abstract void set(int srcPos, A dest, int destPos);
 
     public final A[] toArrays(final int m, final int n, final boolean rows) {
-        A[] arrs = createArrayArray(m);
+        final A[] arrs = createArrayArray(m);
         for (int i = 0; i < m; i++) {
             arrs[i] = createArray(n);
         }
         for (int i = 0; i < m; i++) {
-            A arr = arrs[i];
+            final A arr = arrs[i];
             for (int j = 0; j < n; j++) {
                 int position = offset;
                 if (rows) {
