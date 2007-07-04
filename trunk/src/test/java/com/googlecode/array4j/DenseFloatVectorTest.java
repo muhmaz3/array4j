@@ -14,6 +14,7 @@ public final class DenseFloatVectorTest {
         new DenseFloatVector(new float[1], 2, 0, 1, Orientation.ROW);
     }
 
+    // TODO should probably throw IllegalArgumentException instead?
     @Test(expected=NegativeArraySizeException.class)
     public void testConstructorNegativeSize() {
         new DenseFloatVector(-1);
