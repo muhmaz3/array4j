@@ -1,14 +1,27 @@
 package com.googlecode.array4j;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.io.PrintStream;
 import java.util.Arrays;
+import java.util.Collection;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 
-public abstract class AbstractFloatMatrixTest<M extends FloatMatrix<M, V>, V extends FloatVector<V>> extends TestCase {
+@RunWith(value = Parameterized.class)
+public final class FloatMatrixTest<M extends FloatMatrix<M, V>, V extends FloatVector<V>> {
+    @Parameters
+    public static Collection<?> data() {
+        return Arrays.asList(new Object[][]{{new DenseFloatMatrixFactory()}, {new DenseFloatMatrixFactory()}});
+    }
+
     private final FloatMatrixFactory<M, V> factory;
 
-    public AbstractFloatMatrixTest(final FloatMatrixFactory<M, V> factory) {
+    public FloatMatrixTest(final FloatMatrixFactory<M, V> factory) {
         this.factory = factory;
     }
 
@@ -86,7 +99,8 @@ public abstract class AbstractFloatMatrixTest<M extends FloatMatrix<M, V>, V ext
         }
     }
 
-    public final void testColumn() {
+    @Test
+    public void testColumn() {
         final int rows = 5;
         final int columns = 7;
         FloatMatrix<?, ?> matrix;
@@ -105,7 +119,8 @@ public abstract class AbstractFloatMatrixTest<M extends FloatMatrix<M, V>, V ext
         }
     }
 
-    public final void testConstructor() {
+    @Test
+    public void testConstructor() {
         factory.createMatrix(0, 0);
         factory.createMatrix(0, 1);
         factory.createMatrix(1, 0);
@@ -121,7 +136,8 @@ public abstract class AbstractFloatMatrixTest<M extends FloatMatrix<M, V>, V ext
         factory.createMatrix(5, 5, Orientation.COLUMN);
     }
 
-    public final void testConstructors2() {
+    @Test
+    public void testConstructors2() {
         final float[] data = new float[12];
         for (int i = 0; i < data.length; i++) {
             data[i] = i + 1;
@@ -152,7 +168,8 @@ public abstract class AbstractFloatMatrixTest<M extends FloatMatrix<M, V>, V ext
         }
     }
 
-    public final void testIterators() {
+    @Test
+    public void testIterators() {
         final int rows = 4;
         final int columns = 3;
         final FloatMatrix<?, ?> matrix = createRowMatrixRange(rows, columns);
@@ -169,7 +186,8 @@ public abstract class AbstractFloatMatrixTest<M extends FloatMatrix<M, V>, V ext
         }
     }
 
-    public final void testRow() {
+    @Test
+    public void testRow() {
         final int rows = 5;
         final int columns = 7;
         FloatMatrix<?, ?> matrix;
@@ -188,7 +206,8 @@ public abstract class AbstractFloatMatrixTest<M extends FloatMatrix<M, V>, V ext
         }
     }
 
-    public final void testSetColumn() {
+    @Test
+    public void testSetColumn() {
         final int rows = 3;
         final int columns = 4;
         final float[][] values = {{10.0f, 20.0f, 30.0f}, {40.0f, 50.0f, 60.0f}, {70.0f, 80.0f, 90.0f},
@@ -206,7 +225,8 @@ public abstract class AbstractFloatMatrixTest<M extends FloatMatrix<M, V>, V ext
         }
     }
 
-    public final void testSetRow() {
+    @Test
+    public void testSetRow() {
         final int rows = 4;
         final int columns = 3;
         final float[][] values = {{10.0f, 20.0f, 30.0f}, {40.0f, 50.0f, 60.0f}, {70.0f, 80.0f, 90.0f},
@@ -223,7 +243,8 @@ public abstract class AbstractFloatMatrixTest<M extends FloatMatrix<M, V>, V ext
         }
     }
 
-    public final void testToArray() {
+    @Test
+    public void testToArray() {
         FloatMatrix<?, ?> matrix;
         float[] arr;
 
@@ -249,7 +270,8 @@ public abstract class AbstractFloatMatrixTest<M extends FloatMatrix<M, V>, V ext
         assertEquals(1.0f, arr[1]);
     }
 
-    public final void testToArrays() {
+    @Test
+    public void testToArrays() {
         for (int rows = 0; rows <= 3; rows++) {
             for (int columns = 0; columns <= 4; columns++) {
                 checkToArrays(rows, columns);
@@ -257,7 +279,8 @@ public abstract class AbstractFloatMatrixTest<M extends FloatMatrix<M, V>, V ext
         }
     }
 
-    public final void testTranspose() {
+    @Test
+    public void testTranspose() {
         final int rows = 3;
         final int columns = 4;
         final FloatMatrix<?, ?> original = createRowMatrixRange(rows, columns);

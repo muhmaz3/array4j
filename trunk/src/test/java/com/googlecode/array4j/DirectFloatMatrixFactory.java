@@ -6,9 +6,9 @@ public final class DirectFloatMatrixFactory implements FloatMatrixFactory<Direct
         return new DirectFloatMatrix(data, rows, columns, offset, stride, orientation);
     }
 
-    public DirectFloatMatrix createMatrix(final float[] data, final int rows, final int columns,
+    public DirectFloatMatrix createMatrix(final float[] values, final int rows, final int columns,
             final Orientation orientation) {
-        return new DirectFloatMatrix(data, rows, columns, orientation);
+        return new DirectFloatMatrix(values, rows, columns, orientation);
     }
 
     public DirectFloatMatrix createMatrix(final int rows, final int columns) {
@@ -17,5 +17,9 @@ public final class DirectFloatMatrixFactory implements FloatMatrixFactory<Direct
 
     public DirectFloatMatrix createMatrix(final int rows, final int columns, final Orientation orientation) {
         return new DirectFloatMatrix(rows, columns, orientation);
+    }
+
+    public DirectFloatVector createRowVector(final float... values) {
+        return new DirectFloatVector(Orientation.ROW, values);
     }
 }

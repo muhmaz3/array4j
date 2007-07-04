@@ -27,13 +27,13 @@ public final class DirectFloatVector extends
         this(DirectFloatMatrix.createBuffer(size), size, offset, stride, orientation);
     }
 
+    public DirectFloatVector(final int size, final Orientation orientation) {
+        this(size, 0, 1, orientation);
+    }
+
     public DirectFloatVector(final Orientation orientation, final float[] values) {
         this(values.length, 0, 1, orientation);
         getData().put(values);
-    }
-
-    public DirectFloatVector(final int size, final Orientation orientation) {
-        this(size, 0, 1, orientation);
     }
 
     void copyTo(final FloatBuffer target, final int targetOffset, final int targetStride) {
