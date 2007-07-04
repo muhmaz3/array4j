@@ -5,21 +5,10 @@ import java.util.Arrays;
 
 import junit.framework.TestCase;
 
-public abstract class AbstractFloatMatrixTest extends TestCase {
-    protected interface FloatMatrixFactory {
-        FloatMatrix<?, ?> createMatrix(float[] data, int rows, int columns, int offset, int stride,
-                Orientation orientation);
+public abstract class AbstractFloatMatrixTest<M extends FloatMatrix<M, V>, V extends FloatVector<V>> extends TestCase {
+    private final FloatMatrixFactory<M, V> factory;
 
-        FloatMatrix<?, ?> createMatrix(float[] data, int rows, int columns, Orientation row);
-
-        FloatMatrix<?, ?> createMatrix(int rows, int columns);
-
-        FloatMatrix<?, ?> createMatrix(int rows, int columns, Orientation orientation);
-    }
-
-    private final FloatMatrixFactory factory;
-
-    public AbstractFloatMatrixTest(final FloatMatrixFactory factory) {
+    public AbstractFloatMatrixTest(final FloatMatrixFactory<M, V> factory) {
         this.factory = factory;
     }
 
@@ -58,7 +47,7 @@ public abstract class AbstractFloatMatrixTest extends TestCase {
         }
     }
 
-    private FloatMatrix<?, ?> createColumnMatrixRange(final int rows, final int columns) {
+    private M createColumnMatrixRange(final int rows, final int columns) {
         final float[] data = new float[rows * columns];
         for (int i = 0, k = 0; i < columns; i++) {
             for (int j = 0; j < rows; j++) {
@@ -81,7 +70,7 @@ public abstract class AbstractFloatMatrixTest extends TestCase {
         }
     }
 
-    private FloatMatrix<?, ?> createRowMatrixRange(final int rows, final int columns) {
+    private M createRowMatrixRange(final int rows, final int columns) {
         final float[] data = new float[rows * columns];
         for (int i = 0; i < data.length; i++) {
             data[i] = 1.0f + i;
@@ -223,8 +212,8 @@ public abstract class AbstractFloatMatrixTest extends TestCase {
         final float[][] values = {{10.0f, 20.0f, 30.0f}, {40.0f, 50.0f, 60.0f}, {70.0f, 80.0f, 90.0f},
                 {100.0f, 110.0f, 120.0f}};
         assertEquals(rows, values.length);
-        final FloatMatrix<?, ?> rowMatrix = createRowMatrixRange(rows, columns);
-        final FloatMatrix<?, ?> colMatrix = createColumnMatrixRange(rows, columns);
+        final M rowMatrix = createRowMatrixRange(rows, columns);
+        final M colMatrix = createColumnMatrixRange(rows, columns);
         for (int row = 0; row < rows; row++) {
             rowMatrix.setRow(row, rowMatrix.createRowVector(values[row]));
             assertTrue("Rows must be equal", Arrays.equals(values[row], rowMatrix.row(row).toArray()));
