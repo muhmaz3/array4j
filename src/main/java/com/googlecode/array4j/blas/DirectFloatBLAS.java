@@ -2,9 +2,10 @@ package com.googlecode.array4j.blas;
 
 import java.nio.FloatBuffer;
 
+import com.googlecode.array4j.DirectFloatMatrix;
 import com.googlecode.array4j.DirectFloatVector;
 
-public final class DirectFloatBLAS {
+public final class DirectFloatBLAS implements FloatBLAS<DirectFloatMatrix, DirectFloatVector> {
     private interface Kernel {
         float sdot(int n, FloatBuffer x, int incx, FloatBuffer y, int incy);
     }
@@ -29,24 +30,29 @@ public final class DirectFloatBLAS {
         }
     }
 
-    private static final Kernel KERNEL;
+    public static final DirectFloatBLAS INSTANCE;
 
     static {
         final String ompNumThreads = System.getenv("OMP_NUM_THREADS");
+        final Kernel kernel;
         if (ompNumThreads != null && Integer.valueOf(ompNumThreads) > 1) {
-            KERNEL = new SynchronizedKernel(new KernelImpl());
+            kernel = new SynchronizedKernel(new KernelImpl());
         } else {
-            KERNEL = new KernelImpl();
+            kernel = new KernelImpl();
         }
+        INSTANCE = new DirectFloatBLAS(kernel);
     }
 
-    public static float dot(final DirectFloatVector x, final DirectFloatVector y) {
+    private final Kernel kernel;
+
+    private DirectFloatBLAS(final Kernel kernel) {
+        this.kernel = kernel;
+    }
+
+    public float dot(final DirectFloatVector x, final DirectFloatVector y) {
         if (x.size() != y.size()) {
             throw new IllegalArgumentException();
         }
-        return KERNEL.sdot(x.size(), x.getData(), x.stride(), y.getData(), y.stride());
-    }
-
-    private DirectFloatBLAS() {
+        return kernel.sdot(x.size(), x.getData(), x.stride(), y.getData(), y.stride());
     }
 }
