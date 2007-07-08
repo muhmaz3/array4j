@@ -2,7 +2,7 @@ package net.lunglet.concurrent;
 
 import net.sf.ehcache.Ehcache;
 
-import com.googlecode.array4j.FloatVector;
+// TODO rename to HadoopCacheTask
 
 public abstract class CacheTask<V> extends JMSXGroupTask<V> {
     private final String cacheName;
@@ -22,7 +22,7 @@ public abstract class CacheTask<V> extends JMSXGroupTask<V> {
         return TaskCacheManager.getHadoopCache(cacheName);
     }
 
-    protected final FloatVector<?> getFromCache() {
-        return (FloatVector<?>) getCache().get((Object) id).getObjectValue();
+    protected final Object getFromCache() {
+        return getCache().get((Object) id).getObjectValue();
     }
 }

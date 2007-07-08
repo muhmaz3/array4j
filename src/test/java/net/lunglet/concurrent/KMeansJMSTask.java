@@ -29,7 +29,8 @@ public final class KMeansJMSTask extends CacheTask<FloatVector<?>> implements KM
     }
 
     @Override
-    public FloatMatrix<?, ?> getData() {
-        return getFromCache();
+    public Iterable<FloatVector<?>> getData() {
+//        return getFromCache();
+        return null;
     }
 }
