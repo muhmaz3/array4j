@@ -10,14 +10,16 @@ import javax.jms.Queue;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.command.ActiveMQQueue;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.googlecode.array4j.DenseFloatMatrix;
+import com.googlecode.array4j.DenseFloatVector;
 import com.googlecode.array4j.FloatMatrix;
 import com.googlecode.array4j.FloatVector;
 
 public final class KMeansTest {
-    @Test
+    @Ignore
     public void test() throws Exception {
 //        BrokerService broker = new BrokerService();
 //        broker.setManagementContext(new ManagementContext(ManagementFactory.getPlatformMBeanServer()));
@@ -53,11 +55,10 @@ public final class KMeansTest {
                 return new KMeansJMSTask(data, centroids);
             }
         };
-        KMeans2<DenseFloatMatrix, String> kmeans =
-            new KMeans2<DenseFloatMatrix, String>(completionService, taskFactory);
+        KMeans2<String> kmeans = new KMeans2<String>(completionService, taskFactory);
         DenseFloatMatrix initialCentroids = new DenseFloatMatrix(5, 10);
         String[] data = new String[]{"file1", "file2", "file3"};
-        DenseFloatMatrix centroids = kmeans.train(initialCentroids, data);
+        FloatMatrix<?, ?> centroids = kmeans.train(initialCentroids, data);
         // KMeans over JMS code ends here
 
         System.out.println("CLEANUP!!!!!!!!!!!!!!!!!!!!!");
@@ -70,10 +71,10 @@ public final class KMeansTest {
 
     @Test
     public void testBasic() throws InterruptedException, ExecutionException {
-        KMeans2<DenseFloatMatrix, DenseFloatMatrix> kmeans = KMeans2.<DenseFloatMatrix>create();
+        KMeans2<FloatMatrix<?, ?>> kmeans = KMeans2.create();
         DenseFloatMatrix data = new DenseFloatMatrix(5, 100);
         // TODO let kmeans choose the centroids using the kmeans++ method
         DenseFloatMatrix initialCentroids = new DenseFloatMatrix(5, 10);
-        DenseFloatMatrix centroids = kmeans.train(initialCentroids, data);
+        FloatMatrix<?, ?> centroids = kmeans.train(initialCentroids, data);
     }
 }
