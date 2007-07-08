@@ -1,6 +1,6 @@
 package com.googlecode.array4j;
 
-public abstract class AbstractArray<A extends Array<A>> {
+public abstract class AbstractArray<A extends Array<A>> implements Array<A> {
     protected static final void checkArgument(final boolean condition) {
         if (!condition) {
             throw new IllegalArgumentException();

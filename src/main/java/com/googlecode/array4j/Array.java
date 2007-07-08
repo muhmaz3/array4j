@@ -1,5 +1,7 @@
 package com.googlecode.array4j;
 
-public interface Array<A extends Array<A>> {
+import java.io.Serializable;
+
+public interface Array<A extends Array<A>> extends Serializable {
     int size();
 }

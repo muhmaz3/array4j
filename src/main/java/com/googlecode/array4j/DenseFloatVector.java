@@ -5,11 +5,7 @@ import java.util.Arrays;
 public final class DenseFloatVector extends
         AbstractDenseVector<DenseFloatVector, DenseFloatSupport<DenseFloatVector, DenseFloatVector>, float[]> implements
         FloatVector<DenseFloatVector>, DenseVector<DenseFloatVector> {
-    final float[] data;
-
-    public DenseFloatVector() {
-        this(0);
-    }
+    private final float[] data;
 
     public DenseFloatVector(final float... values) {
         this(Orientation.DEFAULT_FOR_VECTOR, values);

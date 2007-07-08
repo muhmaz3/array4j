@@ -15,15 +15,11 @@ public final class KMeansTask extends CacheTask<Object> {
     @Override
     public Object call() throws Exception {
         System.out.println("need to get item called " + id + " from cache");
-        Object data = getData();
+        Object data = getFromCache();
         System.out.println("working out some stuff");
 
         String result = "WORKED OUT STUFF WITH: " + data.toString();
         System.out.println("RETURNING " + result);
         return result;
-    }
-
-    private Object getData() {
-        return getCache().get((Object) id).getObjectValue();
     }
 }

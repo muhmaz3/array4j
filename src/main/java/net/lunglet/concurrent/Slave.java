@@ -28,7 +28,7 @@ public final class Slave {
         }
     }
 
-    public static void main(String[] args) throws JMSException {
+    public static void main(final String[] args) throws JMSException {
         final String brokerURI = System.getProperty("frags.broker.uri", "tcp://localhost:61616");
 
         final String workQueueName = System.getProperty("frags.workqueue", "work");
@@ -63,7 +63,7 @@ public final class Slave {
             }
         }
     }
-    
+
     private Slave() {
     }
 }
