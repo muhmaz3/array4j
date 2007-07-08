@@ -59,7 +59,7 @@ public final class JMSWorker {
     }
 
     private final class TaskMessageListener implements MessageListener {
-        public void onMessage(Message message) {
+        public void onMessage(final Message message) {
             try {
                 onMessageImpl(message);
             } catch (JMSException e) {
@@ -67,7 +67,7 @@ public final class JMSWorker {
             }
         }
 
-        private void onMessageImpl(Message message) throws JMSException {
+        private void onMessageImpl(final Message message) throws JMSException {
             JMSTask<?> task = (JMSTask<?>) ((ObjectMessage) message).getObject();
             task.prepareTaskFromMessage(message);
             String completionServiceID = message.getStringProperty(JMSCompletionService.ID_PROPERTY);
@@ -88,8 +88,8 @@ public final class JMSWorker {
 
     private final Session session;
 
-    public JMSWorker(ExecutorService executor, final Connection connection, Queue workQueue, Queue resultsQueue)
-            throws JMSException {
+    public JMSWorker(final ExecutorService executor, final Connection connection, final Queue workQueue,
+            final Queue resultsQueue) throws JMSException {
         this.executor = executor;
         this.session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
         // TODO might want to tune prefetch size on this consumer to prevent it

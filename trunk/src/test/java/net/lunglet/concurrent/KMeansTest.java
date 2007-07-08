@@ -1,5 +1,6 @@
 package net.lunglet.concurrent;
 
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -10,6 +11,10 @@ import javax.jms.Queue;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.command.ActiveMQQueue;
 import org.junit.Test;
+
+import com.googlecode.array4j.DenseFloatMatrix;
+import com.googlecode.array4j.FloatMatrix;
+import com.googlecode.array4j.FloatVector;
 
 public final class KMeansTest {
     @Test
@@ -39,11 +44,21 @@ public final class KMeansTest {
 
         connection.start();
 
-        JMSCompletionService<Object> completionService =
-            new JMSCompletionService<Object>(connection, workQueue, resultQueue);
-
-        KMeans kmeans = new KMeans();
-        kmeans.train(new String[]{"file1", "file2", "file3"}, completionService);
+        // KMeans over JMS code starts here
+        JMSCompletionService<FloatVector<?>> completionService =
+            new JMSCompletionService<FloatVector<?>>(connection, workQueue, resultQueue);
+        KMeansTaskFactory<String> taskFactory = new KMeansTaskFactory<String>() {
+            @Override
+            public KMeansTask2 createTask(String data, FloatMatrix<?, ?> centroids) {
+                return new KMeansJMSTask(data, centroids);
+            }
+        };
+        KMeans2<DenseFloatMatrix, String> kmeans =
+            new KMeans2<DenseFloatMatrix, String>(completionService, taskFactory);
+        DenseFloatMatrix initialCentroids = new DenseFloatMatrix(5, 10);
+        String[] data = new String[]{"file1", "file2", "file3"};
+        DenseFloatMatrix centroids = kmeans.train(initialCentroids, data);
+        // KMeans over JMS code ends here
 
         System.out.println("CLEANUP!!!!!!!!!!!!!!!!!!!!!");
         worker.close();
@@ -51,5 +66,14 @@ public final class KMeansTest {
         connection.close();
 
 //        broker.stop();
+    }
+
+    @Test
+    public void testBasic() throws InterruptedException, ExecutionException {
+        KMeans2<DenseFloatMatrix, DenseFloatMatrix> kmeans = KMeans2.<DenseFloatMatrix>create();
+        DenseFloatMatrix data = new DenseFloatMatrix(5, 100);
+        // TODO let kmeans choose the centroids using the kmeans++ method
+        DenseFloatMatrix initialCentroids = new DenseFloatMatrix(5, 10);
+        DenseFloatMatrix centroids = kmeans.train(initialCentroids, data);
     }
 }
