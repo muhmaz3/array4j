@@ -1,5 +1,9 @@
 package com.googlecode.array4j;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
 public final class DenseFloatMatrix
         extends
         AbstractDenseMatrix<DenseFloatMatrix, DenseFloatVector, DenseFloatSupport<DenseFloatMatrix, DenseFloatVector>, float[]>
@@ -53,7 +57,6 @@ public final class DenseFloatMatrix
 
     @Override
     public boolean equals(final Object obj) {
-        // TODO possibly allow any FloatMatrix instance
         if (obj == null || !(obj instanceof DenseFloatMatrix)) {
             return false;
         }
@@ -72,6 +75,11 @@ public final class DenseFloatMatrix
 
     public float[] getData() {
         return data;
+    }
+
+    private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        this.support = new DenseFloatSupport<DenseFloatMatrix, DenseFloatVector>(this, data);
     }
 
     public void setColumn(final int column, final FloatVector<?> columnVector) {
@@ -103,5 +111,10 @@ public final class DenseFloatMatrix
         return new DenseFloatMatrix(data, columns, rows, offset, stride, orientation.transpose());
     }
 
+    private void writeObject(final ObjectOutputStream out) throws IOException {
+        out.defaultWriteObject();
+    }
+
     // TODO implement almostEquals that allows an epsilon
+    // TODO almostEquals should work on any FloatMatrix<?, ?>
 }

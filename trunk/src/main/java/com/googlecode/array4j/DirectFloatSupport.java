@@ -33,7 +33,6 @@ public final class DirectFloatSupport<M extends DenseMatrix<M, V> & FloatMatrix<
     }
 
     private FloatBuffer getData() {
-//        return (FloatBuffer) ((FloatBuffer) data.rewind()).position(matrix.offset());
         return (FloatBuffer) data.rewind();
     }
 

@@ -1,5 +1,7 @@
 package com.googlecode.array4j.blas;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 
 import com.googlecode.array4j.DirectFloatMatrix;
@@ -30,7 +32,11 @@ public final class DirectFloatBLAS implements FloatBLAS<DirectFloatMatrix, Direc
         }
     }
 
+    private static final int FLOAT_SIZE = Float.SIZE >>> 3;
+
     public static final DirectFloatBLAS INSTANCE;
+
+    private static final FloatBuffer ONE_BUFFER;
 
     static {
         final String ompNumThreads = System.getenv("OMP_NUM_THREADS");
@@ -41,6 +47,17 @@ public final class DirectFloatBLAS implements FloatBLAS<DirectFloatMatrix, Direc
             kernel = new KernelImpl();
         }
         INSTANCE = new DirectFloatBLAS(kernel);
+    }
+
+    static {
+        ONE_BUFFER = createBuffer(1);
+        ONE_BUFFER.put(0, 1.0f);
+    }
+
+    public static FloatBuffer createBuffer(final int size) {
+        final ByteBuffer buffer = ByteBuffer.allocateDirect(size * FLOAT_SIZE);
+        buffer.order(ByteOrder.nativeOrder());
+        return buffer.asFloatBuffer();
     }
 
     private final Kernel kernel;
@@ -54,5 +71,9 @@ public final class DirectFloatBLAS implements FloatBLAS<DirectFloatMatrix, Direc
             throw new IllegalArgumentException();
         }
         return kernel.sdot(x.size(), x.getData(), x.stride(), y.getData(), y.stride());
+    }
+
+    public float sum(final DirectFloatVector x) {
+        return kernel.sdot(x.size(), x.getData(), x.stride(), ONE_BUFFER, 0);
     }
 }
