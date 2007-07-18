@@ -7,10 +7,10 @@ import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import org.junit.Test;
+import org.junit.Ignore;
 
 public final class CancellationTest {
-    @Test
+    @Ignore
     public void test() throws InterruptedException {
         ExecutorCompletionService<Void> completionService =
             new ExecutorCompletionService<Void>(Executors.newSingleThreadExecutor());

@@ -1,7 +1,5 @@
 package com.googlecode.array4j.blas;
 
-import static org.junit.Assert.assertEquals;
-
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -15,9 +13,10 @@ import com.googlecode.array4j.DirectFloatMatrixFactory;
 import com.googlecode.array4j.FloatMatrix;
 import com.googlecode.array4j.FloatMatrixFactory;
 import com.googlecode.array4j.FloatVector;
+import com.googlecode.array4j.Orientation;
 
 @RunWith(value = Parameterized.class)
-public final class FloatBLASTest<M extends FloatMatrix<M, V>, V extends FloatVector<V>> {
+public final class FloatBLASBenchmark<M extends FloatMatrix<M, V>, V extends FloatVector<V>> {
     @Parameters
     public static Collection<?> data() {
         return Arrays.asList(new Object[][]{{DenseFloatBLAS.INSTANCE, new DenseFloatMatrixFactory()},
@@ -28,21 +27,22 @@ public final class FloatBLASTest<M extends FloatMatrix<M, V>, V extends FloatVec
 
     private final FloatMatrixFactory<M, V> factory;
 
-    public FloatBLASTest(final FloatBLAS<M, V> blas, final FloatMatrixFactory<M, V> factory) {
+    public FloatBLASBenchmark(final FloatBLAS<M, V> blas, final FloatMatrixFactory<M, V> factory) {
         this.blas = blas;
         this.factory = factory;
     }
 
     @Test
-    public void testDot() {
-        final V x = factory.createRowVector(1.0f, 2.0f, 3.0f);
-        final V y = factory.createRowVector(3.0f, 2.0f, 1.0f);
-        assertEquals(10.0f, blas.dot(x, y));
-    }
-
-    @Test
-    public void testSum() {
-        final V x = factory.createRowVector(1.0f, 2.0f, 3.0f);
-        assertEquals(6.0f, blas.sum(x));
+    public void benchmarkSum() {
+        System.out.println(blas);
+        final V y = factory.createVector(167772160, Orientation.DEFAULT_FOR_VECTOR);
+        long[] deltas = new long[20];
+        for (int i = 0; i < deltas.length; i++) {
+            long start = System.nanoTime();
+            blas.sum(y);
+            long end = System.nanoTime();
+            deltas[i] = (end - start) / 1000L / 1000L;
+        }
+        System.out.println(Arrays.toString(deltas));
     }
 }

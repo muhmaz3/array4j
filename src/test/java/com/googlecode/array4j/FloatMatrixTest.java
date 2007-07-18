@@ -3,6 +3,11 @@ package com.googlecode.array4j;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.Collection;
@@ -209,6 +214,25 @@ public final class FloatMatrixTest<M extends FloatMatrix<M, V>, V extends FloatV
         for (int row = 0; row < rows; row++) {
             assertTrue(matrix.row(row).isRowVector());
             assertTrue(Arrays.equals(matrixRows[row], matrix.row(row).toArray()));
+        }
+    }
+
+    @Test
+    public void testSerialization() throws IOException, ClassNotFoundException {
+        for (int rows = 0; rows < 4; rows++) {
+            for (int columns = 0; columns < 4; columns++) {
+                FloatMatrix<?, ?> input = createRowMatrixRange(rows, columns);
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                ObjectOutputStream oos = new ObjectOutputStream(baos);
+                oos.writeObject(input);
+                oos.close();
+                ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+                ObjectInputStream ois = new ObjectInputStream(bais);
+                FloatMatrix<?, ?> output = (FloatMatrix<?, ?>) ois.readObject();
+                assertEquals(input, output);
+                ois.close();
+                // TODO do some tests to make sure transients were restored
+            }
         }
     }
 

@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 import net.lunglet.concurrent.TaskHandler.ExpiredAction;
 import net.lunglet.concurrent.TaskHandler.FailedAction;
 
-import org.junit.Test;
+import org.junit.Ignore;
 
 public final class TaskManagerTest {
     private static class VerboseTaskHandler<V> implements TaskHandler<V> {
@@ -105,7 +105,7 @@ public final class TaskManagerTest {
         }
     }
 
-    @Test
+    @Ignore
     public void testBasics() throws InterruptedException, ExecutionException {
         Executor executor = Executors.newSingleThreadExecutor();
         ExecutorCompletionService<Void> completionService = new ExecutorCompletionService<Void>(executor);
@@ -127,7 +127,7 @@ public final class TaskManagerTest {
         taskManager.awaitTermination();
     }
 
-    @Test
+    @Ignore
     public void testTooShortTimeout() throws InterruptedException, ExecutionException {
         Executor executor = Executors.newSingleThreadExecutor();
         ExecutorCompletionService<Void> completionService = new ExecutorCompletionService<Void>(executor);
@@ -143,7 +143,7 @@ public final class TaskManagerTest {
         taskManager.awaitTermination();
     }
 
-    @Test
+    @Ignore
     public void testUnreliableTask() throws InterruptedException, ExecutionException {
         Executor executor = Executors.newSingleThreadExecutor();
         ExecutorCompletionService<Void> completionService = new ExecutorCompletionService<Void>(executor);
