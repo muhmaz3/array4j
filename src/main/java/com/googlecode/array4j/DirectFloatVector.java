@@ -1,5 +1,8 @@
 package com.googlecode.array4j;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.nio.FloatBuffer;
 
 public final class DirectFloatVector extends
@@ -69,6 +72,11 @@ public final class DirectFloatVector extends
         return (FloatBuffer) data.rewind();
     }
 
+    private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        this.support = new DirectFloatSupport<DirectFloatVector, DirectFloatVector>(this, data);
+    }
+
     public void setColumn(final int column, final FloatVector<?> columnVector) {
         support.setColumn(column, columnVector);
     }
@@ -83,5 +91,9 @@ public final class DirectFloatVector extends
 
     public DirectFloatVector transpose() {
         return new DirectFloatVector(getData(), size, offset, stride, orientation.transpose());
+    }
+
+    private void writeObject(final ObjectOutputStream out) throws IOException {
+        out.defaultWriteObject();
     }
 }

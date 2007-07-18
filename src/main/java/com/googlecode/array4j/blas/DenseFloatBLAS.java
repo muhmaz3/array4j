@@ -17,4 +17,9 @@ public final class DenseFloatBLAS implements FloatBLAS<DenseFloatMatrix, DenseFl
         }
         return Sdot.sdot(x.size(), x.getData(), x.offset(), x.stride(), y.getData(), y.offset(), y.stride());
     }
+
+    @Override
+    public float sum(final DenseFloatVector x) {
+        return Sdot.sdot(x.size(), x.getData(), x.offset(), x.stride(), new float[]{1.0f}, 0, 0);
+    }
 }

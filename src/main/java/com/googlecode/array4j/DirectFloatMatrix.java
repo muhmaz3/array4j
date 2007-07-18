@@ -1,5 +1,8 @@
 package com.googlecode.array4j;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
@@ -22,7 +25,7 @@ public final class DirectFloatMatrix
         return buffer.asFloatBuffer();
     }
 
-    final FloatBuffer data;
+    private final FloatBuffer data;
 
     public DirectFloatMatrix(final float[] data, final int rows, final int columns, final int offset, final int stride,
             final Orientation orientation) {
@@ -76,6 +79,11 @@ public final class DirectFloatMatrix
         return (FloatBuffer) data.rewind();
     }
 
+    private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        this.support = new DirectFloatSupport<DirectFloatMatrix, DirectFloatVector>(this, data);
+    }
+
     public void setColumn(final int column, final FloatVector<?> columnVector) {
         support.setColumn(column, columnVector);
     }
@@ -91,5 +99,9 @@ public final class DirectFloatMatrix
     public DirectFloatMatrix transpose() {
         // interchange columns and rows and change orientation
         return new DirectFloatMatrix(getData(), columns, rows, offset, stride, orientation.transpose());
+    }
+
+    private void writeObject(final ObjectOutputStream out) throws IOException {
+        out.defaultWriteObject();
     }
 }

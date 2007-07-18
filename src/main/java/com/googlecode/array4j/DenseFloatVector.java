@@ -1,5 +1,8 @@
 package com.googlecode.array4j;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Arrays;
 
 public final class DenseFloatVector extends
@@ -64,7 +67,6 @@ public final class DenseFloatVector extends
 
     @Override
     public boolean equals(final Object obj) {
-        // TODO possibly allow any FloatMatrix instance
         if (obj == null || !(obj instanceof DenseFloatVector)) {
             return false;
         }
@@ -83,6 +85,11 @@ public final class DenseFloatVector extends
 
     public float[] getData() {
         return data;
+    }
+
+    private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        this.support = new DenseFloatSupport<DenseFloatVector, DenseFloatVector>(this, data);
     }
 
     public void setColumn(final int column, final FloatVector<?> columnVector) {
@@ -104,5 +111,9 @@ public final class DenseFloatVector extends
 
     public DenseFloatVector transpose() {
         return new DenseFloatVector(data, size, offset, stride, orientation.transpose());
+    }
+
+    private void writeObject(final ObjectOutputStream out) throws IOException {
+        out.defaultWriteObject();
     }
 }
