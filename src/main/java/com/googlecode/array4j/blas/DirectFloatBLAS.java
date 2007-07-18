@@ -20,6 +20,7 @@ public final class DirectFloatBLAS implements FloatBLAS<DirectFloatMatrix, Direc
         public native float sdot(int n, FloatBuffer x, int incx, FloatBuffer y, int incy);
     }
 
+    // TODO might want to implement this as a dynamic proxy
     private static class SynchronizedKernel implements Kernel {
         private final Kernel kernel;
 
@@ -34,7 +35,7 @@ public final class DirectFloatBLAS implements FloatBLAS<DirectFloatMatrix, Direc
 
     private static final int FLOAT_SIZE = Float.SIZE >>> 3;
 
-    public static final DirectFloatBLAS INSTANCE;
+    public static final FloatBLAS<DirectFloatMatrix, DirectFloatVector> INSTANCE;
 
     private static final FloatBuffer ONE_BUFFER;
 
@@ -66,14 +67,30 @@ public final class DirectFloatBLAS implements FloatBLAS<DirectFloatMatrix, Direc
         this.kernel = kernel;
     }
 
+    @Override
+    public void axpy(final float value, final DirectFloatVector x, final DirectFloatVector y) {
+        throw new UnsupportedOperationException();
+    }
+
     public float dot(final DirectFloatVector x, final DirectFloatVector y) {
         if (x.size() != y.size()) {
             throw new IllegalArgumentException();
         }
-        return kernel.sdot(x.size(), x.getData(), x.stride(), y.getData(), y.stride());
+        return kernel.sdot(x.size(), x.data(), x.stride(), y.data(), y.stride());
     }
 
+    @Override
+    public int iamax(final DirectFloatVector x) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void scal(final float value, final DirectFloatVector x) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public float sum(final DirectFloatVector x) {
-        return kernel.sdot(x.size(), x.getData(), x.stride(), ONE_BUFFER, 0);
+        return kernel.sdot(x.size(), x.data(), x.stride(), ONE_BUFFER, 0);
     }
 }

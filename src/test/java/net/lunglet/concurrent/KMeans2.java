@@ -1,5 +1,6 @@
 package net.lunglet.concurrent;
 
+import java.util.List;
 import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorCompletionService;
@@ -15,7 +16,7 @@ public final class KMeans2<T> {
             public KMeansTask2 createTask(final FloatMatrix<?, ?> data, final FloatMatrix<?, ?> centroids) {
                 return new KMeansTask2() {
                     @Override
-                    public FloatVector<?> call() throws Exception {
+                    public List<FloatVector<?>> call() throws Exception {
                         return KMeans2.doTask(this);
                     }
 
@@ -31,33 +32,47 @@ public final class KMeans2<T> {
                 };
             }
         };
-        CompletionService<FloatVector<?>> completionService =
-            new ExecutorCompletionService<FloatVector<?>>(Executors.newFixedThreadPool(4));
+        CompletionService<List<FloatVector<?>>> completionService =
+            new ExecutorCompletionService<List<FloatVector<?>>>(Executors.newFixedThreadPool(4));
         return new KMeans2<FloatMatrix<?, ?>>(completionService, taskFactory);
     }
 
-    public static FloatVector<?> doTask(final KMeansTask2 task) {
+    public static List<FloatVector<?>> doTask(final KMeansTask2 task) {
         // TODO decorate this iterator with something that checks that it
         // returns the same number of elements each time
         Iterable<? extends FloatVector<?>> data = task.getData();
         FloatMatrix<?, ?> centroids = task.getCentroids();
-        // TODO create a matrix from centroids or data with dimensions centroids x data
-        FloatMatrix<?, ?> distances = null;
-        int i = 0;
-        for (FloatVector<?> centroid : centroids.columnsIterator()) {
-            int j = 0;
-            for (FloatVector<?> x : data) {
-//                distances.set(i++, j++, 0.0f);
+        FloatMatrix<?, ?> newCentroids = null;
+        long[] counts = new long[newCentroids.columns()];
+        float totalDistortion = 0.0f;
+        for (FloatVector<?> x : data) {
+            int nearestIndex = -1;
+            float nearestDistance = Float.POSITIVE_INFINITY;
+            int i = 0;
+            for (FloatVector<?> centroid : centroids.columnsIterator()) {
+                // TODO calculate distance between x and centroid
+                float distance = 0.0f;
+                if (distance < nearestDistance) {
+                    nearestIndex = i;
+                }
+                i++;
             }
+            counts[nearestIndex]++;
+            FloatVector<?> nearestNewCentroid = newCentroids.column(nearestIndex);
+            FloatVector<?> delta = x.minus(nearestNewCentroid);
+            delta.timesEquals(1.0f / counts[nearestIndex]);
+            nearestNewCentroid.plusEquals(delta);
+            totalDistortion += nearestDistance;
         }
+        // TODO return newCentroids, counts, totalDistortion
         return null;
     }
 
-    private CompletionService<FloatVector<?>> cs;
+    private CompletionService<List<FloatVector<?>>> cs;
 
     private KMeansTaskFactory<T> taskFactory;
 
-    public KMeans2(final CompletionService<FloatVector<?>> cs, final KMeansTaskFactory<T> taskFactory) {
+    public KMeans2(final CompletionService<List<FloatVector<?>>> cs, final KMeansTaskFactory<T> taskFactory) {
         this.cs = cs;
         this.taskFactory = taskFactory;
     }
@@ -68,13 +83,11 @@ public final class KMeans2<T> {
         FloatMatrix<?, ?> centroids = initialCentroids;
         for (int j = 0; j < 100; j++) {
             for (int i = 0; i < data.length; i++) {
-//                System.out.println(j + " " + i + " submitting " + data[i]);
                 KMeansTask2 task = taskFactory.createTask(data[i], centroids);
                 cs.submit(task);
             }
             for (int i = 0; i < data.length; i++) {
-                FloatVector<?> distances = cs.take().get();
-//                System.out.println(j + " " + i + " " + distances);
+                List<FloatVector<?>> distances = cs.take().get();
             }
         }
         return centroids;

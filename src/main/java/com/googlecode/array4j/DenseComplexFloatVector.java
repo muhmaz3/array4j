@@ -19,13 +19,16 @@ public final class DenseComplexFloatVector
     }
 
     public DenseComplexFloatVector createColumnVector() {
-        // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     public DenseComplexFloatVector createRowVector() {
-        // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public DenseComplexFloatVector createVector(final int size) {
+        throw new UnsupportedOperationException();
     }
 
     public DenseComplexFloatVector createVector(final int size, final int offset, final int stride,
@@ -34,22 +37,18 @@ public final class DenseComplexFloatVector
     }
 
     public void setColumn(final int column, final ComplexFloatVector<?> columnVector) {
-        // TODO Auto-generated method stub
-
+        throw new UnsupportedOperationException();
     }
 
     public void setRow(final int row, final ComplexFloatVector<?> rowVector) {
-        // TODO Auto-generated method stub
-
+        throw new UnsupportedOperationException();
     }
 
     public ComplexFloat[] toArray() {
-        // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     public DenseComplexFloatVector transpose() {
-        // TODO Auto-generated method stub
-        return null;
+        throw new UnsupportedOperationException();
     }
 }

@@ -16,7 +16,7 @@ import org.junit.runners.Parameterized.Parameters;
 public final class FloatVectorTest<M extends FloatMatrix<M, V>, V extends FloatVector<V>> {
     @Parameters
     public static Collection<?> data() {
-        return Arrays.asList(new Object[][]{{new DenseFloatMatrixFactory()}, {new DenseFloatMatrixFactory()}});
+        return Arrays.asList(new Object[][]{{new DenseFloatMatrixFactory()}, {new DirectFloatMatrixFactory()}});
     }
 
     private final FloatMatrixFactory<M, V> factory;
@@ -31,7 +31,7 @@ public final class FloatVectorTest<M extends FloatMatrix<M, V>, V extends FloatV
     }
 
     // TODO should probably throw IllegalArgumentException instead?
-    @Test(expected=NegativeArraySizeException.class)
+    @Test(expected=IllegalArgumentException.class)
     public void testConstructorNegativeSize() {
         factory.createVector(-1, Orientation.DEFAULT_FOR_VECTOR);
     }
@@ -46,6 +46,41 @@ public final class FloatVectorTest<M extends FloatMatrix<M, V>, V extends FloatV
         // a really long constant vector
         factory.createVector(new float[1], Integer.MAX_VALUE, 0, 0, Orientation.ROW);
         // TODO test for overflows in checkArgument checks
+    }
+
+    @Test
+    public void testMinus() {
+        for (int i = 0; i < 5; i++) {
+            V x = factory.createVector(i, Orientation.DEFAULT_FOR_VECTOR);
+            V y = factory.createVector(i, Orientation.DEFAULT_FOR_VECTOR);
+            for (int j = 0; j < i; j++) {
+                x.set(j, j);
+                y.set(j, i - j);
+            }
+            V z = x.minus(y);
+            for (int j = 0; j < i; j++) {
+                assertEquals(j, x.get(j));
+                assertEquals(i - j, y.get(j));
+                assertEquals(2 * j - i, z.get(j));
+            }
+        }
+    }
+
+    @Test
+    public void testPlusEquals() {
+        for (int i = 0; i < 5; i++) {
+            V x = factory.createVector(i, Orientation.DEFAULT_FOR_VECTOR);
+            V y = factory.createVector(i, Orientation.DEFAULT_FOR_VECTOR);
+            for (int j = 0; j < i; j++) {
+                x.set(j, j);
+                y.set(j, i - j);
+            }
+            x.plusEquals(y);
+            for (int j = 0; j < i; j++) {
+                assertEquals(i, x.get(j));
+                assertEquals(i - j, y.get(j));
+            }
+        }
     }
 
     @Test

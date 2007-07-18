@@ -17,9 +17,9 @@ public final class DirectFloatVector extends
     DirectFloatVector(final FloatBuffer data, final int size, final int offset, final int stride,
             final Orientation orientation) {
         super(size, offset, stride, orientation);
+        checkArgument(data != null);
         this.data = data;
         this.support = new DirectFloatSupport<DirectFloatVector, DirectFloatVector>(this, data);
-        checkPostcondition(getData().remaining() >= size);
     }
 
     public DirectFloatVector(final int size) {
@@ -36,12 +36,12 @@ public final class DirectFloatVector extends
 
     public DirectFloatVector(final Orientation orientation, final float[] values) {
         this(values.length, 0, 1, orientation);
-        getData().put(values);
+        data().put(values);
     }
 
     void copyTo(final FloatBuffer target, final int targetOffset, final int targetStride) {
         for (int i = 0; i < size; i++) {
-            target.put(targetOffset + i * targetStride, getData().get(i * stride));
+            target.put(targetOffset + i * targetStride, data().get(i * stride));
         }
     }
 
@@ -63,18 +63,55 @@ public final class DirectFloatVector extends
         return new DirectFloatVector(Orientation.ROW, values);
     }
 
-    public DirectFloatVector createVector(final int size, final int offset, final int stride,
-            final Orientation orientation) {
-        return new DirectFloatVector(getData(), size, offset, stride, orientation);
+    @Override
+    public DirectFloatVector createVector(final int size) {
+        return new DirectFloatVector(size);
     }
 
-    public FloatBuffer getData() {
+    public DirectFloatVector createVector(final int size, final int offset, final int stride,
+            final Orientation orientation) {
+        return new DirectFloatVector(data(), size, offset, stride, orientation);
+    }
+
+    public FloatBuffer data() {
         return (FloatBuffer) data.rewind();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == null || !(obj instanceof DirectFloatVector)) {
+            return false;
+        }
+        final DirectFloatVector other = (DirectFloatVector) obj;
+        if (size != other.size || !orientation.equals(other.orientation)) {
+            return false;
+        }
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public float get(final int index) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public DirectFloatVector minus(final FloatVector<?> other) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void plusEquals(final FloatVector<?> other) {
+        throw new UnsupportedOperationException();
     }
 
     private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
         this.support = new DirectFloatSupport<DirectFloatVector, DirectFloatVector>(this, data);
+    }
+
+    @Override
+    public void set(final int index, final float value) {
+        throw new UnsupportedOperationException();
     }
 
     public void setColumn(final int column, final FloatVector<?> columnVector) {
@@ -85,12 +122,17 @@ public final class DirectFloatVector extends
         support.setRow(row, rowVector);
     }
 
+    @Override
+    public void timesEquals(final float value) {
+        throw new UnsupportedOperationException();
+    }
+
     public float[] toArray() {
         return support.toArray();
     }
 
     public DirectFloatVector transpose() {
-        return new DirectFloatVector(getData(), size, offset, stride, orientation.transpose());
+        return new DirectFloatVector(data(), size, offset, stride, orientation.transpose());
     }
 
     private void writeObject(final ObjectOutputStream out) throws IOException {

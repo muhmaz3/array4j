@@ -31,6 +31,11 @@ public final class DenseFloatSupport<M extends DenseMatrix<M, V> & FloatMatrix<M
         };
     }
 
+    public float getValue(final int index) {
+        // TODO check that index is valid
+        return data[elementOffset(index)];
+    }
+
     @Override
     public void setColumnImpl(final int column, final FloatVector<?> columnVector) {
         if (!(columnVector instanceof DenseFloatVector)) {
@@ -51,6 +56,11 @@ public final class DenseFloatSupport<M extends DenseMatrix<M, V> & FloatMatrix<M
         }
         final DenseFloatVector denseRowVec = (DenseFloatVector) rowVector;
         denseRowVec.copyTo(data, rowOffset(row), columnStride);
+    }
+
+    public void setValue(final int index, final float value) {
+        // TODO check that index is valid
+        data[elementOffset(index)] = value;
     }
 
     public float[] toArray() {
