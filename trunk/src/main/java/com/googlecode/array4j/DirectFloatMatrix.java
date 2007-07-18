@@ -41,7 +41,7 @@ public final class DirectFloatMatrix
         super(rows, columns, offset, stride, orientation);
         this.data = data;
         this.support = new DirectFloatSupport<DirectFloatMatrix, DirectFloatVector>(this, data);
-        checkPostcondition(getData().remaining() >= size);
+        checkPostcondition(data().remaining() >= size);
     }
 
     public DirectFloatMatrix(final int rows, final int columns) {
@@ -72,10 +72,10 @@ public final class DirectFloatMatrix
 
     public DirectFloatVector createVector(final int size, final int offset, final int stride,
             final Orientation orientation) {
-        return new DirectFloatVector(getData(), size, offset, stride, orientation);
+        return new DirectFloatVector(data(), size, offset, stride, orientation);
     }
 
-    private FloatBuffer getData() {
+    private FloatBuffer data() {
         return (FloatBuffer) data.rewind();
     }
 
@@ -98,7 +98,7 @@ public final class DirectFloatMatrix
 
     public DirectFloatMatrix transpose() {
         // interchange columns and rows and change orientation
-        return new DirectFloatMatrix(getData(), columns, rows, offset, stride, orientation.transpose());
+        return new DirectFloatMatrix(data(), columns, rows, offset, stride, orientation.transpose());
     }
 
     private void writeObject(final ObjectOutputStream out) throws IOException {

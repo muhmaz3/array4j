@@ -4,6 +4,8 @@ public abstract class DenseMatrixSupport<M extends DenseMatrix<M, V>, V extends 
     /** Stride between elements in a column. */
     protected final int columnStride;
 
+    protected final int elementSize;
+
     protected final DenseMatrix<M, V> matrix;
 
     /** Stride between elements in a row. */
@@ -15,6 +17,7 @@ public abstract class DenseMatrixSupport<M extends DenseMatrix<M, V>, V extends 
 
     public DenseMatrixSupport(final DenseMatrix<M, V> matrix, final int elementSize) {
         this.matrix = matrix;
+        this.elementSize = elementSize;
         if (matrix.orientation().equals(Orientation.ROW)) {
             this.rowStride = elementSize * matrix.stride() * matrix.columns();
             this.columnStride = elementSize * matrix.stride();
@@ -47,6 +50,10 @@ public abstract class DenseMatrixSupport<M extends DenseMatrix<M, V>, V extends 
 
     public final int columnOffset(final int column) {
         return matrix.offset() + column * columnStride;
+    }
+
+    public final int elementOffset(final int index) {
+        return matrix.offset() + index * elementSize * matrix.stride();
     }
 
     public final V row(final int row) {

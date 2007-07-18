@@ -1,5 +1,6 @@
 package net.lunglet.concurrent;
 
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -11,6 +12,7 @@ import javax.jms.Queue;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.command.ActiveMQQueue;
 import org.junit.Ignore;
+import org.junit.Test;
 
 import com.googlecode.array4j.DenseFloatMatrix;
 import com.googlecode.array4j.FloatMatrix;
@@ -45,8 +47,8 @@ public final class KMeansTest {
         connection.start();
 
         // KMeans over JMS code starts here
-        JMSCompletionService<FloatVector<?>> completionService =
-            new JMSCompletionService<FloatVector<?>>(connection, workQueue, resultQueue);
+        JMSCompletionService<List<FloatVector<?>>> completionService =
+            new JMSCompletionService<List<FloatVector<?>>>(connection, workQueue, resultQueue);
         KMeansTaskFactory<String> taskFactory = new KMeansTaskFactory<String>() {
             @Override
             public KMeansTask2 createTask(String data, FloatMatrix<?, ?> centroids) {
@@ -67,7 +69,7 @@ public final class KMeansTest {
 //        broker.stop();
     }
 
-    @Ignore
+    @Test
     public void testBasic() throws InterruptedException, ExecutionException {
         KMeans2<FloatMatrix<?, ?>> kmeans = KMeans2.create();
         DenseFloatMatrix data = new DenseFloatMatrix(5, 100);

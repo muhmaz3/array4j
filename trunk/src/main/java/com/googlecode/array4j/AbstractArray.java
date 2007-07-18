@@ -13,6 +13,13 @@ public abstract class AbstractArray<A extends Array<A>> implements Array<A> {
         }
     }
 
+    protected static final int checkArgumentNonNegative(final int value) {
+        if (value < 0) {
+            throw new IllegalArgumentException();
+        }
+        return value;
+    }
+
     protected static final void checkPostcondition(final boolean condition) {
         if (!condition) {
             throw new AssertionError("postcondition failed");

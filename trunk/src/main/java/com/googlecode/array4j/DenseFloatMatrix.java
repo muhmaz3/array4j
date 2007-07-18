@@ -55,6 +55,10 @@ public final class DenseFloatMatrix
         return new DenseFloatVector(data, size, offset, stride, orientation);
     }
 
+    public float[] data() {
+        return data;
+    }
+
     @Override
     public boolean equals(final Object obj) {
         if (obj == null || !(obj instanceof DenseFloatMatrix)) {
@@ -71,10 +75,6 @@ public final class DenseFloatMatrix
             }
         }
         return true;
-    }
-
-    public float[] getData() {
-        return data;
     }
 
     private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {

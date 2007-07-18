@@ -1,9 +1,11 @@
 package net.lunglet.concurrent;
 
+import java.util.List;
+
 import com.googlecode.array4j.FloatMatrix;
 import com.googlecode.array4j.FloatVector;
 
-public final class KMeansJMSTask extends CacheTask<FloatVector<?>> implements KMeansTask2 {
+public final class KMeansJMSTask extends CacheTask<List<FloatVector<?>>> implements KMeansTask2 {
     private static final String CACHE_NAME = String.format("%s.CACHE", KMeansTask2.class.getName());
 
     private static final long serialVersionUID = 1L;
@@ -19,7 +21,7 @@ public final class KMeansJMSTask extends CacheTask<FloatVector<?>> implements KM
     }
 
     @Override
-    public FloatVector<?> call() throws Exception {
+    public List<FloatVector<?>> call() throws Exception {
         return KMeans2.doTask(this);
     }
 

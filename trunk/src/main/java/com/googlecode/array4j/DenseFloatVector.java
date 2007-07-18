@@ -5,6 +5,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Arrays;
 
+import com.googlecode.array4j.blas.DenseFloatBLAS;
+
 public final class DenseFloatVector extends
         AbstractDenseVector<DenseFloatVector, DenseFloatSupport<DenseFloatVector, DenseFloatVector>, float[]> implements
         FloatVector<DenseFloatVector>, DenseVector<DenseFloatVector> {
@@ -24,12 +26,27 @@ public final class DenseFloatVector extends
         this.support = new DenseFloatSupport<DenseFloatVector, DenseFloatVector>(this, data);
     }
 
+    /**
+     * Copy constructor.
+     *
+     * @param other
+     *                instance to copy from
+     */
+    public DenseFloatVector(final FloatVector<?> other) {
+        super(other.size(), 0, 1, other.orientation());
+        this.data = new float[size];
+        this.support = new DenseFloatSupport<DenseFloatVector, DenseFloatVector>(this, data);
+        for (int i = 0; i < size; i++) {
+            data[i] = other.get(i);
+        }
+    }
+
     public DenseFloatVector(final int size) {
         this(size, Orientation.DEFAULT_FOR_VECTOR);
     }
 
     public DenseFloatVector(final int size, final Orientation orientation) {
-        this(new float[size], size, 0, 1, orientation);
+        this(new float[checkArgumentNonNegative(size)], size, 0, 1, orientation);
     }
 
     public DenseFloatVector(final Orientation orientation, final float... values) {
@@ -60,9 +77,18 @@ public final class DenseFloatVector extends
         return new DenseFloatVector(Orientation.ROW, values);
     }
 
+    @Override
+    public DenseFloatVector createVector(final int size) {
+        return new DenseFloatVector(size);
+    }
+
     public DenseFloatVector createVector(final int size, final int offset, final int stride,
             final Orientation orientation) {
         return new DenseFloatVector(data, size, offset, stride, orientation);
+    }
+
+    public float[] data() {
+        return data;
     }
 
     @Override
@@ -71,7 +97,6 @@ public final class DenseFloatVector extends
             return false;
         }
         final DenseFloatVector other = (DenseFloatVector) obj;
-        // TODO orientation is ignored... do we want that?
         if (size != other.size || !orientation.equals(other.orientation)) {
             return false;
         }
@@ -83,13 +108,40 @@ public final class DenseFloatVector extends
         return true;
     }
 
-    public float[] getData() {
-        return data;
+    @Override
+    public float get(final int index) {
+        return support.getValue(index);
+    }
+
+    @Override
+    public DenseFloatVector minus(final FloatVector<?> other) {
+        // TODO check size of other
+        if (!(other instanceof DenseFloatVector)) {
+            throw new UnsupportedOperationException();
+        }
+        DenseFloatVector x = (DenseFloatVector) other;
+        DenseFloatVector y = new DenseFloatVector(this);
+        DenseFloatBLAS.INSTANCE.axpy(-1.0f, x, y);
+        return y;
+    }
+
+    @Override
+    public void plusEquals(final FloatVector<?> other) {
+        if (!(other instanceof DenseFloatVector)) {
+            throw new UnsupportedOperationException();
+        }
+        DenseFloatVector x = (DenseFloatVector) other;
+        DenseFloatBLAS.INSTANCE.axpy(1.0f, x, this);
     }
 
     private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
         this.support = new DenseFloatSupport<DenseFloatVector, DenseFloatVector>(this, data);
+    }
+
+    @Override
+    public void set(final int index, final float value) {
+        support.setValue(index, value);
     }
 
     public void setColumn(final int column, final FloatVector<?> columnVector) {
@@ -98,6 +150,10 @@ public final class DenseFloatVector extends
 
     public void setRow(final int row, final FloatVector<?> rowVector) {
          support.setRow(row, rowVector);
+    }
+
+    public void timesEquals(final float value) {
+        DenseFloatBLAS.INSTANCE.scal(value, this);
     }
 
     public float[] toArray() {
