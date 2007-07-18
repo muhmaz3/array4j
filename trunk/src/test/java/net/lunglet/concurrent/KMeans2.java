@@ -8,7 +8,6 @@ import java.util.concurrent.Executors;
 import com.googlecode.array4j.FloatMatrix;
 import com.googlecode.array4j.FloatVector;
 
-// TODO get rid of M
 public final class KMeans2<T> {
     public static KMeans2<FloatMatrix<?, ?>> create() {
         KMeansTaskFactory<FloatMatrix<?, ?>> taskFactory = new KMeansTaskFactory<FloatMatrix<?, ?>>() {

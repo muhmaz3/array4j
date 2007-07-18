@@ -11,10 +11,8 @@ import javax.jms.Queue;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.command.ActiveMQQueue;
 import org.junit.Ignore;
-import org.junit.Test;
 
 import com.googlecode.array4j.DenseFloatMatrix;
-import com.googlecode.array4j.DenseFloatVector;
 import com.googlecode.array4j.FloatMatrix;
 import com.googlecode.array4j.FloatVector;
 
@@ -69,7 +67,7 @@ public final class KMeansTest {
 //        broker.stop();
     }
 
-    @Test
+    @Ignore
     public void testBasic() throws InterruptedException, ExecutionException {
         KMeans2<FloatMatrix<?, ?>> kmeans = KMeans2.create();
         DenseFloatMatrix data = new DenseFloatMatrix(5, 100);

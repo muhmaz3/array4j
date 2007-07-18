@@ -17,7 +17,7 @@ import javax.jms.Queue;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.command.ActiveMQQueue;
-import org.junit.Test;
+import org.junit.Ignore;
 
 public final class FragsTest {
     private void doWork(final CompletionService<String> completionService) throws InterruptedException,
@@ -48,7 +48,8 @@ public final class FragsTest {
         }
     }
 
-    @Test(timeout = 10000)
+//    @Test(timeout = 10000)
+    @Ignore
     public void test() throws JMSException, InterruptedException, ExecutionException {
         // TODO get logging working properly
 
