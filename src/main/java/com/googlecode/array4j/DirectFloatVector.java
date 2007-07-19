@@ -39,25 +39,34 @@ public final class DirectFloatVector extends
         data().put(values);
     }
 
+    @Override
+    public DirectFloatVector asVector() {
+        throw new UnsupportedOperationException();
+    }
+
     void copyTo(final FloatBuffer target, final int targetOffset, final int targetStride) {
         for (int i = 0; i < size; i++) {
             target.put(targetOffset + i * targetStride, data().get(i * stride));
         }
     }
 
+    @Override
     public DirectFloatVector createColumnVector() {
         return new DirectFloatVector(rows, Orientation.COLUMN);
     }
 
+    @Override
     public DirectFloatVector createColumnVector(final float... values) {
         checkArgument(values.length == rows);
         return new DirectFloatVector(Orientation.COLUMN, values);
     }
 
+    @Override
     public DirectFloatVector createRowVector() {
         return new DirectFloatVector(columns, Orientation.ROW);
     }
 
+    @Override
     public DirectFloatVector createRowVector(final float... values) {
         checkArgument(values.length == columns);
         return new DirectFloatVector(Orientation.ROW, values);
@@ -90,6 +99,11 @@ public final class DirectFloatVector extends
     }
 
     @Override
+    public void fill(final float value) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public float get(final int index) {
         throw new UnsupportedOperationException();
     }
@@ -114,10 +128,12 @@ public final class DirectFloatVector extends
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public void setColumn(final int column, final FloatVector<?> columnVector) {
         support.setColumn(column, columnVector);
     }
 
+    @Override
     public void setRow(final int row, final FloatVector<?> rowVector) {
         support.setRow(row, rowVector);
     }
@@ -127,10 +143,12 @@ public final class DirectFloatVector extends
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public float[] toArray() {
         return support.toArray();
     }
 
+    @Override
     public DirectFloatVector transpose() {
         return new DirectFloatVector(data(), size, offset, stride, orientation.transpose());
     }

@@ -2,6 +2,7 @@ package com.googlecode.array4j.blas;
 
 import org.netlib.blas.Isamax;
 import org.netlib.blas.Saxpy;
+import org.netlib.blas.Scopy;
 import org.netlib.blas.Sdot;
 import org.netlib.blas.Sscal;
 
@@ -19,6 +20,14 @@ public final class DenseFloatBLAS implements FloatBLAS<DenseFloatMatrix, DenseFl
         Saxpy.saxpy(x.size(), value, x.data(), x.offset(), x.stride(), y.data(), y.offset(), y.stride());
     }
 
+    @Override
+    public void copy(final DenseFloatVector x, final DenseFloatVector y) {
+        if (x.size() != y.size()) {
+            throw new IllegalArgumentException();
+        }
+        Scopy.scopy(x.size(), x.data(), x.offset(), x.stride(), y.data(), y.offset(), y.stride());
+    }
+
     public float dot(final DenseFloatVector x, final DenseFloatVector y) {
         if (x.size() != y.size()) {
             throw new IllegalArgumentException();
@@ -34,10 +43,5 @@ public final class DenseFloatBLAS implements FloatBLAS<DenseFloatMatrix, DenseFl
     @Override
     public void scal(final float value, final DenseFloatVector x) {
         Sscal.sscal(x.size(), value, x.data(), x.offset(), x.stride());
-    }
-
-    @Override
-    public float sum(final DenseFloatVector x) {
-        return Sdot.sdot(x.size(), x.data(), x.offset(), x.stride(), new float[]{1.0f}, 0, 0);
     }
 }

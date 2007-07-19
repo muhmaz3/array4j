@@ -45,10 +45,4 @@ public final class FloatBLASTest<M extends FloatMatrix<M, V>, V extends FloatVec
         final V x = factory.createRowVector(1.0f, 3.0f, 2.0f);
         assertEquals(2, blas.iamax(x));
     }
-
-    @Test
-    public void testSum() {
-        final V x = factory.createRowVector(1.0f, 2.0f, 3.0f);
-        assertEquals(6.0f, blas.sum(x));
-    }
 }

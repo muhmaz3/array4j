@@ -36,6 +36,10 @@ public final class DenseFloatSupport<M extends DenseMatrix<M, V> & FloatMatrix<M
         return data[elementOffset(index)];
     }
 
+    public float getValue(final int row, final int column) {
+        return data[elementOffset(row, column)];
+    }
+
     @Override
     public void setColumnImpl(final int column, final FloatVector<?> columnVector) {
         if (!(columnVector instanceof DenseFloatVector)) {
@@ -61,6 +65,10 @@ public final class DenseFloatSupport<M extends DenseMatrix<M, V> & FloatMatrix<M
     public void setValue(final int index, final float value) {
         // TODO check that index is valid
         data[elementOffset(index)] = value;
+    }
+
+    public void setValue(final int row, final int column, final float value) {
+        data[elementOffset(row, column)] = value;
     }
 
     public float[] toArray() {

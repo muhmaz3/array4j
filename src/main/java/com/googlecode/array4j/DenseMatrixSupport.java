@@ -48,6 +48,9 @@ public abstract class DenseMatrixSupport<M extends DenseMatrix<M, V>, V extends 
         return matrix.createVector(matrix.rows(), columnOffset(column), rowStride, Orientation.COLUMN);
     }
 
+    /**
+     * Calculate the offset of the beginning of the specified column.
+     */
     public final int columnOffset(final int column) {
         return matrix.offset() + column * columnStride;
     }
@@ -56,11 +59,20 @@ public abstract class DenseMatrixSupport<M extends DenseMatrix<M, V>, V extends 
         return matrix.offset() + index * elementSize * matrix.stride();
     }
 
+    public final int elementOffset(final int row, final int column) {
+        checkRowIndex(row);
+        checkColumnIndex(column);
+        return rowOffset(row) + column * columnStride;
+    }
+
     public final V row(final int row) {
         checkRowIndex(row);
         return matrix.createVector(matrix.columns(), rowOffset(row), columnStride, Orientation.ROW);
     }
 
+    /**
+     * Calculate the offset of the beginning of the specified row.
+     */
     public final int rowOffset(final int row) {
         return matrix.offset() + row * rowStride;
     }

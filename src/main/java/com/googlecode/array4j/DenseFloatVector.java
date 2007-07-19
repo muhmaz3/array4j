@@ -16,6 +16,10 @@ public final class DenseFloatVector extends
         this(Orientation.DEFAULT_FOR_VECTOR, values);
     }
 
+    DenseFloatVector(final float[] data, final int size, final int stride) {
+        this(data, size, 0, stride, Orientation.DEFAULT_FOR_VECTOR);
+    }
+
     public DenseFloatVector(final float[] data, final int size, final int offset, final int stride,
             final Orientation orientation) {
         super(size, offset, stride, orientation);
@@ -51,6 +55,11 @@ public final class DenseFloatVector extends
 
     public DenseFloatVector(final Orientation orientation, final float... values) {
         this(values, values.length, 0, 1, orientation);
+    }
+
+    @Override
+    public DenseFloatVector asVector() {
+        return this;
     }
 
     void copyTo(final float[] target, final int targetOffset, final int targetStride) {
@@ -109,6 +118,11 @@ public final class DenseFloatVector extends
     }
 
     @Override
+    public void fill(final float value) {
+        DenseFloatBLAS.INSTANCE.copy(new DenseFloatVector(new float[]{value}, size, 0), this);
+    }
+
+    @Override
     public float get(final int index) {
         return support.getValue(index);
     }
@@ -144,14 +158,17 @@ public final class DenseFloatVector extends
         support.setValue(index, value);
     }
 
+    @Override
     public void setColumn(final int column, final FloatVector<?> columnVector) {
          support.setColumn(column, columnVector);
     }
 
+    @Override
     public void setRow(final int row, final FloatVector<?> rowVector) {
          support.setRow(row, rowVector);
     }
 
+    @Override
     public void timesEquals(final float value) {
         DenseFloatBLAS.INSTANCE.scal(value, this);
     }

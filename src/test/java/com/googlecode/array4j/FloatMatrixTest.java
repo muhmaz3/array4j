@@ -8,7 +8,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -21,7 +20,7 @@ import org.junit.runners.Parameterized.Parameters;
 public final class FloatMatrixTest<M extends FloatMatrix<M, V>, V extends FloatVector<V>> {
     @Parameters
     public static Collection<?> data() {
-        return Arrays.asList(new Object[][]{{new DenseFloatMatrixFactory()}, {new DenseFloatMatrixFactory()}});
+        return Arrays.asList(new Object[][]{{new DenseFloatMatrixFactory()}, {new DirectFloatMatrixFactory()}});
     }
 
     private final FloatMatrixFactory<M, V> factory;
@@ -54,11 +53,13 @@ public final class FloatMatrixTest<M extends FloatMatrix<M, V>, V extends FloatV
             for (int column = 0; column < columns; column++) {
                 assertEquals(rows, colArrays1[column].length);
                 final float value1 = row * columns + column + 1.0f;
+                assertEquals(value1, rowMatrix.get(row, column));
                 assertEquals(value1, rowArrays1[row][column]);
                 assertEquals(value1, colArrays1[column][row]);
 
                 assertEquals(rows, colArrays2[column].length);
                 final float value2 = column * rows + row + 1.0f;
+                assertEquals(value2, colMatrix.get(row, column));
                 assertEquals(value2, rowArrays2[row][column]);
                 assertEquals(value2, colArrays2[column][row]);
             }
@@ -94,14 +95,6 @@ public final class FloatMatrixTest<M extends FloatMatrix<M, V>, V extends FloatV
             data[i] = 1.0f + i;
         }
         return factory.createMatrix(data, rows, columns, Orientation.ROW);
-    }
-
-    private void printMatrix(final PrintStream stream, final FloatMatrix<?, ?> matrix) {
-        final float[][] rows = matrix.toRowArrays();
-        stream.println(String.format("%d x %d", matrix.rows(), matrix.columns()));
-        for (final float[] row : rows) {
-            stream.println(Arrays.toString(row));
-        }
     }
 
     @Test
@@ -171,6 +164,24 @@ public final class FloatMatrixTest<M extends FloatMatrix<M, V>, V extends FloatV
                     }
                 }
                 createMatrices(data, offset, stride, maxSize);
+            }
+        }
+    }
+
+    @Test
+    public void testFill() {
+        int k = 0;
+        for (int rows = 0; rows <= 3; rows++) {
+            for (int columns = 0; columns <= 4; columns++) {
+                FloatMatrix<?, ?> matrix = factory.createMatrix(rows, columns);
+                matrix.fill(++k);
+                for (int i = 0; i < rows; i++) {
+                    for (int j = 0; j < columns; j++) {
+                        assertEquals(k, matrix.get(i, j));
+                        assertEquals(k, matrix.row(i).get(j));
+                        assertEquals(k, matrix.column(j).get(i));
+                    }
+                }
             }
         }
     }
