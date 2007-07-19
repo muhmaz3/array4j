@@ -129,6 +129,19 @@ public final class DenseFloatMatrix
     }
 
     @Override
+    public DenseFloatMatrix subMatrixColumns(final int column0, final int column1) {
+        checkArgument(column0 >= 0 && column0 < columns());
+        checkArgument(column1 >= column0 && column1 < columns());
+        int outputColumns = column1 - column0 + 1;
+        DenseFloatMatrix output = new DenseFloatMatrix(rows, outputColumns);
+        // TODO optimize this so that it only copies when necessary
+        for (int i = 0, column = column0; column <= column1; i++, column++) {
+            output.setColumn(i, column(column));
+        }
+        return output;
+    }
+
+    @Override
     public float[] toArray() {
         return support.toArray();
     }
@@ -153,19 +166,6 @@ public final class DenseFloatMatrix
 
     private void writeObject(final ObjectOutputStream out) throws IOException {
         out.defaultWriteObject();
-    }
-
-    @Override
-    public DenseFloatMatrix subMatrixColumns(final int column0, final int column1) {
-        checkArgument(column0 >= 0 && column0 < columns());
-        checkArgument(column1 >= column0 && column1 < columns());
-        int outputColumns = column1 - column0 + 1;
-        DenseFloatMatrix output = new DenseFloatMatrix(rows, outputColumns);
-        // TODO optimize this so that it only copies when necessary
-        for (int i = 0, column = column0; column <= column1; i++, column++) {
-            output.setColumn(i, column(column));
-        }
-        return output;
     }
 
     // TODO implement almostEquals that allows an epsilon
