@@ -19,7 +19,7 @@ public interface Matrix<M extends Matrix<M, V>, V extends Vector<V>> extends Arr
 
     Iterable<V> rowsIterator();
 
-    M transpose();
-
     M subMatrixColumns(int column0, int column1);
+
+    M transpose();
 }

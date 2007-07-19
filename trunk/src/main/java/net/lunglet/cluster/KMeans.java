@@ -1,4 +1,4 @@
-package net.lunglet.concurrent;
+package net.lunglet.cluster;
 
 import java.util.Arrays;
 import java.util.concurrent.Callable;
@@ -189,21 +189,6 @@ public final class KMeans<T> {
         return centroids;
     }
 
-    public DenseFloatMatrix train(final int iterations, final FloatMatrix<?, ?> initialCentroids, final T... data)
-            throws InterruptedException, ExecutionException {
-        DenseFloatMatrix centroids = new DenseFloatMatrix(initialCentroids);
-        double prevDistortion = Double.POSITIVE_INFINITY;
-        for (int iter = 0; iter < iterations; iter++) {
-            double distortion = train(centroids, data);
-            System.out.println(distortion);
-            if (distortion > prevDistortion) {
-                throw new RuntimeException("distortion increased");
-            }
-            prevDistortion = distortion;
-        }
-        return centroids;
-    }
-
     public double train(final FloatMatrix<?, ?> centroids, final T... data) throws InterruptedException,
             ExecutionException {
         DenseFloatMatrix centroidsCopy = new DenseFloatMatrix(centroids);
@@ -242,5 +227,20 @@ public final class KMeans<T> {
         }
 
         return totalDistortion;
+    }
+
+    public DenseFloatMatrix train(final int iterations, final FloatMatrix<?, ?> initialCentroids, final T... data)
+            throws InterruptedException, ExecutionException {
+        DenseFloatMatrix centroids = new DenseFloatMatrix(initialCentroids);
+        double prevDistortion = Double.POSITIVE_INFINITY;
+        for (int iter = 0; iter < iterations; iter++) {
+            double distortion = train(centroids, data);
+            System.out.println(distortion);
+            if (distortion > prevDistortion) {
+                throw new RuntimeException("distortion increased");
+            }
+            prevDistortion = distortion;
+        }
+        return centroids;
     }
 }

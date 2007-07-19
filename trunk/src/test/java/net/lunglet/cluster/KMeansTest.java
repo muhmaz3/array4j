@@ -1,4 +1,4 @@
-package net.lunglet.concurrent;
+package net.lunglet.cluster;
 
 import java.util.Random;
 import java.util.concurrent.ExecutionException;
