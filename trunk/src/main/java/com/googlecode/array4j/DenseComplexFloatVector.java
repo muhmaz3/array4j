@@ -18,10 +18,17 @@ public final class DenseComplexFloatVector
         this(new float[2 * size], size, 0, 1, orientation);
     }
 
+    @Override
+    public DenseComplexFloatVector asVector() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public DenseComplexFloatVector createColumnVector() {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public DenseComplexFloatVector createRowVector() {
         throw new UnsupportedOperationException();
     }
@@ -31,23 +38,28 @@ public final class DenseComplexFloatVector
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public DenseComplexFloatVector createVector(final int size, final int offset, final int stride,
             final Orientation orientation) {
         return new DenseComplexFloatVector(data, size, offset, stride, orientation);
     }
 
+    @Override
     public void setColumn(final int column, final ComplexFloatVector<?> columnVector) {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public void setRow(final int row, final ComplexFloatVector<?> rowVector) {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public ComplexFloat[] toArray() {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public DenseComplexFloatVector transpose() {
         throw new UnsupportedOperationException();
     }

@@ -52,24 +52,34 @@ public final class DirectFloatMatrix
         this(createBuffer(rows * columns), rows, columns, 0, 1, orientation);
     }
 
+    @Override
+    public DirectFloatVector asVector() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public DirectFloatVector createColumnVector() {
         return new DirectFloatVector(rows, Orientation.COLUMN);
     }
 
+    @Override
     public DirectFloatVector createColumnVector(final float... values) {
         checkArgument(values.length == rows);
         return new DirectFloatVector(Orientation.COLUMN, values);
     }
 
+    @Override
     public DirectFloatVector createRowVector() {
         return new DirectFloatVector(columns, Orientation.ROW);
     }
 
+    @Override
     public DirectFloatVector createRowVector(final float... values) {
         checkArgument(values.length == columns);
         return new DirectFloatVector(Orientation.ROW, values);
     }
 
+    @Override
     public DirectFloatVector createVector(final int size, final int offset, final int stride,
             final Orientation orientation) {
         return new DirectFloatVector(data(), size, offset, stride, orientation);
@@ -79,23 +89,32 @@ public final class DirectFloatMatrix
         return (FloatBuffer) data.rewind();
     }
 
+    @Override
+    public void fill(final float value) {
+        throw new UnsupportedOperationException();
+    }
+
     private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
         this.support = new DirectFloatSupport<DirectFloatMatrix, DirectFloatVector>(this, data);
     }
 
+    @Override
     public void setColumn(final int column, final FloatVector<?> columnVector) {
         support.setColumn(column, columnVector);
     }
 
+    @Override
     public void setRow(final int row, final FloatVector<?> rowVector) {
         support.setRow(row, rowVector);
     }
 
+    @Override
     public float[] toArray() {
         return support.toArray();
     }
 
+    @Override
     public DirectFloatMatrix transpose() {
         // interchange columns and rows and change orientation
         return new DirectFloatMatrix(data(), columns, rows, offset, stride, orientation.transpose());

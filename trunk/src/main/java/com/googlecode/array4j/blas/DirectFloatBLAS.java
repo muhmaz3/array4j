@@ -37,8 +37,6 @@ public final class DirectFloatBLAS implements FloatBLAS<DirectFloatMatrix, Direc
 
     public static final FloatBLAS<DirectFloatMatrix, DirectFloatVector> INSTANCE;
 
-    private static final FloatBuffer ONE_BUFFER;
-
     static {
         final String ompNumThreads = System.getenv("OMP_NUM_THREADS");
         final Kernel kernel;
@@ -48,11 +46,6 @@ public final class DirectFloatBLAS implements FloatBLAS<DirectFloatMatrix, Direc
             kernel = new KernelImpl();
         }
         INSTANCE = new DirectFloatBLAS(kernel);
-    }
-
-    static {
-        ONE_BUFFER = createBuffer(1);
-        ONE_BUFFER.put(0, 1.0f);
     }
 
     public static FloatBuffer createBuffer(final int size) {
@@ -72,6 +65,11 @@ public final class DirectFloatBLAS implements FloatBLAS<DirectFloatMatrix, Direc
         throw new UnsupportedOperationException();
     }
 
+    @Override
+    public void copy(final DirectFloatVector x, final DirectFloatVector y) {
+        throw new UnsupportedOperationException();
+    }
+
     public float dot(final DirectFloatVector x, final DirectFloatVector y) {
         if (x.size() != y.size()) {
             throw new IllegalArgumentException();
@@ -87,10 +85,5 @@ public final class DirectFloatBLAS implements FloatBLAS<DirectFloatMatrix, Direc
     @Override
     public void scal(final float value, final DirectFloatVector x) {
         throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public float sum(final DirectFloatVector x) {
-        return kernel.sdot(x.size(), x.data(), x.stride(), ONE_BUFFER, 0);
     }
 }

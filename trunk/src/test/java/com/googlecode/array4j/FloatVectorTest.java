@@ -49,6 +49,20 @@ public final class FloatVectorTest<M extends FloatMatrix<M, V>, V extends FloatV
     }
 
     @Test
+    public void testFill() {
+        for (int i = 0; i < 5; i++) {
+            V x = factory.createVector(i, Orientation.DEFAULT_FOR_VECTOR);
+            for (int j = 0; j < i; j++) {
+                assertEquals(0.0f, x.get(j));
+            }
+            x.fill(i);
+            for (int j = 0; j < i; j++) {
+                assertEquals(i, x.get(j));
+            }
+        }
+    }
+
+    @Test
     public void testMinus() {
         for (int i = 0; i < 5; i++) {
             V x = factory.createVector(i, Orientation.DEFAULT_FOR_VECTOR);

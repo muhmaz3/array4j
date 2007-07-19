@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
+import com.googlecode.array4j.blas.DenseFloatBLAS;
+
 public final class DenseFloatMatrix
         extends
         AbstractDenseMatrix<DenseFloatMatrix, DenseFloatVector, DenseFloatSupport<DenseFloatMatrix, DenseFloatVector>, float[]>
@@ -24,12 +26,31 @@ public final class DenseFloatMatrix
         this(values, rows, columns, 0, 1, orientation);
     }
 
+    /**
+     * Copy constructor.
+     *
+     * @param other
+     *                instance to copy from
+     */
+    public DenseFloatMatrix(final FloatMatrix<?, ?> other) {
+        this(other.rows(), other.columns(), Orientation.DEFAULT);
+        // TODO lots of optimization possible here
+        for (int i = 0; i < rows; i++) {
+            setRow(i, other.row(i));
+        }
+    }
+
     public DenseFloatMatrix(final int rows, final int columns) {
         this(rows, columns, Orientation.DEFAULT);
     }
 
     public DenseFloatMatrix(final int rows, final int columns, final Orientation orientation) {
         this(new float[rows * columns], rows, columns, 0, 1, orientation);
+    }
+
+    @Override
+    public DenseFloatVector asVector() {
+        return new DenseFloatVector(data, size, offset, stride, Orientation.DEFAULT_FOR_VECTOR);
     }
 
     public DenseFloatVector createColumnVector() {
@@ -77,19 +98,37 @@ public final class DenseFloatMatrix
         return true;
     }
 
+    @Override
+    public void fill(final float value) {
+        DenseFloatBLAS.INSTANCE.copy(new DenseFloatVector(new float[]{value}, size, 0), asVector());
+    }
+
+    @Override
+    public float get(final int row, final int column) {
+        return support.getValue(row, column);
+    }
+
     private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
         this.support = new DenseFloatSupport<DenseFloatMatrix, DenseFloatVector>(this, data);
     }
 
+    @Override
+    public void set(final int row, final int column, final float value) {
+        support.setValue(row, column, value);
+    }
+
+    @Override
     public void setColumn(final int column, final FloatVector<?> columnVector) {
         support.setColumn(column, columnVector);
     }
 
+    @Override
     public void setRow(final int row, final FloatVector<?> rowVector) {
         support.setRow(row, rowVector);
     }
 
+    @Override
     public float[] toArray() {
         return support.toArray();
     }
@@ -106,6 +145,7 @@ public final class DenseFloatMatrix
         return builder.toString();
     }
 
+    @Override
     public DenseFloatMatrix transpose() {
         // interchange columns and rows and change orientation
         return new DenseFloatMatrix(data, columns, rows, offset, stride, orientation.transpose());
@@ -113,6 +153,19 @@ public final class DenseFloatMatrix
 
     private void writeObject(final ObjectOutputStream out) throws IOException {
         out.defaultWriteObject();
+    }
+
+    @Override
+    public DenseFloatMatrix subMatrixColumns(final int column0, final int column1) {
+        checkArgument(column0 >= 0 && column0 < columns());
+        checkArgument(column1 >= column0 && column1 < columns());
+        int outputColumns = column1 - column0 + 1;
+        DenseFloatMatrix output = new DenseFloatMatrix(rows, outputColumns);
+        // TODO optimize this so that it only copies when necessary
+        for (int i = 0, column = column0; column <= column1; i++, column++) {
+            output.setColumn(i, column(column));
+        }
+        return output;
     }
 
     // TODO implement almostEquals that allows an epsilon
