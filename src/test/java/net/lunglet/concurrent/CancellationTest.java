@@ -12,8 +12,8 @@ import org.junit.Ignore;
 public final class CancellationTest {
     @Ignore
     public void test() throws InterruptedException {
-        ExecutorCompletionService<Void> completionService =
-            new ExecutorCompletionService<Void>(Executors.newSingleThreadExecutor());
+        ExecutorCompletionService<Void> completionService = new ExecutorCompletionService<Void>(Executors
+                .newSingleThreadExecutor());
 
         Future<?> f1 = completionService.submit(new Callable<Void>() {
             @Override

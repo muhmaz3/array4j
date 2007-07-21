@@ -14,6 +14,7 @@ public interface JMSTask<V> extends Callable<V>, Serializable {
      * Called on the producer before the task is serialized.
      */
     void prepareMessageForTask(Message message) throws JMSException;
+
     /**
      * Called on the consumer (worker) after task has been deserialized.
      */

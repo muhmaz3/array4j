@@ -1,6 +1,7 @@
 package com.googlecode.array4j;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
@@ -16,11 +17,14 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
+import com.googlecode.array4j.dense.FloatDenseMatrixFactory;
+
 @RunWith(value = Parameterized.class)
 public final class FloatMatrixTest<M extends FloatMatrix<M, V>, V extends FloatVector<V>> {
     @Parameters
     public static Collection<?> data() {
-        return Arrays.asList(new Object[][]{{new DenseFloatMatrixFactory()}, {new DirectFloatMatrixFactory()}});
+        return Arrays.asList(new Object[][]{{new FloatDenseMatrixFactory(Storage.JAVA)},
+                {new FloatDenseMatrixFactory(Storage.DIRECT)}});
     }
 
     private final FloatMatrixFactory<M, V> factory;
@@ -36,12 +40,14 @@ public final class FloatMatrixTest<M extends FloatMatrix<M, V>, V extends FloatV
         }
 
         final FloatMatrix<?, ?> rowMatrix = factory.createMatrix(data, rows, columns, Orientation.ROW);
+        assertNotNull(rowMatrix);
         final float[][] rowArrays1 = rowMatrix.toRowArrays();
         assertEquals(rows, rowArrays1.length);
         final float[][] colArrays1 = rowMatrix.toColumnArrays();
         assertEquals(columns, colArrays1.length);
 
         final FloatMatrix<?, ?> colMatrix = factory.createMatrix(data, rows, columns, Orientation.COLUMN);
+        assertNotNull(colMatrix);
         final float[][] rowArrays2 = colMatrix.toRowArrays();
         assertEquals(rows, rowArrays2.length);
         final float[][] colArrays2 = colMatrix.toColumnArrays();
@@ -83,7 +89,8 @@ public final class FloatMatrixTest<M extends FloatMatrix<M, V>, V extends FloatV
                     continue;
                 }
                 for (final Orientation orientation : Orientation.values()) {
-                    factory.createMatrix(data, rows, columns, offset, stride, orientation);
+                    M matrix = factory.createMatrix(data, rows, columns, offset, stride, orientation);
+                    assertNotNull(matrix);
                 }
             }
         }
@@ -94,7 +101,9 @@ public final class FloatMatrixTest<M extends FloatMatrix<M, V>, V extends FloatV
         for (int i = 0; i < data.length; i++) {
             data[i] = 1.0f + i;
         }
-        return factory.createMatrix(data, rows, columns, Orientation.ROW);
+        M matrix = factory.createMatrix(data, rows, columns, Orientation.ROW);
+        assertNotNull(matrix);
+        return matrix;
     }
 
     @Test
@@ -121,19 +130,19 @@ public final class FloatMatrixTest<M extends FloatMatrix<M, V>, V extends FloatV
 
     @Test
     public void testConstructor() {
-        factory.createMatrix(0, 0);
-        factory.createMatrix(0, 1);
-        factory.createMatrix(1, 0);
-        factory.createMatrix(10, 0);
-        factory.createMatrix(0, 10);
-        factory.createMatrix(1, 1);
-        factory.createMatrix(2, 1);
-        factory.createMatrix(1, 2);
-        factory.createMatrix(2, 10);
-        factory.createMatrix(10, 2);
-        factory.createMatrix(10, 10);
-        factory.createMatrix(5, 5, Orientation.ROW);
-        factory.createMatrix(5, 5, Orientation.COLUMN);
+        assertNotNull(factory.createMatrix(0, 0));
+        assertNotNull(factory.createMatrix(0, 1));
+        assertNotNull(factory.createMatrix(1, 0));
+        assertNotNull(factory.createMatrix(10, 0));
+        assertNotNull(factory.createMatrix(0, 10));
+        assertNotNull(factory.createMatrix(1, 1));
+        assertNotNull(factory.createMatrix(2, 1));
+        assertNotNull(factory.createMatrix(1, 2));
+        assertNotNull(factory.createMatrix(2, 10));
+        assertNotNull(factory.createMatrix(10, 2));
+        assertNotNull(factory.createMatrix(10, 10));
+        assertNotNull(factory.createMatrix(5, 5, Orientation.ROW));
+        assertNotNull(factory.createMatrix(5, 5, Orientation.COLUMN));
     }
 
     @Test
@@ -233,6 +242,7 @@ public final class FloatMatrixTest<M extends FloatMatrix<M, V>, V extends FloatV
         for (int rows = 0; rows < 4; rows++) {
             for (int columns = 0; columns < 4; columns++) {
                 FloatMatrix<?, ?> input = createRowMatrixRange(rows, columns);
+                assertNotNull(input);
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 ObjectOutputStream oos = new ObjectOutputStream(baos);
                 oos.writeObject(input);
@@ -258,10 +268,18 @@ public final class FloatMatrixTest<M extends FloatMatrix<M, V>, V extends FloatV
         final FloatMatrix<?, ?> colMatrix = createColumnMatrixRange(rows, columns);
 
         for (int column = 0; column < columns; column++) {
-            rowMatrix.setColumn(column, rowMatrix.createColumnVector(values[column]));
+            FloatVector<?> newColumn = rowMatrix.createColumnVector();
+            for (int index = 0; index < values[column].length; index++) {
+                newColumn.set(index, values[column][index]);
+            }
+            rowMatrix.setColumn(column, newColumn);
             assertTrue("Columns must be equal", Arrays.equals(values[column], rowMatrix.column(column).toArray()));
 
-            colMatrix.setColumn(column, colMatrix.createColumnVector(values[column]));
+            newColumn = colMatrix.createColumnVector();
+            for (int index = 0; index < values[column].length; index++) {
+                newColumn.set(index, values[column][index]);
+            }
+            colMatrix.setColumn(column, newColumn);
             assertTrue("Columns must be equal", Arrays.equals(values[column], colMatrix.column(column).toArray()));
         }
     }
@@ -276,10 +294,18 @@ public final class FloatMatrixTest<M extends FloatMatrix<M, V>, V extends FloatV
         final M rowMatrix = createRowMatrixRange(rows, columns);
         final M colMatrix = createColumnMatrixRange(rows, columns);
         for (int row = 0; row < rows; row++) {
-            rowMatrix.setRow(row, rowMatrix.createRowVector(values[row]));
+            FloatVector<?> newRow = rowMatrix.createRowVector();
+            for (int index = 0; index < values[row].length; index++) {
+                newRow.set(index, values[row][index]);
+            }
+            rowMatrix.setRow(row, newRow);
             assertTrue("Rows must be equal", Arrays.equals(values[row], rowMatrix.row(row).toArray()));
 
-            colMatrix.setRow(row, colMatrix.createRowVector(values[row]));
+            newRow = colMatrix.createRowVector();
+            for (int index = 0; index < values[row].length; index++) {
+                newRow.set(index, values[row][index]);
+            }
+            colMatrix.setRow(row, newRow);
             assertTrue("Rows must be equal", Arrays.equals(values[row], colMatrix.row(row).toArray()));
         }
     }
@@ -291,6 +317,7 @@ public final class FloatMatrixTest<M extends FloatMatrix<M, V>, V extends FloatV
 
         // test stride = 0
         matrix = factory.createMatrix(new float[]{1.0f, 2.0f}, 1, 2, 1, 0, Orientation.ROW);
+        assertNotNull(matrix);
         arr = matrix.toArray();
         assertEquals(2.0f, arr[0]);
         assertEquals(2.0f, arr[1]);

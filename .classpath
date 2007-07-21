@@ -7,8 +7,7 @@
 	</classpathentry>
 	<classpathentry kind="src" path="src/test/java"/>
 	<classpathentry kind="src" path="src/test/resources"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="src" path="src/bench/java"/>
 	<classpathentry kind="lib" path="lib/blas.jar"/>
 	<classpathentry kind="lib" path="lib/f2jutil.jar"/>
 	<classpathentry kind="lib" path="lib/lapack.jar"/>
@@ -20,5 +19,12 @@
 	<classpathentry kind="lib" path="lib/geronimo-jms_1.1_spec-1.0.jar"/>
 	<classpathentry kind="lib" path="lib/hadoop-0.13.0-core.jar"/>
 	<classpathentry kind="lib" path="lib/log4j-1.2.13.jar"/>
+	<classpathentry kind="lib" path="lib/jppf-client.jar"/>
+	<classpathentry kind="lib" path="lib/guice-1.0.jar"/>
+	<classpathentry kind="lib" path="lib/jppf-common.jar"/>
+	<classpathentry kind="lib" path="lib/jppf-common-node.jar"/>
+	<classpathentry kind="lib" path="lib/jppf-server.jar" sourcepath="C:/home/albert/work6/jppf-workspace/server"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="eclipse-classes"/>
 </classpath>

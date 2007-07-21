@@ -2,6 +2,7 @@ package com.googlecode.array4j;
 
 import java.util.Random;
 
+import com.googlecode.array4j.dense.FloatDenseMatrix;
 
 public final class FloatMatrixUtils {
     public static <M extends FloatMatrix<M, V>, V extends FloatVector<V>> V columnMean(final M matrix) {
@@ -48,8 +49,8 @@ public final class FloatMatrixUtils {
         return mean;
     }
 
-    public static DenseFloatMatrix zerosLike(final Matrix<?, ?> matrix) {
-        return new DenseFloatMatrix(matrix.rows(), matrix.columns());
+    public static FloatDenseMatrix zerosLike(final Matrix<?, ?> matrix) {
+        return new FloatDenseMatrix(matrix.rows(), matrix.columns());
     }
 
     private FloatMatrixUtils() {
