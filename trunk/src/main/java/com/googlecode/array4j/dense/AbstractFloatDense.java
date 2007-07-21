@@ -88,6 +88,10 @@ public abstract class AbstractFloatDense<M extends FloatMatrix<M, FloatDenseVect
         return new FloatDenseVector(columns, Orientation.ROW, storage());
     }
 
+    public final FloatBuffer data() {
+        return data;
+    }
+
     public final float[] dataAsArray() {
         return data.array();
     }
