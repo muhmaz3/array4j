@@ -1,8 +1,14 @@
 package com.googlecode.array4j.dense;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
+import java.util.Arrays;
+
+import org.apache.commons.lang.builder.EqualsBuilder;
 
 import com.googlecode.array4j.FloatBLAS;
 import com.googlecode.array4j.FloatMatrix;
@@ -23,7 +29,7 @@ public abstract class AbstractFloatDense<M extends FloatMatrix<M, FloatDenseVect
         }
     }
 
-    protected final FloatBuffer data;
+    protected transient FloatBuffer data;
 
     /**
      * Constructor for matrix with existing data.
@@ -57,6 +63,12 @@ public abstract class AbstractFloatDense<M extends FloatMatrix<M, FloatDenseVect
     }
 
     @Override
+    public final FloatDenseVector column(final int column) {
+        checkColumnIndex(column);
+        return new FloatDenseVector(data, rows, columnOffset(column), rowStride, orientation.COLUMN);
+    }
+
+    @Override
     protected final float[] createArray(final int length) {
         return new float[length];
     }
@@ -64,80 +76,6 @@ public abstract class AbstractFloatDense<M extends FloatMatrix<M, FloatDenseVect
     @Override
     protected final float[][] createArrayArray(final int length) {
         return new float[length][];
-    }
-
-    public final void fill(final float value) {
-        FloatBuffer xdata = createFloatBuffer(1, storage());
-        xdata.put(value);
-        FloatDenseVector x = new FloatDenseVector(xdata, size, 0, 0, Orientation.DEFAULT_FOR_VECTOR);
-        FloatBLAS.copy(x, asVector());
-    }
-
-    public final float get(final int index) {
-        return data.get(elementOffset(index));
-    }
-
-    public final float get(final int row, final int column) {
-        return data.get(elementOffset(row, column));
-    }
-
-    public final Storage storage() {
-        return data.isDirect() ? Storage.DIRECT : Storage.JAVA;
-    }
-
-    public final void set(final int index, final float value) {
-        data.put(elementOffset(index), value);
-    }
-
-    public final void set(final int row, final int column, final float value) {
-        data.put(elementOffset(row, column), value);
-    }
-
-    public final void setColumn(final int column, final FloatVector<?> columnVector) {
-        if (!(columnVector instanceof FloatDenseVector)) {
-            throw new UnsupportedOperationException();
-        }
-        // TODO similar code is duplicated in setRow
-        final FloatDenseVector x = (FloatDenseVector) columnVector;
-        int targetOffset = columnOffset(column);
-        int targetStride = rowStride;
-        for (int i = 0; i < size; i++) {
-            data.put(targetOffset + i * targetStride, x.data.get(i * stride));
-        }
-    }
-
-    @Override
-    protected final void setFrom(final float[] dest, final int destPos, final int srcPos) {
-        dest[destPos] = data.get(srcPos);
-    }
-
-    public final void setRow(final int row, final FloatVector<?> rowVector) {
-        if (!(rowVector instanceof FloatDenseVector)) {
-            throw new UnsupportedOperationException();
-        }
-        // TODO similar code is duplicated in setColumn
-        final FloatDenseVector x = (FloatDenseVector) rowVector;
-        int targetOffset = rowOffset(row);
-        int targetStride = columnStride;
-        for (int i = 0; i < size; i++) {
-            data.put(targetOffset + i * targetStride, x.data.get(i * stride));
-        }
-    }
-
-    public final void timesEquals(final float value) {
-        throw new UnsupportedOperationException();
-    }
-
-    public final float[] dataAsArray() {
-        return data.array();
-    }
-
-    public final int stride() {
-        return stride;
-    }
-
-    public final int offset() {
-        return offset;
     }
 
     @Override
@@ -150,15 +88,128 @@ public abstract class AbstractFloatDense<M extends FloatMatrix<M, FloatDenseVect
         return new FloatDenseVector(columns, Orientation.ROW, storage());
     }
 
+    public final float[] dataAsArray() {
+        return data.array();
+    }
+
     @Override
-    public final FloatDenseVector column(final int column) {
-        checkColumnIndex(column);
-        return new FloatDenseVector(data, rows, columnOffset(column), rowStride, orientation.COLUMN);
+    public boolean equals(final Object obj) {
+        if (obj == null || !(obj instanceof AbstractFloatDense)) {
+            return false;
+        }
+        if (this == obj) {
+            return true;
+        }
+        if (new EqualsBuilder().appendSuper(super.equals(obj)).isEquals()) {
+            return false;
+        }
+        // TODO optimize this
+        AbstractFloatDense<?> other = (AbstractFloatDense<?>) obj;
+        for (int i = 0; i < size; i++) {
+            if (get(i) != other.get(i)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public final void fill(final float value) {
+        FloatBuffer xdata = createFloatBuffer(1, storage());
+        xdata.put(value);
+        FloatDenseVector x = new FloatDenseVector(xdata, size, 0, 0, Orientation.DEFAULT_FOR_VECTOR);
+        FloatBLAS.copy(x, asVector());
+    }
+
+    @Override
+    protected final void fillFrom(final float[] dest, final int srcPos) {
+        Arrays.fill(dest, data.get(srcPos));
+    }
+
+    public final float get(final int index) {
+        checkIndex(index);
+        return data.get(elementOffset(index));
+    }
+
+    public final float get(final int row, final int column) {
+        return data.get(elementOffset(row, column));
+    }
+
+    public final int offset() {
+        return offset;
+    }
+
+    private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        Storage storage = (Storage) in.readObject();
+        this.data = createFloatBuffer(size, storage);
+        // TODO this stuff can fail when there are offsets and strides involved
+        for (int i = 0; i < size; i++) {
+            data.put(i, in.readFloat());
+        }
     }
 
     @Override
     public final FloatDenseVector row(final int row) {
         checkRowIndex(row);
         return new FloatDenseVector(data, columns, rowOffset(row), columnStride, orientation.ROW);
+    }
+
+    public final void set(final int index, final float value) {
+        checkIndex(index);
+        data.put(elementOffset(index), value);
+    }
+
+    public final void set(final int row, final int column, final float value) {
+        checkRowIndex(row);
+        checkColumnIndex(column);
+        data.put(elementOffset(row, column), value);
+    }
+
+    public final void setColumn(final int column, final FloatVector<?> columnVector) {
+        checkColumnIndex(column);
+        checkArgument(rows == columnVector.size());
+        int targetOffset = columnOffset(column);
+        int targetStride = rowStride;
+        // TODO this could be optimized
+        for (int i = 0; i < rows; i++) {
+            data.put(targetOffset + i * targetStride, columnVector.get(i));
+        }
+    }
+
+    @Override
+    protected final void setFrom(final float[] dest, final int destPos, final int srcPos) {
+        dest[destPos] = data.get(srcPos);
+    }
+
+    public final void setRow(final int row, final FloatVector<?> rowVector) {
+        checkRowIndex(row);
+        checkArgument(columns == rowVector.size());
+        int targetOffset = rowOffset(row);
+        int targetStride = columnStride;
+        // TODO this could be optimized
+        for (int i = 0; i < columns; i++) {
+            data.put(targetOffset + i * targetStride, rowVector.get(i));
+        }
+    }
+
+    public final Storage storage() {
+        return data.isDirect() ? Storage.DIRECT : Storage.JAVA;
+    }
+
+    public final int stride() {
+        return stride;
+    }
+
+    public final void timesEquals(final float value) {
+        throw new UnsupportedOperationException();
+    }
+
+    private void writeObject(final ObjectOutputStream out) throws IOException {
+        out.defaultWriteObject();
+        out.writeObject(storage());
+        // TODO optimize this
+        for (int i = 0; i < size; i++) {
+            out.writeFloat(get(i));
+        }
     }
 }

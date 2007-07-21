@@ -2,6 +2,8 @@ package com.googlecode.array4j.dense;
 
 import java.nio.FloatBuffer;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+
 import com.googlecode.array4j.FloatVector;
 import com.googlecode.array4j.Orientation;
 import com.googlecode.array4j.Storage;
@@ -42,6 +44,17 @@ public final class FloatDenseVector extends AbstractFloatDense<FloatDenseVector>
     @Override
     public FloatDenseVector asVector() {
         return this;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == null || !(obj instanceof FloatDenseVector)) {
+            return false;
+        }
+        if (this == obj) {
+            return true;
+        }
+        return new EqualsBuilder().appendSuper(super.equals(obj)).isEquals();
     }
 
     public boolean isColumnVector() {

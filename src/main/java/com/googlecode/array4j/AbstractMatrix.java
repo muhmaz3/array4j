@@ -2,6 +2,8 @@ package com.googlecode.array4j;
 
 import java.util.Iterator;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+
 public abstract class AbstractMatrix<M extends Matrix<M, V>, V extends Vector<V>> extends AbstractArray<M> implements
         Matrix<M, V> {
     protected final int columns;
@@ -18,15 +20,13 @@ public abstract class AbstractMatrix<M extends Matrix<M, V>, V extends Vector<V>
 
     protected final void checkColumnIndex(final int column) {
         if (column < 0 || column >= columns) {
-            throw new IndexOutOfBoundsException(
-                    String.format("Column index out of bounds [0,%d): %d", columns, column));
+            throw new IndexOutOfBoundsException(String.format("Column index out of bounds [0,%d): %d", columns, column));
         }
     }
 
     protected final void checkRowIndex(final int row) {
         if (row < 0 || row >= rows) {
-            throw new IndexOutOfBoundsException(
-                    String.format("Row index out of bounds [0,%d): %d", rows, row));
+            throw new IndexOutOfBoundsException(String.format("Row index out of bounds [0,%d): %d", rows, row));
         }
     }
 
@@ -54,6 +54,19 @@ public abstract class AbstractMatrix<M extends Matrix<M, V>, V extends Vector<V>
                 };
             }
         };
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == null || !(obj instanceof AbstractMatrix)) {
+            return false;
+        }
+        if (this == obj) {
+            return true;
+        }
+        AbstractMatrix<?, ?> other = (AbstractMatrix<?, ?>) obj;
+        return new EqualsBuilder().appendSuper(super.equals(obj)).append(rows, other.rows).append(columns,
+                other.columns).isEquals();
     }
 
     public final int rows() {
