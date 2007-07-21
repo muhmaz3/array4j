@@ -180,8 +180,8 @@ public final class FloatMatrixTest<M extends FloatMatrix<M, V>, V extends FloatV
     @Test
     public void testFill() {
         int k = 0;
-        for (int rows = 0; rows <= 3; rows++) {
-            for (int columns = 0; columns <= 4; columns++) {
+         for (int rows = 0; rows <= 3; rows++) {
+             for (int columns = 0; columns <= 4; columns++) {
                 FloatMatrix<?, ?> matrix = factory.createMatrix(rows, columns);
                 matrix.fill(++k);
                 for (int i = 0; i < rows; i++) {
@@ -252,7 +252,6 @@ public final class FloatMatrixTest<M extends FloatMatrix<M, V>, V extends FloatV
                 FloatMatrix<?, ?> output = (FloatMatrix<?, ?>) ois.readObject();
                 assertEquals(input, output);
                 ois.close();
-                // TODO do some tests to make sure transients were restored
             }
         }
     }

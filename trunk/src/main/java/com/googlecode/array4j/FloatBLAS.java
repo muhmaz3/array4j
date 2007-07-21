@@ -9,8 +9,10 @@ public final class FloatBLAS {
     /**
      * Perform vector-vector operation <CODE>y = x</CODE>.
      *
-     * @param x source vector
-     * @param y destination vector
+     * @param x
+     *                source vector
+     * @param y
+     *                destination vector
      */
     public static void copy(final FloatDenseVector x, final FloatDenseVector y) {
         if (x.size() > y.size()) {
@@ -18,7 +20,7 @@ public final class FloatBLAS {
         }
         if (sameStorage(Storage.JAVA, x, y)) {
             float[] xdata = x.dataAsArray();
-            float[] ydata = x.dataAsArray();
+            float[] ydata = y.dataAsArray();
             Scopy.scopy(x.size(), xdata, x.offset(), x.stride(), ydata, y.offset(), y.stride());
         } else if (sameStorage(Storage.DIRECT, x, y)) {
             throw new UnsupportedOperationException();
@@ -33,7 +35,7 @@ public final class FloatBLAS {
         }
         if (sameStorage(Storage.JAVA, x, y)) {
             float[] xdata = x.dataAsArray();
-            float[] ydata = x.dataAsArray();
+            float[] ydata = y.dataAsArray();
             return Sdot.sdot(x.size(), xdata, x.offset(), x.stride(), ydata, y.offset(), y.stride());
         } else if (sameStorage(Storage.DIRECT, x, y)) {
             throw new UnsupportedOperationException();

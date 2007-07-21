@@ -1,5 +1,7 @@
 package com.googlecode.array4j.dense;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+
 import com.googlecode.array4j.AbstractMatrix;
 import com.googlecode.array4j.Matrix;
 import com.googlecode.array4j.Orientation;
@@ -58,6 +60,22 @@ public abstract class AbstractDenseMatrix<M extends Matrix<M, V>, V extends Vect
         return rowOffset(row) + column * columnStride;
     }
 
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == null || !(obj instanceof AbstractDenseMatrix)) {
+            return false;
+        }
+        if (this == obj) {
+            return true;
+        }
+        AbstractDenseMatrix<?, ?, ?> other = (AbstractDenseMatrix<?, ?, ?>) obj;
+        return new EqualsBuilder().appendSuper(super.equals(obj)).append(elementSize, other.elementSize).append(
+                orientation, other.orientation).isEquals();
+    }
+
+    // TODO give this method a better name
+    protected abstract void fillFrom(T dest, int srcPos);
+
     public final Orientation orientation() {
         return orientation;
     }
@@ -79,11 +97,9 @@ public abstract class AbstractDenseMatrix<M extends Matrix<M, V>, V extends Vect
             return arr;
         }
         if (stride == 0) {
-            // Arrays.fill(arr, data[offset]);
-            // return arr;
-            throw new UnsupportedOperationException();
+            fillFrom(arr, offset);
+            return arr;
         }
-
         for (int i = offset, j = 0; j < size; i += stride, j++) {
             setFrom(arr, j, i);
         }

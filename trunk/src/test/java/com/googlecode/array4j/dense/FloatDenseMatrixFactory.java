@@ -9,6 +9,16 @@ import com.googlecode.array4j.Orientation;
 import com.googlecode.array4j.Storage;
 
 public final class FloatDenseMatrixFactory implements FloatMatrixFactory<FloatDenseMatrix, FloatDenseVector> {
+    private static FloatBuffer createFloatBuffer(final int size, final Storage storage) {
+        if (storage.equals(Storage.DIRECT)) {
+            final ByteBuffer buffer = ByteBuffer.allocateDirect(size * (Float.SIZE >>> 3));
+            buffer.order(ByteOrder.nativeOrder());
+            return buffer.asFloatBuffer();
+        } else {
+            return FloatBuffer.allocate(size);
+        }
+    }
+
     private final Storage storage;
 
     public FloatDenseMatrixFactory(final Storage storage) {
@@ -48,15 +58,5 @@ public final class FloatDenseMatrixFactory implements FloatMatrixFactory<FloatDe
 
     public FloatDenseVector createVector(final int size, final Orientation orientation) {
         return new FloatDenseVector(size, orientation, storage);
-    }
-
-    private static FloatBuffer createFloatBuffer(final int size, final Storage storage) {
-        if (storage.equals(Storage.DIRECT)) {
-            final ByteBuffer buffer = ByteBuffer.allocateDirect(size * (Float.SIZE >>> 3));
-            buffer.order(ByteOrder.nativeOrder());
-            return buffer.asFloatBuffer();
-        } else {
-            return FloatBuffer.allocate(size);
-        }
     }
 }
