@@ -4,7 +4,7 @@
 	<target name="generate">
 		<mkdir dir="src/generated/native" />
 		<javah destdir="${src.generated.native}" classpath="eclipse-classes">
-			<class name="com.googlecode.array4j.blas.DirectFloatBLAS$KernelImpl" />
+			<class name="com.googlecode.array4j.FloatBLAS" />
 		</javah>
 	</target>
 </project>
