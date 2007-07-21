@@ -4,14 +4,11 @@ import java.util.concurrent.TimeUnit;
 
 public interface TaskHandler<V> {
     enum ExpiredAction {
-        CANCEL,
-        CANCEL_AND_RETRY,
-        RETRY_CONCURRENTLY
+        CANCEL, CANCEL_AND_RETRY, RETRY_CONCURRENTLY
     }
 
     enum FailedAction {
-        ABORT,
-        RETRY
+        ABORT, RETRY
     }
 
     void cancelledTask(AggregatedFuture<V> aggFuture);

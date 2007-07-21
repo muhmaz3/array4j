@@ -1,5 +1,13 @@
 package com.googlecode.array4j;
 
-public interface ObjectArray<T, A extends ObjectArray<T, A>> extends Array<A> {
-    T[] toArray();
+public class ObjectArray<T> extends AbstractArray<ObjectArray<T>> {
+    public ObjectArray(final int size) {
+        super(size);
+    }
+
+    public final T[] toArray() {
+        return null;
+    }
+
+    // TODO implement BigIntegerArray on top of ObjectArray
 }

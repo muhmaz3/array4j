@@ -1,6 +1,6 @@
 package com.googlecode.array4j;
 
-public interface FloatVector<V extends FloatVector<V>> extends Vector<V>, FloatMatrix<V, V> {
+public interface FloatVector<V extends FloatVector<V>> extends FloatMatrix<V, V>, Vector<V> {
     float get(int index);
 
     V minus(FloatVector<?> other);

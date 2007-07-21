@@ -11,13 +11,16 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
+import com.googlecode.array4j.dense.FloatDenseMatrixFactory;
+
 @RunWith(value = Parameterized.class)
 public final class FloatMatrixUtilsTest<M extends FloatMatrix<M, V>, V extends FloatVector<V>> {
     @Parameters
     public static Collection<?> data() {
-        return Arrays.asList(new Object[][]{{new DenseFloatMatrixFactory(), Orientation.ROW},
-                {new DenseFloatMatrixFactory(), Orientation.COLUMN}, {new DirectFloatMatrixFactory(), Orientation.ROW},
-                {new DirectFloatMatrixFactory(), Orientation.COLUMN}});
+        return Arrays.asList(new Object[][]{{new FloatDenseMatrixFactory(Storage.JAVA), Orientation.ROW},
+                {new FloatDenseMatrixFactory(Storage.JAVA), Orientation.COLUMN},
+                {new FloatDenseMatrixFactory(Storage.DIRECT), Orientation.ROW},
+                {new FloatDenseMatrixFactory(Storage.DIRECT), Orientation.COLUMN}});
     }
 
     private final FloatMatrixFactory<M, V> matrixFactory;
