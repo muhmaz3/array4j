@@ -10,20 +10,20 @@ import java.util.Arrays;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 
-import com.googlecode.array4j.FloatBLAS;
-import com.googlecode.array4j.FloatMatrix;
-import com.googlecode.array4j.FloatVector;
+import com.googlecode.array4j.ComplexFloat;
+import com.googlecode.array4j.ComplexFloatMatrix;
+import com.googlecode.array4j.ComplexFloatVector;
 import com.googlecode.array4j.Orientation;
 import com.googlecode.array4j.Storage;
 import com.googlecode.array4j.VectorSupport;
 
-public abstract class AbstractFloatDense<M extends FloatMatrix<M, FloatDenseVector>> extends
-        AbstractDenseMatrix<M, FloatDenseVector, float[]> {
+public abstract class AbstractCFloatDense<M extends ComplexFloatMatrix<M, CFloatDenseVector>> extends
+        AbstractDenseMatrix<M, CFloatDenseVector, ComplexFloat[]> {
     private static final int DEFAULT_OFFSET = 0;
 
     private static final int DEFAULT_STRIDE = 1;
 
-    private static final int ELEMENT_SIZE = 1;
+    private static final int ELEMENT_SIZE = 2;
 
     private static final int FLOAT_BYTES = Float.SIZE >>> 3;
 
@@ -42,8 +42,7 @@ public abstract class AbstractFloatDense<M extends FloatMatrix<M, FloatDenseVect
     /**
      * Constructor for matrix with existing data.
      */
-    public AbstractFloatDense(final FloatBuffer data, final int rows, final int columns, final int offset,
-            final int stride, final Orientation orientation) {
+    public AbstractCFloatDense(FloatBuffer data, int rows, int columns, int offset, int stride, Orientation orientation) {
         super(ELEMENT_SIZE, rows, columns, offset, stride, orientation);
         this.data = data;
     }
@@ -51,8 +50,7 @@ public abstract class AbstractFloatDense<M extends FloatMatrix<M, FloatDenseVect
     /**
      * Constructor for vector with existing data.
      */
-    public AbstractFloatDense(final FloatBuffer data, final int size, final int offset, final int stride,
-            final Orientation orientation) {
+    public AbstractCFloatDense(FloatBuffer data, int size, int offset, int stride, Orientation orientation) {
         this(data, VectorSupport.rows(size, orientation), VectorSupport.columns(size, orientation), offset, stride,
                 orientation);
     }
@@ -60,7 +58,7 @@ public abstract class AbstractFloatDense<M extends FloatMatrix<M, FloatDenseVect
     /**
      * Constructor for new matrix.
      */
-    public AbstractFloatDense(final int rows, final int columns, final Orientation orientation, final Storage storage) {
+    public AbstractCFloatDense(int rows, int columns, Orientation orientation, Storage storage) {
         super(ELEMENT_SIZE, rows, columns, DEFAULT_OFFSET, DEFAULT_STRIDE, orientation);
         this.data = createFloatBuffer(size, storage);
     }
@@ -68,34 +66,34 @@ public abstract class AbstractFloatDense<M extends FloatMatrix<M, FloatDenseVect
     /**
      * Constructor for new vector.
      */
-    public AbstractFloatDense(final int size, final Orientation orientation, final Storage storage) {
+    public AbstractCFloatDense(int size, Orientation orientation, Storage storage) {
         this(VectorSupport.rows(size, orientation), VectorSupport.columns(size, orientation), orientation, storage);
     }
 
     @Override
-    public final FloatDenseVector column(final int column) {
+    public final CFloatDenseVector column(final int column) {
         checkColumnIndex(column);
-        return new FloatDenseVector(data, rows, columnOffset(column), rowStride, orientation.COLUMN);
+        return new CFloatDenseVector(data, rows, columnOffset(column), rowStride, orientation.COLUMN);
     }
 
     @Override
-    protected final float[] createArray(final int length) {
-        return new float[length];
+    protected final ComplexFloat[] createArray(final int length) {
+        return new ComplexFloat[length];
     }
 
     @Override
-    protected final float[][] createArrayArray(final int length) {
-        return new float[length][];
+    protected final ComplexFloat[][] createArrayArray(final int length) {
+        return new ComplexFloat[length][];
     }
 
     @Override
-    public final FloatDenseVector createColumnVector() {
-        return new FloatDenseVector(rows, Orientation.COLUMN, storage());
+    public final CFloatDenseVector createColumnVector() {
+        return new CFloatDenseVector(rows, Orientation.COLUMN, storage());
     }
 
     @Override
-    public final FloatDenseVector createRowVector() {
-        return new FloatDenseVector(columns, Orientation.ROW, storage());
+    public final CFloatDenseVector createRowVector() {
+        return new CFloatDenseVector(columns, Orientation.ROW, storage());
     }
 
     public final FloatBuffer data() {
@@ -108,7 +106,7 @@ public abstract class AbstractFloatDense<M extends FloatMatrix<M, FloatDenseVect
 
     @Override
     public boolean equals(final Object obj) {
-        if (obj == null || !(obj instanceof AbstractFloatDense)) {
+        if (obj == null || !(obj instanceof AbstractCFloatDense)) {
             return false;
         }
         if (this == obj) {
@@ -118,33 +116,43 @@ public abstract class AbstractFloatDense<M extends FloatMatrix<M, FloatDenseVect
             return false;
         }
         // TODO optimize this
-        AbstractFloatDense<?> other = (AbstractFloatDense<?>) obj;
+        AbstractCFloatDense<?> other = (AbstractCFloatDense<?>) obj;
         for (int i = 0; i < size; i++) {
-            if (get(i) != other.get(i)) {
+            if (!get(i).equals(other.get(i))) {
                 return false;
             }
         }
         return true;
     }
 
-    public final void fill(final float value) {
+    public final void fill(final ComplexFloat value) {
         FloatBuffer xdata = createFloatBuffer(1, storage());
-        FloatDenseVector x = new FloatDenseVector(xdata, size, 0, 0, Orientation.DEFAULT_FOR_VECTOR);
-        xdata.put(0, value);
-        FloatBLAS.copy(x, asVector());
+        CFloatDenseVector x = new CFloatDenseVector(xdata, size, 0, 0, Orientation.DEFAULT_FOR_VECTOR);
+        x.set(0, value);
+        // FloatBLAS.copy(x, asVector());
+        throw new UnsupportedOperationException();
     }
 
     @Override
-    protected final void fillFrom(final float[] dest, final int srcPos) {
-        Arrays.fill(dest, data.get(srcPos));
+    protected final void fillFrom(final ComplexFloat[] dest, final int srcPos) {
+        float real = data.get(srcPos);
+        float imag = data.get(srcPos + 1);
+        ComplexFloat value = ComplexFloat.valueOf(real, imag);
+        Arrays.fill(dest, value);
     }
 
-    public final float get(final int index) {
-        return data.get(elementOffset(index));
+    public final ComplexFloat get(final int index) {
+        int offset = elementOffset(index);
+        float real = data.get(offset);
+        float imag = data.get(offset + 1);
+        return ComplexFloat.valueOf(real, imag);
     }
 
-    public final float get(final int row, final int column) {
-        return data.get(elementOffset(row, column));
+    public final ComplexFloat get(final int row, final int column) {
+        int offset = elementOffset(row, column);
+        float real = data.get(offset);
+        float imag = data.get(offset + 1);
+        return ComplexFloat.valueOf(real, imag);
     }
 
     public final int offset() {
@@ -156,48 +164,61 @@ public abstract class AbstractFloatDense<M extends FloatMatrix<M, FloatDenseVect
         Storage storage = (Storage) in.readObject();
         this.data = createFloatBuffer(size, storage);
         // TODO this stuff can fail when there are offsets and strides involved
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < ELEMENT_SIZE * size; i++) {
             data.put(i, in.readFloat());
         }
     }
 
     @Override
-    public final FloatDenseVector row(final int row) {
-        return new FloatDenseVector(data, columns, rowOffset(row), columnStride, Orientation.ROW);
+    public final CFloatDenseVector row(final int row) {
+        return new CFloatDenseVector(data, columns, rowOffset(row), columnStride, orientation.ROW);
     }
 
-    public final void set(final int index, final float value) {
-        data.put(elementOffset(index), value);
+    public final void set(final int index, final ComplexFloat value) {
+        int offset = elementOffset(index);
+        data.put(offset, value.real());
+        data.put(offset + 1, value.imag());
     }
 
-    public final void set(final int row, final int column, final float value) {
-        data.put(elementOffset(row, column), value);
+    public final void set(final int row, final int column, final ComplexFloat value) {
+        int offset = elementOffset(row, column);
+        data.put(offset, value.real());
+        data.put(offset + 1, value.imag());
     }
 
-    public final void setColumn(final int column, final FloatVector<?> columnVector) {
+    public final void setColumn(final int column, final ComplexFloatVector<?> columnVector) {
         // TODO this code is almost identical to setRow
         checkArgument(rows == columnVector.size());
         int targetOffset = columnOffset(column);
         int targetStride = rowStride;
         // TODO this could be optimized
         for (int i = 0; i < rows; i++) {
-            data.put(targetOffset + i * targetStride, columnVector.get(i));
+            ComplexFloat value = columnVector.get(i);
+            int offset = targetOffset + i * targetStride;
+            data.put(offset, value.real());
+            data.put(offset + 1, value.imag());
         }
     }
 
     @Override
-    protected final void setFrom(final float[] dest, final int destPos, final int srcPos) {
-        dest[destPos] = data.get(srcPos);
+    protected final void setFrom(final ComplexFloat[] dest, final int destPos, final int srcPos) {
+        float real = data.get(srcPos);
+        float imag = data.get(srcPos + 1);
+        dest[destPos] = ComplexFloat.valueOf(real, imag);
     }
 
-    public final void setRow(final int row, final FloatVector<?> rowVector) {
+    public final void setRow(final int row, final ComplexFloatVector<?> rowVector) {
         // TODO this code is almost identical to setColumn
+        checkRowIndex(row);
         checkArgument(columns == rowVector.size());
         int targetOffset = rowOffset(row);
         int targetStride = columnStride;
         // TODO this could be optimized
         for (int i = 0; i < columns; i++) {
-            data.put(targetOffset + i * targetStride, rowVector.get(i));
+            ComplexFloat value = rowVector.get(i);
+            int offset = targetOffset + i * targetStride;
+            data.put(offset, value.real());
+            data.put(offset + 1, value.imag());
         }
     }
 
@@ -218,7 +239,9 @@ public abstract class AbstractFloatDense<M extends FloatMatrix<M, FloatDenseVect
         out.writeObject(storage());
         // TODO optimize this
         for (int i = 0; i < size; i++) {
-            out.writeFloat(get(i));
+            ComplexFloat value = get(i);
+            out.writeFloat(value.real());
+            out.writeFloat(value.imag());
         }
     }
 }

@@ -7,13 +7,18 @@ import com.googlecode.array4j.Matrix;
 import com.googlecode.array4j.Orientation;
 import com.googlecode.array4j.Vector;
 
+/**
+ * Abstract base class for dense (full) matrices.
+ */
 public abstract class AbstractDenseMatrix<M extends Matrix<M, V>, V extends Vector<V>, T> extends AbstractMatrix<M, V>
         implements Matrix<M, V> {
     /** Stride between elements in a column. */
     protected final int columnStride;
 
+    /** Size of each element. */
     protected final int elementSize;
 
+    /** Offset in storage where matrix data begins. */
     protected final int offset;
 
     protected final Orientation orientation;
@@ -43,6 +48,7 @@ public abstract class AbstractDenseMatrix<M extends Matrix<M, V>, V extends Vect
      * Calculate the offset of the beginning of the specified column.
      */
     protected final int columnOffset(final int column) {
+        checkColumnIndex(column);
         return offset + column * columnStride;
     }
 
@@ -51,6 +57,7 @@ public abstract class AbstractDenseMatrix<M extends Matrix<M, V>, V extends Vect
     protected abstract T[] createArrayArray(int length);
 
     protected final int elementOffset(final int index) {
+        checkIndex(index);
         return offset + index * elementSize * stride;
     }
 
@@ -84,13 +91,13 @@ public abstract class AbstractDenseMatrix<M extends Matrix<M, V>, V extends Vect
      * Calculate the offset of the beginning of the specified row.
      */
     protected final int rowOffset(final int row) {
+        checkRowIndex(row);
         return offset + row * rowStride;
     }
 
     // TODO give this method a better name
     protected abstract void setFrom(T dest, int destPos, int srcPos);
 
-    // TODO add support for elementSize
     public final T toArray() {
         final T arr = createArray(size);
         if (size == 0) {
@@ -100,13 +107,12 @@ public abstract class AbstractDenseMatrix<M extends Matrix<M, V>, V extends Vect
             fillFrom(arr, offset);
             return arr;
         }
-        for (int i = offset, j = 0; j < size; i += stride, j++) {
+        for (int i = offset, j = 0; j < size; i += elementSize * stride, j++) {
             setFrom(arr, j, i);
         }
         return arr;
     }
 
-    // TODO add support for elementSize
     private T[] toArrays(final int m, final int n, final boolean rows) {
         final T[] arrs = createArrayArray(m);
         for (int i = 0; i < m; i++) {
@@ -118,15 +124,15 @@ public abstract class AbstractDenseMatrix<M extends Matrix<M, V>, V extends Vect
                 int position = offset;
                 if (rows) {
                     if (orientation.equals(Orientation.ROW)) {
-                        position += (i * n + j) * stride;
+                        position += (i * n + j) * elementSize * stride;
                     } else {
-                        position += (j * m + i) * stride;
+                        position += (j * m + i) * elementSize * stride;
                     }
                 } else {
                     if (orientation.equals(Orientation.COLUMN)) {
-                        position += (i * n + j) * stride;
+                        position += (i * n + j) * elementSize * stride;
                     } else {
-                        position += (j * m + i) * stride;
+                        position += (j * m + i) * elementSize * stride;
                     }
                 }
                 setFrom(arr, j, position);
