@@ -34,9 +34,9 @@ public final class FloatBLASTest<M extends FloatMatrix<M, V>, V extends FloatVec
         assertEquals(10.0f, FloatBLAS.dot(x, y));
     }
 
-//    @Test
-//    public void testIamax() {
-//        final FloatDenseVector x = factory.createRowVector(1.0f, 3.0f, 2.0f);
-//        assertEquals(2, FloatBLAS.iamax(x));
-//    }
+    // @Test
+    // public void testIamax() {
+    // final FloatDenseVector x = factory.createRowVector(1.0f, 3.0f, 2.0f);
+    // assertEquals(2, FloatBLAS.iamax(x));
+    // }
 }

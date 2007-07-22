@@ -1,6 +1,18 @@
 package com.googlecode.array4j;
 
 public final class ComplexFloat implements Complex<ComplexFloat> {
+    public static ComplexFloat valueOf(final double real, final double imag) {
+        return new ComplexFloat((float) real, (float) imag);
+    }
+
+    public static ComplexFloat valueOf(final float real, final float imag) {
+        return new ComplexFloat(real, imag);
+    }
+
+    public static ComplexFloat valueOf(final long real, final long imag) {
+        return new ComplexFloat(real, imag);
+    }
+
     private final float imag;
 
     private final float real;
@@ -12,6 +24,10 @@ public final class ComplexFloat implements Complex<ComplexFloat> {
     public ComplexFloat(final float real, final float imag) {
         this.real = real;
         this.imag = imag;
+    }
+
+    public ComplexFloat conj() {
+        return new ComplexFloat(real, -imag);
     }
 
     @Override
