@@ -42,7 +42,8 @@ public abstract class AbstractCFloatDense<M extends ComplexFloatMatrix<M, CFloat
     /**
      * Constructor for matrix with existing data.
      */
-    public AbstractCFloatDense(FloatBuffer data, int rows, int columns, int offset, int stride, Orientation orientation) {
+    public AbstractCFloatDense(final FloatBuffer data, final int rows, final int columns, final int offset,
+            final int stride, final Orientation orientation) {
         super(ELEMENT_SIZE, rows, columns, offset, stride, orientation);
         this.data = data;
     }
@@ -50,7 +51,8 @@ public abstract class AbstractCFloatDense<M extends ComplexFloatMatrix<M, CFloat
     /**
      * Constructor for vector with existing data.
      */
-    public AbstractCFloatDense(FloatBuffer data, int size, int offset, int stride, Orientation orientation) {
+    public AbstractCFloatDense(final FloatBuffer data, final int size, final int offset, final int stride,
+            final Orientation orientation) {
         this(data, VectorSupport.rows(size, orientation), VectorSupport.columns(size, orientation), offset, stride,
                 orientation);
     }
@@ -58,7 +60,7 @@ public abstract class AbstractCFloatDense<M extends ComplexFloatMatrix<M, CFloat
     /**
      * Constructor for new matrix.
      */
-    public AbstractCFloatDense(int rows, int columns, Orientation orientation, Storage storage) {
+    public AbstractCFloatDense(final int rows, final int columns, final Orientation orientation, final Storage storage) {
         super(ELEMENT_SIZE, rows, columns, DEFAULT_OFFSET, DEFAULT_STRIDE, orientation);
         this.data = createFloatBuffer(size, storage);
     }
@@ -66,14 +68,14 @@ public abstract class AbstractCFloatDense<M extends ComplexFloatMatrix<M, CFloat
     /**
      * Constructor for new vector.
      */
-    public AbstractCFloatDense(int size, Orientation orientation, Storage storage) {
+    public AbstractCFloatDense(final int size, final Orientation orientation, final Storage storage) {
         this(VectorSupport.rows(size, orientation), VectorSupport.columns(size, orientation), orientation, storage);
     }
 
     @Override
     public final CFloatDenseVector column(final int column) {
         checkColumnIndex(column);
-        return new CFloatDenseVector(data, rows, columnOffset(column), rowStride, orientation.COLUMN);
+        return new CFloatDenseVector(data, rows, columnOffset(column), rowStride, Orientation.COLUMN);
     }
 
     @Override
@@ -171,7 +173,7 @@ public abstract class AbstractCFloatDense<M extends ComplexFloatMatrix<M, CFloat
 
     @Override
     public final CFloatDenseVector row(final int row) {
-        return new CFloatDenseVector(data, columns, rowOffset(row), columnStride, orientation.ROW);
+        return new CFloatDenseVector(data, columns, rowOffset(row), columnStride, Orientation.ROW);
     }
 
     public final void set(final int index, final ComplexFloat value) {
@@ -194,9 +196,9 @@ public abstract class AbstractCFloatDense<M extends ComplexFloatMatrix<M, CFloat
         // TODO this could be optimized
         for (int i = 0; i < rows; i++) {
             ComplexFloat value = columnVector.get(i);
-            int offset = targetOffset + i * targetStride;
-            data.put(offset, value.real());
-            data.put(offset + 1, value.imag());
+            int position = targetOffset + i * targetStride * elementSize;
+            data.put(position, value.real());
+            data.put(position + 1, value.imag());
         }
     }
 
@@ -216,9 +218,9 @@ public abstract class AbstractCFloatDense<M extends ComplexFloatMatrix<M, CFloat
         // TODO this could be optimized
         for (int i = 0; i < columns; i++) {
             ComplexFloat value = rowVector.get(i);
-            int offset = targetOffset + i * targetStride;
-            data.put(offset, value.real());
-            data.put(offset + 1, value.imag());
+            int position = targetOffset + i * targetStride * elementSize;
+            data.put(position, value.real());
+            data.put(position + 1, value.imag());
         }
     }
 
