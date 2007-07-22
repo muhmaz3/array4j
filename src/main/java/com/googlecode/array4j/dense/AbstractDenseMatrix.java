@@ -26,6 +26,7 @@ public abstract class AbstractDenseMatrix<M extends Matrix<M, V>, V extends Vect
     /** Stride between elements in a row. */
     protected final int rowStride;
 
+    /** Stride between elements. */
     protected final int stride;
 
     public AbstractDenseMatrix(final int elementSize, final int rows, final int columns, final int offset,
@@ -36,11 +37,11 @@ public abstract class AbstractDenseMatrix<M extends Matrix<M, V>, V extends Vect
         this.stride = stride;
         this.orientation = orientation;
         if (orientation.equals(Orientation.ROW)) {
-            this.rowStride = elementSize * stride * columns;
-            this.columnStride = elementSize * stride;
+            this.rowStride = stride * columns;
+            this.columnStride = stride;
         } else {
-            this.rowStride = elementSize * stride;
-            this.columnStride = elementSize * stride * rows;
+            this.rowStride = stride;
+            this.columnStride = stride * rows;
         }
     }
 
@@ -49,7 +50,7 @@ public abstract class AbstractDenseMatrix<M extends Matrix<M, V>, V extends Vect
      */
     protected final int columnOffset(final int column) {
         checkColumnIndex(column);
-        return offset + column * columnStride;
+        return offset + column * elementSize * columnStride;
     }
 
     protected abstract T createArray(int length);
@@ -64,7 +65,7 @@ public abstract class AbstractDenseMatrix<M extends Matrix<M, V>, V extends Vect
     protected final int elementOffset(final int row, final int column) {
         checkRowIndex(row);
         checkColumnIndex(column);
-        return rowOffset(row) + column * columnStride;
+        return rowOffset(row) + column * elementSize * columnStride;
     }
 
     @Override
@@ -92,7 +93,7 @@ public abstract class AbstractDenseMatrix<M extends Matrix<M, V>, V extends Vect
      */
     protected final int rowOffset(final int row) {
         checkRowIndex(row);
-        return offset + row * rowStride;
+        return offset + row * elementSize * rowStride;
     }
 
     // TODO give this method a better name
