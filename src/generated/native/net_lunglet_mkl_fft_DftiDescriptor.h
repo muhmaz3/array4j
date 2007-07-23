@@ -9,14 +9,6 @@ extern "C" {
 #endif
 /*
  * Class:     net_lunglet_mkl_fft_DftiDescriptor
- * Method:    createDescriptor
- * Signature: ([JII[I)J
- */
-JNIEXPORT jlong JNICALL Java_net_lunglet_mkl_fft_DftiDescriptor_createDescriptor
-  (JNIEnv *, jclass, jlongArray, jint, jint, jintArray);
-
-/*
- * Class:     net_lunglet_mkl_fft_DftiDescriptor
  * Method:    commitDescriptor
  * Signature: (J)J
  */
@@ -25,11 +17,91 @@ JNIEXPORT jlong JNICALL Java_net_lunglet_mkl_fft_DftiDescriptor_commitDescriptor
 
 /*
  * Class:     net_lunglet_mkl_fft_DftiDescriptor
+ * Method:    computeBackward
+ * Signature: (JLjava/nio/Buffer;)J
+ */
+JNIEXPORT jlong JNICALL Java_net_lunglet_mkl_fft_DftiDescriptor_computeBackward__JLjava_nio_Buffer_2
+  (JNIEnv *, jclass, jlong, jobject);
+
+/*
+ * Class:     net_lunglet_mkl_fft_DftiDescriptor
+ * Method:    computeBackward
+ * Signature: (JLjava/nio/Buffer;Ljava/nio/Buffer;)J
+ */
+JNIEXPORT jlong JNICALL Java_net_lunglet_mkl_fft_DftiDescriptor_computeBackward__JLjava_nio_Buffer_2Ljava_nio_Buffer_2
+  (JNIEnv *, jclass, jlong, jobject, jobject);
+
+/*
+ * Class:     net_lunglet_mkl_fft_DftiDescriptor
+ * Method:    computeForward
+ * Signature: (JLjava/nio/Buffer;)J
+ */
+JNIEXPORT jlong JNICALL Java_net_lunglet_mkl_fft_DftiDescriptor_computeForward__JLjava_nio_Buffer_2
+  (JNIEnv *, jclass, jlong, jobject);
+
+/*
+ * Class:     net_lunglet_mkl_fft_DftiDescriptor
+ * Method:    computeForward
+ * Signature: (JLjava/nio/Buffer;Ljava/nio/Buffer;)J
+ */
+JNIEXPORT jlong JNICALL Java_net_lunglet_mkl_fft_DftiDescriptor_computeForward__JLjava_nio_Buffer_2Ljava_nio_Buffer_2
+  (JNIEnv *, jclass, jlong, jobject, jobject);
+
+/*
+ * Class:     net_lunglet_mkl_fft_DftiDescriptor
+ * Method:    createDescriptor
+ * Signature: ([JII[I)J
+ */
+JNIEXPORT jlong JNICALL Java_net_lunglet_mkl_fft_DftiDescriptor_createDescriptor
+  (JNIEnv *, jclass, jlongArray, jint, jint, jintArray);
+
+/*
+ * Class:     net_lunglet_mkl_fft_DftiDescriptor
  * Method:    freeDescriptor
  * Signature: (J)J
  */
 JNIEXPORT jlong JNICALL Java_net_lunglet_mkl_fft_DftiDescriptor_freeDescriptor
   (JNIEnv *, jclass, jlong);
+
+/*
+ * Class:     net_lunglet_mkl_fft_DftiDescriptor
+ * Method:    getFloatValue
+ * Signature: (JI[J)F
+ */
+JNIEXPORT jfloat JNICALL Java_net_lunglet_mkl_fft_DftiDescriptor_getFloatValue
+  (JNIEnv *, jclass, jlong, jint, jlongArray);
+
+/*
+ * Class:     net_lunglet_mkl_fft_DftiDescriptor
+ * Method:    getIntArrayValue
+ * Signature: (JI[J)[I
+ */
+JNIEXPORT jintArray JNICALL Java_net_lunglet_mkl_fft_DftiDescriptor_getIntArrayValue
+  (JNIEnv *, jclass, jlong, jint, jlongArray);
+
+/*
+ * Class:     net_lunglet_mkl_fft_DftiDescriptor
+ * Method:    getIntValue
+ * Signature: (JI[J)I
+ */
+JNIEXPORT jint JNICALL Java_net_lunglet_mkl_fft_DftiDescriptor_getIntValue
+  (JNIEnv *, jclass, jlong, jint, jlongArray);
+
+/*
+ * Class:     net_lunglet_mkl_fft_DftiDescriptor
+ * Method:    getStringValue
+ * Signature: (JI[J)Ljava/lang/String;
+ */
+JNIEXPORT jstring JNICALL Java_net_lunglet_mkl_fft_DftiDescriptor_getStringValue
+  (JNIEnv *, jclass, jlong, jint, jlongArray);
+
+/*
+ * Class:     net_lunglet_mkl_fft_DftiDescriptor
+ * Method:    setValue
+ * Signature: (JIF)J
+ */
+JNIEXPORT jlong JNICALL Java_net_lunglet_mkl_fft_DftiDescriptor_setValue__JIF
+  (JNIEnv *, jclass, jlong, jint, jfloat);
 
 /*
  * Class:     net_lunglet_mkl_fft_DftiDescriptor
@@ -50,50 +122,10 @@ JNIEXPORT jlong JNICALL Java_net_lunglet_mkl_fft_DftiDescriptor_setValue__JI_3I
 /*
  * Class:     net_lunglet_mkl_fft_DftiDescriptor
  * Method:    setValue
- * Signature: (JIF)J
- */
-JNIEXPORT jlong JNICALL Java_net_lunglet_mkl_fft_DftiDescriptor_setValue__JIF
-  (JNIEnv *, jclass, jlong, jint, jfloat);
-
-/*
- * Class:     net_lunglet_mkl_fft_DftiDescriptor
- * Method:    setValue
  * Signature: (JILjava/lang/String;)J
  */
 JNIEXPORT jlong JNICALL Java_net_lunglet_mkl_fft_DftiDescriptor_setValue__JILjava_lang_String_2
   (JNIEnv *, jclass, jlong, jint, jstring);
-
-/*
- * Class:     net_lunglet_mkl_fft_DftiDescriptor
- * Method:    getIntValue
- * Signature: (JI[J)I
- */
-JNIEXPORT jint JNICALL Java_net_lunglet_mkl_fft_DftiDescriptor_getIntValue
-  (JNIEnv *, jclass, jlong, jint, jlongArray);
-
-/*
- * Class:     net_lunglet_mkl_fft_DftiDescriptor
- * Method:    getIntArrayValue
- * Signature: (JI[J)[I
- */
-JNIEXPORT jintArray JNICALL Java_net_lunglet_mkl_fft_DftiDescriptor_getIntArrayValue
-  (JNIEnv *, jclass, jlong, jint, jlongArray);
-
-/*
- * Class:     net_lunglet_mkl_fft_DftiDescriptor
- * Method:    getFloatValue
- * Signature: (JI[J)F
- */
-JNIEXPORT jfloat JNICALL Java_net_lunglet_mkl_fft_DftiDescriptor_getFloatValue
-  (JNIEnv *, jclass, jlong, jint, jlongArray);
-
-/*
- * Class:     net_lunglet_mkl_fft_DftiDescriptor
- * Method:    getStringValue
- * Signature: (JI[J)Ljava/lang/String;
- */
-JNIEXPORT jstring JNICALL Java_net_lunglet_mkl_fft_DftiDescriptor_getStringValue
-  (JNIEnv *, jclass, jlong, jint, jlongArray);
 
 #ifdef __cplusplus
 }

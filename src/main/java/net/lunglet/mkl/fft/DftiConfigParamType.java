@@ -1,5 +1,5 @@
 package net.lunglet.mkl.fft;
 
 enum DftiConfigParamType {
-    NAMED_CONSTANT, INT_SCALAR, INT_ARRAY, FLOAT_SCALAR, STRING;
+    FLOAT_SCALAR, INT_ARRAY, INT_SCALAR, NAMED_CONSTANT, STRING;
 }

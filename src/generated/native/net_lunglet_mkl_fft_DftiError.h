@@ -7,16 +7,16 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-/* Inaccessible static: DFTI_NO_ERROR */
-/* Inaccessible static: DFTI_MEMORY_ERROR */
-/* Inaccessible static: DFTI_INVALID_CONFIGURATION */
-/* Inaccessible static: DFTI_INCONSISTENT_CONFIGURATION */
-/* Inaccessible static: DFTI_MULTITHREADED_ERROR */
-/* Inaccessible static: DFTI_BAD_DESCRIPTOR */
-/* Inaccessible static: DFTI_UNIMPLEMENTED */
-/* Inaccessible static: DFTI_MKL_INTERNAL_ERROR */
-/* Inaccessible static: DFTI_NUMBER_OF_THREADS_ERROR */
 /* Inaccessible static: DFTI_1D_LENGTH_EXCEEDS_INT32 */
+/* Inaccessible static: DFTI_BAD_DESCRIPTOR */
+/* Inaccessible static: DFTI_INCONSISTENT_CONFIGURATION */
+/* Inaccessible static: DFTI_INVALID_CONFIGURATION */
+/* Inaccessible static: DFTI_MEMORY_ERROR */
+/* Inaccessible static: DFTI_MKL_INTERNAL_ERROR */
+/* Inaccessible static: DFTI_MULTITHREADED_ERROR */
+/* Inaccessible static: DFTI_NO_ERROR */
+/* Inaccessible static: DFTI_NUMBER_OF_THREADS_ERROR */
+/* Inaccessible static: DFTI_UNIMPLEMENTED */
 /* Inaccessible static: ENUM_00024VALUES */
 /*
  * Class:     net_lunglet_mkl_fft_DftiError
