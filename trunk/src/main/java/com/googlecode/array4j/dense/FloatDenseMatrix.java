@@ -66,7 +66,14 @@ public final class FloatDenseMatrix extends AbstractFloatDense<FloatDenseMatrix>
 
     @Override
     public FloatDenseMatrix subMatrixColumns(final int column0, final int column1) {
-        throw new UnsupportedOperationException();
+        checkArgument(column0 >= 0 && column0 < columns);
+        checkArgument(column1 >= column0 && column1 < columns);
+        // TODO only copy if necessary
+        FloatDenseMatrix newMatrix = new FloatDenseMatrix(rows, column1 - column0 + 1, orientation, storage());
+        for (int i = column0, j = 0; i <= column1; i++, j++) {
+            newMatrix.setColumn(j, column(i));
+        }
+        return newMatrix;
     }
 
     @Override

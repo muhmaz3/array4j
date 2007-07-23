@@ -218,7 +218,9 @@ public abstract class AbstractFloatDense<M extends FloatMatrix<M, FloatDenseVect
     }
 
     public final void timesEquals(final float value) {
-        throw new UnsupportedOperationException();
+        for (int i = 0; i < size; i++) {
+            set(i, get(i) * value);
+        }
     }
 
     private void writeObject(final ObjectOutputStream out) throws IOException {
@@ -228,5 +230,17 @@ public abstract class AbstractFloatDense<M extends FloatMatrix<M, FloatDenseVect
         for (int i = 0; i < size; i++) {
             out.writeFloat(get(i));
         }
+    }
+
+    @Override
+    public String toString() {
+        // TODO do something better here
+        StringBuilder builder = new StringBuilder();
+        builder.append("[");
+        for (int i = 0; i < size; i++) {
+            builder.append(String.format("%.16f ", get(i)));
+        }
+        builder.append("]");
+        return builder.toString();
     }
 }

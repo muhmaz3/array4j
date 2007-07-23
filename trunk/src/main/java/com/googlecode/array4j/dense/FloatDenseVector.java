@@ -71,12 +71,24 @@ public final class FloatDenseVector extends AbstractFloatDense<FloatDenseVector>
 
     @Override
     public FloatDenseVector minus(final FloatVector<?> other) {
-        throw new UnsupportedOperationException();
+        if (size != other.size()) {
+            throw new IllegalArgumentException();
+        }
+        FloatDenseVector newVector = new FloatDenseVector(size, orientation, storage());
+        for (int i = 0; i < size; i++) {
+            newVector.set(i, get(i) - other.get(i));
+        }
+        return newVector;
     }
 
     @Override
     public void plusEquals(final FloatVector<?> other) {
-        throw new UnsupportedOperationException();
+        if (size != other.size()) {
+            throw new IllegalArgumentException();
+        }
+        for (int i = 0; i < size; i++) {
+            set(i, get(i) + other.get(i));
+        }
     }
 
     @Override
