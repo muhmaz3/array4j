@@ -2,6 +2,8 @@ package net.lunglet.mkl.fft;
 
 import java.nio.Buffer;
 
+// TODO implement copyDescriptor if it could be useful
+
 public final class DftiDescriptor {
     static {
         System.loadLibrary("array4j");
@@ -9,13 +11,13 @@ public final class DftiDescriptor {
 
     private static native long commitDescriptor(long handle);
 
-    private static native long computeBackward(long handle, Buffer inout);
+    private static native long computeBackward(long handle, Buffer inout, int offset);
 
-    private static native long computeBackward(long handle, Buffer in, Buffer out);
+    private static native long computeBackward(long handle, Buffer in, int inoff, Buffer out, int outoff);
 
-    private static native long computeForward(long handle, Buffer inout);
+    private static native long computeForward(long handle, Buffer inout, int offset);
 
-    private static native long computeForward(long handle, Buffer in, Buffer out);
+    private static native long computeForward(long handle, Buffer in, int inoff, Buffer out, int outoff);
 
     private static native long createDescriptor(long[] handleHolder, int precision, int forwardDomain, int[] length);
 
@@ -39,45 +41,116 @@ public final class DftiDescriptor {
 
     private final long handle;
 
-    public DftiDescriptor(final DftiConfigValue precision, final DftiConfigValue forwardDomain, final int[] length)
+    /**
+     * Constructor.
+     *
+     * @param precision
+     *                <CODE>DftiConfigValue.SINGLE</CODE> or
+     *                <CODE>DftiConfigValue.DOUBLE</CODE>
+     * @param forwardDomain
+     *                <CODE>DftiConfigValue.COMPLEX</CODE>,
+     *                <CODE>DftiConfigValue.REAL</CODE> or
+     *                <CODE>DftiConfigValue.CONJUGATE_EVEN</CODE>
+     * @param lengths
+     *                lengths of the input dimensions
+     * @throws DftiException
+     */
+    public DftiDescriptor(final DftiConfigValue precision, final DftiConfigValue forwardDomain, final int[] lengths)
             throws DftiException {
-        if (length.length < 1) {
+        if (lengths.length < 1) {
             throw new IllegalArgumentException();
         }
         long[] handleHolder = new long[1];
-        long status = createDescriptor(handleHolder, precision.intValue(), forwardDomain.intValue(), length);
+        long status = createDescriptor(handleHolder, precision.intValue(), forwardDomain.intValue(), lengths);
         DftiError.checkStatus(status);
         this.handle = handleHolder[0];
+        // initialize descriptor name to empty string
+        setValue(DftiConfigParam.DESCRIPTOR_NAME, "");
     }
 
+    /**
+     * Commit changes to descriptor.
+     * <p>
+     * This method must be called before using the descriptor to compute
+     * transforms.
+     *
+     * @throws DftiException
+     */
     public void commit() throws DftiException {
         // TODO what happens when commit is called more than once?
         long status = commitDescriptor(handle);
         DftiError.checkStatus(status);
     }
 
-    public void computeBackward(final Buffer inout) throws DftiException {
-        long status = computeBackward(handle, inout);
+    /**
+     * Compute backward transform in-place.
+     * @param inout input/output buffer
+     * @param offset offset in bytes
+     * @throws DftiException
+     */
+    public void computeBackward(final Buffer inout, final int offset) throws DftiException {
+        if (!getValue(DftiConfigParam.PLACEMENT).equals(DftiConfigValue.INPLACE)) {
+            throw new DftiException("Must use inplace placement");
+        }
+        // TODO check that buffer is large enough to support calculation
+        long status = computeBackward(handle, inout, offset);
         DftiError.checkStatus(status);
     }
 
-    public void computeBackward(final Buffer in, final Buffer out) throws DftiException {
-        long status = computeBackward(handle, in, out);
+    /**
+     * Compute backward transform out-of-place.
+     * @param in input buffer
+     * @param inoff input buffer offset in bytes
+     * @param out output buffer
+     * @param outoff output buffer offset in bytes
+     * @throws DftiException
+     */
+    public void computeBackward(final Buffer in, final int inoff, final Buffer out, final int outoff)
+            throws DftiException {
+        if (!getValue(DftiConfigParam.PLACEMENT).equals(DftiConfigValue.NOT_INPLACE)) {
+            throw new DftiException("Must not use inplace placement");
+        }
+        // TODO check that buffers are large enough to support calculation
+        long status = computeBackward(handle, in, inoff, out, outoff);
         DftiError.checkStatus(status);
     }
 
-    // TODO implement copyDescriptor if it could be useful
-
-    public void computeForward(final Buffer inout) throws DftiException {
-        long status = computeForward(handle, inout);
+    /**
+     * Compute forward transform in-place.
+     * @param inout input/output buffer
+     * @param offset offset in bytes
+     * @throws DftiException
+     */
+    public void computeForward(final Buffer inout, final int offset) throws DftiException {
+        if (!getValue(DftiConfigParam.PLACEMENT).equals(DftiConfigValue.INPLACE)) {
+            throw new DftiException("Must use inplace placement");
+        }
+        // TODO check that buffer is large enough to support calculation
+        long status = computeForward(handle, inout, offset);
         DftiError.checkStatus(status);
     }
 
-    public void computeForward(final Buffer in, final Buffer out) throws DftiException {
-        long status = computeForward(handle, in, out);
+    /**
+     * Compute forward transform out-of-place.
+     * @param in input buffer
+     * @param inoff input buffer offset in bytes
+     * @param out output buffer
+     * @param outoff output buffer offset in bytes
+     * @throws DftiException
+     */
+    public void computeForward(final Buffer in, final int inoff, final Buffer out, final int outoff)
+            throws DftiException {
+        if (!getValue(DftiConfigParam.PLACEMENT).equals(DftiConfigValue.NOT_INPLACE)) {
+            throw new DftiException("Must not use inplace placement");
+        }
+        // TODO check that buffers are large enough to support calculation
+        long status = computeForward(handle, in, inoff, out, outoff);
         DftiError.checkStatus(status);
     }
 
+    /**
+     * Free resources allocated to the descriptor.
+     */
     public void free() {
         freeDescriptor(handle);
     }
@@ -134,6 +207,9 @@ public final class DftiDescriptor {
                 return value;
             }
         }
+        // This should never happen. If it did, it means the MKL library
+        // returned a value for a named constant that hasn't been mapped to a
+        // value in the DftiConfigValue enum.
         throw new AssertionError();
     }
 

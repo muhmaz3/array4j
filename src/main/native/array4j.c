@@ -34,25 +34,25 @@ JNIEXPORT void JNICALL Java_com_googlecode_array4j_FloatBLAS_scopy
 }
 
 JNIEXPORT jlong JNICALL Java_net_lunglet_mkl_fft_DftiDescriptor_createDescriptor
-  (JNIEnv *env, jclass clazz, jlongArray handle, jint precision, jint forwardDomain, jintArray length)
+  (JNIEnv *env, jclass clazz, jlongArray handle, jint precision, jint forwardDomain, jintArray lengths)
 {
     jlong status = -1;
     DFTI_DESCRIPTOR_HANDLE handle1 = NULL;
-    jsize dimension = (*env)->GetArrayLength(env, length);
-    jint *length1 = NULL;
-    length1 = (*env)->GetPrimitiveArrayCritical(env, length, NULL);
+    jsize dimension = (*env)->GetArrayLength(env, lengths);
+    jint *lengths1 = NULL;
+    lengths1 = (*env)->GetPrimitiveArrayCritical(env, lengths, NULL);
     if (dimension == 1) {
-        status = DftiCreateDescriptor(&handle1, precision, forwardDomain, dimension, length1[0]);
+        status = DftiCreateDescriptor(&handle1, precision, forwardDomain, dimension, lengths1[0]);
     } else {
         // create a new array to put into the descriptor
-        jint *length2 = malloc(sizeof(jint) * dimension);
+        jint *lengths2 = malloc(sizeof(jint) * dimension);
         jsize i;
         for (i = 0; i < dimension; i++) {
-            length2[i] = length1[i];
+            lengths2[i] = lengths1[i];
         }
-        status = DftiCreateDescriptor(&handle1, precision, forwardDomain, dimension, length2);
+        status = DftiCreateDescriptor(&handle1, precision, forwardDomain, dimension, lengths2);
     }
-    (*env)->ReleasePrimitiveArrayCritical(env, length, length1, JNI_ABORT);
+    (*env)->ReleasePrimitiveArrayCritical(env, lengths, lengths1, JNI_ABORT);
     (*env)->SetLongArrayRegion(env, handle, 0, 1, (const jlong*) &handle1);
     return status;
 }
@@ -159,50 +159,50 @@ JNIEXPORT jintArray JNICALL Java_net_lunglet_mkl_fft_DftiDescriptor_getIntArrayV
     return value;
 }
 
-JNIEXPORT jlong JNICALL Java_net_lunglet_mkl_fft_DftiDescriptor_computeForward__JLjava_nio_Buffer_2
-  (JNIEnv *env, jclass clazz, jlong handle, jobject inoutbuf)
+JNIEXPORT jlong JNICALL Java_net_lunglet_mkl_fft_DftiDescriptor_computeForward__JLjava_nio_Buffer_2I
+  (JNIEnv *env, jclass clazz, jlong handle, jobject inoutbuf, jint offset)
 {
-    void* inout = (*env)->GetDirectBufferAddress(env, inoutbuf);
+    char* inout = (*env)->GetDirectBufferAddress(env, inoutbuf);
     if (inout == NULL) {
         (*env)->FatalError(env, "invalid buffer inout");
     }
-    return DftiComputeForward((DFTI_DESCRIPTOR_HANDLE) handle, inout);
+    return DftiComputeForward((DFTI_DESCRIPTOR_HANDLE) handle, &inout[offset]);
 }
 
-JNIEXPORT jlong JNICALL Java_net_lunglet_mkl_fft_DftiDescriptor_computeForward__JLjava_nio_Buffer_2Ljava_nio_Buffer_2
-  (JNIEnv *env, jclass clazz, jlong handle, jobject inbuf, jobject outbuf)
+JNIEXPORT jlong JNICALL Java_net_lunglet_mkl_fft_DftiDescriptor_computeForward__JLjava_nio_Buffer_2ILjava_nio_Buffer_2I
+  (JNIEnv *env, jclass clazz, jlong handle, jobject inbuf, jint inoff, jobject outbuf, jint outoff)
 {
-    void* in = (*env)->GetDirectBufferAddress(env, inbuf);
-    void* out = (*env)->GetDirectBufferAddress(env, outbuf);
+    char* in = (*env)->GetDirectBufferAddress(env, inbuf);
+    char* out = (*env)->GetDirectBufferAddress(env, outbuf);
     if (in == NULL) {
         (*env)->FatalError(env, "invalid buffer in");
     }
     if (out == NULL) {
         (*env)->FatalError(env, "invalid buffer out");
     }
-    return DftiComputeForward((DFTI_DESCRIPTOR_HANDLE) handle, in, out);
+    return DftiComputeForward((DFTI_DESCRIPTOR_HANDLE) handle, &in[inoff], &out[outoff]);
 }
 
-JNIEXPORT jlong JNICALL Java_net_lunglet_mkl_fft_DftiDescriptor_computeBackward__JLjava_nio_Buffer_2
-  (JNIEnv *env, jclass clazz, jlong handle, jobject inoutbuf)
+JNIEXPORT jlong JNICALL Java_net_lunglet_mkl_fft_DftiDescriptor_computeBackward__JLjava_nio_Buffer_2I
+  (JNIEnv *env, jclass clazz, jlong handle, jobject inoutbuf, jint offset)
 {
-    void* inout = (*env)->GetDirectBufferAddress(env, inoutbuf);
+    char* inout = (*env)->GetDirectBufferAddress(env, inoutbuf);
     if (inout == NULL) {
         (*env)->FatalError(env, "invalid buffer inout");
     }
-    return DftiComputeBackward((DFTI_DESCRIPTOR_HANDLE) handle, inout);
+    return DftiComputeBackward((DFTI_DESCRIPTOR_HANDLE) handle, &inout[offset]);
 }
 
-JNIEXPORT jlong JNICALL Java_net_lunglet_mkl_fft_DftiDescriptor_computeBackward__JLjava_nio_Buffer_2Ljava_nio_Buffer_2
-  (JNIEnv *env, jclass clazz, jlong handle, jobject inbuf, jobject outbuf)
+JNIEXPORT jlong JNICALL Java_net_lunglet_mkl_fft_DftiDescriptor_computeBackward__JLjava_nio_Buffer_2ILjava_nio_Buffer_2I
+  (JNIEnv *env, jclass clazz, jlong handle, jobject inbuf, jint inoff, jobject outbuf, jint outoff)
 {
-    void* in = (*env)->GetDirectBufferAddress(env, inbuf);
-    void* out = (*env)->GetDirectBufferAddress(env, outbuf);
+    char* in = (*env)->GetDirectBufferAddress(env, inbuf);
+    char* out = (*env)->GetDirectBufferAddress(env, outbuf);
     if (in == NULL) {
         (*env)->FatalError(env, "invalid buffer in");
     }
     if (out == NULL) {
         (*env)->FatalError(env, "invalid buffer out");
     }
-    return DftiComputeBackward((DFTI_DESCRIPTOR_HANDLE) handle, in, out);
+    return DftiComputeBackward((DFTI_DESCRIPTOR_HANDLE) handle, &in[inoff], &out[outoff]);
 }

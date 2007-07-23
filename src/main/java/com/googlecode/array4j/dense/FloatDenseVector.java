@@ -41,6 +41,10 @@ public final class FloatDenseVector extends AbstractFloatDense<FloatDenseVector>
         data.put(values);
     }
 
+    public FloatDenseVector(final Storage storage, final float... values) {
+        this(Orientation.DEFAULT_FOR_VECTOR, storage, values);
+    }
+
     @Override
     public FloatDenseVector asVector() {
         return this;

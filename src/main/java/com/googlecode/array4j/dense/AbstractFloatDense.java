@@ -27,7 +27,7 @@ public abstract class AbstractFloatDense<M extends FloatMatrix<M, FloatDenseVect
 
     private static final int FLOAT_BYTES = Float.SIZE >>> 3;
 
-    protected static FloatBuffer createFloatBuffer(final int size, final Storage storage) {
+    public static FloatBuffer createFloatBuffer(final int size, final Storage storage) {
         if (storage.equals(Storage.DIRECT)) {
             final ByteBuffer buffer = ByteBuffer.allocateDirect(size * ELEMENT_SIZE * FLOAT_BYTES);
             buffer.order(ByteOrder.nativeOrder());
@@ -145,6 +145,14 @@ public abstract class AbstractFloatDense<M extends FloatMatrix<M, FloatDenseVect
 
     public final float get(final int row, final int column) {
         return data.get(elementOffset(row, column));
+    }
+
+    public final boolean hasArray() {
+        return data.hasArray();
+    }
+
+    public final boolean isDirect() {
+        return data.isDirect();
     }
 
     public final int offset() {
