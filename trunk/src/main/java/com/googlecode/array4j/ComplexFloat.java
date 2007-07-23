@@ -49,6 +49,10 @@ public final class ComplexFloat implements Complex<ComplexFloat> {
 
     @Override
     public String toString() {
-        return real + " + j" + imag;
+        if (imag >= 0) {
+            return real + " + j" + imag;
+        } else {
+            return real + " - j" + Math.abs(imag);
+        }
     }
 }

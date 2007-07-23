@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
+import java.util.Arrays;
 
 import org.junit.Test;
 
@@ -17,37 +18,17 @@ public final class DftiTest {
     }
 
     @Test
-    public void test() throws DftiException {
-        final int[] lengths = new int[]{3};
-        DftiDescriptor desc = new DftiDescriptor(DftiConfigValue.SINGLE, DftiConfigValue.REAL, lengths);
-        desc.commit();
-        FloatBuffer inout = createFloatBuffer(3);
-        inout.put(0, 1.0f);
-        inout.put(1, 2.0f);
-        inout.put(2, 3.0f);
-        desc.computeForward(inout);
-        desc.free();
-
-        System.out.println(inout.get(0));
-        System.out.println(inout.get(1));
-        System.out.println(inout.get(2));
-    }
-
-    @Test
-    public void testDescriptor() throws DftiException {
-        final int[] lengths = new int[]{4, 5};
+    public void testDescriptorConstructor() throws DftiException {
+        final int[] lengths = new int[]{1};
         DftiDescriptor desc = new DftiDescriptor(DftiConfigValue.SINGLE, DftiConfigValue.REAL, lengths);
         assertEquals(lengths.length, desc.getIntValue(DftiConfigParam.DIMENSION));
-        // TODO default descriptor name returns garbage instead of empty string
-        desc.setValue(DftiConfigParam.DESCRIPTOR_NAME, "hello");
-        assertEquals("hello", desc.getStringValue(DftiConfigParam.DESCRIPTOR_NAME));
+        assertEquals("", desc.getStringValue(DftiConfigParam.DESCRIPTOR_NAME));
         assertTrue(desc.getStringValue(DftiConfigParam.VERSION).startsWith("Intel"));
         assertEquals(DftiConfigValue.UNCOMMITTED, desc.getValue(DftiConfigParam.COMMIT_STATUS));
         assertEquals(1.0f, desc.getFloatValue(DftiConfigParam.FORWARD_SCALE));
         assertEquals(1.0f, desc.getFloatValue(DftiConfigParam.BACKWARD_SCALE));
         assertEquals(1, desc.getIntValue(DftiConfigParam.NUMBER_OF_TRANSFORMS));
-        // TODO this crashes
-//        assertEquals(1, desc.getIntValue(DftiConfigParam.NUMBER_OF_USER_THREADS));
+        assertEquals(1, desc.getIntValue(DftiConfigParam.NUMBER_OF_USER_THREADS));
         assertEquals(0, desc.getIntValue(DftiConfigParam.INPUT_DISTANCE));
         assertEquals(0, desc.getIntValue(DftiConfigParam.OUTPUT_DISTANCE));
         assertEquals(DftiConfigValue.INPLACE, desc.getValue(DftiConfigParam.PLACEMENT));
@@ -63,6 +44,79 @@ public final class DftiTest {
 //        System.out.println(Arrays.toString(desc.getIntArrayValue(DftiConfigParam.OUTPUT_STRIDES)));
 
         desc.commit();
+        assertEquals(DftiConfigValue.COMMITTED, desc.getValue(DftiConfigParam.COMMIT_STATUS));
+        desc.free();
+    }
+
+    @Test
+    public void testDescriptorSetValue() throws DftiException {
+        DftiDescriptor desc = new DftiDescriptor(DftiConfigValue.SINGLE, DftiConfigValue.REAL, new int[]{1});
+        desc.setValue(DftiConfigParam.DESCRIPTOR_NAME, "hello");
+        assertEquals("hello", desc.getStringValue(DftiConfigParam.DESCRIPTOR_NAME));
+        desc.commit();
+        desc.free();
+    }
+
+    @Test
+    public void testSingleComplexInPlace() throws DftiException {
+        final int[] lengths = new int[]{3};
+        DftiDescriptor desc = new DftiDescriptor(DftiConfigValue.SINGLE, DftiConfigValue.COMPLEX, lengths);
+        desc.setValue(DftiConfigParam.FORWARD_SCALE, 1.0f);
+        desc.setValue(DftiConfigParam.BACKWARD_SCALE, 1.0f / lengths[0]);
+        desc.commit();
+        FloatBuffer inout = createFloatBuffer(6);
+        inout.put(0, 1.0f);
+        inout.put(2, 2.0f);
+        inout.put(4, 3.0f);
+
+        desc.computeForward(inout, 0);
+        double delta = 1.0e-6;
+        assertEquals(6.0f, inout.get(0), delta);
+        assertEquals(0.0f, inout.get(1), delta);
+        assertEquals(-1.5f, inout.get(2), delta);
+        assertEquals(0.8660254f, inout.get(3), delta);
+        assertEquals(-1.5f, inout.get(4), delta);
+        assertEquals(-0.8660254f, inout.get(5), delta);
+
+        desc.computeBackward(inout, 0);
+        assertEquals(1.0f, inout.get(0), delta);
+        assertEquals(0.0f, inout.get(1), delta);
+        assertEquals(2.0f, inout.get(2), delta);
+        assertEquals(0.0f, inout.get(3), delta);
+        assertEquals(3.0f, inout.get(4), delta);
+        assertEquals(0.0f, inout.get(5), delta);
+
+        desc.free();
+    }
+
+    @Test
+    public void testSingleComplexOutOfPlace() throws DftiException {
+        final int[] lengths = new int[]{3};
+        DftiDescriptor desc = new DftiDescriptor(DftiConfigValue.SINGLE, DftiConfigValue.REAL, lengths);
+        desc.setValue(DftiConfigParam.FORWARD_SCALE, 1.0f);
+        desc.setValue(DftiConfigParam.BACKWARD_SCALE, 1.0f / lengths[0]);
+        desc.setValue(DftiConfigParam.PLACEMENT, DftiConfigValue.NOT_INPLACE);
+        desc.commit();
+
+        FloatBuffer in = createFloatBuffer(3);
+        in.put(0, 1.0f);
+        in.put(1, 2.0f);
+        in.put(2, 3.0f);
+
+        FloatBuffer out = createFloatBuffer(6);
+        desc.computeForward(in, 0, out, 0);
+        double delta = 1.0e-6;
+
+        float[] values = new float[6];
+        System.out.println(Arrays.toString(values));
+
+        assertEquals(6.0f, out.get(0), delta);
+        assertEquals(0.0f, out.get(1), delta);
+        assertEquals(-1.5f, out.get(2), delta);
+        assertEquals(0.8660254f, out.get(3), delta);
+//        assertEquals(-1.5f, out.get(4), delta);
+//        assertEquals(-0.8660254f, out.get(5), delta);
+
         desc.free();
     }
 }
