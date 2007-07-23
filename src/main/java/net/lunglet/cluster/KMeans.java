@@ -1,6 +1,5 @@
 package net.lunglet.cluster;
 
-import java.util.Arrays;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutionException;
@@ -81,6 +80,7 @@ public final class KMeans<T> {
                 };
             }
         };
+        // TODO need to provide a way to shut down this stuff
         CompletionService<KMeansTaskResult> completionService = new ExecutorCompletionService<KMeansTaskResult>(
                 Executors.newFixedThreadPool(4));
         return new KMeans<FloatMatrix<?, ?>>(completionService, taskFactory);
@@ -189,11 +189,11 @@ public final class KMeans<T> {
         return centroids;
     }
 
-    public double train(final FloatMatrix<?, ?> centroids, final T... data) throws InterruptedException,
+    private double train(final FloatMatrix<?, ?> centroids, final T... data) throws InterruptedException,
             ExecutionException {
         FloatDenseMatrix centroidsCopy = new FloatDenseMatrix(centroids);
         for (int i = 0; i < data.length; i++) {
-            // TODO task should copy its arguments, not depend on who
+            // TODO task should probably copy its arguments, not depend on who
             // creates it to do so
             KMeansTask task = taskFactory.createTask(data[i], centroidsCopy);
             cs.submit(task);
@@ -219,9 +219,9 @@ public final class KMeans<T> {
             totalDistortion += result.totalDistortion;
         }
 
+        // check that all clusters still contain some data
         for (int i = 0; i < n.length; i++) {
             if (n[i] == 0) {
-                System.out.println(Arrays.toString(n));
                 throw new RuntimeException("cluster " + i + " became emtpy");
             }
         }
@@ -232,15 +232,17 @@ public final class KMeans<T> {
     public FloatDenseMatrix train(final int iterations, final FloatMatrix<?, ?> initialCentroids, final T... data)
             throws InterruptedException, ExecutionException {
         FloatDenseMatrix centroids = new FloatDenseMatrix(initialCentroids);
-        double prevDistortion = Double.POSITIVE_INFINITY;
+        FloatDenseMatrix bestCentroids = null;
+        double bestDistortion = Double.POSITIVE_INFINITY;
         for (int iter = 0; iter < iterations; iter++) {
+            FloatDenseMatrix oldCentroids = new FloatDenseMatrix(centroids);
+            // this returns the distortion of the old centroids
             double distortion = train(centroids, data);
-            System.out.println(distortion);
-            if (distortion > prevDistortion) {
-                throw new RuntimeException("distortion increased");
+            if (distortion < bestDistortion) {
+                bestCentroids = oldCentroids;
+                bestDistortion = distortion;
             }
-            prevDistortion = distortion;
         }
-        return centroids;
+        return bestCentroids;
     }
 }
