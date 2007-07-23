@@ -9,6 +9,7 @@ import com.googlecode.array4j.dense.FloatDenseVector;
 
 public final class FloatBLAS {
     static {
+        // TODO try to detect from MKL DLL using MKLGetVersion
         System.loadLibrary("array4j");
     }
 

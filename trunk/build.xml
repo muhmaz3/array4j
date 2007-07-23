@@ -5,6 +5,8 @@
 		<mkdir dir="src/generated/native" />
 		<javah destdir="${src.generated.native}" classpath="eclipse-classes">
 			<class name="com.googlecode.array4j.FloatBLAS" />
+			<class name="net.lunglet.mkl.fft.DftiDescriptor" />
+			<class name="net.lunglet.mkl.fft.DftiError" />
 		</javah>
 	</target>
 </project>
