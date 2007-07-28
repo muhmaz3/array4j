@@ -6,7 +6,6 @@ import static org.junit.Assert.assertTrue;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
-import java.util.Arrays;
 
 import org.junit.Test;
 
@@ -25,8 +24,8 @@ public final class DftiTest {
         assertEquals("", desc.getStringValue(DftiConfigParam.DESCRIPTOR_NAME));
         assertTrue(desc.getStringValue(DftiConfigParam.VERSION).startsWith("Intel"));
         assertEquals(DftiConfigValue.UNCOMMITTED, desc.getValue(DftiConfigParam.COMMIT_STATUS));
-        assertEquals(1.0f, desc.getFloatValue(DftiConfigParam.FORWARD_SCALE));
-        assertEquals(1.0f, desc.getFloatValue(DftiConfigParam.BACKWARD_SCALE));
+        assertEquals(1.0f, desc.getFloatValue(DftiConfigParam.FORWARD_SCALE), 0.0);
+        assertEquals(1.0f, desc.getFloatValue(DftiConfigParam.BACKWARD_SCALE), 0.0);
         assertEquals(1, desc.getIntValue(DftiConfigParam.NUMBER_OF_TRANSFORMS));
         assertEquals(1, desc.getIntValue(DftiConfigParam.NUMBER_OF_USER_THREADS));
         assertEquals(0, desc.getIntValue(DftiConfigParam.INPUT_DISTANCE));

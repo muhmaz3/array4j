@@ -32,14 +32,14 @@ public final class KMeansTest {
         assertEquals(initialCentroids, centroids);
     }
 
-    private void testRandom() throws InterruptedException, ExecutionException {
+    @Test
+    public void testRandom() throws InterruptedException, ExecutionException {
         KMeans<FloatMatrix<?, ?>> kmeans = KMeans.create();
-        while (true) {
+        for (int i = 0; i < 10; i++) {
             Random rng = new Random(System.currentTimeMillis());
             int ndata = 1000 + rng.nextInt(2000);
             int dimension = 1 + rng.nextInt(10);
             int maxCentroids = 1 + rng.nextInt(10);
-
             long seed = System.currentTimeMillis();
             rng = new Random(seed);
             System.out.println(String.format("%d %d %d %d", seed, ndata, dimension, maxCentroids));
@@ -48,7 +48,6 @@ public final class KMeansTest {
             FloatMatrix<?, ?> centroids = kmeans.chooseCentroids(maxCentroids, data);
             int iterations = 100;
             centroids = kmeans.train(iterations, centroids, data);
-            System.out.println("-----------");
         }
     }
 }

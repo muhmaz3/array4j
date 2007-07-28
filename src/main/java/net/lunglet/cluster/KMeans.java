@@ -3,8 +3,6 @@ package net.lunglet.cluster;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorCompletionService;
-import java.util.concurrent.Executors;
 
 import com.googlecode.array4j.FloatMatrix;
 import com.googlecode.array4j.FloatMatrixUtils;
@@ -80,9 +78,7 @@ public final class KMeans<T> {
                 };
             }
         };
-        // TODO need to provide a way to shut down this stuff
-        CompletionService<KMeansTaskResult> completionService = new ExecutorCompletionService<KMeansTaskResult>(
-                Executors.newFixedThreadPool(4));
+        CompletionService<KMeansTaskResult> completionService = CompletionServiceFactory.createCompletionService();
         return new KMeans<FloatMatrix<?, ?>>(completionService, taskFactory);
     }
 

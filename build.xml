@@ -7,6 +7,8 @@
 			<class name="com.googlecode.array4j.blas.MKLFloatBLAS" />
 			<class name="net.lunglet.mkl.fft.DftiDescriptor" />
 			<class name="net.lunglet.mkl.fft.DftiError" />
+			<class name="com.intel.mkl.DFTIDESCRIPTORHANDLE" />
+			<class name="com.intel.mkl.DFTI" />
 		</javah>
 	</target>
 </project>
