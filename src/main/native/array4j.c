@@ -1,5 +1,6 @@
-#include "com_googlecode_array4j_FloatBLAS.h"
+#include "com_googlecode_array4j_blas_MKLFloatBLAS.h"
 #include "net_lunglet_mkl_fft_DftiDescriptor.h"
+#include "net_lunglet_mkl_fft_DftiError.h"
 
 #include <mkl.h>
 #include <stdlib.h>
@@ -19,8 +20,8 @@ JNIEXPORT jfloat JNICALL Java_com_googlecode_array4j_FloatBLAS_sdot
     return cblas_sdot(n, &xp[offx], incx, &yp[offy], incy);
 }
 
-JNIEXPORT void JNICALL Java_com_googlecode_array4j_FloatBLAS_scopy
-  (JNIEnv *env, jclass clazz, jint n, jobject x, jint offx, jint incx, jobject y, jint offy, jint incy)
+JNIEXPORT void JNICALL Java_com_googlecode_array4j_blas_MKLFloatBLAS_scopy
+    (JNIEnv *env, jclass clazz, jint n, jobject x, jint offx, jint incx, jobject y, jint offy, jint incy)
 {
     jfloat* xp = (jfloat*) (*env)->GetDirectBufferAddress(env, x);
     jfloat* yp = (jfloat*) (*env)->GetDirectBufferAddress(env, y);

@@ -1,4 +1,4 @@
-package com.googlecode.array4j;
+package com.googlecode.array4j.blas;
 
 import static org.junit.Assert.assertEquals;
 
@@ -10,6 +10,9 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
+import com.googlecode.array4j.FloatMatrix;
+import com.googlecode.array4j.FloatVector;
+import com.googlecode.array4j.Storage;
 import com.googlecode.array4j.dense.FloatDenseMatrixFactory;
 import com.googlecode.array4j.dense.FloatDenseVector;
 
@@ -17,26 +20,29 @@ import com.googlecode.array4j.dense.FloatDenseVector;
 public final class FloatBLASTest<M extends FloatMatrix<M, V>, V extends FloatVector<V>> {
     @Parameters
     public static Collection<?> data() {
-        return Arrays.asList(new Object[][]{{new FloatDenseMatrixFactory(Storage.JAVA)},
-                {new FloatDenseMatrixFactory(Storage.DIRECT)}});
+        return Arrays.asList(new Object[][]{{new FloatDenseMatrixFactory(Storage.JAVA), JavaFloatBLAS.getInstance()},
+                {new FloatDenseMatrixFactory(Storage.DIRECT), MKLFloatBLAS.getInstance()}});
     }
 
     private final FloatDenseMatrixFactory factory;
 
-    public FloatBLASTest(final FloatDenseMatrixFactory factory) {
+    private final FloatBLAS blas;
+
+    public FloatBLASTest(final FloatDenseMatrixFactory factory, final FloatBLAS blas) {
         this.factory = factory;
+        this.blas = blas;
     }
 
     @Test
     public void testDot() {
         final FloatDenseVector x = factory.createRowVector(1.0f, 2.0f, 3.0f);
         final FloatDenseVector y = factory.createRowVector(3.0f, 2.0f, 1.0f);
-        assertEquals(10.0f, FloatBLAS.dot(x, y));
+        assertEquals(10.0f, blas.dot(x, y));
     }
 
-    // @Test
-    // public void testIamax() {
-    // final FloatDenseVector x = factory.createRowVector(1.0f, 3.0f, 2.0f);
-    // assertEquals(2, FloatBLAS.iamax(x));
-    // }
+     @Test
+     public void testIamax() {
+         final FloatDenseVector x = factory.createRowVector(1.0f, 3.0f, 2.0f);
+//         assertEquals(2, blas.iamax(x));
+     }
 }
