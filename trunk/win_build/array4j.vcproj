@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\src\generated\native;&quot;C:\Program Files\Intel\MKL\9.0\include&quot;;&quot;C:\Program Files\Java\jdk1.6.0_01\include&quot;;&quot;C:\Program Files\Java\jdk1.6.0_01\include\win32&quot;"
+				AdditionalIncludeDirectories="..\src\generated\native;&quot;C:\Program Files\Intel\MKL\9.1\include&quot;;&quot;C:\Program Files\Java\jdk1.6.0_01\include&quot;;&quot;C:\Program Files\Java\jdk1.6.0_01\include\win32&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;ARRAY4J_EXPORTS"
 				MinimalRebuild="false"
 				BasicRuntimeChecks="3"
@@ -61,9 +61,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="mkl_c.lib libguide.lib"
+				AdditionalDependencies="mkl_c_dll.lib libguide40.lib"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;C:\Program Files\Intel\MKL\9.0\ia32\lib&quot;"
+				AdditionalLibraryDirectories="&quot;C:\Program Files\Intel\MKL\9.1\ia32\lib&quot;"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				TargetMachine="1"
@@ -118,7 +118,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\src\generated\native;&quot;C:\Program Files\Intel\MKL\9.0\include&quot;;&quot;C:\Program Files\Java\jdk1.6.0_01\include&quot;;&quot;C:\Program Files\Java\jdk1.6.0_01\include\win32&quot;"
+				AdditionalIncludeDirectories="..\src\generated\native;&quot;C:\Program Files\Intel\MKL\9.1\include&quot;;&quot;C:\Program Files\Java\jdk1.6.0_01\include&quot;;&quot;C:\Program Files\Java\jdk1.6.0_01\include\win32&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;ARRAY4J_EXPORTS"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -137,9 +137,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="mkl_c.lib libguide.lib"
+				AdditionalDependencies="mkl_c_dll.lib libguide40.lib"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;C:\Program Files\Intel\MKL\9.0\ia32\lib&quot;"
+				AdditionalLibraryDirectories="&quot;C:\Program Files\Intel\MKL\9.1\ia32\lib&quot;"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -184,6 +184,10 @@
 				RelativePath="..\src\main\native\array4j.c"
 				>
 			</File>
+			<File
+				RelativePath="..\src\main\native\DFTIDESCRIPTORHANDLE.c"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -192,6 +196,14 @@
 			>
 			<File
 				RelativePath="..\src\generated\native\com_googlecode_array4j_blas_MKLFloatBLAS.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\generated\native\com_intel_mkl_DFTI.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\generated\native\com_intel_mkl_DFTIDESCRIPTORHANDLE.h"
 				>
 			</File>
 			<File
