@@ -1,6 +1,7 @@
 package net.lunglet.sound.sampled;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -44,18 +45,6 @@ public final class SphereAudioFileReaderTest {
         return md5StringBuilder.toString();
     }
 
-    @Test
-    public void testAudioFileReaderRegistered() {
-        List<?> providers = JDK13Services.getProviders(AudioFileReader.class);
-        boolean found = false;
-        for (Object provider : providers) {
-            if (provider instanceof SphereAudioFileReader) {
-                found = true;
-            }
-        }
-        assertTrue(found);
-    }
-
     private AudioInputStream getAudioInputStream(final String name, final int size, final String md5sum)
             throws IOException, UnsupportedAudioFileException {
         InputStream in = this.getClass().getResourceAsStream(name);
@@ -70,15 +59,36 @@ public final class SphereAudioFileReaderTest {
     }
 
     @Test
+    public void testAudioFileReaderRegistered() {
+        List<?> providers = JDK13Services.getProviders(AudioFileReader.class);
+        boolean found = false;
+        for (Object provider : providers) {
+            if (provider instanceof SphereAudioFileReader) {
+                found = true;
+            }
+        }
+        assertTrue(found);
+    }
+
+    @Test
     public void testEx101() throws UnsupportedAudioFileException, IOException {
         AudioInputStream ais = getAudioInputStream("ex1_01.wav", 33024, "8650a5d1f1471f184b1cf3c3e3b2b29b");
+        assertEquals(16000, ais.getFrameLength());
         AudioFormat format = ais.getFormat();
+        assertEquals(1, format.getChannels());
+        assertEquals(16000.0f, format.getFrameRate(), 0.0);
+        assertEquals(2, format.getFrameSize());
+        assertFalse(format.isBigEndian());
+        assertEquals(16000.0f, format.getSampleRate(), 0.0);
+        assertEquals(16, format.getSampleSizeInBits());
+        assertFalse(format.isBigEndian());
     }
 
     @Test
     public void testEx110() throws UnsupportedAudioFileException, IOException {
         AudioInputStream ais = getAudioInputStream("ex1_10.wav", 33024, "6bc80e6a6d82ea4a69cbd133bdd2a3b9");
         AudioFormat format = ais.getFormat();
+        assertTrue(format.isBigEndian());
     }
 
     @Test
@@ -115,17 +125,18 @@ public final class SphereAudioFileReaderTest {
     public void testEx5() throws UnsupportedAudioFileException, IOException {
         AudioInputStream ais = getAudioInputStream("ex5.wav", 33024, "4e0c04f165bf30eed0bf0aea75d3cccc");
         AudioFormat format = ais.getFormat();
+        assertEquals(2, format.getChannels());
     }
 
     @Test
-    public void testEx5p() throws UnsupportedAudioFileException, IOException {
-        AudioInputStream ais = getAudioInputStream("ex5_p.wav", 65024, "4db87101722bc8086d103c2479ad6a5d");
+    public void testEx512() throws UnsupportedAudioFileException, IOException {
+        AudioInputStream ais = getAudioInputStream("ex5_12.wav", 17024, "8b19477ffdc4ed94abb65af950bb4cf8");
         AudioFormat format = ais.getFormat();
     }
 
     @Test
-    public void testEx5p01() throws UnsupportedAudioFileException, IOException {
-        AudioInputStream ais = getAudioInputStream("ex5_p01.wav", 65024, "6a59a8a072d735feda583787e8203a6a");
+    public void testEx512p() throws UnsupportedAudioFileException, IOException {
+        AudioInputStream ais = getAudioInputStream("ex5_12_p.wav", 33024, "9a49dabcc340912a76057b687c29d51a");
         AudioFormat format = ais.getFormat();
     }
 
@@ -154,20 +165,23 @@ public final class SphereAudioFileReaderTest {
     }
 
     @Test
-    public void testEx512() throws UnsupportedAudioFileException, IOException {
-        AudioInputStream ais = getAudioInputStream("ex5_12.wav", 17024, "8b19477ffdc4ed94abb65af950bb4cf8");
+    public void testEx5p() throws UnsupportedAudioFileException, IOException {
+        AudioInputStream ais = getAudioInputStream("ex5_p.wav", 65024, "4db87101722bc8086d103c2479ad6a5d");
         AudioFormat format = ais.getFormat();
+        assertEquals(2, format.getChannels());
     }
 
     @Test
-    public void testEx512p() throws UnsupportedAudioFileException, IOException {
-        AudioInputStream ais = getAudioInputStream("ex5_12_p.wav", 33024, "9a49dabcc340912a76057b687c29d51a");
+    public void testEx5p01() throws UnsupportedAudioFileException, IOException {
+        AudioInputStream ais = getAudioInputStream("ex5_p01.wav", 65024, "6a59a8a072d735feda583787e8203a6a");
         AudioFormat format = ais.getFormat();
+        assertEquals(2, format.getChannels());
     }
 
     @Test
     public void testEx6() throws UnsupportedAudioFileException, IOException {
         AudioInputStream ais = getAudioInputStream("ex6.wav", 65024, "20f533bb92c820e65f18a16ec0b85075");
         AudioFormat format = ais.getFormat();
+        assertEquals(4, format.getChannels());
     }
 }
