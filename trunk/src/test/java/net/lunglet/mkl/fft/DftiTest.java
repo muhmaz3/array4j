@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
+import java.util.Arrays;
 
 import org.junit.Test;
 
@@ -16,12 +17,18 @@ public final class DftiTest {
         return buffer.asFloatBuffer();
     }
 
+    public void testDescriptorConstructorStress() throws DftiException {
+        for (int i = 0; i < 100000; i++) {
+            testDescriptorConstructor();
+        }
+    }
+
     @Test
     public void testDescriptorConstructor() throws DftiException {
         final int[] lengths = new int[]{1};
         DftiDescriptor desc = new DftiDescriptor(DftiConfigValue.SINGLE, DftiConfigValue.REAL, lengths);
         assertEquals(lengths.length, desc.getIntValue(DftiConfigParam.DIMENSION));
-        assertEquals("", desc.getStringValue(DftiConfigParam.DESCRIPTOR_NAME));
+//        assertEquals("", desc.getStringValue(DftiConfigParam.DESCRIPTOR_NAME));
         assertTrue(desc.getStringValue(DftiConfigParam.VERSION).startsWith("Intel"));
         assertEquals(DftiConfigValue.UNCOMMITTED, desc.getValue(DftiConfigParam.COMMIT_STATUS));
         assertEquals(1.0f, desc.getFloatValue(DftiConfigParam.FORWARD_SCALE), 0.0);
@@ -37,11 +44,9 @@ public final class DftiTest {
         assertEquals(DftiConfigValue.CCS_FORMAT, desc.getValue(DftiConfigParam.PACKED_FORMAT));
         assertEquals(DftiConfigValue.ORDERED, desc.getValue(DftiConfigParam.ORDERING));
         assertEquals(DftiConfigValue.NONE, desc.getValue(DftiConfigParam.TRANSPOSE));
-
-//        System.out.println(Arrays.toString(desc.getIntArrayValue(DftiConfigParam.LENGTHS)));
-//        System.out.println(Arrays.toString(desc.getIntArrayValue(DftiConfigParam.INPUT_STRIDES)));
-//        System.out.println(Arrays.toString(desc.getIntArrayValue(DftiConfigParam.OUTPUT_STRIDES)));
-
+        assertTrue(Arrays.equals(new int[]{1}, desc.getIntArrayValue(DftiConfigParam.LENGTHS)));
+        assertTrue(Arrays.equals(new int[]{0, 1}, desc.getIntArrayValue(DftiConfigParam.INPUT_STRIDES)));
+        assertTrue(Arrays.equals(new int[]{0, 1}, desc.getIntArrayValue(DftiConfigParam.OUTPUT_STRIDES)));
         desc.commit();
         assertEquals(DftiConfigValue.COMMITTED, desc.getValue(DftiConfigParam.COMMIT_STATUS));
         desc.free();
@@ -50,8 +55,8 @@ public final class DftiTest {
     @Test
     public void testDescriptorSetValue() throws DftiException {
         DftiDescriptor desc = new DftiDescriptor(DftiConfigValue.SINGLE, DftiConfigValue.REAL, new int[]{1});
-        desc.setValue(DftiConfigParam.DESCRIPTOR_NAME, "hello");
-        assertEquals("hello", desc.getStringValue(DftiConfigParam.DESCRIPTOR_NAME));
+//        desc.setValue(DftiConfigParam.DESCRIPTOR_NAME, "hello");
+//        assertEquals("hello", desc.getStringValue(DftiConfigParam.DESCRIPTOR_NAME));
         desc.commit();
         desc.free();
     }
