@@ -106,10 +106,7 @@ public final class DftiTest {
         FloatBuffer out = createFloatBuffer(6);
         desc.computeForward(in, 0, out, 0);
         double delta = 1.0e-6;
-
         float[] values = new float[6];
-        System.out.println(Arrays.toString(values));
-
         assertEquals(6.0f, out.get(0), delta);
         assertEquals(0.0f, out.get(1), delta);
         assertEquals(-1.5f, out.get(2), delta);

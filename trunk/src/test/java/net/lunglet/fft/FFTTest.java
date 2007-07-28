@@ -32,8 +32,8 @@ public final class FFTTest {
     public void test() {
         FloatDenseVector x = new FloatDenseVector(storage, 1.0f, 2.0f, 3.0f);
         CFloatDenseVector y = fft.fft(x, x.size());
-        System.out.println(Arrays.toString(y.toArray()));
+//        System.out.println(Arrays.toString(y.toArray()));
         y = fft.fft(x, 4);
-        System.out.println(Arrays.toString(y.toArray()));
+//        System.out.println(Arrays.toString(y.toArray()));
     }
 }

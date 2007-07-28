@@ -191,7 +191,7 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\src\generated\native\com_googlecode_array4j_FloatBLAS.h"
+				RelativePath="..\src\generated\native\com_googlecode_array4j_blas_MKLFloatBLAS.h"
 				>
 			</File>
 			<File

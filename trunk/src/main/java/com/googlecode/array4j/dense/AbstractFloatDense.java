@@ -10,12 +10,14 @@ import java.util.Arrays;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 
-import com.googlecode.array4j.FloatBLAS;
 import com.googlecode.array4j.FloatMatrix;
 import com.googlecode.array4j.FloatVector;
 import com.googlecode.array4j.Orientation;
 import com.googlecode.array4j.Storage;
 import com.googlecode.array4j.VectorSupport;
+import com.googlecode.array4j.blas.FloatBLAS;
+import com.googlecode.array4j.blas.JavaFloatBLAS;
+import com.googlecode.array4j.blas.MKLFloatBLAS;
 
 public abstract class AbstractFloatDense<M extends FloatMatrix<M, FloatDenseVector>> extends
         AbstractDenseMatrix<M, FloatDenseVector, float[]> {
@@ -39,6 +41,8 @@ public abstract class AbstractFloatDense<M extends FloatMatrix<M, FloatDenseVect
 
     protected transient FloatBuffer data;
 
+    protected transient FloatBLAS blas;
+
     /**
      * Constructor for matrix with existing data.
      */
@@ -46,6 +50,7 @@ public abstract class AbstractFloatDense<M extends FloatMatrix<M, FloatDenseVect
             final int stride, final Orientation orientation) {
         super(ELEMENT_SIZE, rows, columns, offset, stride, orientation);
         this.data = data;
+        setBlas();
     }
 
     /**
@@ -63,6 +68,7 @@ public abstract class AbstractFloatDense<M extends FloatMatrix<M, FloatDenseVect
     public AbstractFloatDense(final int rows, final int columns, final Orientation orientation, final Storage storage) {
         super(ELEMENT_SIZE, rows, columns, DEFAULT_OFFSET, DEFAULT_STRIDE, orientation);
         this.data = createFloatBuffer(size, storage);
+        setBlas();
     }
 
     /**
@@ -131,7 +137,7 @@ public abstract class AbstractFloatDense<M extends FloatMatrix<M, FloatDenseVect
         FloatBuffer xdata = createFloatBuffer(1, storage());
         FloatDenseVector x = new FloatDenseVector(xdata, size, 0, 0, Orientation.DEFAULT_FOR_VECTOR);
         xdata.put(0, value);
-        FloatBLAS.copy(x, asVector());
+        blas.copy(x, asVector());
     }
 
     @Override
@@ -159,10 +165,21 @@ public abstract class AbstractFloatDense<M extends FloatMatrix<M, FloatDenseVect
         return offset;
     }
 
+    private void setBlas() {
+        // TODO might want to using ACML or other versions of BLAS too,
+        // depending on system properties
+        if (data.isDirect()) {
+            blas = MKLFloatBLAS.getInstance();
+        } else {
+            blas = JavaFloatBLAS.getInstance();
+        }
+    }
+
     private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
         Storage storage = (Storage) in.readObject();
         this.data = createFloatBuffer(size, storage);
+        setBlas();
         // TODO this stuff can fail when there are offsets and strides involved
         for (int i = 0; i < size; i++) {
             data.put(i, in.readFloat());
