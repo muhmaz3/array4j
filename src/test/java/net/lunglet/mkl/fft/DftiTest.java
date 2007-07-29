@@ -17,8 +17,9 @@ public final class DftiTest {
         return buffer.asFloatBuffer();
     }
 
+    @Test
     public void testDescriptorConstructorStress() throws DftiException {
-        for (int i = 0; i < 100000; i++) {
+        for (int i = 0; i < 10000; i++) {
             testDescriptorConstructor();
         }
     }
@@ -28,7 +29,7 @@ public final class DftiTest {
         final int[] lengths = new int[]{1};
         DftiDescriptor desc = new DftiDescriptor(DftiConfigValue.SINGLE, DftiConfigValue.REAL, lengths);
         assertEquals(lengths.length, desc.getIntValue(DftiConfigParam.DIMENSION));
-//        assertEquals("", desc.getStringValue(DftiConfigParam.DESCRIPTOR_NAME));
+        assertEquals("", desc.getStringValue(DftiConfigParam.DESCRIPTOR_NAME));
         assertTrue(desc.getStringValue(DftiConfigParam.VERSION).startsWith("Intel"));
         assertEquals(DftiConfigValue.UNCOMMITTED, desc.getValue(DftiConfigParam.COMMIT_STATUS));
         assertEquals(1.0f, desc.getFloatValue(DftiConfigParam.FORWARD_SCALE), 0.0);
@@ -55,8 +56,8 @@ public final class DftiTest {
     @Test
     public void testDescriptorSetValue() throws DftiException {
         DftiDescriptor desc = new DftiDescriptor(DftiConfigValue.SINGLE, DftiConfigValue.REAL, new int[]{1});
-//        desc.setValue(DftiConfigParam.DESCRIPTOR_NAME, "hello");
-//        assertEquals("hello", desc.getStringValue(DftiConfigParam.DESCRIPTOR_NAME));
+        desc.setValue(DftiConfigParam.DESCRIPTOR_NAME, "hello");
+        assertEquals("hello", desc.getStringValue(DftiConfigParam.DESCRIPTOR_NAME));
         desc.commit();
         desc.free();
     }

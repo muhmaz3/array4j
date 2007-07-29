@@ -65,8 +65,7 @@ public final class DftiDescriptor {
         DftiError.checkStatus(status);
         this.handle = handleHolder[0];
         // TODO initialize descriptor name to empty string
-        // TODO this crashes sometimes
-//        setValue(DftiConfigParam.DESCRIPTOR_NAME, "");
+        setValue(DftiConfigParam.DESCRIPTOR_NAME, "");
     }
 
     /**

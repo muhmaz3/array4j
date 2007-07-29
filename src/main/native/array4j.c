@@ -74,7 +74,7 @@ JNIEXPORT jlong JNICALL Java_net_lunglet_mkl_fft_DftiDescriptor_createDescriptor
         jint lengths2[7];
         jsize i;
         if (dimension > 7) {
-            (*env)->FatalError(env,"wrong dimension");
+            (*env)->FatalError(env, "wrong dimension");
         }
         for (i = 0; i < dimension; i++) {
             lengths2[i] = lengths1[i];
@@ -125,8 +125,15 @@ JNIEXPORT jlong JNICALL Java_net_lunglet_mkl_fft_DftiDescriptor_setValue__JI_3I
 JNIEXPORT jlong JNICALL Java_net_lunglet_mkl_fft_DftiDescriptor_setValue__JILjava_lang_String_2
   (JNIEnv *env, jclass clazz, jlong handle, jint param, jstring value)
 {
-    return DftiSetValue(DFTI_DESCRIPTOR_HANDLE_PTR(handle), param,
-        (*env)->GetStringUTFChars(env, value, NULL));
+    const char* str;
+    jlong status;
+    str = (*env)->GetStringUTFChars(env, value, NULL);
+    if (str == NULL) {
+        (*env)->FatalError(env, "str == NULL");
+    }
+    status = DftiSetValue(DFTI_DESCRIPTOR_HANDLE_PTR(handle), param, str);
+    (*env)->ReleaseStringUTFChars(env, value, str);
+    return status;
 }
 
 JNIEXPORT jboolean JNICALL Java_net_lunglet_mkl_fft_DftiError_errorClass
