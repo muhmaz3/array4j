@@ -7,6 +7,7 @@ import java.util.Arrays;
 
 import net.lunglet.mkl.fft.DftiException;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 public final class DFTITest {
@@ -46,10 +47,38 @@ public final class DFTITest {
         DFTI.SetValue(handle, DFTI.BACKWARD_SCALE, 1.0f / 3);
         DFTI.CommitDescriptor(handle);
         float[] inout = {1.0f, 0.0f, 2.0f, 0.0f, 3.0f, 0.0f};
+        double delta = 1.0e-6;
+
         DFTI.ComputeForward(handle, inout);
-//        System.out.println(Arrays.toString(inout));
+        assertEquals(6.0f, inout[0], delta);
+        assertEquals(0.0f, inout[1], delta);
+        assertEquals(-1.5f, inout[2], delta);
+        assertEquals(0.8660254f, inout[3], delta);
+        assertEquals(-1.5f, inout[4], delta);
+        assertEquals(-0.8660254f, inout[5], delta);
+
         DFTI.ComputeBackward(handle, inout);
-//        System.out.println(Arrays.toString(inout));
+        assertEquals(1.0f, inout[0], delta);
+        assertEquals(0.0f, inout[1], delta);
+        assertEquals(2.0f, inout[2], delta);
+        assertEquals(0.0f, inout[3], delta);
+        assertEquals(3.0f, inout[4], delta);
+        assertEquals(0.0f, inout[5], delta);
+
+        DFTI.FreeDescriptor(handle);
+    }
+
+    @Ignore
+    public void testSingleComplexOutOfPlace() throws DftiException {
+        DFTI.DESCRIPTOR_HANDLE handle = DFTI.CreateDescriptor(DFTI.SINGLE, DFTI.COMPLEX, 1, 3);
+        DFTI.SetValue(handle, DFTI.FORWARD_SCALE, 1.0f);
+        DFTI.SetValue(handle, DFTI.PLACEMENT, DFTI.NOT_INPLACE);
+        DFTI.CommitDescriptor(handle);
+        float[] in = {1.0f, 2.0f, 3.0f};
+        float[] out = new float[6];
+        DFTI.ComputeForward(handle, in, out);
+        // TODO these values are wrong
+        System.out.println(Arrays.toString(out));
         DFTI.FreeDescriptor(handle);
     }
 }

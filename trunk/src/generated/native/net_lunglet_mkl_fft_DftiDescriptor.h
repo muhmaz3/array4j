@@ -18,34 +18,34 @@ JNIEXPORT jlong JNICALL Java_net_lunglet_mkl_fft_DftiDescriptor_commitDescriptor
 /*
  * Class:     net_lunglet_mkl_fft_DftiDescriptor
  * Method:    computeBackward
- * Signature: (JLjava/nio/Buffer;I)J
+ * Signature: (JLjava/nio/Buffer;)J
  */
-JNIEXPORT jlong JNICALL Java_net_lunglet_mkl_fft_DftiDescriptor_computeBackward__JLjava_nio_Buffer_2I
-  (JNIEnv *, jclass, jlong, jobject, jint);
+JNIEXPORT jlong JNICALL Java_net_lunglet_mkl_fft_DftiDescriptor_computeBackward__JLjava_nio_Buffer_2
+  (JNIEnv *, jclass, jlong, jobject);
 
 /*
  * Class:     net_lunglet_mkl_fft_DftiDescriptor
  * Method:    computeBackward
- * Signature: (JLjava/nio/Buffer;ILjava/nio/Buffer;I)J
+ * Signature: (JLjava/nio/Buffer;Ljava/nio/Buffer;)J
  */
-JNIEXPORT jlong JNICALL Java_net_lunglet_mkl_fft_DftiDescriptor_computeBackward__JLjava_nio_Buffer_2ILjava_nio_Buffer_2I
-  (JNIEnv *, jclass, jlong, jobject, jint, jobject, jint);
+JNIEXPORT jlong JNICALL Java_net_lunglet_mkl_fft_DftiDescriptor_computeBackward__JLjava_nio_Buffer_2Ljava_nio_Buffer_2
+  (JNIEnv *, jclass, jlong, jobject, jobject);
 
 /*
  * Class:     net_lunglet_mkl_fft_DftiDescriptor
  * Method:    computeForward
- * Signature: (JLjava/nio/Buffer;I)J
+ * Signature: (JLjava/nio/Buffer;)J
  */
-JNIEXPORT jlong JNICALL Java_net_lunglet_mkl_fft_DftiDescriptor_computeForward__JLjava_nio_Buffer_2I
-  (JNIEnv *, jclass, jlong, jobject, jint);
+JNIEXPORT jlong JNICALL Java_net_lunglet_mkl_fft_DftiDescriptor_computeForward__JLjava_nio_Buffer_2
+  (JNIEnv *, jclass, jlong, jobject);
 
 /*
  * Class:     net_lunglet_mkl_fft_DftiDescriptor
  * Method:    computeForward
- * Signature: (JLjava/nio/Buffer;ILjava/nio/Buffer;I)J
+ * Signature: (JLjava/nio/Buffer;Ljava/nio/Buffer;)J
  */
-JNIEXPORT jlong JNICALL Java_net_lunglet_mkl_fft_DftiDescriptor_computeForward__JLjava_nio_Buffer_2ILjava_nio_Buffer_2I
-  (JNIEnv *, jclass, jlong, jobject, jint, jobject, jint);
+JNIEXPORT jlong JNICALL Java_net_lunglet_mkl_fft_DftiDescriptor_computeForward__JLjava_nio_Buffer_2Ljava_nio_Buffer_2
+  (JNIEnv *, jclass, jlong, jobject, jobject);
 
 /*
  * Class:     net_lunglet_mkl_fft_DftiDescriptor
