@@ -1,5 +1,7 @@
 package net.lunglet.fft;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -8,6 +10,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
+import com.googlecode.array4j.ComplexFloat;
 import com.googlecode.array4j.Storage;
 import com.googlecode.array4j.dense.CFloatDenseVector;
 import com.googlecode.array4j.dense.FloatDenseVector;
@@ -32,8 +35,13 @@ public final class FFTTest {
     public void test() {
         FloatDenseVector x = new FloatDenseVector(storage, 1.0f, 2.0f, 3.0f);
         CFloatDenseVector y = fft.fft(x, x.size());
-//        System.out.println(Arrays.toString(y.toArray()));
+        assertEquals(new ComplexFloat(6.0f, 0.0f), y.get(0));
+        assertEquals(new ComplexFloat(-1.5f, 0.8660254f), y.get(1));
+        assertEquals(new ComplexFloat(-1.5f, -0.8660254f), y.get(2));
         y = fft.fft(x, 4);
-//        System.out.println(Arrays.toString(y.toArray()));
+        assertEquals(new ComplexFloat(6.0f, 0.0f), y.get(0));
+        assertEquals(new ComplexFloat(-2.0f, -2.0f), y.get(1));
+        assertEquals(new ComplexFloat(2.0f, 0.0f), y.get(2));
+        assertEquals(new ComplexFloat(-2.0f, 2.0f), y.get(3));
     }
 }
