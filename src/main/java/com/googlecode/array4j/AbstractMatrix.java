@@ -1,5 +1,6 @@
 package com.googlecode.array4j;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -93,5 +94,9 @@ public abstract class AbstractMatrix<M extends Matrix<M, V>, V extends Vector<V>
                 };
             }
         };
+    }
+
+    public final boolean isSquare() {
+        return rows == columns;
     }
 }
