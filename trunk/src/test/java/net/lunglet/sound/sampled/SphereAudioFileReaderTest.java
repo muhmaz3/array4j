@@ -11,12 +11,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
+import javax.sound.sampled.AudioFormat.Encoding;
 import javax.sound.sampled.spi.AudioFileReader;
 
 import org.junit.Test;
@@ -26,6 +29,28 @@ import com.sun.media.sound.JDK13Services;
 public final class SphereAudioFileReaderTest {
     /** Maximum size for any of the test segments. */
     private static final int MAX_SIZE = 131072;
+
+    private static final class SegmentInfo {
+        private final int size;
+
+        private final String md5sum;
+
+        public SegmentInfo(final int size, final String md5sum) {
+            this.size = size;
+            this.md5sum = md5sum;
+        }
+    }
+
+    private static final Map<String, SegmentInfo> TEST_SEGMENTS = new HashMap<String, SegmentInfo>();
+
+    static {
+        // TODO add other test segments to this map
+        TEST_SEGMENTS.put("ex1_01.wav", new SegmentInfo(33024, "8650a5d1f1471f184b1cf3c3e3b2b29b"));
+        TEST_SEGMENTS.put("ex1_10.wav", new SegmentInfo(33024, "6bc80e6a6d82ea4a69cbd133bdd2a3b9"));
+        TEST_SEGMENTS.put("ex4.wav", new SegmentInfo(17024, "73e22ce2e73ac6f110b7ebe140fcc69b"));
+        TEST_SEGMENTS.put("ex4_01.wav", new SegmentInfo(33024, "b4deddb6704665087f0ada78211d44c5"));
+        TEST_SEGMENTS.put("ex4_10.wav", new SegmentInfo(33024, "eda37911758e16afbf4de61db3a76e39"));
+    }
 
     private static String md5sum(final InputStream in, final int size) throws IOException {
         DataInputStream dis = new DataInputStream(in);
@@ -45,9 +70,15 @@ public final class SphereAudioFileReaderTest {
         return md5StringBuilder.toString();
     }
 
-    private AudioInputStream getAudioInputStream(final String name, final int size, final String md5sum)
+    static AudioInputStream getAudioInputStream(final String name) throws IOException, UnsupportedAudioFileException {
+        SegmentInfo info = TEST_SEGMENTS.get(name);
+        assertNotNull(info);
+        return getAudioInputStream(name, info.size, info.md5sum);
+    }
+
+    private static AudioInputStream getAudioInputStream(final String name, final int size, final String md5sum)
             throws IOException, UnsupportedAudioFileException {
-        InputStream in = this.getClass().getResourceAsStream(name);
+        InputStream in = SphereAudioFileReaderTest.class.getResourceAsStream(name);
         assertNotNull(in);
         BufferedInputStream bis = new BufferedInputStream(in);
         bis.mark(MAX_SIZE);
@@ -72,7 +103,7 @@ public final class SphereAudioFileReaderTest {
 
     @Test
     public void testEx101() throws UnsupportedAudioFileException, IOException {
-        AudioInputStream ais = getAudioInputStream("ex1_01.wav", 33024, "8650a5d1f1471f184b1cf3c3e3b2b29b");
+        AudioInputStream ais = getAudioInputStream("ex1_01.wav");
         assertEquals(16000, ais.getFrameLength());
         AudioFormat format = ais.getFormat();
         assertEquals(1, format.getChannels());
@@ -86,7 +117,7 @@ public final class SphereAudioFileReaderTest {
 
     @Test
     public void testEx110() throws UnsupportedAudioFileException, IOException {
-        AudioInputStream ais = getAudioInputStream("ex1_10.wav", 33024, "6bc80e6a6d82ea4a69cbd133bdd2a3b9");
+        AudioInputStream ais = getAudioInputStream("ex1_10.wav");
         AudioFormat format = ais.getFormat();
         assertTrue(format.isBigEndian());
     }
@@ -105,20 +136,25 @@ public final class SphereAudioFileReaderTest {
 
     @Test
     public void testEx4() throws UnsupportedAudioFileException, IOException {
-        AudioInputStream ais = getAudioInputStream("ex4.wav", 17024, "73e22ce2e73ac6f110b7ebe140fcc69b");
+        AudioInputStream ais = getAudioInputStream("ex4.wav");
         AudioFormat format = ais.getFormat();
+        assertEquals(Encoding.ULAW, format.getEncoding());
+        assertEquals(1, format.getChannels());
+        assertEquals(16000.0f, format.getSampleRate(), 0.0);
     }
 
     @Test
     public void testEx401() throws UnsupportedAudioFileException, IOException {
-        AudioInputStream ais = getAudioInputStream("ex4_01.wav", 33024, "b4deddb6704665087f0ada78211d44c5");
+        AudioInputStream ais = getAudioInputStream("ex4_01.wav");
         AudioFormat format = ais.getFormat();
+        assertEquals(Encoding.PCM_SIGNED, format.getEncoding());
     }
 
     @Test
     public void testEx410() throws UnsupportedAudioFileException, IOException {
-        AudioInputStream ais = getAudioInputStream("ex4_10.wav", 33024, "eda37911758e16afbf4de61db3a76e39");
+        AudioInputStream ais = getAudioInputStream("ex4_10.wav");
         AudioFormat format = ais.getFormat();
+        assertEquals(Encoding.PCM_SIGNED, format.getEncoding());
     }
 
     @Test
