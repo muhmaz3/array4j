@@ -3,7 +3,7 @@ package net.lunglet.svm;
 import com.googlecode.array4j.FloatVector;
 
 abstract class Kernel extends QMatrix {
-    private FloatVector<?>[] x;
+    private SvmNode[] x;
 
     private final double[] x_square;
 
@@ -21,7 +21,7 @@ abstract class Kernel extends QMatrix {
 
     void swapIndex(final int i, final int j) {
         do {
-            FloatVector<?> other = x[i];
+            SvmNode other = x[i];
             x[i] = x[j];
             x[j] = other;
         } while (false);
@@ -62,19 +62,19 @@ abstract class Kernel extends QMatrix {
         case SvmParameter.SIGMOID:
             return tanh(gamma * dot(x[i], x[j]) + coef0);
         case SvmParameter.PRECOMPUTED:
-            return x[i].get(j);
+            return x[i].value.get(x[j].index);
         default:
             throw new AssertionError();
         }
     }
 
-    Kernel(final int l, final FloatVector<?>[] x_, final SvmParameter param) {
+    Kernel(final int l, final SvmNode[] x_, final SvmParameter param) {
         this.kernel_type = param.kernel_type;
         this.degree = param.degree;
         this.gamma = param.gamma;
         this.coef0 = param.coef0;
 
-        x = (FloatVector<?>[]) x_.clone();
+        x = (SvmNode[]) x_.clone();
 
         if (kernel_type == SvmParameter.RBF) {
             x_square = new double[l];
@@ -86,11 +86,15 @@ abstract class Kernel extends QMatrix {
         }
     }
 
-    static double dot(final FloatVector<?> x, final FloatVector<?> y) {
-        throw new UnsupportedOperationException();
+    static double dot(final SvmNode x, final SvmNode y) {
+        return x.value.dot(y.value);
     }
 
-    static double k_function(final FloatVector<?> x, final FloatVector<?> y, final SvmParameter param) {
+    static double dot(final FloatVector<?> x, final SvmNode y) {
+        return x.dot(y.value);
+    }
+
+    static double k_function(final FloatVector<?> x, final SvmNode y, final SvmParameter param) {
         switch (param.kernel_type) {
         case SvmParameter.LINEAR:
             return dot(x, y);
@@ -101,7 +105,9 @@ abstract class Kernel extends QMatrix {
         case SvmParameter.SIGMOID:
             return tanh(param.gamma * dot(x, y) + param.coef0);
         case SvmParameter.PRECOMPUTED:
-            throw new UnsupportedOperationException();
+            // This should never happen. If it does, it's probably because the
+            // svm type parameter wasn't fixed after training.
+            throw new AssertionError();
         default:
             throw new AssertionError();
         }

@@ -22,11 +22,13 @@ public final class SvmTest {
     public void test() {
         final double cost = 100.0;
         final Random rng = new Random(1234);
-        for (int i = 1; i < 100; i++) {
-            for (int j = 2; j < 100; j++) {
+        for (int i = 2; i < 100; i++) {
+            for (int j = 4; j < 100; j++) {
                 FloatDenseMatrix data = new FloatDenseMatrix(i, j);
                 data.fillRandom(rng);
+                // TODO gram is a symmetric matrix
                 FloatMatrix<?, ?> gram = data.transpose().times(data);
+
                 int[] labels = new int[data.columns()];
                 // assume there are at least 2 data vectors and make sure we
                 // have at least one vector with each label
@@ -44,16 +46,24 @@ public final class SvmTest {
                 FloatDenseVector linearScores = getLinearScores(data, labels, cost);
                 FloatDenseVector precomputedScores = getPrecomputedScores(data, gram, labels, cost);
 
-                SimpleSvm svm = new SimpleSvm(data, gram, labels);
-                svm.train(cost);
-                FloatDenseVector scores = svm.score(data);
+                // train SVM using linear kernel
+                SimpleSvm svm1 = new SimpleSvm(data, labels);
+                svm1.train(cost);
+                FloatDenseVector scores1 = svm1.score(data);
+                
+                // train SVM using precomputed kernel
+                SimpleSvm svm2 = new SimpleSvm(data, gram, labels);
+                svm2.train(cost);
+                FloatDenseVector scores2 = svm2.score(data);
 
-                assertEquals(linearScores.size(), precomputedScores.size());
-                assertEquals(linearScores.size(), scores.size());
-                for (int k = 0; i < linearScores.size(); i++) {
-                    assertEquals((int) Math.signum(linearScores.get(k)), (int) Math.signum(labels[k]));
-                    assertEquals(linearScores.get(k), precomputedScores.get(k), 1e-2);
-                    assertEquals(linearScores.get(k), scores.get(k), 1e-2);
+                for (FloatDenseVector scores : new FloatDenseVector[]{scores1, scores2}) {
+                    assertEquals(linearScores.size(), precomputedScores.size());
+                    assertEquals(linearScores.size(), scores.size());
+                    for (int k = 0; i < linearScores.size(); i++) {
+                        assertEquals((int) Math.signum(linearScores.get(k)), (int) Math.signum(labels[k]));
+                        assertEquals(linearScores.get(k), precomputedScores.get(k), 1e-2);
+                        assertEquals(linearScores.get(k), scores.get(k), 1e-2);
+                    }
                 }
             }
         }
@@ -96,6 +106,7 @@ public final class SvmTest {
     }
 
     private svm_parameter createSvmParameter() {
+        // TODO make sure these values match those in SimpleSvm#createDefaultSvmParameter()
         svm_parameter param = new svm_parameter();
         param.svm_type = svm_parameter.C_SVC;
         param.degree = 3;
@@ -133,7 +144,6 @@ public final class SvmTest {
             svm.svm_predict_values(model, prob.x[i], decvalues);
             scores.set(i, (float) decvalues[0]);
         }
-        // make sign consistent
         scores.timesEquals(labels[0] > 0 ? 1.0f : -1.0f);
 
         return scores;

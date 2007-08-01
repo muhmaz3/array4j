@@ -1,13 +1,15 @@
 package net.lunglet.svm;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import com.googlecode.array4j.FloatVector;
 
 final class Svm {
-    private Svm() {
-    }
+    private Log log = LogFactory.getLog(Svm.class);
 
     // construct and solve various formulations
-    private static void solve_c_svc(final SvmProblem prob, final SvmParameter param, final double[] alpha,
+    private void solve_c_svc(final SvmProblem prob, final SvmParameter param, final double[] alpha,
             final Solver.SolutionInfo si, final double Cp, final double Cn) {
         int l = prob.l;
         double[] minusOnes = new double[l];
@@ -31,6 +33,10 @@ final class Svm {
         double sumAlpha = 0;
         for (i = 0; i < l; i++) {
             sumAlpha += alpha[i];
+        }
+
+        if (Cp == Cn) {
+            log.info("nu = " + sumAlpha / (Cp * prob.l));
         }
 
         for (i = 0; i < l; i++) {
@@ -115,7 +121,7 @@ final class Svm {
         s.Solve(l, new OneClassKernel(prob, param), zeros, ones, alpha, 1.0, 1.0, param.eps, si, param.shrinking);
     }
 
-    private static void solve_epsilon_svr(final SvmProblem prob, final SvmParameter param, final double[] alpha,
+    private void solve_epsilon_svr(final SvmProblem prob, final SvmParameter param, final double[] alpha,
             final Solver.SolutionInfo si) {
         int l = prob.l;
         double[] alpha2 = new double[2 * l];
@@ -141,10 +147,10 @@ final class Svm {
             alpha[i] = alpha2[i] - alpha2[i + l];
             sumAlpha += Math.abs(alpha[i]);
         }
-        System.out.print("nu = " + sumAlpha / (param.C * l) + "\n");
+        log.info("nu = " + sumAlpha / (param.C * l));
     }
 
-    private static void solve_nu_svr(final SvmProblem prob, final SvmParameter param, final double[] alpha,
+    private void solve_nu_svr(final SvmProblem prob, final SvmParameter param, final double[] alpha,
             final Solver.SolutionInfo si) {
         int l = prob.l;
         double C = param.C;
@@ -168,7 +174,7 @@ final class Svm {
         NuSolver s = new NuSolver();
         s.Solve(2 * l, new SVRKernel(prob, param), linear_term, y, alpha2, C, C, param.eps, si, param.shrinking);
 
-        System.out.print("epsilon = " + (-si.r) + "\n");
+        log.info("epsilon = " + (-si.r));
 
         for (i = 0; i < l; i++) {
             alpha[i] = alpha2[i] - alpha2[i + l];
@@ -184,8 +190,7 @@ final class Svm {
         double rho;
     };
 
-    static decision_function svm_train_one(final SvmProblem prob, final SvmParameter param, final double Cp,
-            final double Cn) {
+    decision_function svm_train_one(final SvmProblem prob, final SvmParameter param, final double Cp, final double Cn) {
         double[] alpha = new double[prob.l];
         Solver.SolutionInfo si = new Solver.SolutionInfo();
         switch (param.svm_type) {
@@ -208,7 +213,7 @@ final class Svm {
             throw new AssertionError();
         }
 
-        System.out.print("obj = " + si.obj + ", rho = " + si.rho + "\n");
+        log.info("obj = " + si.obj + ", rho = " + si.rho);
 
         // output SVs
 
@@ -229,7 +234,7 @@ final class Svm {
             }
         }
 
-        System.out.print("nSV = " + nSV + ", nBSV = " + nBSV + "\n");
+        log.info("nSV = " + nSV + ", nBSV = " + nBSV);
 
         decision_function f = new decision_function();
         f.alpha = alpha;
@@ -238,7 +243,7 @@ final class Svm {
     }
 
     // Platt's binary SVM Probablistic Output: an improvement from Lin et al.
-    private static void sigmoid_train(int l, double[] dec_values, double[] labels, double[] probAB) {
+    private void sigmoid_train(int l, double[] dec_values, double[] labels, double[] probAB) {
         double A, B;
         double prior1 = 0, prior0 = 0;
         int i;
@@ -343,13 +348,13 @@ final class Svm {
             }
 
             if (stepsize < min_step) {
-                System.err.print("Line search fails in two-class probability estimates\n");
+                log.error("Line search fails in two-class probability estimates");
                 break;
             }
         }
 
         if (iter >= max_iter) {
-            System.err.print("Reaching maximal iterations in two-class probability estimates\n");
+            log.error("Reaching maximal iterations in two-class probability estimates");
         }
         probAB[0] = A;
         probAB[1] = B;
@@ -365,7 +370,7 @@ final class Svm {
     }
 
     // Method 2 from the multiclass_prob paper by Wu, Lin, and Weng
-    private static void multiclass_probability(final int k, final double[][] r, final double[] p) {
+    private void multiclass_probability(final int k, final double[][] r, final double[] p) {
         int t, j;
         int iter = 0, max_iter = Math.max(100, k);
         double[][] Q = new double[k][k];
@@ -416,12 +421,12 @@ final class Svm {
             }
         }
         if (iter >= max_iter) {
-            System.err.print("Exceeds max_iter in multiclass_prob\n");
+            log.error("Exceeds max_iter in multiclass_prob");
         }
     }
 
     // Cross-validation decision values for probability estimates
-    private static void svm_binary_svc_probability(final SvmProblem prob, final SvmParameter param, final double Cp,
+    private void svm_binary_svc_probability(final SvmProblem prob, final SvmParameter param, final double Cp,
             final double Cn, final double[] probAB) {
         int i;
         int nr_fold = 5;
@@ -447,7 +452,7 @@ final class Svm {
             SvmProblem subprob = new SvmProblem();
 
             subprob.l = prob.l - (end - begin);
-            subprob.x = new FloatVector<?>[subprob.l];
+            subprob.x = new SvmNode[subprob.l];
             subprob.y = new double[subprob.l];
 
             k = 0;
@@ -496,7 +501,7 @@ final class Svm {
                 SvmModel submodel = svm_train(subprob, subparam);
                 for (j = begin; j < end; j++) {
                     double[] dec_value = new double[1];
-                    svm_predict_values(submodel, prob.x[perm[j]], dec_value);
+                    svm_predict_values(submodel, prob.x[perm[j]].value, dec_value);
                     dec_values[perm[j]] = dec_value[0];
                     // ensure +1 -1 order; reason not using CV subroutine
                     dec_values[perm[j]] *= submodel.label[0];
@@ -507,7 +512,7 @@ final class Svm {
     }
 
     // Return parameter of a Laplace distribution
-    private static double svm_svr_probability(final SvmProblem prob, final SvmParameter param) {
+    private double svm_svr_probability(final SvmProblem prob, final SvmParameter param) {
         int i;
         int nr_fold = 5;
         double[] ymv = new double[prob.l];
@@ -532,7 +537,8 @@ final class Svm {
             }
         }
         mae /= (prob.l - count);
-        System.err.print("Prob. model for test data: target value = predicted value + z,\nz: Laplace distribution e^(-|z|/sigma)/(2sigma),sigma=" + mae + "\n");
+        log.error("Prob. model for test data: target value = predicted value + z");
+        log.error("z: Laplace distribution e^(-|z|/sigma)/(2sigma),sigma=" + mae);
         return mae;
     }
 
@@ -598,7 +604,7 @@ final class Svm {
     //
     // Interface functions
     //
-    public static SvmModel svm_train(final SvmProblem prob, final SvmParameter param) {
+    public SvmModel svm_train(final SvmProblem prob, final SvmParameter param) {
         SvmModel model = new SvmModel();
         model.param = param;
 
@@ -630,7 +636,7 @@ final class Svm {
                 }
             }
             model.l = nSV;
-            model.SV = new FloatVector<?>[nSV];
+            model.SV = new SvmNode[nSV];
             model.sv_coef[0] = new double[nSV];
             int j = 0;
             for (i = 0; i < prob.l; i++) {
@@ -655,7 +661,7 @@ final class Svm {
             int[] label = tmp_label[0];
             int[] start = tmp_start[0];
             int[] count = tmp_count[0];
-            FloatVector<?>[] x = new FloatVector<?>[l];
+            SvmNode[] x = new SvmNode[l];
             int i;
             for (i = 0; i < l; i++) {
                 x[i] = prob.x[perm[i]];
@@ -675,8 +681,7 @@ final class Svm {
                     }
                 }
                 if (j == nr_class) {
-                    System.err.print("warning: class label " + param.weight_label[i]
-                            + " specified in weight is not found\n");
+                    log.error("warning: class label " + param.weight_label[i] + " specified in weight is not found");
                 } else {
                     weighted_C[j] *= param.weight[i];
                 }
@@ -703,7 +708,7 @@ final class Svm {
                     int si = start[i], sj = start[j];
                     int ci = count[i], cj = count[j];
                     subProb.l = ci + cj;
-                    subProb.x = new FloatVector<?>[subProb.l];
+                    subProb.x = new SvmNode[subProb.l];
                     subProb.y = new double[subProb.l];
                     int k;
                     for (k = 0; k < ci; k++) {
@@ -778,14 +783,15 @@ final class Svm {
                 nzCount[i] = nSV;
             }
 
-            System.out.print("Total nSV = " + nnz + "\n");
+            log.info("Total nSV = " + nnz);
 
             model.l = nnz;
-            model.SV = new FloatVector<?>[nnz];
+            model.SV = new SvmNode[nnz];
             p = 0;
             for (i = 0; i < l; i++) {
                 if (nonzero[i]) {
-                    model.SV[p++] = x[i];
+                    model.SV[p] = x[i];
+                    p++;
                 }
             }
 
@@ -833,7 +839,7 @@ final class Svm {
     }
 
     // Stratified cross validation
-    public static void svm_cross_validation(final SvmProblem prob, final SvmParameter param, final int nr_fold,
+    public void svm_cross_validation(final SvmProblem prob, final SvmParameter param, final int nr_fold,
             final double[] target) {
         int i;
         int[] foldStart = new int[nr_fold + 1];
@@ -920,7 +926,7 @@ final class Svm {
             SvmProblem subprob = new SvmProblem();
 
             subprob.l = l - (end - begin);
-            subprob.x = new FloatVector<?>[subprob.l];
+            subprob.x = new SvmNode[subprob.l];
             subprob.y = new double[subprob.l];
 
             k = 0;
@@ -939,11 +945,11 @@ final class Svm {
                     && (param.svm_type == SvmParameter.C_SVC || param.svm_type == SvmParameter.NU_SVC)) {
                 double[] probEstimates = new double[svm_get_nr_class(submodel)];
                 for (j = begin; j < end; j++) {
-                    target[perm[j]] = svm_predict_probability(submodel, prob.x[perm[j]], probEstimates);
+                    target[perm[j]] = svm_predict_probability(submodel, prob.x[perm[j]].value, probEstimates);
                 }
             } else {
                 for (j = begin; j < end; j++) {
-                    target[perm[j]] = svm_predict(submodel, prob.x[perm[j]]);
+                    target[perm[j]] = svm_predict(submodel, prob.x[perm[j]].value);
                 }
             }
         }
@@ -965,12 +971,12 @@ final class Svm {
         }
     }
 
-    public static double svm_get_svr_probability(final SvmModel model) {
+    public double svm_get_svr_probability(final SvmModel model) {
         if ((model.param.svm_type == SvmParameter.EPSILON_SVR || model.param.svm_type == SvmParameter.NU_SVR)
                 && model.probA != null) {
             return model.probA[0];
         } else {
-            System.err.print("Model doesn't contain information for SVR probability inference\n");
+            log.error("Model doesn't contain information for SVR probability inference");
             return 0;
         }
     }
@@ -1069,7 +1075,7 @@ final class Svm {
         }
     }
 
-    public static double svm_predict_probability(SvmModel model, FloatVector<?> x, double[] prob_estimates) {
+    public double svm_predict_probability(SvmModel model, FloatVector<?> x, double[] prob_estimates) {
         if ((model.param.svm_type == SvmParameter.C_SVC || model.param.svm_type == SvmParameter.NU_SVC)
                 && model.probA != null && model.probB != null) {
             int i;

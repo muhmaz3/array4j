@@ -5,8 +5,6 @@ import java.util.Random;
 import com.googlecode.array4j.dense.FloatDenseMatrix;
 
 public final class FloatMatrixUtils {
-    private static final int FLOAT_BYTES = Float.SIZE >>> 3;
-
     public static <M extends FloatMatrix<M, V>, V extends FloatVector<V>> V columnMean(final M matrix) {
         final V mean = matrix.createColumnVector();
         int n = 0;
