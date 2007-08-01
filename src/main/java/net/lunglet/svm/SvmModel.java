@@ -1,7 +1,5 @@
 package net.lunglet.svm;
 
-import com.googlecode.array4j.FloatVector;
-
 final class SvmModel {
     // parameter
     SvmParameter param;
@@ -13,7 +11,7 @@ final class SvmModel {
     int l;
 
     // SVs (SV[l])
-    public FloatVector<?>[] SV;
+    public SvmNode[] SV;
 
     // coefficients for SVs in decision functions (sv_coef[k-1][l])
     double[][] sv_coef;

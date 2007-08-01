@@ -81,7 +81,7 @@ public abstract class AbstractFloatDense<M extends FloatMatrix<M, FloatDenseVect
     @Override
     public final FloatDenseVector column(final int column) {
         checkColumnIndex(column);
-        return new FloatDenseVector(data, rows, columnOffset(column), rowStride, orientation.COLUMN);
+        return new FloatDenseVector(data, rows, columnOffset(column), rowStride, Orientation.COLUMN);
     }
 
     @Override
@@ -280,5 +280,12 @@ public abstract class AbstractFloatDense<M extends FloatMatrix<M, FloatDenseVect
         for (int i = 0; i < size; i++) {
             set(i, rng.nextFloat());
         }
+    }
+
+    public final float dot(final FloatVector<?> other) {
+        if (!(other instanceof FloatDenseVector)) {
+            throw new UnsupportedOperationException();
+        }
+        return blas.dot((FloatDenseVector) this, (FloatDenseVector) other);
     }
 }

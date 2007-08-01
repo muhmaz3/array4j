@@ -1,13 +1,10 @@
 package com.googlecode.array4j.blas;
 
-import static org.junit.Assert.assertEquals;
-
 import java.nio.FloatBuffer;
 
 import com.googlecode.array4j.Orientation;
 import com.googlecode.array4j.Storage;
 import com.googlecode.array4j.dense.FloatDenseMatrix;
-import com.googlecode.array4j.dense.FloatDenseUtils;
 import com.googlecode.array4j.dense.FloatDenseVector;
 
 public final class MKLFloatBLAS extends AbstractFloatBLAS {

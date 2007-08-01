@@ -1,6 +1,11 @@
 package net.lunglet.svm;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 class Solver {
+    private Log log = LogFactory.getLog(Solver.class);
+
     int active_size;
 
     byte[] y;
@@ -371,10 +376,12 @@ class Solver {
 
         si.upper_bound_p = Cp;
         si.upper_bound_n = Cn;
+
+        log.info("optimization finished, #iter = " + iter);
     }
 
     // return 1 if already optimal, return 0 otherwise
-    int selectWorkingSet(int[] working_set) {
+    int selectWorkingSet(final int[] working_set) {
         // return i,j such that
         // i: maximizes -y_i * grad(f)_i, i in I_up(\alpha)
         // j: mimimizes the decrease of obj value
@@ -407,8 +414,10 @@ class Solver {
 
         int i = Gmax_idx;
         float[] Q_i = null;
-        if (i != -1) // null Q_i not accessed: Gmax=-INF if i=-1
+        if (i != -1) {
+            // null Q_i not accessed: Gmax=-INF if i=-1
             Q_i = Q.getQ(i, active_size);
+        }
 
         for (int j = 0; j < active_size; j++) {
             if (y[j] == +1) {

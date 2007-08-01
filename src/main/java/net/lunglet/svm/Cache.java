@@ -7,8 +7,6 @@ package net.lunglet.svm;
 // size is the cache size limit in bytes
 //
 final class Cache {
-    private final int l;
-
     private long size;
 
     private final class Entry {
@@ -24,7 +22,6 @@ final class Cache {
     private Entry lruHead;
 
     Cache(final int l, final long size) {
-        this.l = l;
         this.size = size;
         entries = new Entry[l];
         for (int i = 0; i < l; i++) {
