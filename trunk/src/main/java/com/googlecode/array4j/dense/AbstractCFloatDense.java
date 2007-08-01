@@ -246,4 +246,11 @@ public abstract class AbstractCFloatDense<M extends ComplexFloatMatrix<M, CFloat
             out.writeFloat(value.imag());
         }
     }
+
+    public final void conj() {
+        // TODO optimize this
+        for (int i = 0; i < size; i++) {
+            set(i, get(i).conj());
+        }
+    }
 }

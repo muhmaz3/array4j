@@ -1,7 +1,7 @@
 package com.googlecode.array4j;
 
 public interface ComplexFloatMatrix<M extends ComplexFloatMatrix<M, V>, V extends ComplexFloatVector<V>> extends
-        Matrix<M, V>, ComplexFloatArray<M> {
+        ComplexMatrix<M, V>, ComplexFloatArray<M> {
     ComplexFloat get(int row, int column);
 
     void set(int row, int column, ComplexFloat value);

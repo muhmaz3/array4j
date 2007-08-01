@@ -56,11 +56,11 @@ public final class FloatVectorTest<M extends FloatMatrix<M, V>, V extends FloatV
         for (int i = 0; i < 5; i++) {
             V x = factory.createVector(i, Orientation.DEFAULT_FOR_VECTOR);
             for (int j = 0; j < i; j++) {
-                assertEquals(0.0f, x.get(j));
+                assertEquals(0.0f, x.get(j), 0.0);
             }
             x.fill(i);
             for (int j = 0; j < i; j++) {
-                assertEquals(i, x.get(j));
+                assertEquals(i, x.get(j), 0.0);
             }
         }
     }
@@ -76,9 +76,9 @@ public final class FloatVectorTest<M extends FloatMatrix<M, V>, V extends FloatV
             }
             V z = x.minus(y);
             for (int j = 0; j < i; j++) {
-                assertEquals(j, x.get(j));
-                assertEquals(i - j, y.get(j));
-                assertEquals(2 * j - i, z.get(j));
+                assertEquals(j, x.get(j), 0.0);
+                assertEquals(i - j, y.get(j), 0.0);
+                assertEquals(2 * j - i, z.get(j), 0.0);
             }
         }
     }
@@ -94,8 +94,8 @@ public final class FloatVectorTest<M extends FloatMatrix<M, V>, V extends FloatV
             }
             x.plusEquals(y);
             for (int j = 0; j < i; j++) {
-                assertEquals(i, x.get(j));
-                assertEquals(i - j, y.get(j));
+                assertEquals(i, x.get(j), 0.0);
+                assertEquals(i - j, y.get(j), 0.0);
             }
         }
     }
@@ -106,6 +106,7 @@ public final class FloatVectorTest<M extends FloatMatrix<M, V>, V extends FloatV
         assertTrue("Vector must be a column vector by default", vector.isColumnVector());
         final V transposedVector = vector.transpose();
         assertTrue(transposedVector.isRowVector());
+        // TODO if orientations differ, vectors must not be equal
         assertFalse(vector.equals(transposedVector));
         final V originalVector = transposedVector.transpose();
         assertTrue(originalVector.isColumnVector());

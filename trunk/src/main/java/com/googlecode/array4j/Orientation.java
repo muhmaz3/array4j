@@ -19,4 +19,13 @@ public enum Orientation {
     public static final Orientation DEFAULT_FOR_VECTOR = COLUMN;
 
     public abstract Orientation transpose();
+
+    public boolean same(final Orientation... orientations) {
+        for (Orientation other : orientations) {
+            if (!equals(other)) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

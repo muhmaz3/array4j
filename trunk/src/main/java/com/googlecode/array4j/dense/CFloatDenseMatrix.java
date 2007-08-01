@@ -71,7 +71,11 @@ public final class CFloatDenseMatrix extends AbstractCFloatDense<CFloatDenseMatr
 
     @Override
     public CFloatDenseMatrix transpose() {
-        // TODO implement conjugate transpose too
         return new CFloatDenseMatrix(data, columns, rows, offset, stride, orientation.transpose());
+    }
+
+    @Override
+    public CFloatDenseMatrix conjTranpose() {
+        throw new UnsupportedOperationException();
     }
 }
