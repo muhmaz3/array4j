@@ -7,9 +7,11 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.util.Arrays;
+import java.util.Random;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 
+import com.googlecode.array4j.Constants;
 import com.googlecode.array4j.FloatMatrix;
 import com.googlecode.array4j.FloatVector;
 import com.googlecode.array4j.Orientation;
@@ -27,11 +29,9 @@ public abstract class AbstractFloatDense<M extends FloatMatrix<M, FloatDenseVect
 
     private static final int ELEMENT_SIZE = 1;
 
-    private static final int FLOAT_BYTES = Float.SIZE >>> 3;
-
     public static FloatBuffer createFloatBuffer(final int size, final Storage storage) {
         if (storage.equals(Storage.DIRECT)) {
-            final ByteBuffer buffer = ByteBuffer.allocateDirect(size * ELEMENT_SIZE * FLOAT_BYTES);
+            final ByteBuffer buffer = ByteBuffer.allocateDirect(size * ELEMENT_SIZE * Constants.FLOAT_BYTES);
             buffer.order(ByteOrder.nativeOrder());
             return buffer.asFloatBuffer();
         } else {
@@ -108,7 +108,7 @@ public abstract class AbstractFloatDense<M extends FloatMatrix<M, FloatDenseVect
         return data;
     }
 
-    public final float[] dataAsArray() {
+    public final float[] dataArray() {
         return data.array();
     }
 
@@ -243,6 +243,8 @@ public abstract class AbstractFloatDense<M extends FloatMatrix<M, FloatDenseVect
     private void writeObject(final ObjectOutputStream out) throws IOException {
         out.defaultWriteObject();
         out.writeObject(storage());
+        // TODO ensure data is written so that when it is read, trans can be set
+        // to Transpose.NORMAL
         // TODO optimize this
         for (int i = 0; i < size; i++) {
             out.writeFloat(get(i));
@@ -259,5 +261,24 @@ public abstract class AbstractFloatDense<M extends FloatMatrix<M, FloatDenseVect
         }
         builder.append("]");
         return builder.toString();
+    }
+
+    public final FloatMatrix<?, ?> times(final FloatMatrix<?, ?> matrix) {
+        if (!(matrix instanceof FloatDenseMatrix)) {
+            throw new UnsupportedOperationException();
+        }
+        FloatDenseMatrix a = (FloatDenseMatrix) this;
+        FloatDenseMatrix b = (FloatDenseMatrix) matrix;
+        FloatDenseMatrix c = new FloatDenseMatrix(rows, b.columns, orientation, storage());
+        blas.gemm(1.0f, a, b, 0.0f, c);
+        // TODO return a vector if possible
+        return c;
+    }
+
+    // TODO this method should be static outside the matrix class
+    public final void fillRandom(final Random rng) {
+        for (int i = 0; i < size; i++) {
+            set(i, rng.nextFloat());
+        }
     }
 }

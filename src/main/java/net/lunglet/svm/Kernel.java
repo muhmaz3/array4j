@@ -7,7 +7,6 @@ abstract class Kernel extends QMatrix {
 
     private final double[] x_square;
 
-    // svm_parameter
     private final int kernel_type;
 
     private final int degree;
@@ -63,7 +62,7 @@ abstract class Kernel extends QMatrix {
         case SvmParameter.SIGMOID:
             return tanh(gamma * dot(x[i], x[j]) + coef0);
         case SvmParameter.PRECOMPUTED:
-            throw new UnsupportedOperationException();
+            return x[i].get(j);
         default:
             throw new AssertionError();
         }

@@ -1,6 +1,5 @@
 package com.googlecode.array4j;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.apache.commons.lang.builder.EqualsBuilder;

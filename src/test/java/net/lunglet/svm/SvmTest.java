@@ -13,6 +13,7 @@ import libsvm.svm_problem;
 
 import org.junit.Test;
 
+import com.googlecode.array4j.FloatMatrix;
 import com.googlecode.array4j.dense.FloatDenseMatrix;
 import com.googlecode.array4j.dense.FloatDenseVector;
 
@@ -20,17 +21,16 @@ public final class SvmTest {
     @Test
     public void test() {
         final double cost = 100.0;
-        final Random random = new Random(1234);
+        final Random rng = new Random(1234);
         for (int i = 1; i < 100; i++) {
             for (int j = 2; j < 100; j++) {
                 FloatDenseMatrix data = new FloatDenseMatrix(i, j);
-                // TODO fill data with random values
-                // TODO gram = data.T * data
-                FloatDenseMatrix gram = null;
+                data.fillRandom(rng);
+                FloatMatrix<?, ?> gram = data.transpose().times(data);
                 int[] labels = new int[data.columns()];
                 // assume there are at least 2 data vectors and make sure we
                 // have at least one vector with each label
-                if (random.nextBoolean()) {
+                if (rng.nextBoolean()) {
                     labels[0] = 1;
                     labels[1] = -1;
                 } else {
@@ -38,16 +38,15 @@ public final class SvmTest {
                     labels[1] = 1;
                 }
                 for (int k = 2; k < labels.length; k++) {
-                    labels[k] = random.nextBoolean() ? 1 : -1;
+                    labels[k] = rng.nextBoolean() ? 1 : -1;
                 }
 
                 FloatDenseVector linearScores = getLinearScores(data, labels, cost);
                 FloatDenseVector precomputedScores = getPrecomputedScores(data, gram, labels, cost);
 
-//                SimpleSvm svm = new Svm(data, gram, labels);
-//                SimpleSvmModel model = svm.train(cost);
-//                FloatDenseVector scores = model.score(data);
-                FloatDenseVector scores = null;
+                SimpleSvm svm = new SimpleSvm(data, gram, labels);
+                svm.train(cost);
+                FloatDenseVector scores = svm.score(data);
 
                 assertEquals(linearScores.size(), precomputedScores.size());
                 assertEquals(linearScores.size(), scores.size());
@@ -60,7 +59,7 @@ public final class SvmTest {
         }
     }
 
-    private svm_problem dataAsSvmProblem(final FloatDenseMatrix data, final int[] labels) {
+    private svm_problem dataAsSvmProblem(final FloatMatrix<?, ?> data, final int[] labels) {
         svm_problem prob = new svm_problem();
         prob.l = data.columns();
         prob.x = new svm_node[prob.l][];
@@ -77,7 +76,7 @@ public final class SvmTest {
         return prob;
     }
 
-    private svm_problem gramAsSvmProblem(final FloatDenseMatrix gram, final int[] labels) {
+    private svm_problem gramAsSvmProblem(final FloatMatrix<?, ?> gram, final int[] labels) {
         svm_problem prob = new svm_problem();
         prob.l = gram.rows();
         prob.x = new svm_node[prob.l][];
@@ -140,7 +139,7 @@ public final class SvmTest {
         return scores;
     }
 
-    private FloatDenseVector getPrecomputedScores(final FloatDenseMatrix data, final FloatDenseMatrix gram,
+    private FloatDenseVector getPrecomputedScores(final FloatMatrix<?, ?> data, final FloatMatrix<?, ?> gram,
             final int[] labels, final double cost) {
         if (data.columns() != labels.length || !gram.isSquare() || data.columns() != gram.rows()) {
             throw new IllegalArgumentException();
@@ -157,7 +156,6 @@ public final class SvmTest {
         // fix model so that prediction works
         param.kernel_type = svm_parameter.LINEAR;
         for (int i = 0; i < model.SV.length; i++) {
-            model.SV[i] = null;
             model.SV[i] = dataprob.x[(int) model.SV[i][0].value - 1];
         }
 

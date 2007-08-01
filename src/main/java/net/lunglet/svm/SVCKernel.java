@@ -1,8 +1,5 @@
 package net.lunglet.svm;
 
-//
-// Q matrices for various formulations
-//
 final class SVCKernel extends Kernel {
     private final byte[] y;
 

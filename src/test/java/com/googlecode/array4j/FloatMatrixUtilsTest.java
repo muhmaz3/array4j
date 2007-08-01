@@ -41,13 +41,13 @@ public final class FloatMatrixUtilsTest<M extends FloatMatrix<M, V>, V extends F
         assertEquals(Orientation.COLUMN, mean.orientation());
         assertEquals(3, mean.size());
         if (orientation.equals(Orientation.ROW)) {
-            assertEquals(1.5f, mean.get(0));
-            assertEquals(3.5f, mean.get(1));
-            assertEquals(5.5f, mean.get(2));
+            assertEquals(1.5f, mean.get(0), 0.0);
+            assertEquals(3.5f, mean.get(1), 0.0);
+            assertEquals(5.5f, mean.get(2), 0.0);
         } else {
-            assertEquals(2.5f, mean.get(0));
-            assertEquals(3.5f, mean.get(1));
-            assertEquals(4.5f, mean.get(2));
+            assertEquals(2.5f, mean.get(0), 0.0);
+            assertEquals(3.5f, mean.get(1), 0.0);
+            assertEquals(4.5f, mean.get(2), 0.0);
         }
     }
 
@@ -60,11 +60,11 @@ public final class FloatMatrixUtilsTest<M extends FloatMatrix<M, V>, V extends F
         assertEquals(Orientation.ROW, mean.orientation());
         assertEquals(2, mean.size());
         if (orientation.equals(Orientation.ROW)) {
-            assertEquals(3.0f, mean.get(0));
-            assertEquals(4.0f, mean.get(1));
+            assertEquals(3.0f, mean.get(0), 0.0);
+            assertEquals(4.0f, mean.get(1), 0.0);
         } else {
-            assertEquals(2.0f, mean.get(0));
-            assertEquals(5.0f, mean.get(1));
+            assertEquals(2.0f, mean.get(0), 0.0);
+            assertEquals(5.0f, mean.get(1), 0.0);
         }
     }
 }

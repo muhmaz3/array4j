@@ -16,6 +16,14 @@ extern "C" {
 JNIEXPORT void JNICALL Java_com_googlecode_array4j_blas_MKLFloatBLAS_scopy
   (JNIEnv *, jclass, jint, jobject, jint, jint, jobject, jint, jint);
 
+/*
+ * Class:     com_googlecode_array4j_blas_MKLFloatBLAS
+ * Method:    gemm
+ * Signature: (IIIIIIFLjava/nio/FloatBuffer;IILjava/nio/FloatBuffer;IIFLjava/nio/FloatBuffer;II)V
+ */
+JNIEXPORT void JNICALL Java_com_googlecode_array4j_blas_MKLFloatBLAS_gemm
+  (JNIEnv *, jclass, jint, jint, jint, jint, jint, jint, jfloat, jobject, jint, jint, jobject, jint, jint, jfloat, jobject, jint, jint);
+
 #ifdef __cplusplus
 }
 #endif

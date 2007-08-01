@@ -1,6 +1,6 @@
 package net.lunglet.svm;
 
-public final class SvmParameter implements Cloneable {
+final class SvmParameter implements Cloneable {
     /* svm_type */
     public static final int C_SVC = 0;
 

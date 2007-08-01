@@ -2,7 +2,7 @@ package net.lunglet.svm;
 
 import com.googlecode.array4j.FloatVector;
 
-public final class Svm {
+final class Svm {
     private Svm() {
     }
 
@@ -31,10 +31,6 @@ public final class Svm {
         double sumAlpha = 0;
         for (i = 0; i < l; i++) {
             sumAlpha += alpha[i];
-        }
-
-        if (Cp == Cn) {
-            System.out.print("nu = " + sumAlpha / (Cp * prob.l) + "\n");
         }
 
         for (i = 0; i < l; i++) {
@@ -80,8 +76,6 @@ public final class Svm {
         NuSolver s = new NuSolver();
         s.Solve(l, new SVCKernel(prob, param, y), zeros, y, alpha, 1.0, 1.0, param.eps, si, param.shrinking);
         double r = si.r;
-
-        System.out.print("C = " + 1 / r + "\n");
 
         for (i = 0; i < l; i++) {
             alpha[i] *= y[i] / r;

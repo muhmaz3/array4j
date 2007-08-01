@@ -77,7 +77,11 @@ public final class CFloatDenseVector extends AbstractCFloatDense<CFloatDenseVect
 
     @Override
     public CFloatDenseVector transpose() {
-        // TODO implement conjugate transpose too
         return new CFloatDenseVector(data, size, offset, stride, orientation.transpose());
+    }
+
+    @Override
+    public CFloatDenseVector conjTranpose() {
+        throw new UnsupportedOperationException();
     }
 }

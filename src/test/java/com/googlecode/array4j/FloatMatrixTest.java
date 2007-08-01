@@ -59,15 +59,15 @@ public final class FloatMatrixTest<M extends FloatMatrix<M, V>, V extends FloatV
             for (int column = 0; column < columns; column++) {
                 assertEquals(rows, colArrays1[column].length);
                 final float value1 = row * columns + column + 1.0f;
-                assertEquals(value1, rowMatrix.get(row, column));
-                assertEquals(value1, rowArrays1[row][column]);
-                assertEquals(value1, colArrays1[column][row]);
+                assertEquals(value1, rowMatrix.get(row, column), 0.0);
+                assertEquals(value1, rowArrays1[row][column], 0.0);
+                assertEquals(value1, colArrays1[column][row], 0.0);
 
                 assertEquals(rows, colArrays2[column].length);
                 final float value2 = column * rows + row + 1.0f;
-                assertEquals(value2, colMatrix.get(row, column));
-                assertEquals(value2, rowArrays2[row][column]);
-                assertEquals(value2, colArrays2[column][row]);
+                assertEquals(value2, colMatrix.get(row, column), 0.0);
+                assertEquals(value2, rowArrays2[row][column], 0.0);
+                assertEquals(value2, colArrays2[column][row], 0.0);
             }
         }
     }
@@ -186,9 +186,9 @@ public final class FloatMatrixTest<M extends FloatMatrix<M, V>, V extends FloatV
                 matrix.fill(++k);
                 for (int i = 0; i < rows; i++) {
                     for (int j = 0; j < columns; j++) {
-                        assertEquals(k, matrix.get(i, j));
-                        assertEquals(k, matrix.row(i).get(j));
-                        assertEquals(k, matrix.column(j).get(i));
+                        assertEquals(k, matrix.get(i, j), 0.0);
+                        assertEquals(k, matrix.row(i).get(j), 0.0);
+                        assertEquals(k, matrix.column(j).get(i), 0.0);
                     }
                 }
             }
@@ -318,13 +318,13 @@ public final class FloatMatrixTest<M extends FloatMatrix<M, V>, V extends FloatV
         matrix = factory.createMatrix(new float[]{1.0f, 2.0f}, 1, 2, 1, 0, Orientation.ROW);
         assertNotNull(matrix);
         arr = matrix.toArray();
-        assertEquals(2.0f, arr[0]);
-        assertEquals(2.0f, arr[1]);
+        assertEquals(2.0f, arr[0], 0.0);
+        assertEquals(2.0f, arr[1], 0.0);
 
         // test size = 1 with a large stride
         matrix = factory.createMatrix(new float[]{1.0f}, 1, 1, 0, Integer.MAX_VALUE, Orientation.ROW);
         arr = matrix.toArray();
-        assertEquals(1.0f, arr[0]);
+        assertEquals(1.0f, arr[0], 0.0);
 
         // test size = 0
         matrix = factory.createMatrix(new float[]{}, 0, 0, 0, 0, Orientation.ROW);
@@ -333,8 +333,8 @@ public final class FloatMatrixTest<M extends FloatMatrix<M, V>, V extends FloatV
         // test stride = -1
         matrix = factory.createMatrix(new float[]{1.0f, 2.0f}, 1, 2, 1, -1, Orientation.ROW);
         arr = matrix.toArray();
-        assertEquals(2.0f, arr[0]);
-        assertEquals(1.0f, arr[1]);
+        assertEquals(2.0f, arr[0], 0.0);
+        assertEquals(1.0f, arr[1], 0.0);
     }
 
     @Test

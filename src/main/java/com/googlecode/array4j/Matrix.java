@@ -23,5 +23,7 @@ public interface Matrix<M extends Matrix<M, V>, V extends Vector<V>> extends Arr
 
     M transpose();
 
+//    M deepTranspose();
+
     boolean isSquare();
 }
