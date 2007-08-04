@@ -28,27 +28,44 @@ public final class ULawtoPCMCodec extends FormatConversionProvider {
     private final class ULawtoPCMInputStream extends InputStream {
         private final InputStream stream;
 
-        private final ByteBuffer buf;
+        private final byte[] bytebuf;
 
-        public ULawtoPCMInputStream(final InputStream stream) {
+        private final ByteBuffer shortbuf;
+
+        public ULawtoPCMInputStream(final AudioInputStream stream) {
             this.stream = stream;
-            this.buf = ByteBuffer.wrap(new byte[2]).order(ByteOrder.LITTLE_ENDIAN);
-            buf.position(buf.capacity());
+            // buffer size to use when reading from underlying stream
+            int bufsize = 65536 * stream.getFormat().getChannels();
+            this.bytebuf = new byte[bufsize];
+            // buffer to contain PCM output samples
+            this.shortbuf =  ByteBuffer.allocate(2 * bufsize).order(ByteOrder.LITTLE_ENDIAN);
+            // there is nothing to output initially, so limit the buffer to 0
+            shortbuf.limit(0);
         }
 
         @Override
         public int read() throws IOException {
-            if (buf.hasRemaining()) {
-                return buf.get() & 0xff;
+            // if there is remaining data in the output buffer, return that
+            // first before reading from the underlying stream again
+            if (shortbuf.hasRemaining()) {
+                // mask with 0xff so that -1 isn't returned
+                return shortbuf.get() & 0xff;
             }
-            int temp = stream.read();
-            if (temp == -1) {
+            int bytesRead = stream.read(bytebuf);
+            if (bytesRead == -1) {
                 System.out.println("done with underlying stream");
                 return -1;
             }
-            buf.putShort(0, ulaw2linear((byte) temp));
-            buf.position(0);
-            return buf.get() & 0xff;
+            shortbuf.clear();
+            for (int i = 0; i < bytesRead; i++) {
+                shortbuf.putShort(ulaw2linear((byte) bytebuf[i]));
+            }
+            shortbuf.position(0);
+            // set limit to 2 * bytesRead because we're converting from 1-byte
+            // ulaw samples to 2-byte PCM samples
+            shortbuf.limit(2 * bytesRead);
+            // mask with 0xff so that -1 isn't returned
+            return shortbuf.get() & 0xff;
         }
     }
 

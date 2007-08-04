@@ -60,6 +60,9 @@ public abstract class AbstractFloatBLAS implements FloatBLAS {
         if (!orientations.contains(c.orientation())) {
             throw new IllegalArgumentException("unsupported orientation " + a.orientation());
         }
+        if (a.stride() != 1 || b.stride() != 1 || c.stride() != 1) {
+            throw new IllegalArgumentException("all matrices must have unit stride");
+        }
         Transpose transa = c.orientation().equals(a.orientation()) ? Transpose.NO_TRANS : Transpose.TRANS;
         Transpose transb = c.orientation().equals(b.orientation()) ? Transpose.NO_TRANS : Transpose.TRANS;
         gemm0(transa, transb, alpha, a, b, beta, c);

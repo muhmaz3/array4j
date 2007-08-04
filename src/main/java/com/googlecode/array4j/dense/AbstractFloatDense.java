@@ -235,9 +235,25 @@ public abstract class AbstractFloatDense<M extends FloatMatrix<M, FloatDenseVect
     }
 
     public final void timesEquals(final float value) {
+        // TODO optimize this
         for (int i = 0; i < size; i++) {
             set(i, get(i) * value);
         }
+    }
+
+    public final void divideEquals(final float value) {
+        timesEquals(1.0f / value);
+    }
+
+    public final void plusEquals(final float value) {
+        // TODO optimize this
+        for (int i = 0; i < size; i++) {
+            set(i, get(i) + value);
+        }
+    }
+
+    public final void minusEquals(final float value) {
+        plusEquals(-1.0f * value);
     }
 
     private void writeObject(final ObjectOutputStream out) throws IOException {
@@ -271,6 +287,8 @@ public abstract class AbstractFloatDense<M extends FloatMatrix<M, FloatDenseVect
         FloatDenseMatrix b = (FloatDenseMatrix) matrix;
         FloatDenseMatrix c = new FloatDenseMatrix(rows, b.columns, orientation, storage());
         blas.gemm(1.0f, a, b, 0.0f, c);
+        // TODO detect the special case of matrix == this, in which case we
+        // might want to do a multiplication that produces a symmetric matrix
         // TODO return a vector if possible
         return c;
     }

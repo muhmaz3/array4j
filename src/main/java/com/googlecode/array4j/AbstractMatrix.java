@@ -11,7 +11,7 @@ public abstract class AbstractMatrix<M extends Matrix<M, V>, V extends Vector<V>
     protected final int rows;
 
     public AbstractMatrix(final int rows, final int columns) {
-        super(rows * columns);
+        super(new int[]{rows, columns});
         checkArgument(rows >= 0);
         checkArgument(columns >= 0);
         this.rows = rows;
