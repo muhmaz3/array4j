@@ -3,6 +3,8 @@ package com.googlecode.array4j.blas;
 import com.googlecode.array4j.dense.FloatDenseMatrix;
 import com.googlecode.array4j.dense.FloatDenseVector;
 
+// TODO make a SparseFloatBLAS interface
+
 public interface FloatBLAS {
     /**
      * <CODE>y = x</CODE>.

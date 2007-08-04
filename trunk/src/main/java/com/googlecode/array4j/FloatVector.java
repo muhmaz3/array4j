@@ -9,7 +9,5 @@ public interface FloatVector<V extends FloatVector<V>> extends FloatMatrix<V, V>
 
     void set(int index, float value);
 
-    void timesEquals(float value);
-
     float dot(FloatVector<?> other);
 }

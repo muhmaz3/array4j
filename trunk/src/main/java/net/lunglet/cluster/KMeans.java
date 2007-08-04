@@ -161,7 +161,7 @@ public final class KMeans<T> {
             for (int i = 0; i < data.length; i++) {
                 FloatDenseMatrix currentCentroids = null;
                 if (centroids != null) {
-                    currentCentroids = centroids.subMatrixColumns(0, iter - 1);
+                    currentCentroids = centroids.subMatrixColumns(0, iter);
                 }
                 KMeansTask task = taskFactory.createTask2(data[i], currentCentroids);
                 cs.submit(task);

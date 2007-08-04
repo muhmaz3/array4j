@@ -18,7 +18,6 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.sound.sampled.AudioFileFormat.Type;
 import javax.sound.sampled.AudioFormat.Encoding;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 public final class ULawtoPCMCodecTest {
@@ -68,7 +67,7 @@ public final class ULawtoPCMCodecTest {
         assertTrue(Arrays.equals(expectedBytes, actualBytes));
     }
 
-    @Ignore
+    @Test
     public void testClipOutput() throws LineUnavailableException, IOException, InterruptedException,
             UnsupportedAudioFileException {
         AudioInputStream sourceStream = SphereAudioFileReaderTest.getAudioInputStream("ex4.wav");
@@ -85,12 +84,15 @@ public final class ULawtoPCMCodecTest {
             }
         });
         clip.open(targetStream);
-//        while (clip.isRunning()) {
-//            synchronized (clip) {
-//                clip.wait();
-//            }
-//        }
-        Thread.sleep(10000);
+        clip.start();
+        while (true) {
+            synchronized (clip) {
+                clip.wait();
+            }
+            if (!clip.isRunning()) {
+                break;
+            }
+        }
         clip.close();
     }
 }

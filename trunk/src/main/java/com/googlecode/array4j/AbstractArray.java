@@ -1,5 +1,7 @@
 package com.googlecode.array4j;
 
+import java.util.Arrays;
+
 import org.apache.commons.lang.builder.EqualsBuilder;
 
 public abstract class AbstractArray<A extends Array<A>> implements Array<A> {
@@ -22,10 +24,18 @@ public abstract class AbstractArray<A extends Array<A>> implements Array<A> {
         return value;
     }
 
+    protected final int[] shape;
+
+    // TODO rename to length
     protected final int size;
 
-    public AbstractArray(final int size) {
-        checkArgument(size >= 0);
+    public AbstractArray(final int[] shape) {
+        int size = 1;
+        for (int dim : shape) {
+            checkArgument(dim >= 0);
+            size *= dim;
+        }
+        this.shape = Arrays.copyOf(shape, shape.length);
         this.size = size;
     }
 
@@ -49,5 +59,9 @@ public abstract class AbstractArray<A extends Array<A>> implements Array<A> {
 
     public final int size() {
         return size;
+    }
+
+    public final int[] shape() {
+        return Arrays.copyOf(shape, shape.length);
     }
 }
