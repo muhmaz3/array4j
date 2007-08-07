@@ -53,7 +53,6 @@ public final class ULawtoPCMCodec extends FormatConversionProvider {
             }
             int bytesRead = stream.read(bytebuf);
             if (bytesRead == -1) {
-                System.out.println("done with underlying stream");
                 return -1;
             }
             shortbuf.clear();

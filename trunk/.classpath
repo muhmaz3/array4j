@@ -5,10 +5,10 @@
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="array4j/win_build/Debug"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="src" path="src/main/resources"/>
 	<classpathentry kind="src" path="src/test/java"/>
 	<classpathentry kind="src" path="src/test/resources"/>
 	<classpathentry kind="src" path="src/bench/java"/>
-	<classpathentry kind="src" path="src/main/resources"/>
 	<classpathentry kind="lib" path="lib/blas.jar"/>
 	<classpathentry kind="lib" path="lib/f2jutil.jar"/>
 	<classpathentry kind="lib" path="lib/lapack.jar"/>
