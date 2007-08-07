@@ -14,6 +14,8 @@ import libsvm.svm_problem;
 import org.junit.Test;
 
 import com.googlecode.array4j.FloatMatrix;
+import com.googlecode.array4j.Orientation;
+import com.googlecode.array4j.Storage;
 import com.googlecode.array4j.dense.FloatDenseMatrix;
 import com.googlecode.array4j.dense.FloatDenseVector;
 
@@ -24,7 +26,7 @@ public final class SvmTest {
         final Random rng = new Random(1234);
         for (int i = 2; i < 100; i++) {
             for (int j = 4; j < 100; j++) {
-                FloatDenseMatrix data = new FloatDenseMatrix(i, j);
+                FloatDenseMatrix data = new FloatDenseMatrix(i, j, Orientation.ROW, Storage.JAVA);
                 data.fillRandom(rng);
                 // TODO gram is a symmetric matrix
                 FloatMatrix<?, ?> gram = data.transpose().times(data);
@@ -50,7 +52,7 @@ public final class SvmTest {
                 SimpleSvm svm1 = new SimpleSvm(data, labels);
                 svm1.train(cost);
                 FloatDenseVector scores1 = svm1.score(data);
-                
+
                 // train SVM using precomputed kernel
                 SimpleSvm svm2 = new SimpleSvm(data, gram, labels);
                 svm2.train(cost);

@@ -1,5 +1,7 @@
 package com.googlecode.array4j;
 
+// TODO move this class to com.googlecode.array4j.math
+
 public final class FloatMatrixMath {
     private FloatMatrixMath() {
     }

@@ -22,7 +22,7 @@ public interface Matrix<M extends Matrix<M, V>, V extends Vector<V>> extends Arr
     /**
      * Get a submatrix spanning the column range [column0, column1).
      */
-    M subMatrixColumns(int column0, int column1);
+    Matrix<M, V> subMatrixColumns(int column0, int column1);
 
     M transpose();
 

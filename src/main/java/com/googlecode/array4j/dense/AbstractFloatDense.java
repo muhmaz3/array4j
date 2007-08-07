@@ -201,7 +201,7 @@ public abstract class AbstractFloatDense<M extends FloatMatrix<M, FloatDenseVect
 
     public final void setColumn(final int column, final FloatVector<?> columnVector) {
         // TODO this code is almost identical to setRow
-        checkArgument(rows == columnVector.size());
+        checkArgument(rows == columnVector.rows());
         int targetOffset = columnOffset(column);
         int targetStride = rowStride;
         // TODO this could be optimized
@@ -217,7 +217,7 @@ public abstract class AbstractFloatDense<M extends FloatMatrix<M, FloatDenseVect
 
     public final void setRow(final int row, final FloatVector<?> rowVector) {
         // TODO this code is almost identical to setColumn
-        checkArgument(columns == rowVector.size());
+        checkArgument(columns == rowVector.columns());
         int targetOffset = rowOffset(row);
         int targetStride = columnStride;
         // TODO this could be optimized

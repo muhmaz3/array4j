@@ -1,5 +1,6 @@
 package com.googlecode.array4j.dense;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -16,9 +17,33 @@ public final class FloatDenseUtils {
     private FloatDenseUtils() {
     }
 
-    public static FloatDenseMatrix readHTK(final String filename) throws IOException {
-        FileChannel channel = new FileInputStream(filename).getChannel();
+    public static FloatDenseMatrix mapHTK(final String filename) throws IOException {
+        return mapHTK(new File(filename));
+    }
+
+
+    // note that mapped files can't reliably be deleted after having been
+    // mapped, so that is why readHTK is also provided
+    public static FloatDenseMatrix mapHTK(final File file) throws IOException {
+        FileChannel channel = new FileInputStream(file).getChannel();
         ByteBuffer buf = channel.map(MapMode.READ_ONLY, 0, channel.size()).order(ByteOrder.BIG_ENDIAN);
+        int nsamples = buf.getInt(0);
+        int period = buf.getInt(4);
+        int size = buf.getShort(8) & 0xffff;
+        int kind = buf.getShort(10) & 0xffff;
+        FloatBuffer data = ((ByteBuffer) buf.position(12)).asFloatBuffer();
+        if (data.remaining() != nsamples * size / Constants.FLOAT_BYTES) {
+            throw new IOException();
+        }
+        int columns = data.remaining() / nsamples;
+        return new FloatDenseMatrix(data, nsamples, columns, 0, 1, Orientation.ROW);
+    }
+
+    public static FloatDenseMatrix readHTK(final File file) throws IOException {
+        FileChannel channel = new FileInputStream(file).getChannel();
+        ByteBuffer buf = ByteBuffer.allocate((int) channel.size());
+        channel.read(buf);
+        channel.close();
         int nsamples = buf.getInt(0);
         int period = buf.getInt(4);
         int size = buf.getShort(8) & 0xffff;
