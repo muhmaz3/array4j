@@ -10,6 +10,8 @@ import com.googlecode.array4j.FloatMatrix;
 import com.googlecode.array4j.FloatVector;
 import com.googlecode.array4j.dense.FloatDenseVector;
 
+// TODO support little-endian output as well as big-endian
+
 public final class MatrixOutputStream extends DataOutputStream implements MatrixOutput {
     public MatrixOutputStream(final OutputStream out) {
         // include a BufferedOutputStream here while the implementations use
@@ -30,9 +32,11 @@ public final class MatrixOutputStream extends DataOutputStream implements Matrix
 
     @Override
     public void writeColumnsAsMatrix(final Collection<? extends FloatDenseVector> columns) throws IOException {
+        // write rows
         writeInt(columns.size());
         boolean wroteColumns = false;
         for (FloatDenseVector column : columns) {
+            // write columns if it hasn't been written yet
             if (!wroteColumns) {
                 writeInt(column.size());
                 wroteColumns = true;
