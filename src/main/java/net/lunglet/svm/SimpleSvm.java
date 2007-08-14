@@ -7,6 +7,9 @@ import com.googlecode.array4j.dense.FloatDenseVector;
 // TODO make data an array of T or an Iterable<FloatVector> or something
 // TODO support arbitrary labels
 
+// TODO implement copyWithoutRowsColumns(int[]) for removing certain trials
+// from a gram matrix for doing cross-validation
+
 public final class SimpleSvm {
     private final FloatMatrix<?, ?> data;
 
@@ -58,9 +61,10 @@ public final class SimpleSvm {
             param.kernel_type = SvmParameter.LINEAR;
             // obtain actual support vectors
             for (int i = 0; i < model.SV.length; i++) {
-                model.SV[i] =  new SvmNode(i, data.column(model.SV[i].index));
+                model.SV[i] = new SvmNode(i, data.column(model.SV[i].index));
             }
         }
+        // TODO compact model so that it contains a single support vector
     }
 
     public FloatDenseVector score(final FloatMatrix<?, ?> testData) {
