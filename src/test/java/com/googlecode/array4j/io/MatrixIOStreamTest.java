@@ -32,7 +32,7 @@ public final class MatrixIOStreamTest {
     }
 
     @Test
-    public void testColumnsAsMatrix() throws IOException {
+    public void testWriteColumnsAsMatrix() throws IOException {
         FloatDenseMatrix matrix = new FloatDenseMatrix(3, 4);
         matrix.fillRandom(new Random(0));
         List<FloatDenseVector> columns = new ArrayList<FloatDenseVector>(matrix.columns());
