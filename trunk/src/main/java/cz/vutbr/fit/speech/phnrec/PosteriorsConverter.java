@@ -3,8 +3,9 @@ package cz.vutbr.fit.speech.phnrec;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -47,19 +48,27 @@ public final class PosteriorsConverter {
         return postsums;
     }
 
-    public void writePhonemePosteriors(final File outputFile) throws IOException {
+    public void writePhonemePosteriors(final OutputStream out) throws IOException {
         List<FloatDenseVector> postsums = getPhonemePosteriors();
-        MatrixOutputStream out = new MatrixOutputStream(new FileOutputStream(outputFile));
-        out.writeColumnsAsMatrix(postsums);
-        out.close();
+        MatrixOutputStream matOut = new MatrixOutputStream(out);
+        matOut.writeColumnsAsMatrix(postsums);
+        matOut.flush();
     }
 
-    public void writeMasterLabels(final File outputFile) throws IOException {
-        BufferedWriter writer = new BufferedWriter(new FileWriter(outputFile));
+    public void writePhonemePosteriors(final File outputFile) throws IOException {
+        writePhonemePosteriors(new FileOutputStream(outputFile));
+    }
+
+    public void writeMasterLabels(final OutputStream out) throws IOException {
+        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out));
         for (MasterLabel label : labels) {
             writer.write(label.toString());
             writer.write("\n");
         }
-        writer.close();
+        writer.flush();
+    }
+
+    public void writeMasterLabels(final File outputFile) throws IOException {
+        writeMasterLabels(new FileOutputStream(outputFile));
     }
 }

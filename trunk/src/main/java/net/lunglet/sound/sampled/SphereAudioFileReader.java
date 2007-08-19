@@ -24,6 +24,8 @@ import javax.sound.sampled.AudioFormat.Encoding;
 import javax.sound.sampled.spi.AudioFileReader;
 
 public final class SphereAudioFileReader extends AudioFileReader {
+    private static final String HEADER_SIZE_PROPERTY = "nist_header_size";
+
     private static final String CHANNELS_PROPERTY = "channel_count";
 
     private static final String ENCODING_PROPERTY = "sample_coding";
@@ -147,6 +149,7 @@ public final class SphereAudioFileReader extends AudioFileReader {
         buf = new byte[headerSize];
         dataStream.readFully(buf);
         Map<String, Object> properties = parseProperties(buf);
+        properties.put(HEADER_SIZE_PROPERTY, headerSize);
 
         // sample rate
         checkRequiredHeader(properties, SAMPLE_RATE_PROPERTY);
@@ -203,7 +206,17 @@ public final class SphereAudioFileReader extends AudioFileReader {
 
     @Override
     public AudioInputStream getAudioInputStream(final File file) throws UnsupportedAudioFileException, IOException {
-        return getAudioInputStream(new FileInputStream(file));
+        AudioInputStream stream = getAudioInputStream(new FileInputStream(file));
+        Map<String, Object> properties = stream.getFormat().properties();
+        int headerSize = (Integer) properties.get(HEADER_SIZE_PROPERTY);
+        int frameLength = (Integer) properties.get(FRAME_LENGTH_PROPERTY);
+        int sampleSize = (Integer) properties.get(SAMPLE_SIZE_PROPERTY);
+        int channels = (Integer) properties.get(CHANNELS_PROPERTY);
+        long expectedLength = 1L * channels * frameLength * sampleSize + headerSize;
+        if (file.length() != expectedLength) {
+            throw new RuntimeException("length of " + file.getCanonicalPath() + "doesn't match length from header");
+        }
+        return stream;
     }
 
     @Override
