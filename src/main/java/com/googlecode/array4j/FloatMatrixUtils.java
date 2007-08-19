@@ -5,6 +5,8 @@ import java.util.Random;
 import com.googlecode.array4j.dense.FloatDenseMatrix;
 import com.googlecode.array4j.dense.FloatDenseVector;
 
+// TODO implement unmodifiableMatrix
+
 public final class FloatMatrixUtils {
     public static <M extends FloatMatrix<M, V>, V extends FloatVector<V>> V rowSum(final M matrix) {
         final V sum = matrix.createRowVector();

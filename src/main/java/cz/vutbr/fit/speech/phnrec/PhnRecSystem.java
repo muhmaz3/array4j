@@ -20,8 +20,6 @@ import com.googlecode.array4j.dense.FloatDenseUtils;
 public final class PhnRecSystem {
     private Log log = LogFactory.getLog(PhnRecSystem.class);
 
-    private static final String PHNREC_DIR = "C:/phnrec_v2_14";
-
     private final File systemConfigDir;
 
     private final File phnRecExe;
@@ -32,11 +30,22 @@ public final class PhnRecSystem {
 
     public PhnRecSystem(final String name, final String shortName) {
         this.shortName = shortName;
-        this.systemConfigDir = new File(PHNREC_DIR, name);
+        String phnRecDir = System.getProperty("phnrec.dir", "C:/phnrec_v2_14");
+        this.systemConfigDir = new File(phnRecDir, name);
+        try {
+            log.info("phnrec system dir = " + systemConfigDir.getCanonicalPath());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         if (!systemConfigDir.isDirectory()) {
             throw new RuntimeException();
         }
-        this.phnRecExe = new File(PHNREC_DIR, "phnrec.exe");
+        this.phnRecExe = new File(phnRecDir, System.getProperty("phnrec.exe", "phnrec.exe"));
+        try {
+            log.info("phnrec exe = " + phnRecExe.getCanonicalPath());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         if (!phnRecExe.isFile()) {
             throw new RuntimeException();
         }
@@ -77,6 +86,8 @@ public final class PhnRecSystem {
         ProcessBuilder pb = new ProcessBuilder(command);
         pb.redirectErrorStream(true);
         Process process = pb.start();
+//        String[] cmdarray = command.toArray(new String[0]);
+//        Process process = Runtime.getRuntime().exec(cmdarray);
         BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
         String line = reader.readLine();
         while (line != null) {
@@ -145,22 +156,12 @@ public final class PhnRecSystem {
     }
 
     public List<MasterLabel> readStrings(final File stringsFile) throws IOException {
-        List<MasterLabel> labels = new ArrayList<MasterLabel>();
-        BufferedReader reader = new BufferedReader(new FileReader(stringsFile));
-        String line = reader.readLine();
-        while (line != null) {
-            String[] parts = line.split("\\s+");
-            String label = parts[2];
-            if (!phonemes.contains(label)) {
+        List<MasterLabel> labels = PhonemeUtil.readMasterLabels(new FileReader(stringsFile));
+        for (MasterLabel label : labels) {
+            if (!phonemes.contains(label.label)) {
                 throw new RuntimeException("invalid phoneme: " + label);
             }
-            long startTime = Long.valueOf(parts[0]);
-            long endTime = Long.valueOf(parts[1]);
-            float score = Float.valueOf(parts[3]);
-            labels.add(new MasterLabel(label, startTime, endTime, score));
-            line = reader.readLine();
         }
-        reader.close();
         return labels;
     }
 }

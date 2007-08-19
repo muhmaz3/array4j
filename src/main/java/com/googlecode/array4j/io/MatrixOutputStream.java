@@ -32,18 +32,23 @@ public final class MatrixOutputStream extends DataOutputStream implements Matrix
 
     @Override
     public void writeColumnsAsMatrix(final Collection<? extends FloatDenseVector> columns) throws IOException {
-        // write rows
-        writeInt(columns.size());
-        boolean wroteColumns = false;
+        boolean wroteHeader = false;
         for (FloatDenseVector column : columns) {
-            // write columns if it hasn't been written yet
-            if (!wroteColumns) {
+            if (!wroteHeader) {
+                // write number of rows
                 writeInt(column.size());
-                wroteColumns = true;
+                // write number of columns
+                writeInt(columns.size());
+                wroteHeader = true;
             }
             for (int i = 0; i < column.size(); i++) {
                 writeFloat(column.get(i));
             }
+        }
+        // if there were no columns, write a header anyway
+        if (!wroteHeader) {
+            writeInt(0);
+            writeInt(0);
         }
     }
 }
