@@ -3,7 +3,7 @@ package cz.vutbr.fit.speech.phnrec;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
-final class MasterLabel {
+public final class MasterLabel {
     final String label;
 
     final long startTime;
@@ -30,6 +30,22 @@ final class MasterLabel {
         MasterLabel other = (MasterLabel) obj;
         return new EqualsBuilder().append(label, other.label).append(startTime, other.startTime).append(endTime,
                 other.endTime).append(score, other.score).isEquals();
+    }
+
+    public long getStartTime() {
+        return startTime;
+    }
+
+    public long getEndTime() {
+        return endTime;
+    }
+
+    public long getDuration() {
+        return endTime - startTime;
+    }
+
+    public boolean isValid() {
+        return !label.equals("int") && !label.equals("oth") && !label.equals("pau") && !label.equals("spk");
     }
 
     @Override

@@ -18,9 +18,6 @@ import com.googlecode.array4j.io.MatrixInputStream;
 // TODO factor out a PhnRecLabels class that only reads labels
 
 public final class PhnRecFeatures {
-    private static final List<String> PHONEMES_TO_IGNORE = Collections.unmodifiableList(Arrays.asList(new String[]{
-            "int", "oth", "pau", "spk"}));
-
     private static final String MLF_SUFFIX = ".mlf";
 
     private static final String POSTERIORS_SUFFIX = ".post";
@@ -70,7 +67,7 @@ public final class PhnRecFeatures {
         }
         List<MasterLabel> validLabels = new ArrayList<MasterLabel>();
         for (MasterLabel label : labels) {
-            if (!PHONEMES_TO_IGNORE.contains(label.label)) {
+            if (label.isValid()) {
                 validLabels.add(label);
             }
         }
