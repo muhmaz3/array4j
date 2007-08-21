@@ -52,13 +52,17 @@ public final class SvmTest {
                 SimpleSvm svm1 = new SimpleSvm(data, labels);
                 svm1.train(cost);
                 FloatDenseVector scores1 = svm1.score(data);
+                svm1.compact();
+                FloatDenseVector scores2 = svm1.score(data);
 
                 // train SVM using precomputed kernel
                 SimpleSvm svm2 = new SimpleSvm(data, gram, labels);
                 svm2.train(cost);
-                FloatDenseVector scores2 = svm2.score(data);
+                FloatDenseVector scores3 = svm2.score(data);
+                svm2.compact();
+                FloatDenseVector scores4 = svm2.score(data);
 
-                for (FloatDenseVector scores : new FloatDenseVector[]{scores1, scores2}) {
+                for (FloatDenseVector scores : new FloatDenseVector[]{scores1, scores2, scores3, scores4}) {
                     assertEquals(linearScores.size(), precomputedScores.size());
                     assertEquals(linearScores.size(), scores.size());
                     for (int k = 0; i < linearScores.size(); i++) {
