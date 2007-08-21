@@ -1,5 +1,7 @@
 package net.lunglet.svm;
 
+import java.util.Arrays;
+
 import com.googlecode.array4j.FloatMatrix;
 import com.googlecode.array4j.FloatVector;
 import com.googlecode.array4j.dense.FloatDenseVector;
@@ -64,7 +66,33 @@ public final class SimpleSvm {
                 model.SV[i] = new SvmNode(i, data.column(model.SV[i].index));
             }
         }
-        // TODO compact model so that it contains a single support vector
+        if (model.SV.length == 0) {
+            throw new RuntimeException();
+        }
+    }
+
+    /**
+     * Compact model so that it consists of a single support vector per class.
+     */
+    public void compact() {
+        SvmNode[] supportVectors = new SvmNode[model.nr_class];
+        for (int i = 0, j = 0; i < model.nr_class; i++) {
+            FloatDenseVector sv = new FloatDenseVector(model.SV[0].value.size());
+            for (int k = 0; k < model.nSV[i]; k++, j++) {
+                final float alpha = (float) model.sv_coef[0][j];
+                // TODO replace this with an axpy operation
+                for (int m = 0; m < sv.size(); m++) {
+                    sv.set(m, sv.get(m) + alpha * model.SV[j].value.get(m));
+                }
+            }
+            supportVectors[i] = new SvmNode(0, sv);
+        }
+        model.SV = supportVectors;
+        model.sv_coef = new double[][]{new double[model.nr_class]};
+        Arrays.fill(model.sv_coef[0], 1.0);
+        model.nSV = new int[model.nr_class];
+        Arrays.fill(model.nSV, 1);
+        model.l = model.nr_class;
     }
 
     public FloatDenseVector score(final FloatMatrix<?, ?> testData) {
@@ -78,8 +106,10 @@ public final class SimpleSvm {
             Svm.svm_predict_values(model, x, decvalues);
             scores.set(i++, (float) decvalues[0]);
         }
-        // make sign consistent
-        scores.timesEquals(problem.y[0] > 0 ? 1.0f : -1.0f);
+        // make sign consistent regardless of data/label ordering
+        if (problem.y[0] < 0) {
+            scores.timesEquals(-1.0f);
+        }
         return scores;
     }
 
