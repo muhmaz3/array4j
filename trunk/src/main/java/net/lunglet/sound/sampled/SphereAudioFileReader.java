@@ -214,7 +214,7 @@ public final class SphereAudioFileReader extends AudioFileReader {
         int channels = (Integer) properties.get(CHANNELS_PROPERTY);
         long expectedLength = 1L * channels * frameLength * sampleSize + headerSize;
         if (file.length() != expectedLength) {
-            throw new RuntimeException("length of " + file.getCanonicalPath() + " doesn't match length from header");
+            throw new IOException("length of " + file.getCanonicalPath() + " doesn't match length from header");
         }
         return stream;
     }
