@@ -15,6 +15,8 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.sound.sampled.AudioFormat.Encoding;
 
+import net.lunglet.io.FileUtils;
+import net.lunglet.io.FilenameSuffixFilter;
 import net.lunglet.sound.sampled.RawAudioFileWriter;
 
 import org.apache.commons.logging.Log;
@@ -119,6 +121,7 @@ public final class PhnRec {
         AudioInputStream sourceStream = AudioSystem.getAudioInputStream(inputFile);
         AudioInputStream targetStream = AudioSystem.getAudioInputStream(Encoding.PCM_SIGNED, sourceStream);
         byte[][] channelsData = splitChannels(targetStream);
+        targetStream.close();
         for (int i = 0; i < channelsData.length; i++) {
             File outputFile = new File(inputFile.getCanonicalFile() + "_" + i + ".phnrec.zip");
             if (outputFile.isFile()) {
@@ -131,19 +134,20 @@ public final class PhnRec {
             ZipOutputStream out = new ZipOutputStream(new FileOutputStream(tempOutputFile));
             out.setLevel(9);
             for (PhnRecSystem system : PHNREC_SYSTEMS) {
+                LOG.info("processing channel " + i + " with system " + system.getShortName());
                 processChannel(channelsData[i], system, out);
             }
             out.close();
             if (!tempOutputFile.renameTo(outputFile)) {
                 throw new RuntimeException();
             }
-            LOG.info("moved to output file = " + outputFile.getCanonicalPath());
+            LOG.info("moved output to file = " + outputFile.getCanonicalPath());
         }
     }
 
     public static void main(final String[] args) throws UnsupportedAudioFileException, IOException {
         File inputDirectory = new File("F:/test");
-        FilenameFilter filter = new FileUtils.FilenameSuffixFilter(".sph", true);
+        FilenameFilter filter = new FilenameSuffixFilter(".sph", true);
         File[] inputFiles = FileUtils.listFiles(inputDirectory, filter, true);
         for (File inputFile : inputFiles) {
             processFile(inputFile);
