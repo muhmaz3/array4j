@@ -9,6 +9,9 @@ import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
+import net.lunglet.io.FileUtils;
+import net.lunglet.io.FilenameSuffixFilter;
+
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.junit.Test;
 
@@ -21,7 +24,7 @@ public final class PhnRecTest {
 
         PhnRecServer server = new PhnRecServer(connection);
         File inputDirectory = new File("F:/test");
-        FilenameFilter filter = new FileUtils.FilenameSuffixFilter(".sph", true);
+        FilenameFilter filter = new FilenameSuffixFilter(".sph", true);
         File[] inputFiles =  FileUtils.listFiles(inputDirectory, filter, true);
         server.generateWorkUnits(inputFiles);
 
