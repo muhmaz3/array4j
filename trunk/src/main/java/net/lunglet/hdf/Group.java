@@ -49,7 +49,7 @@ public final class Group extends H5Object {
         }
 
         // No failure, create and return the DataSet object
-        return new DataSet(datasetId, name);
+        return new DataSet(datasetId, createName(name));
     }
 
     public DataSet createDataSet(final String name, final DataType dataType, final long... dims) {
@@ -67,7 +67,7 @@ public final class Group extends H5Object {
         }
 
         // No failure, create and return the Group object
-        return new Group(groupId, name);
+        return new Group(groupId, createName(name));
     }
 
     @Override
@@ -130,7 +130,7 @@ public final class Group extends H5Object {
         }
 
         // No failure, create and return the DataSet object
-        return new DataSet(datasetId, name);
+        return new DataSet(datasetId, createName(name));
     }
 
     public Group openGroup(final String name) {
@@ -144,6 +144,16 @@ public final class Group extends H5Object {
         }
 
         // No failure, create and return the Group object
-        return new Group(groupId, name);
+        return new Group(groupId, createName(name));
+    }
+
+    private String createName(final String name) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(getName());
+        if (!getName().equals("/")) {
+            builder.append("/");
+        }
+        builder.append(name);
+        return builder.toString();
     }
 }

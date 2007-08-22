@@ -283,4 +283,8 @@ public interface H5Library extends Library {
     int H5Tcopy(int type_id);
 
     int H5Tcreate(int type, int size);
+
+    long H5Dget_storage_size(int dset_id);
+
+    int H5Dget_space(int dset_id);
 }
