@@ -3,8 +3,23 @@ package net.lunglet.hdf;
 import java.nio.ByteBuffer;
 
 public final class DataSet extends AbstractDs {
-    public DataSet(final int id) {
+    private final String name;
+
+    DataSet(final int id, final String name) {
         super(id);
+        this.name = name;
+    }
+
+    public void close() {
+        int err = H5Library.INSTANCE.H5Dclose(getId());
+        if (err < 0) {
+            throw new H5DataSetException("H5Dclose failed");
+        }
+        invalidate();
+    }
+
+    public String getName() {
+        return name;
     }
 
     public void read(final byte[] buf, final DataType memType) {
@@ -17,7 +32,7 @@ public final class DataSet extends AbstractDs {
         final int memSpaceId = memSpace.getId();
         final int fileSpaceId = fileSpace.getId();
         final int xferPlistId = xferPlist.getId();
-        int err = H5Library.INSTANCE.H5Dread(id, memTypeId, memSpaceId, fileSpaceId, xferPlistId, buf);
+        int err = H5Library.INSTANCE.H5Dread(getId(), memTypeId, memSpaceId, fileSpaceId, xferPlistId, buf);
         if (err < 0) {
             throw new H5DataSetException("H5Dread failed");
         }
@@ -33,7 +48,7 @@ public final class DataSet extends AbstractDs {
         final int memSpaceId = memSpace.getId();
         final int fileSpaceId = fileSpace.getId();
         final int xferPlistId = xferPlist.getId();
-        int err = H5Library.INSTANCE.H5Dwrite(id, memTypeId, memSpaceId, fileSpaceId, xferPlistId, buf);
+        int err = H5Library.INSTANCE.H5Dwrite(getId(), memTypeId, memSpaceId, fileSpaceId, xferPlistId, buf);
         if (err < 0) {
             throw new H5DataSetException("H5Dwrite failed");
         }
@@ -49,18 +64,9 @@ public final class DataSet extends AbstractDs {
         final int memSpaceId = memSpace.getId();
         final int fileSpaceId = fileSpace.getId();
         final int xferPlistId = xferPlist.getId();
-        int err = H5Library.INSTANCE.H5Dwrite(id, memTypeId, memSpaceId, fileSpaceId, xferPlistId, buf);
+        int err = H5Library.INSTANCE.H5Dwrite(getId(), memTypeId, memSpaceId, fileSpaceId, xferPlistId, buf);
         if (err < 0) {
             throw new H5DataSetException("H5Dwrite failed");
         }
-    }
-
-    public void close() {
-        int err = H5Library.INSTANCE.H5Dclose(id);
-        if (err < 0) {
-            throw new H5DataSetException("H5Dclose failed");
-        }
-        // reset the id because the group that it represents is now closed
-        id = 0;
     }
 }

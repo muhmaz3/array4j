@@ -1,7 +1,7 @@
 package net.lunglet.hdf;
 
 public enum DataSpaceClass {
-    NO_CLASS(-1), SCALAR(0), SIMPLE(1), COMPLEX(2);
+    COMPLEX(2), NO_CLASS(-1), SCALAR(0), SIMPLE(1);
 
     private final int value;
 

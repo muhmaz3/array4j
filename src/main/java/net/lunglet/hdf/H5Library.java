@@ -2,13 +2,19 @@ package net.lunglet.hdf;
 
 import java.nio.ByteBuffer;
 
+import com.sun.jna.Callback;
 import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.NativeLibrary;
+import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.LongByReference;
 
-interface H5Library extends Library {
+public interface H5Library extends Library {
+    interface H5G_iterate_t extends Callback {
+        int callback(int locId, String name, Pointer data);
+    }
+
     static final class Loader {
         private static int loadIntValue(final String name) {
             int err = loadLibrary().H5open();
@@ -220,14 +226,21 @@ interface H5Library extends Library {
 
     H5Library INSTANCE = Loader.loadLibrary();
 
-    // String LIBRARY_NAME = "hdf5dll";
-    String LIBRARY_NAME = "hdf5ddll";
+    String LIBRARY_NAME = "hdf5dll";
+
+    int H5Dclose(int dset_id);
 
     int H5Dcreate(int file_id, String name, int type_id, int space_id, int plist_id);
+
+    int H5Dopen(int loc_id, String name);
 
     int H5Dread(int dset_id, int mem_type_id, int mem_space_id, int file_space_id, int plist_id, byte[] buf);
 
     int H5Dread(int dset_id, int mem_type_id, int mem_space_id, int file_space_id, int plist_id, ByteBuffer buf);
+
+    int H5Dwrite(int dset_id, int mem_type_id, int mem_space_id, int file_space_id, int plist_id, byte[] buf);
+
+    int H5Dwrite(int dset_id, int mem_type_id, int mem_space_id, int file_space_id, int plist_id, ByteBuffer buf);
 
     int H5Fclose(int file_id);
 
@@ -244,6 +257,12 @@ interface H5Library extends Library {
     int H5Gcreate(int loc_id, String name, int size_hint);
 
     int H5get_libversion(IntByReference majnum, IntByReference minnum, IntByReference relnum);
+
+    int H5Gget_num_objs(int loc_id, LongByReference num_objs);
+
+    int H5Gget_objtype_by_idx(int loc_id, long idx);
+
+    int H5Giterate(int loc_id, String name, IntByReference idx, H5G_iterate_t operator, Pointer operator_data);
 
     int H5Gopen(int loc_id, String name);
 
@@ -264,10 +283,4 @@ interface H5Library extends Library {
     int H5Tcopy(int type_id);
 
     int H5Tcreate(int type, int size);
-
-    int H5Dwrite(int dset_id, int mem_type_id, int mem_space_id, int file_space_id, int plist_id, byte[] buf);
-
-    int H5Dwrite(int dset_id, int mem_type_id, int mem_space_id, int file_space_id, int plist_id, ByteBuffer buf);
-
-    int H5Dclose(int dset_id);
 }

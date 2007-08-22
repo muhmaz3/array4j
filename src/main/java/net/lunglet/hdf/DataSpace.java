@@ -3,36 +3,9 @@ package net.lunglet.hdf;
 public final class DataSpace extends IdComponent {
     private static final int H5S_ALL = 0;
 
-    private static final int H5S_UNLIMITED = -1;
-
     public static final DataSpace ALL = new DataSpace(H5S_ALL);
 
-    DataSpace(final int id) {
-        super(id);
-    }
-
-    DataSpace(final long[] dims) {
-        this(dims, null);
-    }
-
-    DataSpace(final long[] dims, final long[] maxdims) {
-        super(init(dims, maxdims));
-    }
-
-    public void close() {
-        if (id != H5S_ALL) {
-            // not a constant, should call H5Sclose
-            int err = H5Library.INSTANCE.H5Sclose(id);
-            if (err < 0) {
-                throw new H5DataSpaceException("H5Sclose failed");
-            }
-            // reset id because the dataspace that it represents is now closed
-            id = 0;
-        } else {
-            // cannot close a constant
-            throw new H5DataSpaceException("Cannot close a constant");
-        }
-    }
+    private static final int H5S_UNLIMITED = -1;
 
     private static int init(final long[] dims, final long[] maxdims) {
         if (maxdims != null && dims.length != maxdims.length) {
@@ -58,6 +31,32 @@ public final class DataSpace extends IdComponent {
             throw new H5DataSpaceException("H5Screate_simple failed");
         }
         return id;
+    }
+
+    private DataSpace(final int id) {
+        super(id);
+    }
+
+    DataSpace(final long[] dims) {
+        this(dims, null);
+    }
+
+    DataSpace(final long[] dims, final long[] maxdims) {
+        super(init(dims, maxdims));
+    }
+
+    public void close() {
+        if (getId() != H5S_ALL) {
+            // not a constant, should call H5Sclose
+            int err = H5Library.INSTANCE.H5Sclose(getId());
+            if (err < 0) {
+                throw new H5DataSpaceException("H5Sclose failed");
+            }
+            invalidate();
+        } else {
+            // cannot close a constant
+            throw new H5DataSpaceException("Cannot close a constant");
+        }
     }
 
 //    private static int init(final int type) {
