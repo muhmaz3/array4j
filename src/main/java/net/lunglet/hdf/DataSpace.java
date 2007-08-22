@@ -33,7 +33,7 @@ public final class DataSpace extends IdComponent {
         return id;
     }
 
-    private DataSpace(final int id) {
+    DataSpace(final int id) {
         super(id);
     }
 
@@ -59,11 +59,12 @@ public final class DataSpace extends IdComponent {
         }
     }
 
-//    private static int init(final int type) {
-//        int id = H5Library.INSTANCE.H5Screate(type);
-//        if (id < 0) {
-//            throw new H5DataSpaceException("H5Screate failed");
-//        }
-//        return id;
-//    }
+    // TODO use an enum for type
+    private static int init(final int type) {
+        int id = H5Library.INSTANCE.H5Screate(type);
+        if (id < 0) {
+            throw new H5DataSpaceException("H5Screate failed");
+        }
+        return id;
+    }
 }

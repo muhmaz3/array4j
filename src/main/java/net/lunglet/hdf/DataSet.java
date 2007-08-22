@@ -22,11 +22,39 @@ public final class DataSet extends AbstractDs {
         return name;
     }
 
+    public DataSpace getSpace() {
+        int dataspaceId = H5Library.INSTANCE.H5Dget_space(getId());
+        if (dataspaceId < 0) {
+            throw new H5DataSetException("H5Dget_space failed");
+        }
+        return new DataSpace(dataspaceId);
+    }
+
+    public long getStorageSize() {
+        return H5Library.INSTANCE.H5Dget_storage_size(getId());
+    }
+
     public void read(final byte[] buf, final DataType memType) {
         read(buf, memType, DataSpace.ALL, DataSpace.ALL, DataSetMemXferPropList.DEFAULT);
     }
 
     public void read(final byte[] buf, final DataType memType, final DataSpace memSpace, final DataSpace fileSpace,
+            final DataSetMemXferPropList xferPlist) {
+        final int memTypeId = memType.getId();
+        final int memSpaceId = memSpace.getId();
+        final int fileSpaceId = fileSpace.getId();
+        final int xferPlistId = xferPlist.getId();
+        int err = H5Library.INSTANCE.H5Dread(getId(), memTypeId, memSpaceId, fileSpaceId, xferPlistId, buf);
+        if (err < 0) {
+            throw new H5DataSetException("H5Dread failed");
+        }
+    }
+
+    public void read(final ByteBuffer buf, final DataType memType) {
+        read(buf, memType, DataSpace.ALL, DataSpace.ALL, DataSetMemXferPropList.DEFAULT);
+    }
+
+    public void read(final ByteBuffer buf, final DataType memType, final DataSpace memSpace, final DataSpace fileSpace,
             final DataSetMemXferPropList xferPlist) {
         final int memTypeId = memType.getId();
         final int memSpaceId = memSpace.getId();
