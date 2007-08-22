@@ -1,18 +1,18 @@
 package net.lunglet.hdf;
 
 public enum DataTypeClass {
-    NO_CLASS(-1),
-    INTEGER(0),
-    FLOAT(1),
-    TIME(2),
-    STRING(3),
+    ARRAY(10),
     BITFIELD(4),
-    OPAQUE(5),
     COMPOUND(6),
-    REFERENCE(7),
     ENUM(8),
-    VLEN(9),
-    ARRAY(10);
+    FLOAT(1),
+    INTEGER(0),
+    NO_CLASS(-1),
+    OPAQUE(5),
+    REFERENCE(7),
+    STRING(3),
+    TIME(2),
+    VLEN(9);
 
     private final int value;
 
