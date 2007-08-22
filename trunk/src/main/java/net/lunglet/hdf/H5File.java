@@ -22,8 +22,7 @@ public final class H5File extends CommonFG {
     private static final int H5F_ACC_CREAT = 0x0010;
 
     public H5File(final String name) {
-        // TODO make this constructor truncate the file
-        this(name, H5F_ACC_RDWR | H5F_ACC_CREAT);
+        this(name, H5F_ACC_TRUNC);
     }
 
     public H5File(final String name, final int flags) {

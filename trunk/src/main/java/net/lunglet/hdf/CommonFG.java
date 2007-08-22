@@ -35,7 +35,7 @@ abstract class CommonFG extends IdComponent {
         return new Group(groupId);
     }
 
-    public DataSet createDataSet(final String name, final DataType dataType, final int[] dims) {
+    public DataSet createDataSet(final String name, final DataType dataType, final long[] dims) {
         return createDataSet(name, dataType, new DataSpace(dims));
     }
 
@@ -45,9 +45,6 @@ abstract class CommonFG extends IdComponent {
 
     public DataSet createDataSet(final String name, final DataType dataType, final DataSpace dataSpace,
             final DataSetCreatePropList createPlist) {
-        if (dataType.committed()) {
-            throw new IllegalArgumentException();
-        }
         // Obtain identifiers for C API
         int typeId = dataType.getId();
         int spaceId = dataSpace.getId();
