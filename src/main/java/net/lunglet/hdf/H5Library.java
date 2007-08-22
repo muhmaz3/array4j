@@ -2,9 +2,9 @@ package net.lunglet.hdf;
 
 import java.nio.ByteBuffer;
 
-import com.sun.jna.Function;
 import com.sun.jna.Library;
 import com.sun.jna.Native;
+import com.sun.jna.NativeLibrary;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.LongByReference;
 
@@ -13,9 +13,9 @@ interface H5Library extends Library {
         private static int loadIntValue(final String name) {
             int err = loadLibrary().H5open();
             if (err < 0) {
-                throw new RuntimeException();
+                throw new H5Exception();
             }
-            return new Function(LIBRARY_NAME, name).getInt(0);
+            return NativeLibrary.getInstance(LIBRARY_NAME).getFunction(name).getInt(0);
         }
 
         private static H5Library loadLibrary() {
@@ -253,7 +253,7 @@ interface H5Library extends Library {
 
     int H5Screate(int type);
 
-    int H5Screate_simple(int rank, int[] dims, int[] maxdims);
+    int H5Screate_simple(int rank, long[] dims, long[] maxdims);
 
     int H5Tclose(int type_id);
 

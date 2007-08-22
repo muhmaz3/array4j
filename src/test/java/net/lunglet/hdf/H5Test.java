@@ -2,7 +2,6 @@ package net.lunglet.hdf;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.File;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
@@ -26,7 +25,11 @@ public final class H5Test {
 
     @Test
     public void test() {
-        ByteBuffer buf = ByteBuffer.allocateDirect(4 * 6).order(ByteOrder.nativeOrder());
+        int rows = 2;
+        int columns = 3;
+        int k = 1;
+        int size = rows * columns * k;
+        ByteBuffer buf = ByteBuffer.allocateDirect(4 * size).order(ByteOrder.nativeOrder());
         FloatBuffer floatBuf = buf.asFloatBuffer();
         floatBuf.put(0, 1.0f);
         floatBuf.put(1, 2.0f);
@@ -35,12 +38,11 @@ public final class H5Test {
         floatBuf.put(4, 5.0f);
         floatBuf.put(5, 6.0f);
 
-        new File("test.h5").delete();
         H5File file = new H5File("test.h5");
         DataType dtype = PredefinedType.IEEE_F32LE;
-        DataSet ds1 = file.createDataSet("ds1", dtype, new int[]{2, 3});
-//        ds1.write(buf, dtype);
-        ds1.close();
+        DataSet dataset = file.createDataSet("ds1", dtype, new long[]{rows, columns, k});
+        dataset.write(buf, dtype);
+        dataset.close();
         file.close();
     }
 }
