@@ -1,5 +1,7 @@
 package net.lunglet.hdf;
 
+import java.util.Arrays;
+
 public final class DataSpace extends IdComponent {
     private static final int H5S_ALL = 0;
 
@@ -45,6 +47,32 @@ public final class DataSpace extends IdComponent {
         super(init(dims, maxdims));
     }
 
+    private int getNDims() {
+        int ndims = H5Library.INSTANCE.H5Sget_simple_extent_ndims(getId());
+        if (ndims < 0) {
+            throw new H5DataSpaceException("H5Sget_simple_extent_ndims failed");
+        }
+        return ndims;
+    }
+
+    public int[] getDims() {
+        int[] dims = new int[getNDims()];
+        int err = H5Library.INSTANCE.H5Sget_simple_extent_dims(getId(), dims, null);
+        if (err < 0) {
+            throw new H5DataSpaceException("H5Sget_simple_extent_dims failed");
+        }
+        return dims;
+    }
+
+    public int[] getMaxDims() {
+        int[] maxdims = new int[getNDims()];
+        int err = H5Library.INSTANCE.H5Sget_simple_extent_dims(getId(), null, maxdims);
+        if (err < 0) {
+            throw new H5DataSpaceException("H5Sget_simple_extent_dims failed");
+        }
+        return maxdims;
+    }
+
     public void close() {
         if (getId() != H5S_ALL) {
             // not a constant, should call H5Sclose
@@ -57,6 +85,11 @@ public final class DataSpace extends IdComponent {
             // cannot close a constant
             throw new H5DataSpaceException("Cannot close a constant");
         }
+    }
+
+    @Override
+    public String toString() {
+        return "DataSpace[dims=" + Arrays.toString(getDims()) + ", maxdims=" + Arrays.toString(getMaxDims()) + "]";
     }
 
     // TODO use an enum for type

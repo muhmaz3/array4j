@@ -232,6 +232,10 @@ public interface H5Library extends Library {
 
     int H5Dcreate(int file_id, String name, int type_id, int space_id, int plist_id);
 
+    int H5Dget_space(int dset_id);
+
+    long H5Dget_storage_size(int dset_id);
+
     int H5Dopen(int loc_id, String name);
 
     int H5Dread(int dset_id, int mem_type_id, int mem_space_id, int file_space_id, int plist_id, byte[] buf);
@@ -274,6 +278,10 @@ public interface H5Library extends Library {
 
     int H5Screate_simple(int rank, long[] dims, long[] maxdims);
 
+    int H5Sget_simple_extent_dims(int space_id, int[] dims, int[] maxdims);
+
+    int H5Sget_simple_extent_ndims(int space_id);
+
     int H5Tclose(int type_id);
 
     int H5Tcommit(int loc_id, String name, int type_id);
@@ -283,8 +291,4 @@ public interface H5Library extends Library {
     int H5Tcopy(int type_id);
 
     int H5Tcreate(int type, int size);
-
-    long H5Dget_storage_size(int dset_id);
-
-    int H5Dget_space(int dset_id);
 }
