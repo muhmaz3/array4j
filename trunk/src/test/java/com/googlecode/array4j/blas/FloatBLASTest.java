@@ -24,22 +24,16 @@ public final class FloatBLASTest<M extends FloatMatrix<M, V>, V extends FloatVec
     @Parameters
     public static Collection<?> data() {
         return Arrays.asList(new Object[][]{
-                {new FloatDenseMatrixFactory(Storage.JAVA), JavaFloatBLAS.getInstance(),
-                        new Orientation[]{Orientation.COLUMN}},
-                {new FloatDenseMatrixFactory(Storage.DIRECT), MKLFloatBLAS.getInstance(),
-                        new Orientation[]{Orientation.ROW, Orientation.COLUMN}}});
+                {new FloatDenseMatrixFactory(Storage.HEAP), new Orientation[]{Orientation.COLUMN}},
+                {new FloatDenseMatrixFactory(Storage.DIRECT), new Orientation[]{Orientation.ROW, Orientation.COLUMN}}});
     }
 
     private final FloatDenseMatrixFactory factory;
 
-    private final FloatBLAS blas;
-
     private final Orientation[] blasOrientations;
 
-    public FloatBLASTest(final FloatDenseMatrixFactory factory, final FloatBLAS blas,
-            final Orientation[] blasOrientations) {
+    public FloatBLASTest(final FloatDenseMatrixFactory factory, final Orientation[] blasOrientations) {
         this.factory = factory;
-        this.blas = blas;
         this.blasOrientations = blasOrientations;
     }
 
@@ -47,7 +41,7 @@ public final class FloatBLASTest<M extends FloatMatrix<M, V>, V extends FloatVec
     public void testDot() {
         final FloatDenseVector x = factory.createRowVector(1.0f, 2.0f, 3.0f);
         final FloatDenseVector y = factory.createRowVector(3.0f, 2.0f, 1.0f);
-        assertEquals(10.0f, blas.dot(x, y), 0.0);
+        assertEquals(10.0f, FloatDenseBLAS.dot(x, y), 0.0);
     }
 
     @Ignore
@@ -79,7 +73,7 @@ public final class FloatBLASTest<M extends FloatMatrix<M, V>, V extends FloatVec
     private void checkGemm(final Orientation blasOrientation, final FloatDenseMatrix a, final FloatDenseMatrix b) {
         final float alpha = 1.0f;
         FloatDenseMatrix c = factory.createMatrix(a.rows(), b.columns(), blasOrientation);
-        blas.gemm(alpha, a, b, 0.0f, c);
+        FloatDenseBLAS.gemm(alpha, a, b, 0.0f, c);
         checkMatrix(referenceGemm(alpha, a, b), c);
     }
 

@@ -6,8 +6,8 @@ import com.googlecode.array4j.Vector;
 
 public abstract class AbstractPackedMatrix<M extends Matrix<M, V>, V extends Vector<V>> extends AbstractMatrix<M, V> {
     private enum UpLo {
-        UP,
-        LO
+        LO,
+        UP
     }
 
     private final UpLo uplo;

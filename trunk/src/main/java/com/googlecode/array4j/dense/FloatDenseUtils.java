@@ -14,13 +14,34 @@ import com.googlecode.array4j.Orientation;
 import com.googlecode.array4j.Storage;
 
 public final class FloatDenseUtils {
-    private FloatDenseUtils() {
+    public static FloatDenseMatrix arange(final int rows, final int columns, final Orientation orientation,
+            final Storage storage) {
+        FloatDenseMatrix matrix = new FloatDenseMatrix(rows, columns, orientation, storage);
+        for (int i = 0; i < matrix.length(); i++) {
+            matrix.set(i, (float) i + 1);
+        }
+        return matrix;
     }
 
-    public static FloatDenseMatrix mapHTK(final String filename) throws IOException {
-        return mapHTK(new File(filename));
+    public static FloatDenseMatrix createMatrix(final float[][] values) {
+        return createMatrix(values, Orientation.DEFAULT, Storage.DEFAULT_FOR_DENSE);
     }
 
+
+    public static FloatDenseMatrix createMatrix(float[][] values, Orientation orientation, Storage storage) {
+        int rows = values.length;
+        int columns = rows > 0 ? values[0].length : 0;
+        FloatDenseMatrix matrix = new FloatDenseMatrix(rows, columns, orientation, storage);
+        for (int i = 0; i < rows; i++) {
+            if (values[i].length != columns) {
+                throw new IllegalArgumentException();
+            }
+            for (int j = 0; j < columns; j++) {
+                matrix.set(i, j, values[i][j]);
+            }
+        }
+        return matrix;
+    }
 
     // note that mapped files can't reliably be deleted after having been
     // mapped, so that is why readHTK is also provided
@@ -37,6 +58,10 @@ public final class FloatDenseUtils {
         }
         int columns = data.remaining() / nsamples;
         return new FloatDenseMatrix(data, nsamples, columns, 0, 1, Orientation.ROW);
+    }
+
+    public static FloatDenseMatrix mapHTK(final String filename) throws IOException {
+        return mapHTK(new File(filename));
     }
 
     public static FloatDenseMatrix readHTK(final File file) throws IOException {
@@ -56,31 +81,6 @@ public final class FloatDenseUtils {
         return new FloatDenseMatrix(data, nsamples, columns, 0, 1, Orientation.ROW);
     }
 
-    public static FloatDenseMatrix createMatrix(final float[][] values) {
-        return createMatrix(values, Orientation.DEFAULT, Storage.DEFAULT_FOR_DENSE);
-    }
-
-    public static FloatDenseMatrix createMatrix(float[][] values, Orientation orientation, Storage storage) {
-        int rows = values.length;
-        int columns = rows > 0 ? values[0].length : 0;
-        FloatDenseMatrix matrix = new FloatDenseMatrix(rows, columns, orientation, storage);
-        for (int i = 0; i < rows; i++) {
-            if (values[i].length != columns) {
-                throw new IllegalArgumentException();
-            }
-            for (int j = 0; j < columns; j++) {
-                matrix.set(i, j, values[i][j]);
-            }
-        }
-        return matrix;
-    }
-
-    public static FloatDenseMatrix arange(final int rows, final int columns, final Orientation orientation,
-            final Storage storage) {
-        FloatDenseMatrix matrix = new FloatDenseMatrix(rows, columns, orientation, storage);
-        for (int i = 0; i < matrix.size(); i++) {
-            matrix.set(i, (float) i + 1);
-        }
-        return matrix;
+    private FloatDenseUtils() {
     }
 }

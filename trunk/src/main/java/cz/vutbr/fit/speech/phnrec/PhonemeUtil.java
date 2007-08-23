@@ -6,16 +6,12 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.googlecode.array4j.FloatMatrix;
 import com.googlecode.array4j.FloatMatrixMath;
 import com.googlecode.array4j.FloatMatrixUtils;
 import com.googlecode.array4j.dense.FloatDenseMatrix;
 import com.googlecode.array4j.dense.FloatDenseVector;
 
 public final class PhonemeUtil {
-    private PhonemeUtil() {
-    }
-
     public static FloatDenseVector calculateNGrams(final FloatDenseMatrix posteriors) {
         if (posteriors.columns() < 2) {
             throw new IllegalArgumentException();
@@ -26,9 +22,9 @@ public final class PhonemeUtil {
         FloatMatrixMath.logEquals(monograms);
         monograms.minusEquals(FloatMatrixUtils.mean(monograms));
 
-        FloatDenseMatrix b1 = posteriors.subMatrixColumns(0, posteriors.columns() - 1);
-        FloatDenseMatrix b2 = posteriors.subMatrixColumns(1, posteriors.columns());
-        FloatMatrix<?, ?> bigrams = b1.times(b2.transpose());
+        FloatDenseMatrix b1 = FloatMatrixUtils.subMatrixColumns(posteriors, 0, posteriors.columns() - 1);
+        FloatDenseMatrix b2 = FloatMatrixUtils.subMatrixColumns(posteriors, 1, posteriors.columns());
+        FloatDenseMatrix bigrams = FloatMatrixMath.times(b1, b2.transpose());
         bigrams.plusEquals(1.0f);
         bigrams.divideEquals(FloatMatrixUtils.sum(bigrams));
         FloatMatrixMath.logEquals(bigrams);
@@ -54,5 +50,8 @@ public final class PhonemeUtil {
         // TODO maybe this close shouldn't be here
         bufReader.close();
         return labels;
+    }
+
+    private PhonemeUtil() {
     }
 }

@@ -5,7 +5,7 @@ abstract class AbstractDs extends H5Object {
         super(id);
     }
 
-    public abstract long getStorageSize();
-
     public abstract DataSpace getSpace();
+
+    public abstract long getStorageSize();
 }

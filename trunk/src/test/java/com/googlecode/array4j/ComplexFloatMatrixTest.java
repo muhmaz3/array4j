@@ -23,7 +23,7 @@ import com.googlecode.array4j.dense.CFloatDenseMatrixFactory;
 public final class ComplexFloatMatrixTest<M extends ComplexFloatMatrix<M, V>, V extends ComplexFloatVector<V>> {
     @Parameters
     public static Collection<?> data() {
-        return Arrays.asList(new Object[][]{{new CFloatDenseMatrixFactory(Storage.JAVA)},
+        return Arrays.asList(new Object[][]{{new CFloatDenseMatrixFactory(Storage.HEAP)},
                 {new CFloatDenseMatrixFactory(Storage.DIRECT)}});
     }
 
@@ -207,14 +207,14 @@ public final class ComplexFloatMatrixTest<M extends ComplexFloatMatrix<M, V>, V 
         final ComplexFloatMatrix<?, ?> matrix = createRowMatrixRange(rows, columns);
         for (final ComplexFloatVector<?> rowVector : matrix.rowsIterator()) {
             assertTrue(rowVector.isRowVector());
-            assertEquals(columns, rowVector.size());
+            assertEquals(columns, rowVector.length());
             assertEquals(1, rowVector.rows());
             assertEquals(columns, rowVector.columns());
         }
 
         for (final ComplexFloatVector<?> columnVector : matrix.columnsIterator()) {
             assertTrue(columnVector.isColumnVector());
-            assertEquals(rows, columnVector.size());
+            assertEquals(rows, columnVector.length());
             assertEquals(rows, columnVector.rows());
             assertEquals(1, columnVector.columns());
         }
@@ -231,7 +231,6 @@ public final class ComplexFloatMatrixTest<M extends ComplexFloatMatrix<M, V>, V 
         matrixRows = matrix.toRowArrays();
         for (int row = 0; row < rows; row++) {
             assertTrue(matrix.row(row).isRowVector());
-            ComplexFloatVector<?> rowVector = matrix.row(row);
             assertTrue("Rows must be equal", Arrays.equals(matrixRows[row], matrix.row(row).toArray()));
         }
 

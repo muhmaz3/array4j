@@ -11,26 +11,12 @@ import javax.sound.sampled.AudioFormat.Encoding;
 import javax.sound.sampled.spi.FormatConversionProvider;
 
 public final class ULawtoPCMCodec extends FormatConversionProvider {
-    private static final short[] EXP_LUT = {0, 132, 396, 924, 1980, 4092, 8316, 16764};
-
-    static short ulaw2linear(byte ulawbyte) {
-        ulawbyte = (byte) ~ulawbyte;
-        short sign = (short) (ulawbyte & 0x80);
-        short exponent = (short) ((ulawbyte >> 4) & 0x07);
-        short mantissa = (short) (ulawbyte & 0x0F);
-        short sample = (short) (EXP_LUT[exponent] + (mantissa << (exponent + 3)));
-        if (sign != 0) {
-            sample = (short) -sample;
-        }
-        return sample;
-    }
-
     private final class ULawtoPCMInputStream extends InputStream {
-        private final InputStream stream;
-
         private final byte[] bytebuf;
 
         private final ByteBuffer shortbuf;
+
+        private final InputStream stream;
 
         public ULawtoPCMInputStream(final AudioInputStream stream) {
             this.stream = stream;
@@ -57,7 +43,7 @@ public final class ULawtoPCMCodec extends FormatConversionProvider {
             }
             shortbuf.clear();
             for (int i = 0; i < bytesRead; i++) {
-                shortbuf.putShort(ulaw2linear((byte) bytebuf[i]));
+                shortbuf.putShort(ulaw2linear(bytebuf[i]));
             }
             shortbuf.position(0);
             // set limit to 2 * bytesRead because we're converting from 1-byte
@@ -68,15 +54,29 @@ public final class ULawtoPCMCodec extends FormatConversionProvider {
         }
     }
 
-    @Override
-    public AudioInputStream getAudioInputStream(final Encoding targetEncoding, final AudioInputStream sourceStream) {
-        AudioFormat format = getTargetFormats(targetEncoding, sourceStream.getFormat())[0];
-        return new AudioInputStream(new ULawtoPCMInputStream(sourceStream), format, sourceStream.getFrameLength());
+    private static final short[] EXP_LUT = {0, 132, 396, 924, 1980, 4092, 8316, 16764};
+
+    static short ulaw2linear(byte ulawbyte) {
+        ulawbyte = (byte) ~ulawbyte;
+        short sign = (short) (ulawbyte & 0x80);
+        short exponent = (short) ((ulawbyte >> 4) & 0x07);
+        short mantissa = (short) (ulawbyte & 0x0F);
+        short sample = (short) (EXP_LUT[exponent] + (mantissa << (exponent + 3)));
+        if (sign != 0) {
+            sample = (short) -sample;
+        }
+        return sample;
     }
 
     @Override
     public AudioInputStream getAudioInputStream(final AudioFormat targetFormat, final AudioInputStream sourceStream) {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public AudioInputStream getAudioInputStream(final Encoding targetEncoding, final AudioInputStream sourceStream) {
+        AudioFormat format = getTargetFormats(targetEncoding, sourceStream.getFormat())[0];
+        return new AudioInputStream(new ULawtoPCMInputStream(sourceStream), format, sourceStream.getFrameLength());
     }
 
     @Override

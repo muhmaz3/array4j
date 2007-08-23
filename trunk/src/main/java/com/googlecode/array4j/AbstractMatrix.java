@@ -69,6 +69,10 @@ public abstract class AbstractMatrix<M extends Matrix<M, V>, V extends Vector<V>
                 other.columns).isEquals();
     }
 
+    public final boolean isSquare() {
+        return rows == columns;
+    }
+
     public final int rows() {
         return rows;
     }
@@ -93,9 +97,5 @@ public abstract class AbstractMatrix<M extends Matrix<M, V>, V extends Vector<V>
                 };
             }
         };
-    }
-
-    public final boolean isSquare() {
-        return rows == columns;
     }
 }

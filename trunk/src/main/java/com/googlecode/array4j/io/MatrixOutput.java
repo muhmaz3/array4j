@@ -8,7 +8,7 @@ import com.googlecode.array4j.FloatMatrix;
 import com.googlecode.array4j.dense.FloatDenseVector;
 
 public interface MatrixOutput extends DataOutput {
-    void writeMatrix(FloatMatrix<?, ?> matrix) throws IOException;
-
     void writeColumnsAsMatrix(final Collection<? extends FloatDenseVector> columns) throws IOException;
+
+    void writeMatrix(FloatMatrix<?, ?> matrix) throws IOException;
 }

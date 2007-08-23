@@ -4,9 +4,9 @@ import java.io.File;
 import java.io.FilenameFilter;
 
 public final class FilenameSuffixFilter implements FilenameFilter {
-    private final String suffix;
-
     private final boolean ignoreCase;
+
+    private final String suffix;
 
     public FilenameSuffixFilter(final String suffix) {
         this(suffix, false);

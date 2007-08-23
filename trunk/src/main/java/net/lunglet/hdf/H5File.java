@@ -46,6 +46,8 @@ public final class H5File extends IdComponent {
         return id;
     }
 
+    private final Group rootGroup;
+
     public H5File(final String name) {
         this(name, H5F_ACC_TRUNC);
     }
@@ -53,8 +55,6 @@ public final class H5File extends IdComponent {
     public H5File(final String name, final int flags) {
         this(name, flags, FileCreatePropList.DEFAULT, FileAccessPropList.DEFAULT);
     }
-
-    private final Group rootGroup;
 
     public H5File(final String name, final int flags, final FileCreatePropList createPlist,
             final FileAccessPropList accessPlist) {

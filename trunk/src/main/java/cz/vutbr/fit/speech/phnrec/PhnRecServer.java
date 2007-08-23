@@ -30,28 +30,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 public final class PhnRecServer {
-    public static final Topic WORK_REQUEST_TOPIC = new ActiveMQTopic("workrequest");
-
-    public static final Topic WORK_RESULT_TOPIC = new ActiveMQTopic("workresult");
-
-    private final Log log = LogFactory.getLog(PhnRecServer.class);
-
-    private final Session session;
-
-    private final MessageConsumer requestConsumer;
-
-    private final MessageConsumer resultConsumer;
-
-    private final MessageProducer producer;
-
-    private final List<WorkUnit> workunits;
-
-    private final Random rng;
-
     private static final class WorkUnit {
-        private final File file;
-
         private final int channel;
+
+        private final File file;
 
         public WorkUnit(final File file, final int channel) {
             this.file = file;
@@ -66,6 +48,117 @@ public final class PhnRecServer {
                 throw new RuntimeException(e);
             }
         }
+    }
+
+    public static final Topic WORK_REQUEST_TOPIC = new ActiveMQTopic("workrequest");
+
+    public static final Topic WORK_RESULT_TOPIC = new ActiveMQTopic("workresult");
+
+    private final Log log = LogFactory.getLog(PhnRecServer.class);
+
+    private final MessageProducer producer;
+
+    private final MessageConsumer requestConsumer;
+
+    private final MessageConsumer resultConsumer;
+
+    private final Random rng;
+
+    private final Session session;
+
+    private final List<WorkUnit> workunits;
+
+    public PhnRecServer(final Connection connection) throws JMSException {
+        // use a single session so that the message listeners are never called
+        // at the same time
+        this.session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+        this.requestConsumer = session.createConsumer(WORK_REQUEST_TOPIC);
+        this.resultConsumer = session.createConsumer(WORK_RESULT_TOPIC);
+        this.producer = session.createProducer(null);
+        this.workunits = new ArrayList<WorkUnit>();
+        this.rng = new Random(0);
+        requestConsumer.setMessageListener(new MessageListener() {
+            @Override
+            public void onMessage(final Message request) {
+                try {
+                    sendWork(request);
+                } catch (JMSException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+        resultConsumer.setMessageListener(new MessageListener() {
+            @Override
+            public void onMessage(final Message result) {
+                try {
+                    BytesMessage resultBytes = (BytesMessage) result;
+                    byte[] buf = new byte[(int) resultBytes.getBodyLength()];
+                    int bytesRead = resultBytes.readBytes(buf);
+                    if (bytesRead != buf.length) {
+                        // short read
+                        throw new RuntimeException();
+                    }
+                    if (!result.propertyExists("file") || !result.propertyExists("channel")) {
+                        // invalid message
+                        throw new RuntimeException();
+                    }
+                    String file = result.getStringProperty("file");
+                    int channel = result.getIntProperty("channel");
+                    File outputFile = new File(file + "_" + channel + ".phnrec.zip");
+                    try {
+                        if (outputFile.exists()) {
+                            // TODO could check that results are identical
+                            log.info(outputFile.getCanonicalPath() + " already exists, not writing again");
+                            return;
+                        }
+                        log.info("writing " + outputFile.getCanonicalPath());
+                        FileOutputStream out = new FileOutputStream(outputFile);
+                        out.write(buf);
+                        out.close();
+                    } catch (IOException e) {
+                        outputFile.delete();
+                        log.error("output write failed", e);
+                        throw new RuntimeException(e);
+                    }
+                } catch (JMSException e) {
+                    log.error("JMS failure", e);
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+
+        // TODO add a listener for classloading requests
+    }
+
+    public void close() throws JMSException {
+        session.close();
+    }
+
+    public void generateWorkUnits(final File inputFile) {
+        try {
+            log.info("processing " + inputFile.getCanonicalPath());
+            AudioFileFormat format = AudioSystem.getAudioFileFormat(inputFile);
+            for (int channel = 0; channel < format.getFormat().getChannels(); channel++) {
+                WorkUnit workunit = new WorkUnit(inputFile, channel);
+                if (!workunit.isDone()) {
+                    log.info("adding work unit for channel " + channel);
+                    workunits.add(workunit);
+                }
+            }
+        } catch (IOException e) {
+            log.error("IOException while processing", e);
+            throw new RuntimeException(e);
+        } catch (UnsupportedAudioFileException e) {
+            log.error("UnsupportedAudioFileException while processing", e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void generateWorkUnits(final File[] files) {
+        for (File file : files) {
+            generateWorkUnits(file);
+        }
+        log.info("generated " + workunits.size() + " workunits");
     }
 
     private byte[] readChannelFromAudioFile(final File file, final int channel) {
@@ -134,98 +227,5 @@ public final class PhnRecServer {
         reply.setIntProperty("channel", workunit.channel);
         reply.setJMSCorrelationID(request.getJMSCorrelationID());
         producer.send(request.getJMSReplyTo(), reply);
-    }
-
-    public PhnRecServer(final Connection connection) throws JMSException {
-        // use a single session so that the message listeners are never called
-        // at the same time
-        this.session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-        this.requestConsumer = session.createConsumer(WORK_REQUEST_TOPIC);
-        this.resultConsumer = session.createConsumer(WORK_RESULT_TOPIC);
-        this.producer = session.createProducer(null);
-        this.workunits = new ArrayList<WorkUnit>();
-        this.rng = new Random(0);
-        requestConsumer.setMessageListener(new MessageListener() {
-            @Override
-            public void onMessage(final Message request) {
-                try {
-                    sendWork(request);
-                } catch (JMSException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        });
-        resultConsumer.setMessageListener(new MessageListener() {
-            @Override
-            public void onMessage(final Message result) {
-                try {
-                    BytesMessage resultBytes = (BytesMessage) result;
-                    byte[] buf = new byte[(int) resultBytes.getBodyLength()];
-                    int bytesRead = resultBytes.readBytes(buf);
-                    if (bytesRead != buf.length) {
-                        // short read
-                        throw new RuntimeException();
-                    }
-                    if (!result.propertyExists("file") || !result.propertyExists("channel")) {
-                        // invalid message
-                        throw new RuntimeException();
-                    }
-                    String file = result.getStringProperty("file");
-                    int channel = result.getIntProperty("channel");
-                    File outputFile = new File(file + "_" + channel + ".phnrec.zip");
-                    try {
-                        if (outputFile.exists()) {
-                            // TODO could check that results are identical
-                            log.info(outputFile.getCanonicalPath() + " already exists, not writing again");
-                            return;
-                        }
-                        log.info("writing " + outputFile.getCanonicalPath());
-                        FileOutputStream out = new FileOutputStream(outputFile);
-                        out.write(buf);
-                        out.close();
-                    } catch (IOException e) {
-                        outputFile.delete();
-                        log.error("output write failed", e);
-                        throw new RuntimeException(e);
-                    }
-                } catch (JMSException e) {
-                    log.error("JMS failure", e);
-                    throw new RuntimeException(e);
-                }
-            }
-        });
-
-        // TODO add a listener for classloading requests
-    }
-
-    public void close() throws JMSException {
-        session.close();
-    }
-
-    public void generateWorkUnits(final File[] files) {
-        for (File file : files) {
-            generateWorkUnits(file);
-        }
-        log.info("generated " + workunits.size() + " workunits");
-    }
-
-    public void generateWorkUnits(final File inputFile) {
-        try {
-            log.info("processing " + inputFile.getCanonicalPath());
-            AudioFileFormat format = AudioSystem.getAudioFileFormat(inputFile);
-            for (int channel = 0; channel < format.getFormat().getChannels(); channel++) {
-                WorkUnit workunit = new WorkUnit(inputFile, channel);
-                if (!workunit.isDone()) {
-                    log.info("adding work unit for channel " + channel);
-                    workunits.add(workunit);
-                }
-            }
-        } catch (IOException e) {
-            log.error("IOException while processing", e);
-            throw new RuntimeException(e);
-        } catch (UnsupportedAudioFileException e) {
-            log.error("UnsupportedAudioFileException while processing", e);
-            throw new RuntimeException(e);
-        }
     }
 }

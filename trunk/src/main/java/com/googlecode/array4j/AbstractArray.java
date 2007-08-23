@@ -5,15 +5,6 @@ import java.util.Arrays;
 import org.apache.commons.lang.builder.EqualsBuilder;
 
 public abstract class AbstractArray<A extends Array<A>> implements Array<A> {
-    /**
-     * Checks that value is in the range [start, stop).
-     */
-    protected static final void checkArgumentRange(final int value, final int start, final int stop) {
-        if (value < start || value >= stop) {
-            throw new IllegalArgumentException(String.format("%d not in range [%d, %d)", value, start, stop));
-        }
-    }
-
     protected static final void checkArgument(final boolean condition) {
         if (!condition) {
             throw new IllegalArgumentException();
@@ -33,24 +24,35 @@ public abstract class AbstractArray<A extends Array<A>> implements Array<A> {
         return value;
     }
 
+    /**
+     * Checks that value is in the range [start, stop).
+     */
+    protected static final void checkArgumentRange(final int value, final int start, final int stop) {
+        if (value < start || value >= stop) {
+            throw new IllegalArgumentException(String.format("%d not in range [%d, %d)", value, start, stop));
+        }
+    }
+
+    protected final int length;
+
     protected final int[] shape;
 
-    // TODO rename to length
-    protected final int size;
-
     public AbstractArray(final int[] shape) {
-        int size = 1;
+        long length = 1;
         for (int dim : shape) {
             checkArgument(dim >= 0);
-            size *= dim;
+            length *= dim;
+            if (length < 0 || length > Integer.MAX_VALUE) {
+                throw new IllegalArgumentException();
+            }
         }
         this.shape = Arrays.copyOf(shape, shape.length);
-        this.size = size;
+        this.length = (int) length;
     }
 
     protected final void checkIndex(final int index) {
-        if (index < 0 || index >= size) {
-            throw new IndexOutOfBoundsException(String.format("Index out of bounds [0,%d): %d", size, index));
+        if (index < 0 || index >= length) {
+            throw new IndexOutOfBoundsException(String.format("Index out of bounds [0,%d): %d", length, index));
         }
     }
 
@@ -67,8 +69,8 @@ public abstract class AbstractArray<A extends Array<A>> implements Array<A> {
         return new EqualsBuilder().appendSuper(super.equals(obj)).append(shape, other.shape).isEquals();
     }
 
-    public final int size() {
-        return size;
+    public final int length() {
+        return length;
     }
 
     public final int[] shape() {

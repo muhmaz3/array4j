@@ -10,7 +10,9 @@ import com.googlecode.array4j.Orientation;
 import com.googlecode.array4j.Storage;
 
 public final class CFloatDenseVector extends AbstractCFloatDense<CFloatDenseVector> implements
-        ComplexFloatVector<CFloatDenseVector> {
+        ComplexFloatVector<CFloatDenseVector>, DenseVector<CFloatDenseVector> {
+    private static final long serialVersionUID = 1L;
+
     public CFloatDenseVector(final ComplexFloat... values) {
         this(Orientation.DEFAULT_FOR_VECTOR, Storage.DEFAULT_FOR_DENSE, values);
     }
@@ -52,6 +54,11 @@ public final class CFloatDenseVector extends AbstractCFloatDense<CFloatDenseVect
     }
 
     @Override
+    public CFloatDenseVector conjTranpose() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public boolean equals(final Object obj) {
         if (obj == null || !(obj instanceof CFloatDenseVector)) {
             return false;
@@ -71,17 +78,7 @@ public final class CFloatDenseVector extends AbstractCFloatDense<CFloatDenseVect
     }
 
     @Override
-    public CFloatDenseVector subMatrixColumns(final int column0, final int column1) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public CFloatDenseVector transpose() {
-        return new CFloatDenseVector(data, size, offset, stride, orientation.transpose());
-    }
-
-    @Override
-    public CFloatDenseVector conjTranpose() {
-        throw new UnsupportedOperationException();
+        return new CFloatDenseVector(data, length, offset, stride, orientation.transpose());
     }
 }

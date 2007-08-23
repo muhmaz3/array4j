@@ -6,41 +6,21 @@ import org.apache.commons.logging.LogFactory;
 import com.googlecode.array4j.FloatVector;
 
 final class Svm {
-    private Log log = LogFactory.getLog(Svm.class);
+    //
+    // decision_function
+    //
+    static class decision_function {
+        double[] alpha;
 
-    // construct and solve various formulations
-    private void solve_c_svc(final SvmProblem prob, final SvmParameter param, final double[] alpha,
-            final Solver.SolutionInfo si, final double Cp, final double Cn) {
-        int l = prob.l;
-        double[] minusOnes = new double[l];
-        byte[] y = new byte[l];
+        double rho;
+    }
 
-        int i;
-
-        for (i = 0; i < l; i++) {
-            alpha[i] = 0;
-            minusOnes[i] = -1;
-            if (prob.y[i] > 0) {
-                y[i] = +1;
-            } else {
-                y[i] = -1;
-            }
-        }
-
-        Solver s = new Solver();
-        s.Solve(l, new SVCKernel(prob, param, y), minusOnes, y, alpha, Cp, Cn, param.eps, si, param.shrinking);
-
-        double sumAlpha = 0;
-        for (i = 0; i < l; i++) {
-            sumAlpha += alpha[i];
-        }
-
-        if (Cp == Cn) {
-            log.info("nu = " + sumAlpha / (Cp * prob.l));
-        }
-
-        for (i = 0; i < l; i++) {
-            alpha[i] *= y[i];
+    private static double sigmoid_predict(final double decision_value, final double A, final double B) {
+        double fApB = decision_value * A + B;
+        if (fApB >= 0) {
+            return Math.exp(-fApB) / (1.0 + Math.exp(-fApB));
+        } else {
+            return 1.0 / (1 + Math.exp(fApB));
         }
     }
 
@@ -121,125 +101,355 @@ final class Svm {
         s.Solve(l, new OneClassKernel(prob, param), zeros, ones, alpha, 1.0, 1.0, param.eps, si, param.shrinking);
     }
 
-    private void solve_epsilon_svr(final SvmProblem prob, final SvmParameter param, final double[] alpha,
-            final Solver.SolutionInfo si) {
-        int l = prob.l;
-        double[] alpha2 = new double[2 * l];
-        double[] linear_term = new double[2 * l];
-        byte[] y = new byte[2 * l];
-        int i;
+    public static String svm_check_parameter(final SvmProblem prob, final SvmParameter param) {
+        // svm_type
 
-        for (i = 0; i < l; i++) {
-            alpha2[i] = 0;
-            linear_term[i] = param.p - prob.y[i];
-            y[i] = 1;
-
-            alpha2[i + l] = 0;
-            linear_term[i + l] = param.p + prob.y[i];
-            y[i + l] = -1;
+        int svmType = param.svm_type;
+        if (svmType != SvmParameter.C_SVC && svmType != SvmParameter.NU_SVC && svmType != SvmParameter.ONE_CLASS
+                && svmType != SvmParameter.EPSILON_SVR && svmType != SvmParameter.NU_SVR) {
+            return "unknown svm type";
         }
 
-        Solver s = new Solver();
-        s.Solve(2 * l, new SVRKernel(prob, param), linear_term, y, alpha2, param.C, param.C, param.eps, si, param.shrinking);
+        // kernel_type, degree
 
-        double sumAlpha = 0;
-        for (i = 0; i < l; i++) {
-            alpha[i] = alpha2[i] - alpha2[i + l];
-            sumAlpha += Math.abs(alpha[i]);
-        }
-        log.info("nu = " + sumAlpha / (param.C * l));
-    }
-
-    private void solve_nu_svr(final SvmProblem prob, final SvmParameter param, final double[] alpha,
-            final Solver.SolutionInfo si) {
-        int l = prob.l;
-        double C = param.C;
-        double[] alpha2 = new double[2 * l];
-        double[] linear_term = new double[2 * l];
-        byte[] y = new byte[2 * l];
-        int i;
-
-        double sum = C * param.nu * l / 2;
-        for (i = 0; i < l; i++) {
-            alpha2[i] = alpha2[i + l] = Math.min(sum, C);
-            sum -= alpha2[i];
-
-            linear_term[i] = -prob.y[i];
-            y[i] = 1;
-
-            linear_term[i + l] = prob.y[i];
-            y[i + l] = -1;
+        int kernelType = param.kernel_type;
+        if (kernelType != SvmParameter.LINEAR && kernelType != SvmParameter.POLY
+                && kernelType != SvmParameter.RBF && kernelType != SvmParameter.SIGMOID
+                && kernelType != SvmParameter.PRECOMPUTED) {
+            return "unknown kernel type";
         }
 
-        NuSolver s = new NuSolver();
-        s.Solve(2 * l, new SVRKernel(prob, param), linear_term, y, alpha2, C, C, param.eps, si, param.shrinking);
-
-        log.info("epsilon = " + (-si.r));
-
-        for (i = 0; i < l; i++) {
-            alpha[i] = alpha2[i] - alpha2[i + l];
-        }
-    }
-
-    //
-    // decision_function
-    //
-    static class decision_function {
-        double[] alpha;
-
-        double rho;
-    };
-
-    decision_function svm_train_one(final SvmProblem prob, final SvmParameter param, final double Cp, final double Cn) {
-        double[] alpha = new double[prob.l];
-        Solver.SolutionInfo si = new Solver.SolutionInfo();
-        switch (param.svm_type) {
-        case SvmParameter.C_SVC:
-            solve_c_svc(prob, param, alpha, si, Cp, Cn);
-            break;
-        case SvmParameter.NU_SVC:
-            solveNuSvc(prob, param, alpha, si);
-            break;
-        case SvmParameter.ONE_CLASS:
-            solveOneClass(prob, param, alpha, si);
-            break;
-        case SvmParameter.EPSILON_SVR:
-            solve_epsilon_svr(prob, param, alpha, si);
-            break;
-        case SvmParameter.NU_SVR:
-            solve_nu_svr(prob, param, alpha, si);
-            break;
-        default:
-            throw new AssertionError();
+        if (param.degree < 0) {
+            return "degree of polynomial kernel < 0";
         }
 
-        log.info("obj = " + si.obj + ", rho = " + si.rho);
+        // cache_size,eps,C,nu,p,shrinking
 
-        // output SVs
+        if (param.cache_size <= 0) {
+            return "cache_size <= 0";
+        }
 
-        int nSV = 0;
-        int nBSV = 0;
-        for (int i = 0; i < prob.l; i++) {
-            if (Math.abs(alpha[i]) > 0) {
-                ++nSV;
-                if (prob.y[i] > 0) {
-                    if (Math.abs(alpha[i]) >= si.upper_bound_p) {
-                        ++nBSV;
+        if (param.eps <= 0) {
+            return "eps <= 0";
+        }
+
+        if (svmType == SvmParameter.C_SVC || svmType == SvmParameter.EPSILON_SVR
+                || svmType == SvmParameter.NU_SVR) {
+            if (param.C <= 0) {
+                return "C <= 0";
+            }
+        }
+
+        if (svmType == SvmParameter.NU_SVC || svmType == SvmParameter.ONE_CLASS || svmType == SvmParameter.NU_SVR) {
+            if (param.nu <= 0 || param.nu > 1) {
+                return "nu <= 0 or nu > 1";
+            }
+        }
+
+        if (svmType == SvmParameter.EPSILON_SVR) {
+            if (param.p < 0) {
+                return "p < 0";
+            }
+        }
+
+        if (param.shrinking != 0 && param.shrinking != 1) {
+            return "shrinking != 0 and shrinking != 1";
+        }
+
+        if (param.probability != 0 && param.probability != 1) {
+            return "probability != 0 and probability != 1";
+        }
+
+        if (param.probability == 1 && svmType == SvmParameter.ONE_CLASS) {
+            return "one-class SVM probability output not supported yet";
+        }
+
+        // check whether nu-svc is feasible
+
+        if (svmType == SvmParameter.NU_SVC) {
+            int l = prob.l;
+            int maxNrClass = 16;
+            int nrClass = 0;
+            int[] label = new int[maxNrClass];
+            int[] count = new int[maxNrClass];
+
+            int i;
+            for (i = 0; i < l; i++) {
+                int thisLabel = (int) prob.y[i];
+                int j;
+                for (j = 0; j < nrClass; j++) {
+                    if (thisLabel == label[j]) {
+                        ++count[j];
+                        break;
                     }
-                } else {
-                    if (Math.abs(alpha[i]) >= si.upper_bound_n) {
-                        ++nBSV;
+                }
+
+                if (j == nrClass) {
+                    if (nrClass == maxNrClass) {
+                        maxNrClass *= 2;
+                        int[] newData = new int[maxNrClass];
+                        System.arraycopy(label, 0, newData, 0, label.length);
+                        label = newData;
+
+                        newData = new int[maxNrClass];
+                        System.arraycopy(count, 0, newData, 0, count.length);
+                        count = newData;
+                    }
+                    label[nrClass] = thisLabel;
+                    count[nrClass] = 1;
+                    ++nrClass;
+                }
+            }
+
+            for (i = 0; i < nrClass; i++) {
+                int n1 = count[i];
+                for (int j = i + 1; j < nrClass; j++) {
+                    int n2 = count[j];
+                    if (param.nu * (n1 + n2) / 2 > Math.min(n1, n2)) {
+                        return "specified nu is infeasible";
                     }
                 }
             }
         }
 
-        log.info("nSV = " + nSV + ", nBSV = " + nBSV);
+        return null;
+    }
 
-        decision_function f = new decision_function();
-        f.alpha = alpha;
-        f.rho = si.rho;
-        return f;
+    public static int svm_check_probability_model(final SvmModel model) {
+        if (((model.param.svm_type == SvmParameter.C_SVC || model.param.svm_type == SvmParameter.NU_SVC)
+                && model.probA != null && model.probB != null)
+                || ((model.param.svm_type == SvmParameter.EPSILON_SVR || model.param.svm_type == SvmParameter.NU_SVR) && model.probA != null)) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+
+    public static void svm_get_labels(final SvmModel model, final int[] label) {
+        if (model.label != null) {
+            for (int i = 0; i < model.nr_class; i++) {
+                label[i] = model.label[i];
+            }
+        }
+    };
+
+    public static int svm_get_nr_class(final SvmModel model) {
+        return model.nr_class;
+    }
+
+    public static int svm_get_svm_type(final SvmModel model) {
+        return model.param.svm_type;
+    }
+
+    // label: label name, start: begin of each class, count: #data of classes,
+    // perm: indices to the original data
+    // perm, length l, must be allocated before calling this subroutine
+    private static void svm_group_classes(final SvmProblem prob, final int[] nr_class_ret, final int[][] label_ret,
+            final int[][] start_ret, final int[][] count_ret, final int[] perm) {
+        int l = prob.l;
+        int max_nr_class = 16;
+        int nr_class = 0;
+        int[] label = new int[max_nr_class];
+        int[] count = new int[max_nr_class];
+        int[] data_label = new int[l];
+        int i;
+
+        for (i = 0; i < l; i++) {
+            int this_label = (int) (prob.y[i]);
+            int j;
+            for (j = 0; j < nr_class; j++) {
+                if (this_label == label[j]) {
+                    ++count[j];
+                    break;
+                }
+            }
+            data_label[i] = j;
+            if (j == nr_class) {
+                if (nr_class == max_nr_class) {
+                    max_nr_class *= 2;
+                    int[] new_data = new int[max_nr_class];
+                    System.arraycopy(label, 0, new_data, 0, label.length);
+                    label = new_data;
+                    new_data = new int[max_nr_class];
+                    System.arraycopy(count, 0, new_data, 0, count.length);
+                    count = new_data;
+                }
+                label[nr_class] = this_label;
+                count[nr_class] = 1;
+                ++nr_class;
+            }
+        }
+
+        int[] start = new int[nr_class];
+        start[0] = 0;
+        for (i = 1; i < nr_class; i++) {
+            start[i] = start[i - 1] + count[i - 1];
+        }
+        for (i = 0; i < l; i++) {
+            perm[start[data_label[i]]] = i;
+            ++start[data_label[i]];
+        }
+        start[0] = 0;
+        for (i = 1; i < nr_class; i++) {
+            start[i] = start[i - 1] + count[i - 1];
+        }
+
+        nr_class_ret[0] = nr_class;
+        label_ret[0] = label;
+        start_ret[0] = start;
+        count_ret[0] = count;
+    }
+
+    public static double svm_predict(final SvmModel model, FloatVector<?> x) {
+        if (model.param.svm_type == SvmParameter.ONE_CLASS || model.param.svm_type == SvmParameter.EPSILON_SVR
+                || model.param.svm_type == SvmParameter.NU_SVR) {
+            double[] res = new double[1];
+            svm_predict_values(model, x, res);
+
+            if (model.param.svm_type == SvmParameter.ONE_CLASS) {
+                return (res[0] > 0) ? 1 : -1;
+            } else {
+                return res[0];
+            }
+        } else {
+            int i;
+            int nr_class = model.nr_class;
+            double[] dec_values = new double[nr_class * (nr_class - 1) / 2];
+            svm_predict_values(model, x, dec_values);
+
+            int[] vote = new int[nr_class];
+            for (i = 0; i < nr_class; i++) {
+                vote[i] = 0;
+            }
+            int pos = 0;
+            for (i = 0; i < nr_class; i++) {
+                for (int j = i + 1; j < nr_class; j++) {
+                    if (dec_values[pos++] > 0) {
+                        ++vote[i];
+                    } else {
+                        ++vote[j];
+                    }
+                }
+            }
+
+            int vote_max_idx = 0;
+            for (i = 1; i < nr_class; i++) {
+                if (vote[i] > vote[vote_max_idx]) {
+                    vote_max_idx = i;
+                }
+            }
+            return model.label[vote_max_idx];
+        }
+    }
+
+    public static void svm_predict_values(SvmModel model, FloatVector<?> x, double[] dec_values) {
+        if (model.param.svm_type == SvmParameter.ONE_CLASS || model.param.svm_type == SvmParameter.EPSILON_SVR
+                || model.param.svm_type == SvmParameter.NU_SVR) {
+            double[] sv_coef = model.sv_coef[0];
+            double sum = 0;
+            for (int i = 0; i < model.l; i++) {
+                sum += sv_coef[i] * Kernel.k_function(x, model.SV[i], model.param);
+            }
+            sum -= model.rho[0];
+            dec_values[0] = sum;
+        } else {
+            int i;
+            int nr_class = model.nr_class;
+            int l = model.l;
+
+            double[] kvalue = new double[l];
+            for (i = 0; i < l; i++) {
+                kvalue[i] = Kernel.k_function(x, model.SV[i], model.param);
+            }
+
+            int[] start = new int[nr_class];
+            start[0] = 0;
+            for (i = 1; i < nr_class; i++) {
+                start[i] = start[i - 1] + model.nSV[i - 1];
+            }
+
+            int p = 0;
+            for (i = 0; i < nr_class; i++) {
+                for (int j = i + 1; j < nr_class; j++) {
+                    double sum = 0;
+                    int si = start[i];
+                    int sj = start[j];
+                    int ci = model.nSV[i];
+                    int cj = model.nSV[j];
+
+                    int k;
+                    double[] coef1 = model.sv_coef[j - 1];
+                    double[] coef2 = model.sv_coef[i];
+                    for (k = 0; k < ci; k++) {
+                        sum += coef1[si + k] * kvalue[si + k];
+                    }
+                    for (k = 0; k < cj; k++) {
+                        sum += coef2[sj + k] * kvalue[sj + k];
+                    }
+                    sum -= model.rho[p];
+                    dec_values[p] = sum;
+                    p++;
+                }
+            }
+        }
+    }
+
+    private Log log = LogFactory.getLog(Svm.class);
+
+    // Method 2 from the multiclass_prob paper by Wu, Lin, and Weng
+    private void multiclass_probability(final int k, final double[][] r, final double[] p) {
+        int t, j;
+        int iter = 0, max_iter = Math.max(100, k);
+        double[][] Q = new double[k][k];
+        double[] Qp = new double[k];
+        double pQp, eps = 0.005 / k;
+
+        for (t = 0; t < k; t++) {
+            p[t] = 1.0 / k; // Valid if k = 1
+            Q[t][t] = 0;
+            for (j = 0; j < t; j++) {
+                Q[t][t] += r[j][t] * r[j][t];
+                Q[t][j] = Q[j][t];
+            }
+            for (j = t + 1; j < k; j++) {
+                Q[t][t] += r[j][t] * r[j][t];
+                Q[t][j] = -r[j][t] * r[t][j];
+            }
+        }
+        for (iter = 0; iter < max_iter; iter++) {
+            // stopping condition, recalculate QP,pQP for numerical accuracy
+            pQp = 0;
+            for (t = 0; t < k; t++) {
+                Qp[t] = 0;
+                for (j = 0; j < k; j++) {
+                    Qp[t] += Q[t][j] * p[j];
+                }
+                pQp += p[t] * Qp[t];
+            }
+            double max_error = 0;
+            for (t = 0; t < k; t++) {
+                double error = Math.abs(Qp[t] - pQp);
+                if (error > max_error) {
+                    max_error = error;
+                }
+            }
+            if (max_error < eps) {
+                break;
+            }
+
+            for (t = 0; t < k; t++) {
+                double diff = (-Qp[t] + pQp) / Q[t][t];
+                p[t] += diff;
+                pQp = (pQp + diff * (diff * Q[t][t] + 2 * Qp[t])) / (1 + diff) / (1 + diff);
+                for (j = 0; j < k; j++) {
+                    Qp[j] = (Qp[j] + diff * Q[t][j]) / (1 + diff);
+                    p[j] /= (1 + diff);
+                }
+            }
+        }
+        if (iter >= max_iter) {
+            log.error("Exceeds max_iter in multiclass_prob");
+        }
     }
 
     // Platt's binary SVM Probablistic Output: an improvement from Lin et al.
@@ -360,68 +570,99 @@ final class Svm {
         probAB[1] = B;
     }
 
-    private static double sigmoid_predict(final double decision_value, final double A, final double B) {
-        double fApB = decision_value * A + B;
-        if (fApB >= 0) {
-            return Math.exp(-fApB) / (1.0 + Math.exp(-fApB));
-        } else {
-            return 1.0 / (1 + Math.exp(fApB));
+    // construct and solve various formulations
+    private void solve_c_svc(final SvmProblem prob, final SvmParameter param, final double[] alpha,
+            final Solver.SolutionInfo si, final double Cp, final double Cn) {
+        int l = prob.l;
+        double[] minusOnes = new double[l];
+        byte[] y = new byte[l];
+
+        int i;
+
+        for (i = 0; i < l; i++) {
+            alpha[i] = 0;
+            minusOnes[i] = -1;
+            if (prob.y[i] > 0) {
+                y[i] = +1;
+            } else {
+                y[i] = -1;
+            }
+        }
+
+        Solver s = new Solver();
+        s.Solve(l, new SVCKernel(prob, param, y), minusOnes, y, alpha, Cp, Cn, param.eps, si, param.shrinking);
+
+        double sumAlpha = 0;
+        for (i = 0; i < l; i++) {
+            sumAlpha += alpha[i];
+        }
+
+        if (Cp == Cn) {
+            log.info("nu = " + sumAlpha / (Cp * prob.l));
+        }
+
+        for (i = 0; i < l; i++) {
+            alpha[i] *= y[i];
         }
     }
 
-    // Method 2 from the multiclass_prob paper by Wu, Lin, and Weng
-    private void multiclass_probability(final int k, final double[][] r, final double[] p) {
-        int t, j;
-        int iter = 0, max_iter = Math.max(100, k);
-        double[][] Q = new double[k][k];
-        double[] Qp = new double[k];
-        double pQp, eps = 0.005 / k;
+    private void solve_epsilon_svr(final SvmProblem prob, final SvmParameter param, final double[] alpha,
+            final Solver.SolutionInfo si) {
+        int l = prob.l;
+        double[] alpha2 = new double[2 * l];
+        double[] linear_term = new double[2 * l];
+        byte[] y = new byte[2 * l];
+        int i;
 
-        for (t = 0; t < k; t++) {
-            p[t] = 1.0 / k; // Valid if k = 1
-            Q[t][t] = 0;
-            for (j = 0; j < t; j++) {
-                Q[t][t] += r[j][t] * r[j][t];
-                Q[t][j] = Q[j][t];
-            }
-            for (j = t + 1; j < k; j++) {
-                Q[t][t] += r[j][t] * r[j][t];
-                Q[t][j] = -r[j][t] * r[t][j];
-            }
-        }
-        for (iter = 0; iter < max_iter; iter++) {
-            // stopping condition, recalculate QP,pQP for numerical accuracy
-            pQp = 0;
-            for (t = 0; t < k; t++) {
-                Qp[t] = 0;
-                for (j = 0; j < k; j++) {
-                    Qp[t] += Q[t][j] * p[j];
-                }
-                pQp += p[t] * Qp[t];
-            }
-            double max_error = 0;
-            for (t = 0; t < k; t++) {
-                double error = Math.abs(Qp[t] - pQp);
-                if (error > max_error) {
-                    max_error = error;
-                }
-            }
-            if (max_error < eps) {
-                break;
-            }
+        for (i = 0; i < l; i++) {
+            alpha2[i] = 0;
+            linear_term[i] = param.p - prob.y[i];
+            y[i] = 1;
 
-            for (t = 0; t < k; t++) {
-                double diff = (-Qp[t] + pQp) / Q[t][t];
-                p[t] += diff;
-                pQp = (pQp + diff * (diff * Q[t][t] + 2 * Qp[t])) / (1 + diff) / (1 + diff);
-                for (j = 0; j < k; j++) {
-                    Qp[j] = (Qp[j] + diff * Q[t][j]) / (1 + diff);
-                    p[j] /= (1 + diff);
-                }
-            }
+            alpha2[i + l] = 0;
+            linear_term[i + l] = param.p + prob.y[i];
+            y[i + l] = -1;
         }
-        if (iter >= max_iter) {
-            log.error("Exceeds max_iter in multiclass_prob");
+
+        Solver s = new Solver();
+        s.Solve(2 * l, new SVRKernel(prob, param), linear_term, y, alpha2, param.C, param.C, param.eps, si, param.shrinking);
+
+        double sumAlpha = 0;
+        for (i = 0; i < l; i++) {
+            alpha[i] = alpha2[i] - alpha2[i + l];
+            sumAlpha += Math.abs(alpha[i]);
+        }
+        log.info("nu = " + sumAlpha / (param.C * l));
+    }
+
+    private void solve_nu_svr(final SvmProblem prob, final SvmParameter param, final double[] alpha,
+            final Solver.SolutionInfo si) {
+        int l = prob.l;
+        double C = param.C;
+        double[] alpha2 = new double[2 * l];
+        double[] linear_term = new double[2 * l];
+        byte[] y = new byte[2 * l];
+        int i;
+
+        double sum = C * param.nu * l / 2;
+        for (i = 0; i < l; i++) {
+            alpha2[i] = alpha2[i + l] = Math.min(sum, C);
+            sum -= alpha2[i];
+
+            linear_term[i] = -prob.y[i];
+            y[i] = 1;
+
+            linear_term[i + l] = prob.y[i];
+            y[i + l] = -1;
+        }
+
+        NuSolver s = new NuSolver();
+        s.Solve(2 * l, new SVRKernel(prob, param), linear_term, y, alpha2, C, C, param.eps, si, param.shrinking);
+
+        log.info("epsilon = " + (-si.r));
+
+        for (i = 0; i < l; i++) {
+            alpha[i] = alpha2[i] - alpha2[i + l];
         }
     }
 
@@ -511,6 +752,167 @@ final class Svm {
         sigmoid_train(prob.l, dec_values, prob.y, probAB);
     }
 
+    // Stratified cross validation
+    public void svm_cross_validation(final SvmProblem prob, final SvmParameter param, final int nr_fold,
+            final double[] target) {
+        int i;
+        int[] foldStart = new int[nr_fold + 1];
+        int l = prob.l;
+        int[] perm = new int[l];
+
+        // stratified cv may not give leave-one-out rate
+        // Each class to l folds -> some folds may have zero elements
+        if ((param.svm_type == SvmParameter.C_SVC || param.svm_type == SvmParameter.NU_SVC) && nr_fold < l) {
+            int[] tmp_nr_class = new int[1];
+            int[][] tmp_label = new int[1][];
+            int[][] tmp_start = new int[1][];
+            int[][] tmp_count = new int[1][];
+
+            svm_group_classes(prob, tmp_nr_class, tmp_label, tmp_start, tmp_count, perm);
+
+            int nrClass = tmp_nr_class[0];
+            int[] label = tmp_label[0];
+            int[] start = tmp_start[0];
+            int[] count = tmp_count[0];
+
+            // random shuffle and then data grouped by fold using the array perm
+            int[] foldCount = new int[nr_fold];
+            int c;
+            int[] index = new int[l];
+            for (i = 0; i < l; i++) {
+                index[i] = perm[i];
+            }
+            for (c = 0; c < nrClass; c++) {
+                for (i = 0; i < count[c]; i++) {
+                    int j = i + (int) (Math.random() * (count[c] - i));
+                    do {
+                        int other = index[start[c] + j];
+                        index[start[c] + j] = index[start[c] + i];
+                        index[start[c] + i] = other;
+                    } while (false);
+                }
+            }
+            for (i = 0; i < nr_fold; i++) {
+                foldCount[i] = 0;
+                for (c = 0; c < nrClass; c++) {
+                    foldCount[i] += (i + 1) * count[c] / nr_fold - i * count[c] / nr_fold;
+                }
+            }
+            foldStart[0] = 0;
+            for (i = 1; i <= nr_fold; i++) {
+                foldStart[i] = foldStart[i - 1] + foldCount[i - 1];
+            }
+            for (c = 0; c < nrClass; c++) {
+                for (i = 0; i < nr_fold; i++) {
+                    int begin = start[c] + i * count[c] / nr_fold;
+                    int end = start[c] + (i + 1) * count[c] / nr_fold;
+                    for (int j = begin; j < end; j++) {
+                        perm[foldStart[i]] = index[j];
+                        foldStart[i]++;
+                    }
+                }
+            }
+            foldStart[0] = 0;
+            for (i = 1; i <= nr_fold; i++) {
+                foldStart[i] = foldStart[i - 1] + foldCount[i - 1];
+            }
+        } else {
+            for (i = 0; i < l; i++) {
+                perm[i] = i;
+            }
+            for (i = 0; i < l; i++) {
+                int j = i + (int) (Math.random() * (l - i));
+                do {
+                    int other = perm[i];
+                    perm[i] = perm[j];
+                    perm[j] = other;
+                } while (false);
+            }
+            for (i = 0; i <= nr_fold; i++) {
+                foldStart[i] = i * l / nr_fold;
+            }
+        }
+
+        for (i = 0; i < nr_fold; i++) {
+            int begin = foldStart[i];
+            int end = foldStart[i + 1];
+            int j, k;
+            SvmProblem subprob = new SvmProblem();
+
+            subprob.l = l - (end - begin);
+            subprob.x = new SvmNode[subprob.l];
+            subprob.y = new double[subprob.l];
+
+            k = 0;
+            for (j = 0; j < begin; j++) {
+                subprob.x[k] = prob.x[perm[j]];
+                subprob.y[k] = prob.y[perm[j]];
+                ++k;
+            }
+            for (j = end; j < l; j++) {
+                subprob.x[k] = prob.x[perm[j]];
+                subprob.y[k] = prob.y[perm[j]];
+                ++k;
+            }
+            SvmModel submodel = svm_train(subprob, param);
+            if (param.probability == 1
+                    && (param.svm_type == SvmParameter.C_SVC || param.svm_type == SvmParameter.NU_SVC)) {
+                double[] probEstimates = new double[svm_get_nr_class(submodel)];
+                for (j = begin; j < end; j++) {
+                    target[perm[j]] = svm_predict_probability(submodel, prob.x[perm[j]].value, probEstimates);
+                }
+            } else {
+                for (j = begin; j < end; j++) {
+                    target[perm[j]] = svm_predict(submodel, prob.x[perm[j]].value);
+                }
+            }
+        }
+    }
+
+    public double svm_get_svr_probability(final SvmModel model) {
+        if ((model.param.svm_type == SvmParameter.EPSILON_SVR || model.param.svm_type == SvmParameter.NU_SVR)
+                && model.probA != null) {
+            return model.probA[0];
+        } else {
+            log.error("Model doesn't contain information for SVR probability inference");
+            return 0;
+        }
+    }
+
+    public double svm_predict_probability(SvmModel model, FloatVector<?> x, double[] prob_estimates) {
+        if ((model.param.svm_type == SvmParameter.C_SVC || model.param.svm_type == SvmParameter.NU_SVC)
+                && model.probA != null && model.probB != null) {
+            int i;
+            int nr_class = model.nr_class;
+            double[] dec_values = new double[nr_class * (nr_class - 1) / 2];
+            svm_predict_values(model, x, dec_values);
+
+            double min_prob = 1e-7;
+            double[][] pairwise_prob = new double[nr_class][nr_class];
+
+            int k = 0;
+            for (i = 0; i < nr_class; i++) {
+                for (int j = i + 1; j < nr_class; j++) {
+                    pairwise_prob[i][j] = Math.min(Math.max(sigmoid_predict(dec_values[k], model.probA[k],
+                            model.probB[k]), min_prob), 1 - min_prob);
+                    pairwise_prob[j][i] = 1 - pairwise_prob[i][j];
+                    k++;
+                }
+            }
+            multiclass_probability(nr_class, pairwise_prob, prob_estimates);
+
+            int prob_max_idx = 0;
+            for (i = 1; i < nr_class; i++) {
+                if (prob_estimates[i] > prob_estimates[prob_max_idx]) {
+                    prob_max_idx = i;
+                }
+            }
+            return model.label[prob_max_idx];
+        } else {
+            return svm_predict(model, x);
+        }
+    }
+
     // Return parameter of a Laplace distribution
     private double svm_svr_probability(final SvmProblem prob, final SvmParameter param) {
         int i;
@@ -540,65 +942,6 @@ final class Svm {
         log.error("Prob. model for test data: target value = predicted value + z");
         log.error("z: Laplace distribution e^(-|z|/sigma)/(2sigma),sigma=" + mae);
         return mae;
-    }
-
-    // label: label name, start: begin of each class, count: #data of classes,
-    // perm: indices to the original data
-    // perm, length l, must be allocated before calling this subroutine
-    private static void svm_group_classes(final SvmProblem prob, final int[] nr_class_ret, final int[][] label_ret,
-            final int[][] start_ret, final int[][] count_ret, final int[] perm) {
-        int l = prob.l;
-        int max_nr_class = 16;
-        int nr_class = 0;
-        int[] label = new int[max_nr_class];
-        int[] count = new int[max_nr_class];
-        int[] data_label = new int[l];
-        int i;
-
-        for (i = 0; i < l; i++) {
-            int this_label = (int) (prob.y[i]);
-            int j;
-            for (j = 0; j < nr_class; j++) {
-                if (this_label == label[j]) {
-                    ++count[j];
-                    break;
-                }
-            }
-            data_label[i] = j;
-            if (j == nr_class) {
-                if (nr_class == max_nr_class) {
-                    max_nr_class *= 2;
-                    int[] new_data = new int[max_nr_class];
-                    System.arraycopy(label, 0, new_data, 0, label.length);
-                    label = new_data;
-                    new_data = new int[max_nr_class];
-                    System.arraycopy(count, 0, new_data, 0, count.length);
-                    count = new_data;
-                }
-                label[nr_class] = this_label;
-                count[nr_class] = 1;
-                ++nr_class;
-            }
-        }
-
-        int[] start = new int[nr_class];
-        start[0] = 0;
-        for (i = 1; i < nr_class; i++) {
-            start[i] = start[i - 1] + count[i - 1];
-        }
-        for (i = 0; i < l; i++) {
-            perm[start[data_label[i]]] = i;
-            ++start[data_label[i]];
-        }
-        start[0] = 0;
-        for (i = 1; i < nr_class; i++) {
-            start[i] = start[i - 1] + count[i - 1];
-        }
-
-        nr_class_ret[0] = nr_class;
-        label_ret[0] = label;
-        start_ret[0] = start;
-        count_ret[0] = count;
     }
 
     //
@@ -838,398 +1181,55 @@ final class Svm {
         return model;
     }
 
-    // Stratified cross validation
-    public void svm_cross_validation(final SvmProblem prob, final SvmParameter param, final int nr_fold,
-            final double[] target) {
-        int i;
-        int[] foldStart = new int[nr_fold + 1];
-        int l = prob.l;
-        int[] perm = new int[l];
+    decision_function svm_train_one(final SvmProblem prob, final SvmParameter param, final double Cp, final double Cn) {
+        double[] alpha = new double[prob.l];
+        Solver.SolutionInfo si = new Solver.SolutionInfo();
+        switch (param.svm_type) {
+        case SvmParameter.C_SVC:
+            solve_c_svc(prob, param, alpha, si, Cp, Cn);
+            break;
+        case SvmParameter.NU_SVC:
+            solveNuSvc(prob, param, alpha, si);
+            break;
+        case SvmParameter.ONE_CLASS:
+            solveOneClass(prob, param, alpha, si);
+            break;
+        case SvmParameter.EPSILON_SVR:
+            solve_epsilon_svr(prob, param, alpha, si);
+            break;
+        case SvmParameter.NU_SVR:
+            solve_nu_svr(prob, param, alpha, si);
+            break;
+        default:
+            throw new AssertionError();
+        }
 
-        // stratified cv may not give leave-one-out rate
-        // Each class to l folds -> some folds may have zero elements
-        if ((param.svm_type == SvmParameter.C_SVC || param.svm_type == SvmParameter.NU_SVC) && nr_fold < l) {
-            int[] tmp_nr_class = new int[1];
-            int[][] tmp_label = new int[1][];
-            int[][] tmp_start = new int[1][];
-            int[][] tmp_count = new int[1][];
+        log.info("obj = " + si.obj + ", rho = " + si.rho);
 
-            svm_group_classes(prob, tmp_nr_class, tmp_label, tmp_start, tmp_count, perm);
+        // output SVs
 
-            int nrClass = tmp_nr_class[0];
-            int[] label = tmp_label[0];
-            int[] start = tmp_start[0];
-            int[] count = tmp_count[0];
-
-            // random shuffle and then data grouped by fold using the array perm
-            int[] foldCount = new int[nr_fold];
-            int c;
-            int[] index = new int[l];
-            for (i = 0; i < l; i++) {
-                index[i] = perm[i];
-            }
-            for (c = 0; c < nrClass; c++) {
-                for (i = 0; i < count[c]; i++) {
-                    int j = i + (int) (Math.random() * (count[c] - i));
-                    do {
-                        int other = index[start[c] + j];
-                        index[start[c] + j] = index[start[c] + i];
-                        index[start[c] + i] = other;
-                    } while (false);
-                }
-            }
-            for (i = 0; i < nr_fold; i++) {
-                foldCount[i] = 0;
-                for (c = 0; c < nrClass; c++) {
-                    foldCount[i] += (i + 1) * count[c] / nr_fold - i * count[c] / nr_fold;
-                }
-            }
-            foldStart[0] = 0;
-            for (i = 1; i <= nr_fold; i++) {
-                foldStart[i] = foldStart[i - 1] + foldCount[i - 1];
-            }
-            for (c = 0; c < nrClass; c++) {
-                for (i = 0; i < nr_fold; i++) {
-                    int begin = start[c] + i * count[c] / nr_fold;
-                    int end = start[c] + (i + 1) * count[c] / nr_fold;
-                    for (int j = begin; j < end; j++) {
-                        perm[foldStart[i]] = index[j];
-                        foldStart[i]++;
+        int nSV = 0;
+        int nBSV = 0;
+        for (int i = 0; i < prob.l; i++) {
+            if (Math.abs(alpha[i]) > 0) {
+                ++nSV;
+                if (prob.y[i] > 0) {
+                    if (Math.abs(alpha[i]) >= si.upper_bound_p) {
+                        ++nBSV;
                     }
-                }
-            }
-            foldStart[0] = 0;
-            for (i = 1; i <= nr_fold; i++) {
-                foldStart[i] = foldStart[i - 1] + foldCount[i - 1];
-            }
-        } else {
-            for (i = 0; i < l; i++) {
-                perm[i] = i;
-            }
-            for (i = 0; i < l; i++) {
-                int j = i + (int) (Math.random() * (l - i));
-                do {
-                    int other = perm[i];
-                    perm[i] = perm[j];
-                    perm[j] = other;
-                } while (false);
-            }
-            for (i = 0; i <= nr_fold; i++) {
-                foldStart[i] = i * l / nr_fold;
-            }
-        }
-
-        for (i = 0; i < nr_fold; i++) {
-            int begin = foldStart[i];
-            int end = foldStart[i + 1];
-            int j, k;
-            SvmProblem subprob = new SvmProblem();
-
-            subprob.l = l - (end - begin);
-            subprob.x = new SvmNode[subprob.l];
-            subprob.y = new double[subprob.l];
-
-            k = 0;
-            for (j = 0; j < begin; j++) {
-                subprob.x[k] = prob.x[perm[j]];
-                subprob.y[k] = prob.y[perm[j]];
-                ++k;
-            }
-            for (j = end; j < l; j++) {
-                subprob.x[k] = prob.x[perm[j]];
-                subprob.y[k] = prob.y[perm[j]];
-                ++k;
-            }
-            SvmModel submodel = svm_train(subprob, param);
-            if (param.probability == 1
-                    && (param.svm_type == SvmParameter.C_SVC || param.svm_type == SvmParameter.NU_SVC)) {
-                double[] probEstimates = new double[svm_get_nr_class(submodel)];
-                for (j = begin; j < end; j++) {
-                    target[perm[j]] = svm_predict_probability(submodel, prob.x[perm[j]].value, probEstimates);
-                }
-            } else {
-                for (j = begin; j < end; j++) {
-                    target[perm[j]] = svm_predict(submodel, prob.x[perm[j]].value);
-                }
-            }
-        }
-    }
-
-    public static int svm_get_svm_type(final SvmModel model) {
-        return model.param.svm_type;
-    }
-
-    public static int svm_get_nr_class(final SvmModel model) {
-        return model.nr_class;
-    }
-
-    public static void svm_get_labels(final SvmModel model, final int[] label) {
-        if (model.label != null) {
-            for (int i = 0; i < model.nr_class; i++) {
-                label[i] = model.label[i];
-            }
-        }
-    }
-
-    public double svm_get_svr_probability(final SvmModel model) {
-        if ((model.param.svm_type == SvmParameter.EPSILON_SVR || model.param.svm_type == SvmParameter.NU_SVR)
-                && model.probA != null) {
-            return model.probA[0];
-        } else {
-            log.error("Model doesn't contain information for SVR probability inference");
-            return 0;
-        }
-    }
-
-    public static void svm_predict_values(SvmModel model, FloatVector<?> x, double[] dec_values) {
-        if (model.param.svm_type == SvmParameter.ONE_CLASS || model.param.svm_type == SvmParameter.EPSILON_SVR
-                || model.param.svm_type == SvmParameter.NU_SVR) {
-            double[] sv_coef = model.sv_coef[0];
-            double sum = 0;
-            for (int i = 0; i < model.l; i++) {
-                sum += sv_coef[i] * Kernel.k_function(x, model.SV[i], model.param);
-            }
-            sum -= model.rho[0];
-            dec_values[0] = sum;
-        } else {
-            int i;
-            int nr_class = model.nr_class;
-            int l = model.l;
-
-            double[] kvalue = new double[l];
-            for (i = 0; i < l; i++) {
-                kvalue[i] = Kernel.k_function(x, model.SV[i], model.param);
-            }
-
-            int[] start = new int[nr_class];
-            start[0] = 0;
-            for (i = 1; i < nr_class; i++) {
-                start[i] = start[i - 1] + model.nSV[i - 1];
-            }
-
-            int p = 0;
-            for (i = 0; i < nr_class; i++) {
-                for (int j = i + 1; j < nr_class; j++) {
-                    double sum = 0;
-                    int si = start[i];
-                    int sj = start[j];
-                    int ci = model.nSV[i];
-                    int cj = model.nSV[j];
-
-                    int k;
-                    double[] coef1 = model.sv_coef[j - 1];
-                    double[] coef2 = model.sv_coef[i];
-                    for (k = 0; k < ci; k++) {
-                        sum += coef1[si + k] * kvalue[si + k];
-                    }
-                    for (k = 0; k < cj; k++) {
-                        sum += coef2[sj + k] * kvalue[sj + k];
-                    }
-                    sum -= model.rho[p];
-                    dec_values[p] = sum;
-                    p++;
-                }
-            }
-        }
-    }
-
-    public static double svm_predict(final SvmModel model, FloatVector<?> x) {
-        if (model.param.svm_type == SvmParameter.ONE_CLASS || model.param.svm_type == SvmParameter.EPSILON_SVR
-                || model.param.svm_type == SvmParameter.NU_SVR) {
-            double[] res = new double[1];
-            svm_predict_values(model, x, res);
-
-            if (model.param.svm_type == SvmParameter.ONE_CLASS) {
-                return (res[0] > 0) ? 1 : -1;
-            } else {
-                return res[0];
-            }
-        } else {
-            int i;
-            int nr_class = model.nr_class;
-            double[] dec_values = new double[nr_class * (nr_class - 1) / 2];
-            svm_predict_values(model, x, dec_values);
-
-            int[] vote = new int[nr_class];
-            for (i = 0; i < nr_class; i++) {
-                vote[i] = 0;
-            }
-            int pos = 0;
-            for (i = 0; i < nr_class; i++) {
-                for (int j = i + 1; j < nr_class; j++) {
-                    if (dec_values[pos++] > 0) {
-                        ++vote[i];
-                    } else {
-                        ++vote[j];
-                    }
-                }
-            }
-
-            int vote_max_idx = 0;
-            for (i = 1; i < nr_class; i++) {
-                if (vote[i] > vote[vote_max_idx]) {
-                    vote_max_idx = i;
-                }
-            }
-            return model.label[vote_max_idx];
-        }
-    }
-
-    public double svm_predict_probability(SvmModel model, FloatVector<?> x, double[] prob_estimates) {
-        if ((model.param.svm_type == SvmParameter.C_SVC || model.param.svm_type == SvmParameter.NU_SVC)
-                && model.probA != null && model.probB != null) {
-            int i;
-            int nr_class = model.nr_class;
-            double[] dec_values = new double[nr_class * (nr_class - 1) / 2];
-            svm_predict_values(model, x, dec_values);
-
-            double min_prob = 1e-7;
-            double[][] pairwise_prob = new double[nr_class][nr_class];
-
-            int k = 0;
-            for (i = 0; i < nr_class; i++) {
-                for (int j = i + 1; j < nr_class; j++) {
-                    pairwise_prob[i][j] = Math.min(Math.max(sigmoid_predict(dec_values[k], model.probA[k],
-                            model.probB[k]), min_prob), 1 - min_prob);
-                    pairwise_prob[j][i] = 1 - pairwise_prob[i][j];
-                    k++;
-                }
-            }
-            multiclass_probability(nr_class, pairwise_prob, prob_estimates);
-
-            int prob_max_idx = 0;
-            for (i = 1; i < nr_class; i++) {
-                if (prob_estimates[i] > prob_estimates[prob_max_idx]) {
-                    prob_max_idx = i;
-                }
-            }
-            return model.label[prob_max_idx];
-        } else {
-            return svm_predict(model, x);
-        }
-    }
-
-    public static String svm_check_parameter(final SvmProblem prob, final SvmParameter param) {
-        // svm_type
-
-        int svmType = param.svm_type;
-        if (svmType != SvmParameter.C_SVC && svmType != SvmParameter.NU_SVC && svmType != SvmParameter.ONE_CLASS
-                && svmType != SvmParameter.EPSILON_SVR && svmType != SvmParameter.NU_SVR) {
-            return "unknown svm type";
-        }
-
-        // kernel_type, degree
-
-        int kernelType = param.kernel_type;
-        if (kernelType != SvmParameter.LINEAR && kernelType != SvmParameter.POLY
-                && kernelType != SvmParameter.RBF && kernelType != SvmParameter.SIGMOID
-                && kernelType != SvmParameter.PRECOMPUTED) {
-            return "unknown kernel type";
-        }
-
-        if (param.degree < 0) {
-            return "degree of polynomial kernel < 0";
-        }
-
-        // cache_size,eps,C,nu,p,shrinking
-
-        if (param.cache_size <= 0) {
-            return "cache_size <= 0";
-        }
-
-        if (param.eps <= 0) {
-            return "eps <= 0";
-        }
-
-        if (svmType == SvmParameter.C_SVC || svmType == SvmParameter.EPSILON_SVR
-                || svmType == SvmParameter.NU_SVR) {
-            if (param.C <= 0) {
-                return "C <= 0";
-            }
-        }
-
-        if (svmType == SvmParameter.NU_SVC || svmType == SvmParameter.ONE_CLASS || svmType == SvmParameter.NU_SVR) {
-            if (param.nu <= 0 || param.nu > 1) {
-                return "nu <= 0 or nu > 1";
-            }
-        }
-
-        if (svmType == SvmParameter.EPSILON_SVR) {
-            if (param.p < 0) {
-                return "p < 0";
-            }
-        }
-
-        if (param.shrinking != 0 && param.shrinking != 1) {
-            return "shrinking != 0 and shrinking != 1";
-        }
-
-        if (param.probability != 0 && param.probability != 1) {
-            return "probability != 0 and probability != 1";
-        }
-
-        if (param.probability == 1 && svmType == SvmParameter.ONE_CLASS) {
-            return "one-class SVM probability output not supported yet";
-        }
-
-        // check whether nu-svc is feasible
-
-        if (svmType == SvmParameter.NU_SVC) {
-            int l = prob.l;
-            int maxNrClass = 16;
-            int nrClass = 0;
-            int[] label = new int[maxNrClass];
-            int[] count = new int[maxNrClass];
-
-            int i;
-            for (i = 0; i < l; i++) {
-                int thisLabel = (int) prob.y[i];
-                int j;
-                for (j = 0; j < nrClass; j++) {
-                    if (thisLabel == label[j]) {
-                        ++count[j];
-                        break;
-                    }
-                }
-
-                if (j == nrClass) {
-                    if (nrClass == maxNrClass) {
-                        maxNrClass *= 2;
-                        int[] newData = new int[maxNrClass];
-                        System.arraycopy(label, 0, newData, 0, label.length);
-                        label = newData;
-
-                        newData = new int[maxNrClass];
-                        System.arraycopy(count, 0, newData, 0, count.length);
-                        count = newData;
-                    }
-                    label[nrClass] = thisLabel;
-                    count[nrClass] = 1;
-                    ++nrClass;
-                }
-            }
-
-            for (i = 0; i < nrClass; i++) {
-                int n1 = count[i];
-                for (int j = i + 1; j < nrClass; j++) {
-                    int n2 = count[j];
-                    if (param.nu * (n1 + n2) / 2 > Math.min(n1, n2)) {
-                        return "specified nu is infeasible";
+                } else {
+                    if (Math.abs(alpha[i]) >= si.upper_bound_n) {
+                        ++nBSV;
                     }
                 }
             }
         }
 
-        return null;
-    }
+        log.info("nSV = " + nSV + ", nBSV = " + nBSV);
 
-    public static int svm_check_probability_model(final SvmModel model) {
-        if (((model.param.svm_type == SvmParameter.C_SVC || model.param.svm_type == SvmParameter.NU_SVC)
-                && model.probA != null && model.probB != null)
-                || ((model.param.svm_type == SvmParameter.EPSILON_SVR || model.param.svm_type == SvmParameter.NU_SVR) && model.probA != null)) {
-            return 1;
-        } else {
-            return 0;
-        }
+        decision_function f = new decision_function();
+        f.alpha = alpha;
+        f.rho = si.rho;
+        return f;
     }
 }

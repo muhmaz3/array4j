@@ -8,6 +8,4 @@ public interface FloatVector<V extends FloatVector<V>> extends FloatMatrix<V, V>
     void plusEquals(FloatVector<?> other);
 
     void set(int index, float value);
-
-    float dot(FloatVector<?> other);
 }

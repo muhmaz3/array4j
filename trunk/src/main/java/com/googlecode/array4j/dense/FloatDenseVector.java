@@ -9,7 +9,9 @@ import com.googlecode.array4j.Orientation;
 import com.googlecode.array4j.Storage;
 
 public final class FloatDenseVector extends AbstractFloatDense<FloatDenseVector> implements
-        FloatVector<FloatDenseVector> {
+        FloatVector<FloatDenseVector>, DenseVector<FloatDenseVector> {
+    private static final long serialVersionUID = 1L;
+
     public FloatDenseVector(final float... values) {
         this(Orientation.DEFAULT_FOR_VECTOR, Storage.DEFAULT_FOR_DENSE, values);
     }
@@ -71,11 +73,11 @@ public final class FloatDenseVector extends AbstractFloatDense<FloatDenseVector>
 
     @Override
     public FloatDenseVector minus(final FloatVector<?> other) {
-        if (size != other.size()) {
+        if (length != other.length()) {
             throw new IllegalArgumentException();
         }
-        FloatDenseVector newVector = new FloatDenseVector(size, orientation, storage());
-        for (int i = 0; i < size; i++) {
+        FloatDenseVector newVector = new FloatDenseVector(length, orientation, storage());
+        for (int i = 0; i < length; i++) {
             newVector.set(i, get(i) - other.get(i));
         }
         return newVector;
@@ -83,21 +85,16 @@ public final class FloatDenseVector extends AbstractFloatDense<FloatDenseVector>
 
     @Override
     public void plusEquals(final FloatVector<?> other) {
-        if (size != other.size()) {
+        if (length != other.length()) {
             throw new IllegalArgumentException();
         }
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < length; i++) {
             set(i, get(i) + other.get(i));
         }
     }
 
     @Override
-    public FloatDenseVector subMatrixColumns(final int column0, final int column1) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public FloatDenseVector transpose() {
-        return new FloatDenseVector(data, size, offset, stride, orientation.transpose());
+        return new FloatDenseVector(data, length, offset, stride, orientation.transpose());
     }
 }

@@ -20,9 +20,6 @@ import org.apache.commons.logging.LogFactory;
 public final class PhnRecWorkerMain {
     private static final Log LOG = LogFactory.getLog(PhnRecWorkerMain.class);
 
-    private PhnRecWorkerMain() {
-    }
-
     private static File createTempDirectory(final String prefix, final String suffix) {
         return createTempDirectory(prefix, suffix, null);
     }
@@ -99,5 +96,8 @@ public final class PhnRecWorkerMain {
         } catch (JMSException e) {
             LOG.error("JMS failed", e);
         }
+    }
+
+    private PhnRecWorkerMain() {
     }
 }

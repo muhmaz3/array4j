@@ -1,20 +1,15 @@
 package com.googlecode.array4j.blas;
 
-import com.googlecode.array4j.dense.FloatDenseMatrix;
-import com.googlecode.array4j.dense.FloatDenseVector;
+import com.googlecode.array4j.FloatVector;
 
-// TODO make a SparseFloatBLAS interface
+public final class FloatBLAS {
+    public static float dot(final FloatVector<?> x, final FloatVector<?> y) {
+        return 0.0f;
+    }
 
-public interface FloatBLAS {
-    /**
-     * <CODE>y = x</CODE>.
-     */
-    void copy(FloatDenseVector x, FloatDenseVector y);
-
-    float dot(FloatDenseVector x, FloatDenseVector y);
-
-    /**
-     * <CODE>C = alpha*A*B + beta*C</CODE>.
-     */
-    void gemm(float alpha, FloatDenseMatrix a, FloatDenseMatrix b, float beta, FloatDenseMatrix c);
+//    public static FloatDenseMatrix times(final FloatDenseMatrix a, final FloatDenseMatrix b) {
+//        FloatDenseMatrix c = null;
+//        gemm(1.0f, a, b, 0.0f, c);
+//        return c;
+//    }
 }

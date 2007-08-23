@@ -23,7 +23,7 @@ import com.googlecode.array4j.dense.FloatDenseMatrixFactory;
 public final class FloatMatrixTest<M extends FloatMatrix<M, V>, V extends FloatVector<V>> {
     @Parameters
     public static Collection<?> data() {
-        return Arrays.asList(new Object[][]{{new FloatDenseMatrixFactory(Storage.JAVA)},
+        return Arrays.asList(new Object[][]{{new FloatDenseMatrixFactory(Storage.HEAP)},
                 {new FloatDenseMatrixFactory(Storage.DIRECT)}});
     }
 
@@ -183,7 +183,7 @@ public final class FloatMatrixTest<M extends FloatMatrix<M, V>, V extends FloatV
          for (int rows = 0; rows <= 3; rows++) {
              for (int columns = 0; columns <= 4; columns++) {
                 FloatMatrix<?, ?> matrix = factory.createMatrix(rows, columns);
-                matrix.fill(++k);
+                FloatMatrixUtils.fill(matrix, ++k);
                 for (int i = 0; i < rows; i++) {
                     for (int j = 0; j < columns; j++) {
                         assertEquals(k, matrix.get(i, j), 0.0);
@@ -202,14 +202,14 @@ public final class FloatMatrixTest<M extends FloatMatrix<M, V>, V extends FloatV
         final FloatMatrix<?, ?> matrix = createRowMatrixRange(rows, columns);
         for (final FloatVector<?> rowVector : matrix.rowsIterator()) {
             assertTrue(rowVector.isRowVector());
-            assertEquals(columns, rowVector.size());
+            assertEquals(columns, rowVector.length());
             assertEquals(1, rowVector.rows());
             assertEquals(columns, rowVector.columns());
         }
 
         for (final FloatVector<?> columnVector : matrix.columnsIterator()) {
             assertTrue(columnVector.isColumnVector());
-            assertEquals(rows, columnVector.size());
+            assertEquals(rows, columnVector.length());
             assertEquals(rows, columnVector.rows());
             assertEquals(1, columnVector.columns());
         }

@@ -1,4 +1,3 @@
-#include "com_googlecode_array4j_blas_MKLFloatBLAS.h"
 #include "net_lunglet_mkl_fft_DftiDescriptor.h"
 #include "net_lunglet_mkl_fft_DftiError.h"
 
@@ -30,34 +29,6 @@ static void* ptr4jlong(jlong l) {
 }
 
 #define DFTI_DESCRIPTOR_HANDLE_PTR(x) ((DFTI_DESCRIPTOR_HANDLE) ptr4jlong(x))
-
-JNIEXPORT jfloat JNICALL Java_com_googlecode_array4j_FloatBLAS_sdot
-  (JNIEnv *env, jclass clazz, jint n, jobject x, jint offx, jint incx, jobject y, jint offy, jint incy)
-{
-    jfloat* xp = (jfloat*) (*env)->GetDirectBufferAddress(env, x);
-    jfloat* yp = (jfloat*) (*env)->GetDirectBufferAddress(env, y);
-    if (xp == NULL) {
-        (*env)->FatalError(env, "invalid buffer x");
-    }
-    if (xp == NULL) {
-        (*env)->FatalError(env, "invalid buffer y");
-    }
-    return cblas_sdot(n, &xp[offx], incx, &yp[offy], incy);
-}
-
-JNIEXPORT void JNICALL Java_com_googlecode_array4j_blas_MKLFloatBLAS_scopy
-    (JNIEnv *env, jclass clazz, jint n, jobject x, jint offx, jint incx, jobject y, jint offy, jint incy)
-{
-    jfloat* xp = (jfloat*) (*env)->GetDirectBufferAddress(env, x);
-    jfloat* yp = (jfloat*) (*env)->GetDirectBufferAddress(env, y);
-    if (xp == NULL) {
-        (*env)->FatalError(env, "invalid buffer x");
-    }
-    if (xp == NULL) {
-        (*env)->FatalError(env, "invalid buffer y");
-    }
-    cblas_scopy(n, &xp[offx], incx, &yp[offy], incy);
-}
 
 JNIEXPORT jlong JNICALL Java_net_lunglet_mkl_fft_DftiDescriptor_createDescriptor
   (JNIEnv *env, jclass clazz, jlongArray handle, jint precision, jint forwardDomain, jintArray lengths)
@@ -246,25 +217,4 @@ JNIEXPORT jlong JNICALL Java_net_lunglet_mkl_fft_DftiDescriptor_computeBackward_
         (*env)->FatalError(env, "invalid buffer out");
     }
     return DftiComputeBackward(DFTI_DESCRIPTOR_HANDLE_PTR(handle), in, out);
-}
-
-JNIEXPORT void JNICALL Java_com_googlecode_array4j_blas_MKLFloatBLAS_gemm
-  (JNIEnv *env, jclass clazz, jint order, jint transa, jint transb, jint m, jint n, jint k, jfloat alpha, jobject abuf, jint aoff, jint lda, jobject bbuf, jint boff, jint ldb, jfloat beta, jobject cbuf, jint coff, jint ldc)
-{
-    const float* a = (*env)->GetDirectBufferAddress(env, abuf);
-    const float* b = (*env)->GetDirectBufferAddress(env, bbuf);
-    float* c = (*env)->GetDirectBufferAddress(env, cbuf);
-    if (a == NULL) {
-        (*env)->FatalError(env, "invalid buffer a");
-    }
-    a = &a[aoff];
-    if (b == NULL) {
-        (*env)->FatalError(env, "invalid buffer b");
-    }
-    b = &b[boff];
-    if (c == NULL) {
-        (*env)->FatalError(env, "invalid buffer c");
-    }
-    c = &c[coff];
-    cblas_sgemm(order, transa, transb, m, n, k, alpha, a, lda, b, ldb, beta, c, ldc);
 }

@@ -7,7 +7,6 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.util.Arrays;
-import java.util.Random;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 
@@ -17,12 +16,9 @@ import com.googlecode.array4j.FloatVector;
 import com.googlecode.array4j.Orientation;
 import com.googlecode.array4j.Storage;
 import com.googlecode.array4j.VectorSupport;
-import com.googlecode.array4j.blas.FloatBLAS;
-import com.googlecode.array4j.blas.JavaFloatBLAS;
-import com.googlecode.array4j.blas.MKLFloatBLAS;
 
-public abstract class AbstractFloatDense<M extends FloatMatrix<M, FloatDenseVector>> extends
-        AbstractDenseMatrix<M, FloatDenseVector, float[]> {
+public abstract class AbstractFloatDense<M extends FloatMatrix<M, FloatDenseVector> & DenseMatrix<M, FloatDenseVector>>
+        extends AbstractDenseMatrix<M, FloatDenseVector, float[]> {
     private static final int DEFAULT_OFFSET = 0;
 
     private static final int DEFAULT_STRIDE = 1;
@@ -41,16 +37,15 @@ public abstract class AbstractFloatDense<M extends FloatMatrix<M, FloatDenseVect
 
     protected transient FloatBuffer data;
 
-    protected transient FloatBLAS blas;
-
     /**
      * Constructor for matrix with existing data.
      */
     public AbstractFloatDense(final FloatBuffer data, final int rows, final int columns, final int offset,
             final int stride, final Orientation orientation) {
-        super(ELEMENT_SIZE, rows, columns, offset, stride, orientation);
-        this.data = data;
-        setBlas();
+        // create a new buffer with zero offset so that native code doesn't have
+        // to care about the offset when operating on the buffer
+        super(ELEMENT_SIZE, rows, columns, 0, stride, orientation);
+        this.data = ((FloatBuffer) data.position(offset)).slice();
     }
 
     /**
@@ -67,8 +62,7 @@ public abstract class AbstractFloatDense<M extends FloatMatrix<M, FloatDenseVect
      */
     public AbstractFloatDense(final int rows, final int columns, final Orientation orientation, final Storage storage) {
         super(ELEMENT_SIZE, rows, columns, DEFAULT_OFFSET, DEFAULT_STRIDE, orientation);
-        this.data = createFloatBuffer(size, storage);
-        setBlas();
+        this.data = createFloatBuffer(length, storage);
     }
 
     /**
@@ -112,6 +106,10 @@ public abstract class AbstractFloatDense<M extends FloatMatrix<M, FloatDenseVect
         return data.array();
     }
 
+    public final void divideEquals(final float value) {
+        timesEquals(1.0f / value);
+    }
+
     @Override
     public boolean equals(final Object obj) {
         if (obj == null || !(obj instanceof AbstractFloatDense)) {
@@ -125,19 +123,12 @@ public abstract class AbstractFloatDense<M extends FloatMatrix<M, FloatDenseVect
         }
         // TODO optimize this
         AbstractFloatDense<?> other = (AbstractFloatDense<?>) obj;
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < length; i++) {
             if (get(i) != other.get(i)) {
                 return false;
             }
         }
         return true;
-    }
-
-    public final void fill(final float value) {
-        FloatBuffer xdata = createFloatBuffer(1, storage());
-        FloatDenseVector x = new FloatDenseVector(xdata, size, 0, 0, Orientation.DEFAULT_FOR_VECTOR);
-        xdata.put(0, value);
-        blas.copy(x, asVector());
     }
 
     @Override
@@ -161,27 +152,23 @@ public abstract class AbstractFloatDense<M extends FloatMatrix<M, FloatDenseVect
         return data.isDirect();
     }
 
-    public final int offset() {
-        return offset;
+    public final void minusEquals(final float value) {
+        plusEquals(-1.0f * value);
     }
 
-    private void setBlas() {
-        // TODO might want to using ACML or other versions of BLAS too,
-        // depending on system properties
-        if (data.isDirect()) {
-            blas = MKLFloatBLAS.getInstance();
-        } else {
-            blas = JavaFloatBLAS.getInstance();
+    public final void plusEquals(final float value) {
+        // TODO optimize this
+        for (int i = 0; i < length; i++) {
+            set(i, get(i) + value);
         }
     }
 
     private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
         Storage storage = (Storage) in.readObject();
-        this.data = createFloatBuffer(size, storage);
-        setBlas();
+        this.data = createFloatBuffer(length, storage);
         // TODO this stuff can fail when there are offsets and strides involved
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < length; i++) {
             data.put(i, in.readFloat());
         }
     }
@@ -227,43 +214,13 @@ public abstract class AbstractFloatDense<M extends FloatMatrix<M, FloatDenseVect
     }
 
     public final Storage storage() {
-        return data.isDirect() ? Storage.DIRECT : Storage.JAVA;
-    }
-
-    public final int stride() {
-        return stride;
+        return data.isDirect() ? Storage.DIRECT : Storage.HEAP;
     }
 
     public final void timesEquals(final float value) {
         // TODO optimize this
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < length; i++) {
             set(i, get(i) * value);
-        }
-    }
-
-    public final void divideEquals(final float value) {
-        timesEquals(1.0f / value);
-    }
-
-    public final void plusEquals(final float value) {
-        // TODO optimize this
-        for (int i = 0; i < size; i++) {
-            set(i, get(i) + value);
-        }
-    }
-
-    public final void minusEquals(final float value) {
-        plusEquals(-1.0f * value);
-    }
-
-    private void writeObject(final ObjectOutputStream out) throws IOException {
-        out.defaultWriteObject();
-        out.writeObject(storage());
-        // TODO ensure data is written so that when it is read, trans can be set
-        // to Transpose.NORMAL
-        // TODO optimize this
-        for (int i = 0; i < size; i++) {
-            out.writeFloat(get(i));
         }
     }
 
@@ -272,38 +229,21 @@ public abstract class AbstractFloatDense<M extends FloatMatrix<M, FloatDenseVect
         // TODO do something better here
         StringBuilder builder = new StringBuilder();
         builder.append("[");
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < length; i++) {
             builder.append(String.format("%.16f ", get(i)));
         }
         builder.append("]");
         return builder.toString();
     }
 
-    public final FloatMatrix<?, ?> times(final FloatMatrix<?, ?> matrix) {
-        if (!(matrix instanceof FloatDenseMatrix)) {
-            throw new UnsupportedOperationException();
+    private void writeObject(final ObjectOutputStream out) throws IOException {
+        out.defaultWriteObject();
+        out.writeObject(storage());
+        // TODO ensure data is written so that when it is read, trans can be set
+        // to Transpose.NORMAL
+        // TODO optimize this
+        for (int i = 0; i < length; i++) {
+            out.writeFloat(get(i));
         }
-        FloatDenseMatrix a = (FloatDenseMatrix) this;
-        FloatDenseMatrix b = (FloatDenseMatrix) matrix;
-        FloatDenseMatrix c = new FloatDenseMatrix(rows, b.columns, orientation, storage());
-        blas.gemm(1.0f, a, b, 0.0f, c);
-        // TODO detect the special case of matrix == this, in which case we
-        // might want to do a multiplication that produces a symmetric matrix
-        // TODO return a vector if possible
-        return c;
-    }
-
-    // TODO this method should be static outside the matrix class
-    public final void fillRandom(final Random rng) {
-        for (int i = 0; i < size; i++) {
-            set(i, rng.nextFloat());
-        }
-    }
-
-    public final float dot(final FloatVector<?> other) {
-        if (!(other instanceof FloatDenseVector)) {
-            throw new UnsupportedOperationException();
-        }
-        return blas.dot((FloatDenseVector) this, (FloatDenseVector) other);
     }
 }
