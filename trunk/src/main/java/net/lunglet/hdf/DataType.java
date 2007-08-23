@@ -30,6 +30,11 @@ public class DataType extends H5Object {
         }
     }
 
+    public final long getSize() {
+        // TODO do we need error checking here?
+        return H5Library.INSTANCE.H5Tget_size(getId());
+    }
+
     final boolean committed() {
         // Call C function to determine if a datatype is a named one
         int committed = H5Library.INSTANCE.H5Tcommitted(getId());

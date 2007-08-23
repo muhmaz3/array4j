@@ -32,6 +32,10 @@ abstract class IdComponent {
         return id;
     }
 
+    protected final boolean isValid() {
+        return valid;
+    }
+
     @Override
     public int hashCode() {
         return new HashCodeBuilder().append(getId()).toHashCode();
@@ -39,5 +43,12 @@ abstract class IdComponent {
 
     protected final void invalidate() {
         this.valid = false;
+    }
+
+    protected void finalize() throws Throwable {
+        if (isValid()) {
+            System.err.println(this + " wasn't invalidated");
+        }
+        super.finalize();
     }
 }

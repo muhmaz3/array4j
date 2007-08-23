@@ -29,6 +29,27 @@ public final class Group extends H5Object {
         this.name = name;
     }
 
+    public void close() {
+        // don't close root group
+        if (name.equals("/")) {
+            invalidate();
+            return;
+        }
+        int err = H5Library.INSTANCE.H5Gclose(getId());
+        if (err < 0) {
+            throw new H5GroupException("H5Gclose failed");
+        }
+        invalidate();
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        if (isValid()) {
+            close();
+        }
+        super.finalize();
+    }
+
     public DataSet createDataSet(final String name, final DataType dataType, final DataSpace dataSpace) {
         return createDataSet(name, dataType, dataSpace, DataSetCreatePropList.DEFAULT);
     }
