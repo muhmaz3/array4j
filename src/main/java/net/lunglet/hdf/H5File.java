@@ -54,9 +54,12 @@ public final class H5File extends IdComponent {
         this(name, flags, FileCreatePropList.DEFAULT, FileAccessPropList.DEFAULT);
     }
 
+    private final Group rootGroup;
+
     public H5File(final String name, final int flags, final FileCreatePropList createPlist,
             final FileAccessPropList accessPlist) {
         super(init(name, flags, createPlist, accessPlist));
+        this.rootGroup = new Group(getId(), "/");
     }
 
     public void close() {
@@ -65,6 +68,14 @@ public final class H5File extends IdComponent {
             throw new H5FileException("H5Fclose failed");
         }
         invalidate();
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        if (isValid()) {
+            close();
+        }
+        super.finalize();
     }
 
     public String getFileName() {
@@ -90,6 +101,6 @@ public final class H5File extends IdComponent {
     }
 
     public Group getRootGroup() {
-        return new Group(getId(), "/");
+        return rootGroup;
     }
 }

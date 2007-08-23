@@ -14,17 +14,10 @@ public final class DataSpace extends IdComponent {
             throw new IllegalArgumentException();
         }
         int rank = dims.length;
-        // reverse dimensions
-        long[] rdims = new long[dims.length];
-        for (int i = 0; i < rdims.length; i++) {
-            rdims[i] = dims[dims.length - i - 1];
-        }
+        long[] rdims = reverseArray(dims);
         final long[] rmaxdims;
         if (maxdims != null) {
-            rmaxdims = new long[maxdims.length];
-            for (int i = 0; i < rmaxdims.length; i++) {
-                rmaxdims[i] = rmaxdims[rmaxdims.length - i - 1];
-            }
+            rmaxdims = reverseArray(maxdims);
         } else {
             rmaxdims = null;
         }
@@ -39,11 +32,11 @@ public final class DataSpace extends IdComponent {
         super(id);
     }
 
-    DataSpace(final long[] dims) {
+    public DataSpace(final long[] dims) {
         this(dims, null);
     }
 
-    DataSpace(final long[] dims, final long[] maxdims) {
+    public DataSpace(final long[] dims, final long[] maxdims) {
         super(init(dims, maxdims));
     }
 
@@ -55,22 +48,26 @@ public final class DataSpace extends IdComponent {
         return ndims;
     }
 
-    public int[] getDims() {
-        int[] dims = new int[getNDims()];
+    public long[] getDims() {
+        long[] dims = new long[getNDims()];
         int err = H5Library.INSTANCE.H5Sget_simple_extent_dims(getId(), dims, null);
         if (err < 0) {
             throw new H5DataSpaceException("H5Sget_simple_extent_dims failed");
         }
-        return dims;
+        return reverseArray(dims);
     }
 
-    public int[] getMaxDims() {
-        int[] maxdims = new int[getNDims()];
+    public long getSimpleExtentNpoints() {
+        return 0L;
+    }
+
+    public long[] getMaxDims() {
+        long[] maxdims = new long[getNDims()];
         int err = H5Library.INSTANCE.H5Sget_simple_extent_dims(getId(), null, maxdims);
         if (err < 0) {
             throw new H5DataSpaceException("H5Sget_simple_extent_dims failed");
         }
-        return maxdims;
+        return reverseArray(maxdims);
     }
 
     public void close() {
@@ -88,8 +85,20 @@ public final class DataSpace extends IdComponent {
     }
 
     @Override
+    protected void finalize() throws Throwable {
+        if (isValid()) {
+            close();
+        }
+        super.finalize();
+    }
+
+    @Override
     public String toString() {
-        return "DataSpace[dims=" + Arrays.toString(getDims()) + ", maxdims=" + Arrays.toString(getMaxDims()) + "]";
+        if (isValid()) {
+            return "DataSpace[dims=" + Arrays.toString(getDims()) + ", maxdims=" + Arrays.toString(getMaxDims()) + "]";
+        } else {
+            return "DataSpace[closed]";
+        }
     }
 
     // TODO use an enum for type
@@ -99,5 +108,14 @@ public final class DataSpace extends IdComponent {
             throw new H5DataSpaceException("H5Screate failed");
         }
         return id;
+    }
+
+    private static long[] reverseArray(final long[] arr) {
+        // TODO might want to reverse inplace instead
+        long[] rarr = new long[arr.length];
+        for (int i = 0; i < arr.length; i++) {
+            rarr[i] = arr[arr.length - i - 1];
+        }
+        return rarr;
     }
 }

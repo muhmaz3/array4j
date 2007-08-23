@@ -1,6 +1,6 @@
 package net.lunglet.hdf;
 
-import java.nio.ByteBuffer;
+import java.nio.Buffer;
 
 import com.sun.jna.Callback;
 import com.sun.jna.Library;
@@ -240,11 +240,11 @@ public interface H5Library extends Library {
 
     int H5Dread(int dset_id, int mem_type_id, int mem_space_id, int file_space_id, int plist_id, byte[] buf);
 
-    int H5Dread(int dset_id, int mem_type_id, int mem_space_id, int file_space_id, int plist_id, ByteBuffer buf);
+    int H5Dread(int dset_id, int mem_type_id, int mem_space_id, int file_space_id, int plist_id, Buffer buf);
 
     int H5Dwrite(int dset_id, int mem_type_id, int mem_space_id, int file_space_id, int plist_id, byte[] buf);
 
-    int H5Dwrite(int dset_id, int mem_type_id, int mem_space_id, int file_space_id, int plist_id, ByteBuffer buf);
+    int H5Dwrite(int dset_id, int mem_type_id, int mem_space_id, int file_space_id, int plist_id, Buffer buf);
 
     int H5Fclose(int file_id);
 
@@ -278,7 +278,7 @@ public interface H5Library extends Library {
 
     int H5Screate_simple(int rank, long[] dims, long[] maxdims);
 
-    int H5Sget_simple_extent_dims(int space_id, int[] dims, int[] maxdims);
+    int H5Sget_simple_extent_dims(int space_id, long[] dims, long[] maxdims);
 
     int H5Sget_simple_extent_ndims(int space_id);
 
@@ -291,4 +291,8 @@ public interface H5Library extends Library {
     int H5Tcopy(int type_id);
 
     int H5Tcreate(int type, int size);
+
+    long H5Tget_size(int type_id);
+
+    int H5Gclose(int group_id);
 }
