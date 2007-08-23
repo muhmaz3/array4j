@@ -3,19 +3,17 @@ package com.googlecode.array4j.dense;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.util.Arrays;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 
-import com.googlecode.array4j.Constants;
 import com.googlecode.array4j.FloatMatrix;
 import com.googlecode.array4j.FloatVector;
 import com.googlecode.array4j.Orientation;
 import com.googlecode.array4j.Storage;
 import com.googlecode.array4j.VectorSupport;
+import com.googlecode.array4j.util.BufferUtil;
 
 public abstract class AbstractFloatDense<M extends FloatMatrix<M, FloatDenseVector> & DenseMatrix<M, FloatDenseVector>>
         extends AbstractDenseMatrix<M, FloatDenseVector, float[]> {
@@ -25,16 +23,6 @@ public abstract class AbstractFloatDense<M extends FloatMatrix<M, FloatDenseVect
 
     private static final int ELEMENT_SIZE = 1;
 
-    public static FloatBuffer createFloatBuffer(final int size, final Storage storage) {
-        if (storage.equals(Storage.DIRECT)) {
-            final ByteBuffer buffer = ByteBuffer.allocateDirect(size * ELEMENT_SIZE * Constants.FLOAT_BYTES);
-            buffer.order(ByteOrder.nativeOrder());
-            return buffer.asFloatBuffer();
-        } else {
-            return FloatBuffer.allocate(size * ELEMENT_SIZE);
-        }
-    }
-
     protected transient FloatBuffer data;
 
     /**
@@ -42,10 +30,8 @@ public abstract class AbstractFloatDense<M extends FloatMatrix<M, FloatDenseVect
      */
     public AbstractFloatDense(final FloatBuffer data, final int rows, final int columns, final int offset,
             final int stride, final Orientation orientation) {
-        // create a new buffer with zero offset so that native code doesn't have
-        // to care about the offset when operating on the buffer
-        super(ELEMENT_SIZE, rows, columns, 0, stride, orientation);
-        this.data = ((FloatBuffer) data.position(offset)).slice();
+        super(ELEMENT_SIZE, rows, columns, offset, stride, orientation);
+        this.data = data;
     }
 
     /**
@@ -62,7 +48,7 @@ public abstract class AbstractFloatDense<M extends FloatMatrix<M, FloatDenseVect
      */
     public AbstractFloatDense(final int rows, final int columns, final Orientation orientation, final Storage storage) {
         super(ELEMENT_SIZE, rows, columns, DEFAULT_OFFSET, DEFAULT_STRIDE, orientation);
-        this.data = createFloatBuffer(length, storage);
+        this.data = BufferUtil.createFloatBuffer(length, storage);
     }
 
     /**
@@ -118,7 +104,7 @@ public abstract class AbstractFloatDense<M extends FloatMatrix<M, FloatDenseVect
         if (this == obj) {
             return true;
         }
-        if (new EqualsBuilder().appendSuper(super.equals(obj)).isEquals()) {
+        if (!new EqualsBuilder().appendSuper(super.equals(obj)).isEquals()) {
             return false;
         }
         // TODO optimize this
@@ -166,7 +152,7 @@ public abstract class AbstractFloatDense<M extends FloatMatrix<M, FloatDenseVect
     private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
         Storage storage = (Storage) in.readObject();
-        this.data = createFloatBuffer(length, storage);
+        this.data = BufferUtil.createFloatBuffer(length, storage);
         // TODO this stuff can fail when there are offsets and strides involved
         for (int i = 0; i < length; i++) {
             data.put(i, in.readFloat());

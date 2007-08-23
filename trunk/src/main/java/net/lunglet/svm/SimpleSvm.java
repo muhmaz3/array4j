@@ -7,6 +7,7 @@ import com.googlecode.array4j.FloatVector;
 import com.googlecode.array4j.dense.FloatDenseVector;
 
 // TODO make data an array of T or an Iterable<FloatVector> or something
+
 // TODO support arbitrary labels
 
 // TODO implement copyWithoutRowsColumns(int[]) for removing certain trials
@@ -112,6 +113,7 @@ public final class SimpleSvm {
     }
 
     public void train(final double cost) {
+        // TODO might want to increase cache size
         SvmParameter param = createDefaultSvmParameter();
         param.svm_type = SvmParameter.C_SVC;
         param.C = cost;
