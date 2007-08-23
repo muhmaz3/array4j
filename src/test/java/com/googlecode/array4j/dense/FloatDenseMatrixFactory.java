@@ -5,6 +5,7 @@ import java.nio.FloatBuffer;
 import com.googlecode.array4j.FloatMatrixFactory;
 import com.googlecode.array4j.Orientation;
 import com.googlecode.array4j.Storage;
+import com.googlecode.array4j.util.BufferUtil;
 
 public final class FloatDenseMatrixFactory implements FloatMatrixFactory<FloatDenseMatrix, FloatDenseVector> {
     private final Storage storage;
@@ -15,7 +16,7 @@ public final class FloatDenseMatrixFactory implements FloatMatrixFactory<FloatDe
 
     public FloatDenseMatrix createMatrix(final float[] values, final int rows, final int columns, final int offset,
             final int stride, final Orientation orientation) {
-        FloatBuffer data = AbstractFloatDense.createFloatBuffer(values.length, storage);
+        FloatBuffer data = BufferUtil.createFloatBuffer(values.length, storage);
         data.put(values);
         return new FloatDenseMatrix(data, rows, columns, offset, stride, orientation);
     }
@@ -39,7 +40,7 @@ public final class FloatDenseMatrixFactory implements FloatMatrixFactory<FloatDe
 
     public FloatDenseVector createVector(final float[] values, final int size, final int offset, final int stride,
             final Orientation orientation) {
-        FloatBuffer data = AbstractFloatDense.createFloatBuffer(values.length, storage);
+        FloatBuffer data = BufferUtil.createFloatBuffer(values.length, storage);
         data.put(values);
         return new FloatDenseVector(data, size, offset, stride, orientation);
     }

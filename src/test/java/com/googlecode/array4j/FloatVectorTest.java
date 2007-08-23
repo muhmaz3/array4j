@@ -106,7 +106,6 @@ public final class FloatVectorTest<M extends FloatMatrix<M, V>, V extends FloatV
         assertTrue("Vector must be a column vector by default", vector.isColumnVector());
         final V transposedVector = vector.transpose();
         assertTrue(transposedVector.isRowVector());
-        // TODO if orientations differ, vectors must not be equal
         assertFalse(vector.equals(transposedVector));
         final V originalVector = transposedVector.transpose();
         assertTrue(originalVector.isColumnVector());

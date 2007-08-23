@@ -66,7 +66,7 @@ public abstract class AbstractArray<A extends Array<A>> implements Array<A> {
         }
         AbstractArray<?> other = (AbstractArray<?>) obj;
         // length is calculated from shape, so only check shape
-        return new EqualsBuilder().appendSuper(super.equals(obj)).append(shape, other.shape).isEquals();
+        return new EqualsBuilder().append(shape, other.shape).isEquals();
     }
 
     public final int length() {

@@ -22,6 +22,8 @@ import com.googlecode.array4j.dense.FloatDenseMatrix;
 import com.googlecode.array4j.dense.FloatDenseVector;
 import com.googlecode.array4j.packed.FloatPackedMatrix;
 
+// TODO test with heap and direct data oriented both ways
+
 public final class SvmTest {
     @Test
     public void test() {

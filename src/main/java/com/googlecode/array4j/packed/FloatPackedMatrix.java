@@ -5,9 +5,8 @@ import java.nio.FloatBuffer;
 import com.googlecode.array4j.FloatMatrix;
 import com.googlecode.array4j.FloatVector;
 import com.googlecode.array4j.Orientation;
+import com.googlecode.array4j.Storage;
 import com.googlecode.array4j.dense.FloatDenseVector;
-
-// TODO use ?syrk to calculate a symmetric matrix
 
 public final class FloatPackedMatrix extends AbstractPackedMatrix<FloatPackedMatrix, FloatDenseVector> implements
         FloatMatrix<FloatPackedMatrix, FloatDenseVector> {
@@ -112,5 +111,21 @@ public final class FloatPackedMatrix extends AbstractPackedMatrix<FloatPackedMat
     public FloatDenseVector createRowVector() {
         // TODO implement this
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Orientation orientation() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Storage storage() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public float[] dataArray() {
+        return data.array();
     }
 }

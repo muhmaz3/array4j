@@ -9,6 +9,7 @@ import net.lunglet.mkl.fft.DftiException;
 
 import com.googlecode.array4j.dense.CFloatDenseVector;
 import com.googlecode.array4j.dense.FloatDenseVector;
+import com.googlecode.array4j.util.BufferUtil;
 
 public final class MKLFFT implements FFT {
     private static void checkArgument(final boolean condition) {
@@ -27,7 +28,7 @@ public final class MKLFFT implements FFT {
         final int xoffset;
         final int xstride;
         if (n > x.length()) {
-            xdata = FloatDenseVector.createFloatBuffer(n, x.storage());
+            xdata = BufferUtil.createFloatBuffer(n, x.storage());
             xoffset = 0;
             xstride = 1;
             // TODO optimize this

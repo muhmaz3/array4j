@@ -1,13 +1,15 @@
 package com.googlecode.array4j.blas;
 
 import org.netlib.blas.Sgemm;
+import org.netlib.blas.Ssyrk;
 
 import com.googlecode.array4j.dense.FloatDenseMatrix;
 import com.googlecode.array4j.dense.FloatDenseVector;
+import com.googlecode.array4j.packed.FloatPackedMatrix;
 
 public final class FloatDenseBLAS extends AbstractDenseBLAS {
     public static float dot(final FloatDenseVector x, final FloatDenseVector y) {
-        // TODO move these checks to AbstractBLAS
+        // TODO move these checks to AbstractDenseBLAS
 //        if (x.length() > y.length()) {
 //            throw new IllegalArgumentException();
 //        }
@@ -21,6 +23,7 @@ public final class FloatDenseBLAS extends AbstractDenseBLAS {
             try {
                 NATIVE_BLAS_LOCK.lock();
                 // TODO call dot in native library using JNA
+                // TODO slice buffer at offset before passing to JNA
                 return 2.0f;
             } finally {
                 NATIVE_BLAS_LOCK.unlock();
@@ -57,10 +60,29 @@ public final class FloatDenseBLAS extends AbstractDenseBLAS {
             try {
                 NATIVE_BLAS_LOCK.lock();
                 // TODO call gemm in native library using JNA
+                // TODO slice buffer at offset before passing to JNA
                 return;
             } finally {
                 NATIVE_BLAS_LOCK.unlock();
             }
+        default:
+            throw new AssertionError();
+        }
+    }
+
+    public static void sykr(final float alpha, final FloatDenseMatrix a, final float beta, final FloatPackedMatrix c) {
+        checkSyrk(a, c);
+        Transpose transa = chooseTrans(c, a);
+        int n = c.rows();
+        int k = a.columns();
+        int lda = ld(a);
+        int ldc = ld(c);
+        switch (a.storage()) {
+        case HEAP:
+            Ssyrk.ssyrk(c.getUpLo().toString(), transa.toString(), n, k, alpha, a.dataArray(), a.offset(), lda, beta,
+                    c.dataArray(), c.offset(), ldc);
+        case DIRECT:
+            throw new UnsupportedOperationException();
         default:
             throw new AssertionError();
         }

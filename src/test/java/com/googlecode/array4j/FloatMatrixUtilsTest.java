@@ -13,7 +13,6 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 import com.googlecode.array4j.dense.FloatDenseMatrixFactory;
-import com.googlecode.array4j.dense.FloatDenseVector;
 
 @RunWith(value = Parameterized.class)
 public final class FloatMatrixUtilsTest<M extends FloatMatrix<M, V>, V extends FloatVector<V>> {
