@@ -19,6 +19,9 @@ public final class FileUtils {
     public static File[] listFiles(final File directory, final FilenameFilter filter, final boolean recurse) {
         List<File> files = new ArrayList<File>();
         File[] entries = directory.listFiles();
+        if (entries == null) {
+            return new File[0];
+        }
         for (File entry : entries) {
             if (filter == null || filter.accept(directory, entry.getName())) {
                 files.add(entry);
