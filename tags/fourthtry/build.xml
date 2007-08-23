@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project default="generate">
+	<property name="src.generated.native" value="src/generated/native" />
+	<target name="generate">
+		<mkdir dir="src/generated/native" />
+		<javah destdir="${src.generated.native}" classpath="eclipse-classes">
+			<class name="com.googlecode.array4j.blas.MKLFloatBLAS" />
+			<class name="net.lunglet.mkl.fft.DftiDescriptor" />
+			<class name="net.lunglet.mkl.fft.DftiError" />
+			<class name="com.intel.mkl.DFTIDESCRIPTORHANDLE" />
+			<class name="com.intel.mkl.DFTI" />
+		</javah>
+	</target>
+</project>
