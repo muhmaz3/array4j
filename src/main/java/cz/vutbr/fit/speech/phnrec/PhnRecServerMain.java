@@ -17,9 +17,6 @@ import org.apache.commons.logging.LogFactory;
 public final class PhnRecServerMain {
     private static final Log LOG = LogFactory.getLog(PhnRecWorkerMain.class);
 
-    private PhnRecServerMain() {
-    }
-
     public static void main(final String[] args) throws InterruptedException {
         try {
             File inputDirectory = new File("F:/language/CallFriend");
@@ -35,5 +32,8 @@ public final class PhnRecServerMain {
         } catch (JMSException e) {
             LOG.error("JMS failed", e);
         }
+    }
+
+    private PhnRecServerMain() {
     }
 }

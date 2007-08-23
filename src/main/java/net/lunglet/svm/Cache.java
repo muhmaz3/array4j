@@ -7,19 +7,19 @@ package net.lunglet.svm;
 // size is the cache size limit in bytes
 //
 final class Cache {
-    private long size;
-
     private final class Entry {
-        Entry prev, next; // a cicular list
-
         float[] data;
 
         int len; // data[0,len) is cached in this entry
+
+        Entry prev, next; // a cicular list
     }
 
     private final Entry[] entries;
 
     private Entry lruHead;
+
+    private long size;
 
     Cache(final int l, final long size) {
         this.size = size;
@@ -35,20 +35,6 @@ final class Cache {
         lruHead = new Entry();
         lruHead.next = lruHead;
         lruHead.prev = lruHead;
-    }
-
-    private void lruDelete(final Entry h) {
-        // delete from current location
-        h.prev.next = h.next;
-        h.next.prev = h.prev;
-    }
-
-    private void lruInsert(final Entry h) {
-        // insert to last position
-        h.next = lruHead;
-        h.prev = lruHead.prev;
-        h.prev.next = h;
-        h.next.prev = h;
     }
 
     // request data [0,len)
@@ -89,6 +75,20 @@ final class Cache {
         lruInsert(h);
         data[0] = h.data;
         return len;
+    }
+
+    private void lruDelete(final Entry h) {
+        // delete from current location
+        h.prev.next = h.next;
+        h.next.prev = h.prev;
+    }
+
+    private void lruInsert(final Entry h) {
+        // insert to last position
+        h.next = lruHead;
+        h.prev = lruHead.prev;
+        h.prev.next = h;
+        h.next.prev = h;
     }
 
     void swapIndex(int i, int j) {

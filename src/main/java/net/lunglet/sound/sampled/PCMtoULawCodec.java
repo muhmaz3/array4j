@@ -6,6 +6,10 @@ import javax.sound.sampled.AudioFormat.Encoding;
 import javax.sound.sampled.spi.FormatConversionProvider;
 
 public final class PCMtoULawCodec extends FormatConversionProvider {
+    private static final short BIAS = 0x84;
+
+    private static final short CLIP = 32635;
+
     private static final byte[] EXP_LUT = {0, 0, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4,
             4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
             5, 5, 5, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6,
@@ -16,10 +20,6 @@ public final class PCMtoULawCodec extends FormatConversionProvider {
             7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7};
 
     private static final boolean ZEROTRAP = false;
-
-    private static final short CLIP = 32635;
-
-    private static final short BIAS = 0x84;
 
     static byte linear2ulaw(int sample) {
         // Get the sample into sign-magnitude.
@@ -47,13 +47,13 @@ public final class PCMtoULawCodec extends FormatConversionProvider {
     }
 
     @Override
-    public AudioInputStream getAudioInputStream(final Encoding targetEncoding, final AudioInputStream sourceStream) {
+    public AudioInputStream getAudioInputStream(final AudioFormat targetFormat, final AudioInputStream sourceStream) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public AudioInputStream getAudioInputStream(final AudioFormat targetFormat, final AudioInputStream sourceStream) {
+    public AudioInputStream getAudioInputStream(final Encoding targetEncoding, final AudioInputStream sourceStream) {
         // TODO Auto-generated method stub
         return null;
     }

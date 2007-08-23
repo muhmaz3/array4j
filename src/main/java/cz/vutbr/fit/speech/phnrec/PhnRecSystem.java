@@ -18,15 +18,24 @@ import com.googlecode.array4j.dense.FloatDenseMatrix;
 import com.googlecode.array4j.dense.FloatDenseUtils;
 
 public final class PhnRecSystem {
-    private Log log = LogFactory.getLog(PhnRecSystem.class);
+    private static String join(final Collection<? extends String> strs, final String separator) {
+        StringBuilder builder = new StringBuilder();
+        for (String str : strs) {
+            builder.append(str);
+            builder.append(separator);
+        }
+        return builder.toString();
+    }
 
-    private final File systemConfigDir;
+    private Log log = LogFactory.getLog(PhnRecSystem.class);
 
     private final File phnRecExe;
 
     private final Set<String> phonemes;
 
     private final String shortName;
+
+    private final File systemConfigDir;
 
     public PhnRecSystem(final String name, final String shortName) {
         this.shortName = shortName;
@@ -72,13 +81,43 @@ public final class PhnRecSystem {
         return shortName;
     }
 
-    private static String join(final Collection<? extends String> strs, final String separator) {
-        StringBuilder builder = new StringBuilder();
-        for (String str : strs) {
-            builder.append(str);
-            builder.append(separator);
+    public void posteriorsToStrings(final File posteriorsFile, final File stringsFile) throws IOException {
+        List<String> command = new ArrayList<String>();
+        command.add(phnRecExe.getAbsolutePath());
+        command.add("-v");
+        command.add("-c");
+        command.add(systemConfigDir.getAbsolutePath());
+        // source is posteriors in HTK format
+        command.add("-s");
+        command.add("post");
+        command.add("-i");
+        command.add(posteriorsFile.getAbsolutePath());
+        // target is labeled phonemes in MLF format
+        command.add("-t");
+        command.add("str");
+        command.add("-o");
+        command.add(stringsFile.getAbsolutePath());
+        runPhnRec(command);
+    }
+
+    public FloatDenseMatrix readPosteriors(final File posteriorsFile) throws IOException {
+        FloatDenseMatrix posteriors = FloatDenseUtils.readHTK(posteriorsFile);
+        // transpose so that frames correspond to columns
+        posteriors = posteriors.transpose();
+        if (posteriors.rows() != 3 * phonemes.size()) {
+            throw new RuntimeException();
         }
-        return builder.toString();
+        return posteriors;
+    }
+
+    public List<MasterLabel> readStrings(final File stringsFile) throws IOException {
+        List<MasterLabel> labels = PhonemeUtil.readMasterLabels(new FileReader(stringsFile));
+        for (MasterLabel label : labels) {
+            if (!phonemes.contains(label.label)) {
+                throw new RuntimeException("invalid phoneme: " + label);
+            }
+        }
+        return labels;
     }
 
     private void runPhnRec(final List<String> command) throws IOException {
@@ -124,44 +163,5 @@ public final class PhnRecSystem {
         command.add("-o");
         command.add(posteriorsFile.getAbsolutePath());
         runPhnRec(command);
-    }
-
-    public FloatDenseMatrix readPosteriors(final File posteriorsFile) throws IOException {
-        FloatDenseMatrix posteriors = FloatDenseUtils.readHTK(posteriorsFile);
-        // transpose so that frames correspond to columns
-        posteriors = posteriors.transpose();
-        if (posteriors.rows() != 3 * phonemes.size()) {
-            throw new RuntimeException();
-        }
-        return posteriors;
-    }
-
-    public void posteriorsToStrings(final File posteriorsFile, final File stringsFile) throws IOException {
-        List<String> command = new ArrayList<String>();
-        command.add(phnRecExe.getAbsolutePath());
-        command.add("-v");
-        command.add("-c");
-        command.add(systemConfigDir.getAbsolutePath());
-        // source is posteriors in HTK format
-        command.add("-s");
-        command.add("post");
-        command.add("-i");
-        command.add(posteriorsFile.getAbsolutePath());
-        // target is labeled phonemes in MLF format
-        command.add("-t");
-        command.add("str");
-        command.add("-o");
-        command.add(stringsFile.getAbsolutePath());
-        runPhnRec(command);
-    }
-
-    public List<MasterLabel> readStrings(final File stringsFile) throws IOException {
-        List<MasterLabel> labels = PhonemeUtil.readMasterLabels(new FileReader(stringsFile));
-        for (MasterLabel label : labels) {
-            if (!phonemes.contains(label.label)) {
-                throw new RuntimeException("invalid phoneme: " + label);
-            }
-        }
-        return labels;
     }
 }

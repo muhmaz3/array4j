@@ -1,7 +1,6 @@
 package com.googlecode.array4j.packed;
 
 import java.nio.FloatBuffer;
-import java.util.Random;
 
 import com.googlecode.array4j.FloatMatrix;
 import com.googlecode.array4j.FloatVector;
@@ -20,19 +19,21 @@ public final class FloatPackedMatrix extends AbstractPackedMatrix<FloatPackedMat
     }
 
     @Override
+    public FloatDenseVector asVector() {
+        // TODO return a dense vector
+        return null;
+    }
+
+    @Override
+    public FloatDenseVector column(final int column) {
+        // TODO return a dense column
+        return null;
+    }
+
+    @Override
     public void divideEquals(final float value) {
         // TODO use blas scal
         // TODO note that there are fewers values to scale
-    }
-
-    @Override
-    public void fill(final float value) {
-        // TODO use blas copy
-    }
-
-    // TODO move this method out of the matrix interface
-    @Override
-    public void fillRandom(final Random rng) {
     }
 
     @Override
@@ -46,6 +47,12 @@ public final class FloatPackedMatrix extends AbstractPackedMatrix<FloatPackedMat
 
     @Override
     public void plusEquals(final float value) {
+    }
+
+    @Override
+    public FloatDenseVector row(final int row) {
+        // TODO return a dense row
+        return null;
     }
 
     @Override
@@ -66,14 +73,15 @@ public final class FloatPackedMatrix extends AbstractPackedMatrix<FloatPackedMat
     }
 
     @Override
-    public FloatMatrix<?, ?> times(final FloatMatrix<?, ?> matrix) {
-        // TODO use BLAS level 3 ?symm
-        return null;
+    public void timesEquals(final float value) {
+        // TODO use blas scal
     }
 
     @Override
-    public void timesEquals(final float value) {
-        // TODO use blas scal
+    public float[] toArray() {
+        // TODO figure out if this returns a dense array or a packed array
+        // TODO a packed array will probably be more useful
+        return null;
     }
 
     @Override
@@ -89,53 +97,20 @@ public final class FloatPackedMatrix extends AbstractPackedMatrix<FloatPackedMat
     }
 
     @Override
-    public FloatDenseVector asVector() {
-        // TODO return a dense vector
-        return null;
-    }
-
-    @Override
-    public FloatDenseVector column(final int column) {
-        // TODO return a dense column
-        return null;
-    }
-
-    @Override
-    public FloatDenseVector createColumnVector() {
-        // TODO use same storage as matrix
-        return new FloatDenseVector(rows, Orientation.COLUMN, null);
-    }
-
-    @Override
-    public FloatDenseVector createRowVector() {
-        return new FloatDenseVector(columns, Orientation.ROW, null);
-    }
-
-    @Override
-    public FloatDenseVector row(final int row) {
-        // TODO return a dense row
-        return null;
-    }
-
-    @Override
-    public FloatPackedMatrix subMatrixColumns(final int column0, final int column1) {
-        // TODO this makes a matrix that is no longer symmetric, so this
-        // function should probably be moved to a DenseMatrix interface that is
-        // generified so that FloatPackedMatrix can implement it to return
-        // FloatDenseMatrix
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public FloatPackedMatrix transpose() {
         // TODO switch uplo
         return null;
     }
 
     @Override
-    public float[] toArray() {
-        // TODO figure out if this returns a dense array or a packed array
-        // TODO a packed array will probably be more useful
-        return null;
+    public FloatDenseVector createColumnVector() {
+        // TODO implement this
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public FloatDenseVector createRowVector() {
+        // TODO implement this
+        throw new UnsupportedOperationException();
     }
 }

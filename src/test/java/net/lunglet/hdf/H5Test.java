@@ -37,12 +37,14 @@ public final class H5Test {
         floatBuf.put(3, 4.0f);
         floatBuf.put(4, 5.0f);
         floatBuf.put(5, 6.0f);
-
         H5File file = new H5File("test.h5");
         DataType dtype = PredefinedType.IEEE_F32LE;
-        DataSet dataset = file.createDataSet("ds1", dtype, new long[]{rows, columns, k});
+        Group root = file.getRootGroup();
+        Group group = root.createGroup("g1");
+        Group alsoGroup = root.openGroup("g1");
+        Group group2 = group.createGroup("g2");
+        DataSet dataset = group2.createDataSet("ds1", dtype, new long[]{rows, columns, k});
         dataset.write(buf, dtype);
-        dataset.close();
         file.close();
     }
 }

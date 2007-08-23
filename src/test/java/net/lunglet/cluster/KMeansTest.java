@@ -21,7 +21,7 @@ public final class KMeansTest {
         Random rng = new Random(1185202905218L);
         KMeans<FloatMatrix<?, ?>> kmeans = KMeans.create();
         FloatDenseMatrix data = new FloatDenseMatrix(dimension, ndata);
-        FloatMatrixUtils.fillRandom(rng, data);
+        FloatMatrixUtils.fillRandom(data, rng);
         FloatMatrix<?, ?> initialCentroids = kmeans.chooseCentroids(maxCentroids, data);
         double delta = 1.0e-6;
         assertEquals(0.3165713548660278, initialCentroids.get(0, 0), delta);
@@ -44,7 +44,7 @@ public final class KMeansTest {
             rng = new Random(seed);
             System.out.println(String.format("%d %d %d %d", seed, ndata, dimension, maxCentroids));
             FloatDenseMatrix data = new FloatDenseMatrix(dimension, ndata);
-            FloatMatrixUtils.fillRandom(rng, data);
+            FloatMatrixUtils.fillRandom(data, rng);
             FloatMatrix<?, ?> centroids = kmeans.chooseCentroids(maxCentroids, data);
             int iterations = 100;
             centroids = kmeans.train(iterations, centroids, data);

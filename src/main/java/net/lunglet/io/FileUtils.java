@@ -7,9 +7,6 @@ import java.util.Arrays;
 import java.util.List;
 
 public final class FileUtils {
-    private FileUtils() {
-    }
-
     public static final FilenameFilter ALL_FILES_FILTER = new FilenameFilter() {
         public boolean accept(final File dir, final String name) {
             return new File(dir, name).isFile();
@@ -33,5 +30,8 @@ public final class FileUtils {
             }
         }
         return files.toArray(new File[0]);
+    }
+
+    private FileUtils() {
     }
 }

@@ -19,14 +19,14 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 public final class PhnRecWorker {
-    private final Log log = LogFactory.getLog(PhnRecWorker.class);
-
     private static final String[] PROPERTY_NAMES = {"java.vm.version", "java.vm.name", "os.arch", "user.name",
             "sun.cpu.isalist", "sun.cpu.endian", "user.country", "sun.os.patch.level"};
 
-    private final Session session;
+    private final Log log = LogFactory.getLog(PhnRecWorker.class);
 
     private final MessageProducer producer;
+
+    private final Session session;
 
     private final String workerId;
 
@@ -38,17 +38,6 @@ public final class PhnRecWorker {
 
     public void close() throws JMSException {
         session.close();
-    }
-
-    // TODO make this an abstract method in a worker base class
-    private boolean isWorkMessage(final Message message, final String correlationID) throws JMSException {
-        if (!(message instanceof BytesMessage)) {
-            return false;
-        }
-        if (!correlationID.equals(message.getJMSCorrelationID())) {
-            return false;
-        }
-        return true;
     }
 
     // TODO when message is an ObjectMessage and the object inside is
@@ -79,10 +68,15 @@ public final class PhnRecWorker {
         producer.send(PhnRecServer.WORK_RESULT_TOPIC, result);
     }
 
-    private void setSystemPropertiesOnMessage(final Message message) throws JMSException {
-        for (String key : PROPERTY_NAMES) {
-            message.setStringProperty(key, System.getProperty(key));
+    // TODO make this an abstract method in a worker base class
+    private boolean isWorkMessage(final Message message, final String correlationID) throws JMSException {
+        if (!(message instanceof BytesMessage)) {
+            return false;
         }
+        if (!correlationID.equals(message.getJMSCorrelationID())) {
+            return false;
+        }
+        return true;
     }
 
     public void requestAndDoWork() throws JMSException {
@@ -109,6 +103,12 @@ public final class PhnRecWorker {
             } else {
                 log.info("receive timed out");
             }
+        }
+    }
+
+    private void setSystemPropertiesOnMessage(final Message message) throws JMSException {
+        for (String key : PROPERTY_NAMES) {
+            message.setStringProperty(key, System.getProperty(key));
         }
     }
 }

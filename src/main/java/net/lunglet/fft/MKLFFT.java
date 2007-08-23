@@ -20,18 +20,18 @@ public final class MKLFFT implements FFT {
     @Override
     public CFloatDenseVector fft(final FloatDenseVector x, final int n) {
         // TODO short circuit on zero-length x instead of throwing
-        checkArgument(x.size() > 0 && n > 0);
+        checkArgument(x.length() > 0 && n > 0);
         checkArgument(x.isDirect());
 
         final FloatBuffer xdata;
         final int xoffset;
         final int xstride;
-        if (n > x.size()) {
+        if (n > x.length()) {
             xdata = FloatDenseVector.createFloatBuffer(n, x.storage());
             xoffset = 0;
             xstride = 1;
             // TODO optimize this
-            for (int i = 0; i < x.size(); i++) {
+            for (int i = 0; i < x.length(); i++) {
                 xdata.put(x.get(i));
             }
         } else {

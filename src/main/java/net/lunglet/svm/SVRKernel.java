@@ -1,22 +1,22 @@
 package net.lunglet.svm;
 
 final class SVRKernel extends Kernel {
-    private final int l;
+    private float[][] buffer;
 
     private final Cache cache;
 
-    private final byte[] sign;
-
     private final int[] index;
+
+    private final int l;
 
     private int nextBuffer;
 
-    private float[][] buffer;
-
     private final float[] QD;
 
+    private final byte[] sign;
+
     SVRKernel(final SvmProblem prob, final SvmParameter param) {
-        super(prob.l, prob.x, param);
+        super(prob.l, prob.x, prob.gram, param);
         l = prob.l;
         cache = new Cache(l, (long) (param.cache_size * (1 << 20)));
         QD = new float[2 * l];
@@ -34,24 +34,7 @@ final class SVRKernel extends Kernel {
         nextBuffer = 0;
     }
 
-    void swapIndex(final int i, final int j) {
-        do {
-            byte other = sign[i];
-            sign[i] = sign[j];
-            sign[j] = other;
-        } while (false);
-        do {
-            int other = index[i];
-            index[i] = index[j];
-            index[j] = other;
-        } while (false);
-        do {
-            float other = QD[i];
-            QD[i] = QD[j];
-            QD[j] = other;
-        } while (false);
-    }
-
+    @Override
     float[] getQ(final int i, final int len) {
         float[][] data = new float[1][];
         int reali = index[i];
@@ -71,7 +54,27 @@ final class SVRKernel extends Kernel {
         return buf;
     }
 
+    @Override
     float[] getQD() {
         return QD;
+    }
+
+    @Override
+    void swapIndex(final int i, final int j) {
+        do {
+            byte other = sign[i];
+            sign[i] = sign[j];
+            sign[j] = other;
+        } while (false);
+        do {
+            int other = index[i];
+            index[i] = index[j];
+            index[j] = other;
+        } while (false);
+        do {
+            float other = QD[i];
+            QD[i] = QD[j];
+            QD[j] = other;
+        } while (false);
     }
 }

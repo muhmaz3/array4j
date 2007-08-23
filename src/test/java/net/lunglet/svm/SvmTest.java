@@ -14,10 +14,13 @@ import libsvm.svm_problem;
 import org.junit.Test;
 
 import com.googlecode.array4j.FloatMatrix;
+import com.googlecode.array4j.FloatMatrixMath;
+import com.googlecode.array4j.FloatMatrixUtils;
 import com.googlecode.array4j.Orientation;
 import com.googlecode.array4j.Storage;
 import com.googlecode.array4j.dense.FloatDenseMatrix;
 import com.googlecode.array4j.dense.FloatDenseVector;
+import com.googlecode.array4j.packed.FloatPackedMatrix;
 
 public final class SvmTest {
     @Test
@@ -26,10 +29,9 @@ public final class SvmTest {
         final Random rng = new Random(1234);
         for (int i = 2; i < 100; i++) {
             for (int j = 4; j < 100; j++) {
-                FloatDenseMatrix data = new FloatDenseMatrix(i, j, Orientation.ROW, Storage.JAVA);
-                data.fillRandom(rng);
-                // TODO gram is a symmetric matrix
-                FloatMatrix<?, ?> gram = data.transpose().times(data);
+                FloatDenseMatrix data = new FloatDenseMatrix(i, j, Orientation.ROW, Storage.HEAP);
+                FloatMatrixUtils.fillRandom(data, rng);
+                FloatPackedMatrix gram = FloatMatrixMath.timesTranspose(data.transpose());
 
                 int[] labels = new int[data.columns()];
                 // assume there are at least 2 data vectors and make sure we
@@ -63,9 +65,9 @@ public final class SvmTest {
                 FloatDenseVector scores4 = svm2.score(data);
 
                 for (FloatDenseVector scores : new FloatDenseVector[]{scores1, scores2, scores3, scores4}) {
-                    assertEquals(linearScores.size(), precomputedScores.size());
-                    assertEquals(linearScores.size(), scores.size());
-                    for (int k = 0; i < linearScores.size(); i++) {
+                    assertEquals(linearScores.length(), precomputedScores.length());
+                    assertEquals(linearScores.length(), scores.length());
+                    for (int k = 0; i < linearScores.length(); i++) {
                         assertEquals((int) Math.signum(linearScores.get(k)), (int) Math.signum(labels[k]));
                         assertEquals(linearScores.get(k), precomputedScores.get(k), 1e-2);
                         assertEquals(linearScores.get(k), scores.get(k), 1e-2);

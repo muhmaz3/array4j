@@ -23,6 +23,11 @@ public final class RawAudioFileWriter extends AudioFileWriter {
     }
 
     @Override
+    public int write(final AudioInputStream stream, final Type fileType, final File out) throws IOException {
+        return write(stream, fileType, new FileOutputStream(out));
+    }
+
+    @Override
     public int write(final AudioInputStream stream, final Type fileType, final OutputStream out) throws IOException {
         byte[] buf = new byte[1024];
         int bytesWritten = 0;
@@ -35,10 +40,5 @@ public final class RawAudioFileWriter extends AudioFileWriter {
             bytesWritten += bytesRead;
         }
         return bytesWritten;
-    }
-
-    @Override
-    public int write(final AudioInputStream stream, final Type fileType, final File out) throws IOException {
-        return write(stream, fileType, new FileOutputStream(out));
     }
 }

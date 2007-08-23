@@ -36,7 +36,7 @@ public final class PhnRecFeaturesTest {
             System.out.println(posteriors.column(0));
             System.out.println(posteriors.rows() + " " + posteriors.columns());
             FloatDenseVector ngrams = PhonemeUtil.calculateNGrams(posteriors);
-            System.out.println(ngrams.size());
+            System.out.println(ngrams.length());
 
             Segment[] validSegments = features.getValidSegments().toArray(new Segment[0]);
             systemSegments.put(system, validSegments);

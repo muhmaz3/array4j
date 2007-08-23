@@ -161,7 +161,7 @@ public final class KMeans<T> {
             for (int i = 0; i < data.length; i++) {
                 FloatDenseMatrix currentCentroids = null;
                 if (centroids != null) {
-                    currentCentroids = centroids.subMatrixColumns(0, iter);
+                    currentCentroids = FloatMatrixUtils.subMatrixColumns(centroids, 0, iter);
                 }
                 KMeansTask task = taskFactory.createTask2(data[i], currentCentroids);
                 cs.submit(task);
@@ -194,7 +194,7 @@ public final class KMeans<T> {
             KMeansTask task = taskFactory.createTask(data[i], centroidsCopy);
             cs.submit(task);
         }
-        centroids.fill(0.0f);
+        FloatMatrixUtils.fill(centroids, 0.0f);
         long[] n = new long[centroids.columns()];
         double totalDistortion = 0.0;
         for (int i = 0; i < data.length; i++) {

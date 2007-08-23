@@ -27,6 +27,9 @@ import com.googlecode.array4j.dense.FloatDenseMatrix;
 public final class PhnRec {
     private static final Log LOG = LogFactory.getLog(PhnRec.class);
 
+    public static final PhnRecSystem[] PHNREC_SYSTEMS = {new PhnRecSystem("PHN_CZ_SPDAT_LCRC_N1500", "cz"),
+            new PhnRecSystem("PHN_HU_SPDAT_LCRC_N1500", "hu"), new PhnRecSystem("PHN_RU_SPDAT_LCRC_N1500", "ru")};
+
     private static final File TEMP_PCM_FILE;
 
     private static final File TEMP_POSTERIORS_FILE;
@@ -48,40 +51,13 @@ public final class PhnRec {
         }
     }
 
-    public static final PhnRecSystem[] PHNREC_SYSTEMS = {new PhnRecSystem("PHN_CZ_SPDAT_LCRC_N1500", "cz"),
-            new PhnRecSystem("PHN_HU_SPDAT_LCRC_N1500", "hu"), new PhnRecSystem("PHN_RU_SPDAT_LCRC_N1500", "ru")};
-
-    private static byte[][] splitChannels(final AudioInputStream sourceStream) throws IOException {
-        int channels = sourceStream.getFormat().getChannels();
-        byte[][] channelsData = new byte[channels][];
-        int sampleSizeInBits = sourceStream.getFormat().getSampleSizeInBits();
-        if (sampleSizeInBits % 8 != 0) {
-            throw new UnsupportedOperationException();
+    public static void main(final String[] args) throws UnsupportedAudioFileException, IOException {
+        File inputDirectory = new File("F:/test");
+        FilenameFilter filter = new FilenameSuffixFilter(".sph", true);
+        File[] inputFiles = FileUtils.listFiles(inputDirectory, filter, true);
+        for (File inputFile : inputFiles) {
+            processFile(inputFile);
         }
-        int sampleSizeInBytes = sampleSizeInBits >>> 3;
-        if (sourceStream.getFrameLength() > Integer.MAX_VALUE) {
-            throw new UnsupportedOperationException();
-        }
-        int frameLength = (int) sourceStream.getFrameLength();
-        for (int i = 0; i < channels; i++) {
-            channelsData[i] = new byte[sampleSizeInBytes * frameLength];
-        }
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        AudioSystem.write(sourceStream, RawAudioFileWriter.RAW, baos);
-        byte[] samples = baos.toByteArray();
-        final int expectedLength = channels * sampleSizeInBytes * frameLength;
-        if (samples.length != expectedLength) {
-            throw new RuntimeException("short read from audio stream");
-        }
-        for (int i = 0, sampleOffset = 0; i < frameLength; i++) {
-            for (int j = 0; j < channels; j++) {
-                for (int k = 0; k < sampleSizeInBytes; k++, sampleOffset++) {
-                    int channelOffset = i * sampleSizeInBytes + k;
-                    channelsData[j][channelOffset] = samples[sampleOffset];
-                }
-            }
-        }
-        return channelsData;
     }
 
     public static void processChannel(final byte[] channelData, final PhnRecSystem system, final ZipOutputStream out)
@@ -145,12 +121,36 @@ public final class PhnRec {
         }
     }
 
-    public static void main(final String[] args) throws UnsupportedAudioFileException, IOException {
-        File inputDirectory = new File("F:/test");
-        FilenameFilter filter = new FilenameSuffixFilter(".sph", true);
-        File[] inputFiles = FileUtils.listFiles(inputDirectory, filter, true);
-        for (File inputFile : inputFiles) {
-            processFile(inputFile);
+    private static byte[][] splitChannels(final AudioInputStream sourceStream) throws IOException {
+        int channels = sourceStream.getFormat().getChannels();
+        byte[][] channelsData = new byte[channels][];
+        int sampleSizeInBits = sourceStream.getFormat().getSampleSizeInBits();
+        if (sampleSizeInBits % 8 != 0) {
+            throw new UnsupportedOperationException();
         }
+        int sampleSizeInBytes = sampleSizeInBits >>> 3;
+        if (sourceStream.getFrameLength() > Integer.MAX_VALUE) {
+            throw new UnsupportedOperationException();
+        }
+        int frameLength = (int) sourceStream.getFrameLength();
+        for (int i = 0; i < channels; i++) {
+            channelsData[i] = new byte[sampleSizeInBytes * frameLength];
+        }
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        AudioSystem.write(sourceStream, RawAudioFileWriter.RAW, baos);
+        byte[] samples = baos.toByteArray();
+        final int expectedLength = channels * sampleSizeInBytes * frameLength;
+        if (samples.length != expectedLength) {
+            throw new RuntimeException("short read from audio stream");
+        }
+        for (int i = 0, sampleOffset = 0; i < frameLength; i++) {
+            for (int j = 0; j < channels; j++) {
+                for (int k = 0; k < sampleSizeInBytes; k++, sampleOffset++) {
+                    int channelOffset = i * sampleSizeInBytes + k;
+                    channelsData[j][channelOffset] = samples[sampleOffset];
+                }
+            }
+        }
+        return channelsData;
     }
 }

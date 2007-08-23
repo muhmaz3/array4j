@@ -13,13 +13,14 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 import com.googlecode.array4j.dense.FloatDenseMatrixFactory;
+import com.googlecode.array4j.dense.FloatDenseVector;
 
 @RunWith(value = Parameterized.class)
 public final class FloatMatrixUtilsTest<M extends FloatMatrix<M, V>, V extends FloatVector<V>> {
     @Parameters
     public static Collection<?> data() {
-        return Arrays.asList(new Object[][]{{new FloatDenseMatrixFactory(Storage.JAVA), Orientation.ROW},
-                {new FloatDenseMatrixFactory(Storage.JAVA), Orientation.COLUMN},
+        return Arrays.asList(new Object[][]{{new FloatDenseMatrixFactory(Storage.HEAP), Orientation.ROW},
+                {new FloatDenseMatrixFactory(Storage.HEAP), Orientation.COLUMN},
                 {new FloatDenseMatrixFactory(Storage.DIRECT), Orientation.ROW},
                 {new FloatDenseMatrixFactory(Storage.DIRECT), Orientation.COLUMN}});
     }
@@ -40,7 +41,7 @@ public final class FloatMatrixUtilsTest<M extends FloatMatrix<M, V>, V extends F
         V mean = FloatMatrixUtils.columnMean(matrix);
         assertTrue(mean.isColumnVector());
         assertEquals(Orientation.COLUMN, mean.orientation());
-        assertEquals(3, mean.size());
+        assertEquals(3, mean.length());
         if (orientation.equals(Orientation.ROW)) {
             assertEquals(1.5f, mean.get(0), 0.0);
             assertEquals(3.5f, mean.get(1), 0.0);
@@ -59,7 +60,7 @@ public final class FloatMatrixUtilsTest<M extends FloatMatrix<M, V>, V extends F
         V mean = FloatMatrixUtils.rowMean(matrix);
         assertTrue(mean.isRowVector());
         assertEquals(Orientation.ROW, mean.orientation());
-        assertEquals(2, mean.size());
+        assertEquals(2, mean.length());
         if (orientation.equals(Orientation.ROW)) {
             assertEquals(3.0f, mean.get(0), 0.0);
             assertEquals(4.0f, mean.get(1), 0.0);

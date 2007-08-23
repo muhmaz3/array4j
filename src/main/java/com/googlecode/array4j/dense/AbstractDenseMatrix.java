@@ -3,15 +3,13 @@ package com.googlecode.array4j.dense;
 import org.apache.commons.lang.builder.EqualsBuilder;
 
 import com.googlecode.array4j.AbstractMatrix;
-import com.googlecode.array4j.Matrix;
 import com.googlecode.array4j.Orientation;
-import com.googlecode.array4j.Vector;
 
 /**
  * Abstract base class for dense (full) matrices.
  */
-public abstract class AbstractDenseMatrix<M extends Matrix<M, V>, V extends Vector<V>, T> extends AbstractMatrix<M, V>
-        implements Matrix<M, V> {
+public abstract class AbstractDenseMatrix<M extends DenseMatrix<M, V>, V extends DenseVector<V>, T> extends
+        AbstractMatrix<M, V> implements DenseMatrix<M, V> {
     /** Stride between elements in a column. */
     protected final int columnStride;
 
@@ -84,6 +82,10 @@ public abstract class AbstractDenseMatrix<M extends Matrix<M, V>, V extends Vect
     // TODO give this method a better name
     protected abstract void fillFrom(T dest, int srcPos);
 
+    public final int offset() {
+        return offset;
+    }
+
     public final Orientation orientation() {
         return orientation;
     }
@@ -99,16 +101,20 @@ public abstract class AbstractDenseMatrix<M extends Matrix<M, V>, V extends Vect
     // TODO give this method a better name
     protected abstract void setFrom(T dest, int destPos, int srcPos);
 
+    public final int stride() {
+        return stride;
+    }
+
     public final T toArray() {
-        final T arr = createArray(size);
-        if (size == 0) {
+        final T arr = createArray(length);
+        if (length == 0) {
             return arr;
         }
         if (stride == 0) {
             fillFrom(arr, offset);
             return arr;
         }
-        for (int i = offset, j = 0; j < size; i += elementSize * stride, j++) {
+        for (int i = offset, j = 0; j < length; i += elementSize * stride, j++) {
             setFrom(arr, j, i);
         }
         return arr;

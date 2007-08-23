@@ -18,7 +18,7 @@ import com.googlecode.array4j.dense.FloatDenseMatrixFactory;
 public final class FloatVectorTest<M extends FloatMatrix<M, V>, V extends FloatVector<V>> {
     @Parameters
     public static Collection<?> data() {
-        return Arrays.asList(new Object[][]{{new FloatDenseMatrixFactory(Storage.JAVA)},
+        return Arrays.asList(new Object[][]{{new FloatDenseMatrixFactory(Storage.HEAP)},
                 {new FloatDenseMatrixFactory(Storage.DIRECT)}});
     }
 
@@ -58,7 +58,7 @@ public final class FloatVectorTest<M extends FloatMatrix<M, V>, V extends FloatV
             for (int j = 0; j < i; j++) {
                 assertEquals(0.0f, x.get(j), 0.0);
             }
-            x.fill(i);
+            FloatMatrixUtils.fill(x, i);
             for (int j = 0; j < i; j++) {
                 assertEquals(i, x.get(j), 0.0);
             }

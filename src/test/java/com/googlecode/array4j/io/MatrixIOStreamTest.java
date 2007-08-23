@@ -11,6 +11,7 @@ import java.util.Random;
 
 import org.junit.Test;
 
+import com.googlecode.array4j.FloatMatrixUtils;
 import com.googlecode.array4j.dense.FloatDenseMatrix;
 import com.googlecode.array4j.dense.FloatDenseVector;
 
@@ -18,7 +19,7 @@ public final class MatrixIOStreamTest {
     @Test
     public void testWriteMatrix() throws IOException {
         FloatDenseMatrix matrix = new FloatDenseMatrix(10, 20);
-        matrix.fillRandom(new Random(0));
+        FloatMatrixUtils.fillRandom(matrix, new Random(0));
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         MatrixOutputStream out = new MatrixOutputStream(baos);
         out.writeMatrix(matrix);
@@ -34,7 +35,7 @@ public final class MatrixIOStreamTest {
     @Test
     public void testWriteColumnsAsMatrix() throws IOException {
         FloatDenseMatrix matrix = new FloatDenseMatrix(3, 4);
-        matrix.fillRandom(new Random(0));
+        FloatMatrixUtils.fillRandom(matrix, new Random(0));
         List<FloatDenseVector> columns = new ArrayList<FloatDenseVector>(matrix.columns());
         for (FloatDenseVector column : matrix.columnsIterator()) {
             columns.add(column);

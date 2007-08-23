@@ -18,15 +18,15 @@ import com.googlecode.array4j.dense.FloatDenseVector;
 import com.googlecode.array4j.io.MatrixOutputStream;
 
 public final class PosteriorsConverter {
+    // 10ms frame period in the HTK time unit
+    private static final long FRAME_PERIOD = 100000L;
+
     private static final List<String> PHONEMES_TO_IGNORE = Collections.unmodifiableList(Arrays.asList(new String[]{
             "int", "oth", "pau", "spk"}));
 
-    private final FloatDenseMatrix posteriors;
-
     private final List<MasterLabel> labels;
 
-    // 10ms frame period in the HTK time unit
-    private static final long FRAME_PERIOD = 100000L;
+    private final FloatDenseMatrix posteriors;
 
     public PosteriorsConverter(final FloatDenseMatrix posteriors, final Collection<? extends MasterLabel> labels) {
         this.posteriors = posteriors;
@@ -41,22 +41,15 @@ public final class PosteriorsConverter {
             }
             int startIndex = (int) (label.startTime / FRAME_PERIOD);
             int endIndex = (int) (label.endTime / FRAME_PERIOD);
-            FloatDenseMatrix postpart = posteriors.subMatrixColumns(startIndex, endIndex);
+            FloatDenseMatrix postpart = FloatMatrixUtils.subMatrixColumns(posteriors, startIndex, endIndex);
             FloatDenseVector postsum = FloatMatrixUtils.columnSum(postpart);
             postsums.add(postsum);
         }
         return postsums;
     }
 
-    public void writePhonemePosteriors(final OutputStream out) throws IOException {
-        List<FloatDenseVector> postsums = getPhonemePosteriors();
-        MatrixOutputStream matOut = new MatrixOutputStream(out);
-        matOut.writeColumnsAsMatrix(postsums);
-        matOut.flush();
-    }
-
-    public void writePhonemePosteriors(final File outputFile) throws IOException {
-        writePhonemePosteriors(new FileOutputStream(outputFile));
+    public void writeMasterLabels(final File outputFile) throws IOException {
+        writeMasterLabels(new FileOutputStream(outputFile));
     }
 
     public void writeMasterLabels(final OutputStream out) throws IOException {
@@ -68,7 +61,14 @@ public final class PosteriorsConverter {
         writer.flush();
     }
 
-    public void writeMasterLabels(final File outputFile) throws IOException {
-        writeMasterLabels(new FileOutputStream(outputFile));
+    public void writePhonemePosteriors(final File outputFile) throws IOException {
+        writePhonemePosteriors(new FileOutputStream(outputFile));
+    }
+
+    public void writePhonemePosteriors(final OutputStream out) throws IOException {
+        List<FloatDenseVector> postsums = getPhonemePosteriors();
+        MatrixOutputStream matOut = new MatrixOutputStream(out);
+        matOut.writeColumnsAsMatrix(postsums);
+        matOut.flush();
     }
 }

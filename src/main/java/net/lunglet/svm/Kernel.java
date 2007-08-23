@@ -1,36 +1,34 @@
 package net.lunglet.svm;
 
+import com.googlecode.array4j.FloatMatrix;
+import com.googlecode.array4j.FloatMatrixMath;
 import com.googlecode.array4j.FloatVector;
 
 abstract class Kernel extends QMatrix {
-    private SvmNode[] x;
+    static double dot(final FloatVector<?> x, final SvmNode y) {
+        return FloatMatrixMath.dot(x, y.value);
+    }
 
-    private final double[] x_square;
+    static double dot(final SvmNode x, final SvmNode y) {
+        return FloatMatrixMath.dot(x.value, y.value);
+    }
 
-    private final int kernel_type;
-
-    private final int degree;
-
-    private final double gamma;
-
-    private final double coef0;
-
-    abstract float[] getQ(int column, int len);
-
-    abstract float[] getQD();
-
-    void swapIndex(final int i, final int j) {
-        do {
-            SvmNode other = x[i];
-            x[i] = x[j];
-            x[j] = other;
-        } while (false);
-        if (x_square != null) {
-            do {
-                double other = x_square[i];
-                x_square[i] = x_square[j];
-                x_square[j] = other;
-            } while (false);
+    static double k_function(final FloatVector<?> x, final SvmNode y, final SvmParameter param) {
+        switch (param.kernel_type) {
+        case SvmParameter.LINEAR:
+            return dot(x, y);
+        case SvmParameter.POLY:
+            return powi(param.gamma * dot(x, y) + param.coef0, param.degree);
+        case SvmParameter.RBF:
+            throw new UnsupportedOperationException();
+        case SvmParameter.SIGMOID:
+            return tanh(param.gamma * dot(x, y) + param.coef0);
+        case SvmParameter.PRECOMPUTED:
+            // This should never happen. If it does, it's probably because the
+            // svm type parameter wasn't fixed after training.
+            throw new AssertionError();
+        default:
+            throw new AssertionError();
         }
     }
 
@@ -51,6 +49,43 @@ abstract class Kernel extends QMatrix {
         return 1.0 - 2.0 / (e * e + 1);
     }
 
+    private final double coef0;
+
+    private final int degree;
+
+    private final double gamma;
+
+    private final FloatMatrix<?, ?> gram;
+
+    private final int kernel_type;
+
+    private SvmNode[] x;
+
+    private final double[] x_square;
+
+    Kernel(final int l, final SvmNode[] x, final FloatMatrix<?, ?> gram, final SvmParameter param) {
+        this.x = x.clone();
+        this.gram = gram;
+        this.kernel_type = param.kernel_type;
+        this.degree = param.degree;
+        this.gamma = param.gamma;
+        this.coef0 = param.coef0;
+        if (kernel_type == SvmParameter.RBF) {
+            x_square = new double[l];
+            for (int i = 0; i < l; i++) {
+                x_square[i] = dot(x[i], x[i]);
+            }
+        } else {
+            x_square = null;
+        }
+    }
+
+    @Override
+    abstract float[] getQ(int column, int len);
+
+    @Override
+    abstract float[] getQD();
+
     double kernel_function(final int i, final int j) {
         switch (kernel_type) {
         case SvmParameter.LINEAR:
@@ -62,54 +97,25 @@ abstract class Kernel extends QMatrix {
         case SvmParameter.SIGMOID:
             return tanh(gamma * dot(x[i], x[j]) + coef0);
         case SvmParameter.PRECOMPUTED:
-            return x[i].value.get(x[j].index);
+            return gram.get(i, j);
         default:
             throw new AssertionError();
         }
     }
 
-    Kernel(final int l, final SvmNode[] x_, final SvmParameter param) {
-        this.kernel_type = param.kernel_type;
-        this.degree = param.degree;
-        this.gamma = param.gamma;
-        this.coef0 = param.coef0;
-
-        x = (SvmNode[]) x_.clone();
-
-        if (kernel_type == SvmParameter.RBF) {
-            x_square = new double[l];
-            for (int i = 0; i < l; i++) {
-                x_square[i] = dot(x[i], x[i]);
-            }
-        } else {
-            x_square = null;
-        }
-    }
-
-    static double dot(final SvmNode x, final SvmNode y) {
-        return x.value.dot(y.value);
-    }
-
-    static double dot(final FloatVector<?> x, final SvmNode y) {
-        return x.dot(y.value);
-    }
-
-    static double k_function(final FloatVector<?> x, final SvmNode y, final SvmParameter param) {
-        switch (param.kernel_type) {
-        case SvmParameter.LINEAR:
-            return dot(x, y);
-        case SvmParameter.POLY:
-            return powi(param.gamma * dot(x, y) + param.coef0, param.degree);
-        case SvmParameter.RBF:
-            throw new UnsupportedOperationException();
-        case SvmParameter.SIGMOID:
-            return tanh(param.gamma * dot(x, y) + param.coef0);
-        case SvmParameter.PRECOMPUTED:
-            // This should never happen. If it does, it's probably because the
-            // svm type parameter wasn't fixed after training.
-            throw new AssertionError();
-        default:
-            throw new AssertionError();
+    @Override
+    void swapIndex(final int i, final int j) {
+        do {
+            SvmNode other = x[i];
+            x[i] = x[j];
+            x[j] = other;
+        } while (false);
+        if (x_square != null) {
+            do {
+                double other = x_square[i];
+                x_square[i] = x_square[j];
+                x_square[j] = other;
+            } while (false);
         }
     }
 }

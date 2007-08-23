@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.zip.ZipEntry;
@@ -24,9 +23,9 @@ public final class PhnRecFeatures {
 
     private final List<MasterLabel> labels;
 
-    private final List<MasterLabel> validLabels;
-
     private final FloatDenseMatrix posteriors;
+
+    private final List<MasterLabel> validLabels;
 
     public PhnRecFeatures(final String prefix, final InputStream stream) throws IOException {
         ZipInputStream zis = new ZipInputStream(stream);
@@ -83,12 +82,12 @@ public final class PhnRecFeatures {
         return labels;
     }
 
-    public List<MasterLabel> getValidLabels() {
-        return validLabels;
-    }
-
     public FloatDenseMatrix getPosteriors() {
         return posteriors;
+    }
+
+    public List<MasterLabel> getValidLabels() {
+        return validLabels;
     }
 
     public List<Segment> getValidSegments() {

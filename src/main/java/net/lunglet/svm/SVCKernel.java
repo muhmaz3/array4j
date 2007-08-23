@@ -1,15 +1,15 @@
 package net.lunglet.svm;
 
 final class SVCKernel extends Kernel {
-    private final byte[] y;
-
     private final Cache cache;
 
     private final float[] QD;
 
+    private final byte[] y;
+
     SVCKernel(final SvmProblem prob, final SvmParameter param, final byte[] y_) {
-        super(prob.l, prob.x, param);
-        y = (byte[]) y_.clone();
+        super(prob.l, prob.x, prob.gram, param);
+        y = y_.clone();
         cache = new Cache(prob.l, (long) (param.cache_size * (1 << 20)));
         QD = new float[prob.l];
         for (int i = 0; i < prob.l; i++) {
@@ -17,6 +17,7 @@ final class SVCKernel extends Kernel {
         }
     }
 
+    @Override
     float[] getQ(final int i, final int len) {
         float[][] data = new float[1][];
         int start;
@@ -28,10 +29,12 @@ final class SVCKernel extends Kernel {
         return data[0];
     }
 
+    @Override
     float[] getQD() {
         return QD;
     }
 
+    @Override
     void swapIndex(final int i, final int j) {
         cache.swapIndex(i, j);
         super.swapIndex(i, j);

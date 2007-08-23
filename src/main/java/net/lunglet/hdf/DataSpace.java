@@ -5,9 +5,18 @@ import java.util.Arrays;
 public final class DataSpace extends IdComponent {
     private static final int H5S_ALL = 0;
 
+    private static final int H5S_UNLIMITED = -1;
+
     public static final DataSpace ALL = new DataSpace(H5S_ALL);
 
-    private static final int H5S_UNLIMITED = -1;
+    // TODO use an enum for type
+    private static int init(final int type) {
+        int id = H5Library.INSTANCE.H5Screate(type);
+        if (id < 0) {
+            throw new H5DataSpaceException("H5Screate failed");
+        }
+        return id;
+    }
 
     private static int init(final long[] dims, final long[] maxdims) {
         if (maxdims != null && dims.length != maxdims.length) {
@@ -28,6 +37,15 @@ public final class DataSpace extends IdComponent {
         return id;
     }
 
+    private static long[] reverseArray(final long[] arr) {
+        // TODO might want to reverse inplace instead
+        long[] rarr = new long[arr.length];
+        for (int i = 0; i < arr.length; i++) {
+            rarr[i] = arr[arr.length - i - 1];
+        }
+        return rarr;
+    }
+
     DataSpace(final int id) {
         super(id);
     }
@@ -38,36 +56,6 @@ public final class DataSpace extends IdComponent {
 
     public DataSpace(final long[] dims, final long[] maxdims) {
         super(init(dims, maxdims));
-    }
-
-    private int getNDims() {
-        int ndims = H5Library.INSTANCE.H5Sget_simple_extent_ndims(getId());
-        if (ndims < 0) {
-            throw new H5DataSpaceException("H5Sget_simple_extent_ndims failed");
-        }
-        return ndims;
-    }
-
-    public long[] getDims() {
-        long[] dims = new long[getNDims()];
-        int err = H5Library.INSTANCE.H5Sget_simple_extent_dims(getId(), dims, null);
-        if (err < 0) {
-            throw new H5DataSpaceException("H5Sget_simple_extent_dims failed");
-        }
-        return reverseArray(dims);
-    }
-
-    public long getSimpleExtentNpoints() {
-        return 0L;
-    }
-
-    public long[] getMaxDims() {
-        long[] maxdims = new long[getNDims()];
-        int err = H5Library.INSTANCE.H5Sget_simple_extent_dims(getId(), null, maxdims);
-        if (err < 0) {
-            throw new H5DataSpaceException("H5Sget_simple_extent_dims failed");
-        }
-        return reverseArray(maxdims);
     }
 
     public void close() {
@@ -92,6 +80,36 @@ public final class DataSpace extends IdComponent {
         super.finalize();
     }
 
+    public long[] getDims() {
+        long[] dims = new long[getNDims()];
+        int err = H5Library.INSTANCE.H5Sget_simple_extent_dims(getId(), dims, null);
+        if (err < 0) {
+            throw new H5DataSpaceException("H5Sget_simple_extent_dims failed");
+        }
+        return reverseArray(dims);
+    }
+
+    public long[] getMaxDims() {
+        long[] maxdims = new long[getNDims()];
+        int err = H5Library.INSTANCE.H5Sget_simple_extent_dims(getId(), null, maxdims);
+        if (err < 0) {
+            throw new H5DataSpaceException("H5Sget_simple_extent_dims failed");
+        }
+        return reverseArray(maxdims);
+    }
+
+    private int getNDims() {
+        int ndims = H5Library.INSTANCE.H5Sget_simple_extent_ndims(getId());
+        if (ndims < 0) {
+            throw new H5DataSpaceException("H5Sget_simple_extent_ndims failed");
+        }
+        return ndims;
+    }
+
+    public long getSimpleExtentNpoints() {
+        return 0L;
+    }
+
     @Override
     public String toString() {
         if (isValid()) {
@@ -99,23 +117,5 @@ public final class DataSpace extends IdComponent {
         } else {
             return "DataSpace[closed]";
         }
-    }
-
-    // TODO use an enum for type
-    private static int init(final int type) {
-        int id = H5Library.INSTANCE.H5Screate(type);
-        if (id < 0) {
-            throw new H5DataSpaceException("H5Screate failed");
-        }
-        return id;
-    }
-
-    private static long[] reverseArray(final long[] arr) {
-        // TODO might want to reverse inplace instead
-        long[] rarr = new long[arr.length];
-        for (int i = 0; i < arr.length; i++) {
-            rarr[i] = arr[arr.length - i - 1];
-        }
-        return rarr;
     }
 }

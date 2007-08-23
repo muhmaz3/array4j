@@ -42,14 +42,6 @@ public final class Group extends H5Object {
         invalidate();
     }
 
-    @Override
-    protected void finalize() throws Throwable {
-        if (isValid()) {
-            close();
-        }
-        super.finalize();
-    }
-
     public DataSet createDataSet(final String name, final DataType dataType, final DataSpace dataSpace) {
         return createDataSet(name, dataType, dataSpace, DataSetCreatePropList.DEFAULT);
     }
@@ -91,6 +83,16 @@ public final class Group extends H5Object {
         return new Group(groupId, createName(name));
     }
 
+    private String createName(final String name) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(getName());
+        if (!getName().equals("/")) {
+            builder.append("/");
+        }
+        builder.append(name);
+        return builder.toString();
+    }
+
     @Override
     public boolean equals(final Object obj) {
         if (obj == null || !(obj instanceof Group)) {
@@ -100,6 +102,14 @@ public final class Group extends H5Object {
             return true;
         }
         return new EqualsBuilder().appendSuper(super.equals(obj)).isEquals();
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        if (isValid()) {
+            close();
+        }
+        super.finalize();
     }
 
     public Set<DataSet> getDataSets() {
@@ -166,15 +176,5 @@ public final class Group extends H5Object {
 
         // No failure, create and return the Group object
         return new Group(groupId, createName(name));
-    }
-
-    private String createName(final String name) {
-        StringBuilder builder = new StringBuilder();
-        builder.append(getName());
-        if (!getName().equals("/")) {
-            builder.append("/");
-        }
-        builder.append(name);
-        return builder.toString();
     }
 }

@@ -1,9 +1,13 @@
 package net.lunglet.svm;
 
+import com.googlecode.array4j.FloatMatrix;
+
 class SvmProblem {
+    public FloatMatrix<?, ?> gram;
+
     public int l;
 
-    public double[] y;
-
     public SvmNode[] x;
+
+    public double[] y;
 }

@@ -20,28 +20,17 @@ public final class MatrixOutputStream extends DataOutputStream implements Matrix
     }
 
     @Override
-    public void writeMatrix(final FloatMatrix<?, ?> matrix) throws IOException {
-        writeInt(matrix.rows());
-        writeInt(matrix.columns());
-        for (FloatVector<?> column : matrix.columnsIterator()) {
-            for (int i = 0; i < column.size(); i++) {
-                writeFloat(column.get(i));
-            }
-        }
-    }
-
-    @Override
     public void writeColumnsAsMatrix(final Collection<? extends FloatDenseVector> columns) throws IOException {
         boolean wroteHeader = false;
         for (FloatDenseVector column : columns) {
             if (!wroteHeader) {
                 // write number of rows
-                writeInt(column.size());
+                writeInt(column.length());
                 // write number of columns
                 writeInt(columns.size());
                 wroteHeader = true;
             }
-            for (int i = 0; i < column.size(); i++) {
+            for (int i = 0; i < column.length(); i++) {
                 writeFloat(column.get(i));
             }
         }
@@ -49,6 +38,17 @@ public final class MatrixOutputStream extends DataOutputStream implements Matrix
         if (!wroteHeader) {
             writeInt(0);
             writeInt(0);
+        }
+    }
+
+    @Override
+    public void writeMatrix(final FloatMatrix<?, ?> matrix) throws IOException {
+        writeInt(matrix.rows());
+        writeInt(matrix.columns());
+        for (FloatVector<?> column : matrix.columnsIterator()) {
+            for (int i = 0; i < column.length(); i++) {
+                writeFloat(column.get(i));
+            }
         }
     }
 }

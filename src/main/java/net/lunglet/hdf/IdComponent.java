@@ -25,15 +25,19 @@ abstract class IdComponent {
         return new EqualsBuilder().append(getId(), other.getId()).isEquals();
     }
 
+    @Override
+    protected void finalize() throws Throwable {
+        if (isValid()) {
+            System.err.println(this + " wasn't invalidated");
+        }
+        super.finalize();
+    }
+
     protected final int getId() {
         if (!valid) {
             throw new IllegalStateException();
         }
         return id;
-    }
-
-    protected final boolean isValid() {
-        return valid;
     }
 
     @Override
@@ -45,10 +49,7 @@ abstract class IdComponent {
         this.valid = false;
     }
 
-    protected void finalize() throws Throwable {
-        if (isValid()) {
-            System.err.println(this + " wasn't invalidated");
-        }
-        super.finalize();
+    protected final boolean isValid() {
+        return valid;
     }
 }

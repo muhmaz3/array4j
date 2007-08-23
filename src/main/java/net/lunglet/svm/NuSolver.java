@@ -8,13 +8,139 @@ package net.lunglet.svm;
 final class NuSolver extends Solver {
     private SolutionInfo si;
 
-    void Solve(final int l, final QMatrix Q, final double[] p, final byte[] y, final double[] alpha, final double Cp,
-            final double Cn, final double eps, final SolutionInfo si, final int shrinking) {
-        this.si = si;
-        super.Solve(l, Q, p, y, alpha, Cp, Cn, eps, si, shrinking);
+    private boolean beShrunken(final int i, final double Gmax1, final double Gmax2, final double Gmax3,
+            final double Gmax4) {
+        if (is_upper_bound(i)) {
+            if (y[i] == +1) {
+                return (-G[i] > Gmax1);
+            } else {
+                return (-G[i] > Gmax4);
+            }
+        } else if (is_lower_bound(i)) {
+            if (y[i] == +1) {
+                return (G[i] > Gmax2);
+            } else {
+                return (G[i] > Gmax3);
+            }
+        } else {
+            return (false);
+        }
+    }
+
+    @Override
+    double calculateRho() {
+        int nrFree1 = 0, nrFree2 = 0;
+        double ub1 = INF, ub2 = INF;
+        double lb1 = -INF, lb2 = -INF;
+        double sumFree1 = 0, sumFree2 = 0;
+
+        for (int i = 0; i < active_size; i++) {
+            if (y[i] == +1) {
+                if (is_lower_bound(i)) {
+                    ub1 = Math.min(ub1, G[i]);
+                } else if (is_upper_bound(i)) {
+                    lb1 = Math.max(lb1, G[i]);
+                } else {
+                    ++nrFree1;
+                    sumFree1 += G[i];
+                }
+            } else {
+                if (is_lower_bound(i)) {
+                    ub2 = Math.min(ub2, G[i]);
+                } else if (is_upper_bound(i)) {
+                    lb2 = Math.max(lb2, G[i]);
+                } else {
+                    ++nrFree2;
+                    sumFree2 += G[i];
+                }
+            }
+        }
+
+        double r1, r2;
+        if (nrFree1 > 0) {
+            r1 = sumFree1 / nrFree1;
+        } else {
+            r1 = (ub1 + lb1) / 2;
+        }
+
+        if (nrFree2 > 0) {
+            r2 = sumFree2 / nrFree2;
+        } else {
+            r2 = (ub2 + lb2) / 2;
+        }
+
+        si.r = (r1 + r2) / 2;
+        return (r1 - r2) / 2;
+    }
+
+    @Override
+    void doShrinking() {
+        double Gmax1 = -INF; // max { -y_i * grad(f)_i | y_i = +1, i in I_up(\alpha) }
+        double Gmax2 = -INF; // max { y_i * grad(f)_i | y_i = +1, i in I_low(\alpha) }
+        double Gmax3 = -INF; // max { -y_i * grad(f)_i | y_i = -1, i in I_up(\alpha) }
+        double Gmax4 = -INF; // max { y_i * grad(f)_i | y_i = -1, i in I_low(\alpha) }
+
+        // find maximal violating pair first
+        int i;
+        for (i = 0; i < active_size; i++) {
+            if (!is_upper_bound(i)) {
+                if (y[i] == +1) {
+                    if (-G[i] > Gmax1) {
+                        Gmax1 = -G[i];
+                    }
+                } else if (-G[i] > Gmax4) {
+                    Gmax4 = -G[i];
+                }
+            }
+            if (!is_lower_bound(i)) {
+                if (y[i] == +1) {
+                    if (G[i] > Gmax2) {
+                        Gmax2 = G[i];
+                    }
+                } else if (G[i] > Gmax3) {
+                    Gmax3 = G[i];
+                }
+            }
+        }
+
+        // shrinking
+
+        for (i = 0; i < active_size; i++) {
+            if (beShrunken(i, Gmax1, Gmax2, Gmax3, Gmax4)) {
+                active_size--;
+                while (active_size > i) {
+                    if (!beShrunken(active_size, Gmax1, Gmax2, Gmax3, Gmax4)) {
+                        swap_index(i, active_size);
+                        break;
+                    }
+                    active_size--;
+                }
+            }
+        }
+
+        if (unshrinked || Math.max(Gmax1 + Gmax2, Gmax3 + Gmax4) > eps * 10) {
+            return;
+        }
+
+        unshrinked = true;
+        reconstructGradient();
+
+        for (i = l - 1; i >= active_size; i--) {
+            if (!beShrunken(i, Gmax1, Gmax2, Gmax3, Gmax4)) {
+                while (active_size < i) {
+                    if (beShrunken(active_size, Gmax1, Gmax2, Gmax3, Gmax4)) {
+                        swap_index(i, active_size);
+                        break;
+                    }
+                    active_size++;
+                }
+                active_size++;
+            }
+        }
     }
 
     // return 1 if already optimal, return 0 otherwise
+    @Override
     int selectWorkingSet(final int[] workingSet) {
         // return i,j such that y_i = y_j and
         // i: maximizes -y_i * grad(f)_i, i in I_up(\alpha)
@@ -123,132 +249,10 @@ final class NuSolver extends Solver {
         return 0;
     }
 
-    private boolean beShrunken(final int i, final double Gmax1, final double Gmax2, final double Gmax3,
-            final double Gmax4) {
-        if (is_upper_bound(i)) {
-            if (y[i] == +1) {
-                return (-G[i] > Gmax1);
-            } else {
-                return (-G[i] > Gmax4);
-            }
-        } else if (is_lower_bound(i)) {
-            if (y[i] == +1) {
-                return (G[i] > Gmax2);
-            } else {
-                return (G[i] > Gmax3);
-            }
-        } else {
-            return (false);
-        }
-    }
-
-    void doShrinking() {
-        double Gmax1 = -INF; // max { -y_i * grad(f)_i | y_i = +1, i in I_up(\alpha) }
-        double Gmax2 = -INF; // max { y_i * grad(f)_i | y_i = +1, i in I_low(\alpha) }
-        double Gmax3 = -INF; // max { -y_i * grad(f)_i | y_i = -1, i in I_up(\alpha) }
-        double Gmax4 = -INF; // max { y_i * grad(f)_i | y_i = -1, i in I_low(\alpha) }
-
-        // find maximal violating pair first
-        int i;
-        for (i = 0; i < active_size; i++) {
-            if (!is_upper_bound(i)) {
-                if (y[i] == +1) {
-                    if (-G[i] > Gmax1) {
-                        Gmax1 = -G[i];
-                    }
-                } else if (-G[i] > Gmax4) {
-                    Gmax4 = -G[i];
-                }
-            }
-            if (!is_lower_bound(i)) {
-                if (y[i] == +1) {
-                    if (G[i] > Gmax2) {
-                        Gmax2 = G[i];
-                    }
-                } else if (G[i] > Gmax3) {
-                    Gmax3 = G[i];
-                }
-            }
-        }
-
-        // shrinking
-
-        for (i = 0; i < active_size; i++) {
-            if (beShrunken(i, Gmax1, Gmax2, Gmax3, Gmax4)) {
-                active_size--;
-                while (active_size > i) {
-                    if (!beShrunken(active_size, Gmax1, Gmax2, Gmax3, Gmax4)) {
-                        swap_index(i, active_size);
-                        break;
-                    }
-                    active_size--;
-                }
-            }
-        }
-
-        if (unshrinked || Math.max(Gmax1 + Gmax2, Gmax3 + Gmax4) > eps * 10) {
-            return;
-        }
-
-        unshrinked = true;
-        reconstructGradient();
-
-        for (i = l - 1; i >= active_size; i--) {
-            if (!beShrunken(i, Gmax1, Gmax2, Gmax3, Gmax4)) {
-                while (active_size < i) {
-                    if (beShrunken(active_size, Gmax1, Gmax2, Gmax3, Gmax4)) {
-                        swap_index(i, active_size);
-                        break;
-                    }
-                    active_size++;
-                }
-                active_size++;
-            }
-        }
-    }
-
-    double calculateRho() {
-        int nrFree1 = 0, nrFree2 = 0;
-        double ub1 = INF, ub2 = INF;
-        double lb1 = -INF, lb2 = -INF;
-        double sumFree1 = 0, sumFree2 = 0;
-
-        for (int i = 0; i < active_size; i++) {
-            if (y[i] == +1) {
-                if (is_lower_bound(i)) {
-                    ub1 = Math.min(ub1, G[i]);
-                } else if (is_upper_bound(i)) {
-                    lb1 = Math.max(lb1, G[i]);
-                } else {
-                    ++nrFree1;
-                    sumFree1 += G[i];
-                }
-            } else {
-                if (is_lower_bound(i)) {
-                    ub2 = Math.min(ub2, G[i]);
-                } else if (is_upper_bound(i)) {
-                    lb2 = Math.max(lb2, G[i]);
-                } else {
-                    ++nrFree2;
-                    sumFree2 += G[i];
-                }
-            }
-        }
-
-        double r1, r2;
-        if (nrFree1 > 0) {
-            r1 = sumFree1 / nrFree1;
-        } else {
-            r1 = (ub1 + lb1) / 2;
-        }
-
-        if (nrFree2 > 0) {
-            r2 = sumFree2 / nrFree2;
-        } else {
-            r2 = (ub2 + lb2) / 2;
-        }
-
-        si.r = (r1 + r2) / 2;
-        return (r1 - r2) / 2;
+    @Override
+    void Solve(final int l, final QMatrix Q, final double[] p, final byte[] y, final double[] alpha, final double Cp,
+            final double Cn, final double eps, final SolutionInfo si, final int shrinking) {
+        this.si = si;
+        super.Solve(l, Q, p, y, alpha, Cp, Cn, eps, si, shrinking);
     }
 }

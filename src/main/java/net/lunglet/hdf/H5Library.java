@@ -238,13 +238,13 @@ public interface H5Library extends Library {
 
     int H5Dopen(int loc_id, String name);
 
-    int H5Dread(int dset_id, int mem_type_id, int mem_space_id, int file_space_id, int plist_id, byte[] buf);
-
     int H5Dread(int dset_id, int mem_type_id, int mem_space_id, int file_space_id, int plist_id, Buffer buf);
 
-    int H5Dwrite(int dset_id, int mem_type_id, int mem_space_id, int file_space_id, int plist_id, byte[] buf);
+    int H5Dread(int dset_id, int mem_type_id, int mem_space_id, int file_space_id, int plist_id, byte[] buf);
 
     int H5Dwrite(int dset_id, int mem_type_id, int mem_space_id, int file_space_id, int plist_id, Buffer buf);
+
+    int H5Dwrite(int dset_id, int mem_type_id, int mem_space_id, int file_space_id, int plist_id, byte[] buf);
 
     int H5Fclose(int file_id);
 
@@ -257,6 +257,8 @@ public interface H5Library extends Library {
     int H5Fis_hdf5(String filename);
 
     int H5Fopen(String filename, int flags, int access_plist);
+
+    int H5Gclose(int group_id);
 
     int H5Gcreate(int loc_id, String name, int size_hint);
 
@@ -293,6 +295,4 @@ public interface H5Library extends Library {
     int H5Tcreate(int type, int size);
 
     long H5Tget_size(int type_id);
-
-    int H5Gclose(int group_id);
 }
