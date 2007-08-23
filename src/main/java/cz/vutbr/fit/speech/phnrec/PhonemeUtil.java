@@ -17,6 +17,9 @@ public final class PhonemeUtil {
     }
 
     public static FloatDenseVector calculateNGrams(final FloatDenseMatrix posteriors) {
+        if (posteriors.columns() < 2) {
+            throw new IllegalArgumentException();
+        }
         FloatDenseVector monograms = FloatMatrixUtils.columnSum(posteriors);
         monograms.plusEquals(1.0f);
         monograms.divideEquals(FloatMatrixUtils.sum(monograms));
