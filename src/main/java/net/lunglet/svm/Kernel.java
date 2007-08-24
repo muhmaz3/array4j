@@ -55,7 +55,7 @@ abstract class Kernel extends QMatrix {
 
     private final double gamma;
 
-    private final FloatMatrix<?, ?> gram;
+    private final GramMatrix gram;
 
     private final int kernel_type;
 
@@ -63,7 +63,7 @@ abstract class Kernel extends QMatrix {
 
     private final double[] x_square;
 
-    Kernel(final int l, final SvmNode[] x, final FloatMatrix<?, ?> gram, final SvmParameter param) {
+    Kernel(final int l, final SvmNode[] x, final GramMatrix gram, final SvmParameter param) {
         this.x = x.clone();
         this.gram = gram;
         this.kernel_type = param.kernel_type;
