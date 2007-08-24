@@ -1,9 +1,7 @@
 package net.lunglet.svm;
 
-import com.googlecode.array4j.FloatMatrix;
-
 class SvmProblem {
-    public FloatMatrix<?, ?> gram;
+    public GramMatrix gram;
 
     public int l;
 

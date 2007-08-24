@@ -32,19 +32,34 @@ public final class SimpleSvm {
         return param;
     }
 
+    private static GramMatrix createGramMatrix(final FloatMatrix<?, ?> data, final FloatMatrix<?, ?> gram) {
+        if (gram == null) {
+            throw new NullPointerException();
+        }
+        if (data.columns() != gram.rows() || !gram.isSquare()) {
+            throw new IllegalArgumentException();
+        }
+        return new GramMatrix() {
+            public float get(final int i, final int j) {
+                return gram.get(i, j);
+            }
+        };
+    }
+
     private final FloatMatrix<?, ?> data;
 
-    private final FloatMatrix<?, ?> gram;
+    private final GramMatrix gram;
 
     private SvmModel model;
 
     private final SvmProblem problem;
 
     public SimpleSvm(final FloatMatrix<?, ?> data, final FloatMatrix<?, ?> gram, final int[] labels) {
+        this(data, createGramMatrix(data, gram), labels);
+    }
+
+    public SimpleSvm(final FloatMatrix<?, ?> data, final GramMatrix gram, final int[] labels) {
         if (data.columns() != labels.length) {
-            throw new IllegalArgumentException();
-        }
-        if (gram != null && (data.columns() != gram.rows() || !gram.isSquare())) {
             throw new IllegalArgumentException();
         }
         this.data = data;
@@ -67,7 +82,7 @@ public final class SimpleSvm {
     }
 
     public SimpleSvm(final FloatMatrix<?, ?> data, final int[] labels) {
-        this(data, null, labels);
+        this(data, (GramMatrix) null, labels);
     }
 
     /**
