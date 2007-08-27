@@ -5,6 +5,7 @@ import java.nio.FloatBuffer;
 import org.apache.commons.lang.builder.EqualsBuilder;
 
 import com.googlecode.array4j.FloatMatrix;
+import com.googlecode.array4j.FloatMatrixUtils;
 import com.googlecode.array4j.Orientation;
 import com.googlecode.array4j.Storage;
 
@@ -64,6 +65,11 @@ public final class FloatDenseMatrix extends AbstractFloatDense<FloatDenseMatrix>
             return true;
         }
         return new EqualsBuilder().appendSuper(super.equals(obj)).isEquals();
+    }
+
+    @Override
+    public String toString() {
+        return FloatMatrixUtils.toString(this);
     }
 
     @Override

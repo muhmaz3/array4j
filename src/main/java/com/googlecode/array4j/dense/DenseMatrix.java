@@ -15,5 +15,5 @@ public interface DenseMatrix<M extends DenseMatrix<M, V>, V extends DenseVector<
 
     int stride();
 
-    <B extends Buffer> B data();
+    Buffer data();
 }

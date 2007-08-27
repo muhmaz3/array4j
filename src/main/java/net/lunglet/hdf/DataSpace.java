@@ -115,7 +115,7 @@ public final class DataSpace extends IdComponent {
         if (isValid()) {
             return "DataSpace[dims=" + Arrays.toString(getDims()) + ", maxdims=" + Arrays.toString(getMaxDims()) + "]";
         } else {
-            return "DataSpace[closed]";
+            return "DataSpace[invalid]";
         }
     }
 }

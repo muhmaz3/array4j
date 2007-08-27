@@ -6,6 +6,8 @@ import org.netlib.blas.Sgemm;
 
 import com.googlecode.array4j.dense.FloatDenseMatrix;
 
+// XXX all BLAS level 3 functions require dense matrices
+
 public final class FloatDenseBLAS extends AbstractDenseBLAS {
     public static final FloatDenseBLAS DEFAULT = new FloatDenseBLAS(new BLASPolicy.BestEffort());
 
@@ -14,7 +16,7 @@ public final class FloatDenseBLAS extends AbstractDenseBLAS {
     }
 
     /**
-     * <CODE>C = alpha * A * B + beta * C</CODE>.
+     * <CODE>C := alpha*A*B + beta*C</CODE>.
      */
     public void gemm(final float alpha, final FloatDenseMatrix a, final FloatDenseMatrix b, final float beta,
             final FloatDenseMatrix c) {
