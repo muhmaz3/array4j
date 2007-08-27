@@ -22,7 +22,8 @@ public final class MKLFFT implements FFT {
     public CFloatDenseVector fft(final FloatDenseVector x, final int n) {
         // TODO short circuit on zero-length x instead of throwing
         checkArgument(x.length() > 0 && n > 0);
-        checkArgument(x.isDirect());
+        // TODO JNA should convert all the arguments to native arrays
+//        checkArgument(x.isDirect());
 
         final FloatBuffer xdata;
         final int xoffset;

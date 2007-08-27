@@ -1,5 +1,7 @@
 package com.googlecode.array4j.dense;
 
+import java.nio.Buffer;
+
 import com.googlecode.array4j.Matrix;
 import com.googlecode.array4j.Orientation;
 import com.googlecode.array4j.Storage;
@@ -12,4 +14,6 @@ public interface DenseMatrix<M extends DenseMatrix<M, V>, V extends DenseVector<
     Storage storage();
 
     int stride();
+
+    <B extends Buffer> B data();
 }

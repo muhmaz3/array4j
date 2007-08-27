@@ -85,11 +85,7 @@ public abstract class AbstractFloatDense<M extends FloatMatrix<M, FloatDenseVect
     }
 
     public final FloatBuffer data() {
-        return data;
-    }
-
-    public final float[] dataArray() {
-        return data.array();
+        return ((FloatBuffer) data.position(offset)).slice();
     }
 
     public final void divideEquals(final float value) {
@@ -128,14 +124,6 @@ public abstract class AbstractFloatDense<M extends FloatMatrix<M, FloatDenseVect
 
     public final float get(final int row, final int column) {
         return data.get(elementOffset(row, column));
-    }
-
-    public final boolean hasArray() {
-        return data.hasArray();
-    }
-
-    public final boolean isDirect() {
-        return data.isDirect();
     }
 
     public final void minusEquals(final float value) {
@@ -212,13 +200,34 @@ public abstract class AbstractFloatDense<M extends FloatMatrix<M, FloatDenseVect
 
     @Override
     public String toString() {
-        // TODO do something better here
         StringBuilder builder = new StringBuilder();
-        builder.append("[");
-        for (int i = 0; i < length; i++) {
-            builder.append(String.format("%.16f ", get(i)));
+        builder.append(rows + " x " + columns);
+        builder.append(", " + orientation + ", " + storage());
+        builder.append("\n");
+        if (rows == 0) {
+            builder.append("[]");
+            return builder.toString();
         }
-        builder.append("]");
+        for (int i = 0; i < rows; i++) {
+            if (i == 0) {
+                builder.append("[");
+            } else {
+                builder.append(" ");
+            }
+            builder.append("[");
+            for (int j = 0; j < columns; j++) {
+                builder.append(String.format("% .16g", get(i, j)));
+                if (j < columns - 1) {
+                    builder.append(" ");
+                }
+            }
+            builder.append("]");
+            if (i < rows - 1) {
+                builder.append("\n");
+            } else {
+                builder.append("]");
+            }
+        }
         return builder.toString();
     }
 

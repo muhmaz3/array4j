@@ -1,6 +1,5 @@
 package net.lunglet.svm;
 
-import com.googlecode.array4j.FloatMatrix;
 import com.googlecode.array4j.FloatMatrixMath;
 import com.googlecode.array4j.FloatVector;
 

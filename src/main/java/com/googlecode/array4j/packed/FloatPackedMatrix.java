@@ -12,15 +12,21 @@ public final class FloatPackedMatrix extends AbstractPackedMatrix<FloatPackedMat
         FloatMatrix<FloatPackedMatrix, FloatDenseVector> {
     private final FloatBuffer data;
 
-    public FloatPackedMatrix(final int rows, final int columns) {
-        super(rows, columns);
-        this.data = null;
+    public static FloatPackedMatrix createSymmetric(final int rows, final int columns) {
+        return new FloatPackedMatrix(rows, columns, PackedType.SYMMETRIC);
     }
 
-    @Override
-    public FloatDenseVector asVector() {
-        // TODO return a dense vector
-        return null;
+    public static FloatPackedMatrix createUpperTriangular(final int rows, final int columns) {
+        return new FloatPackedMatrix(rows, columns, PackedType.UPPER_TRIANGULAR);
+    }
+
+    public static FloatPackedMatrix createLowerTriangular(final int rows, final int columns) {
+        return new FloatPackedMatrix(rows, columns, PackedType.LOWER_TRIANGULAR);
+    }
+
+    private FloatPackedMatrix(final int rows, final int columns, final PackedType packedType) {
+        super(rows, columns, packedType);
+        this.data = null;
     }
 
     @Override
@@ -97,26 +103,22 @@ public final class FloatPackedMatrix extends AbstractPackedMatrix<FloatPackedMat
 
     @Override
     public FloatPackedMatrix transpose() {
-        // TODO switch uplo
-        return null;
+        if (isSymmetric()) {
+            return this;
+        } else {
+            // TODO probably need to switch uplo?
+            throw new UnsupportedOperationException();
+        }
     }
 
     @Override
     public FloatDenseVector createColumnVector() {
-        // TODO implement this
-        throw new UnsupportedOperationException();
+        return new FloatDenseVector(rows(), Orientation.COLUMN, storage());
     }
 
     @Override
     public FloatDenseVector createRowVector() {
-        // TODO implement this
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Orientation orientation() {
-        // TODO Auto-generated method stub
-        return null;
+        return new FloatDenseVector(columns(), Orientation.ROW, storage());
     }
 
     @Override
@@ -127,5 +129,11 @@ public final class FloatPackedMatrix extends AbstractPackedMatrix<FloatPackedMat
 
     public float[] dataArray() {
         return data.array();
+    }
+
+    @Override
+    public FloatDenseVector asVector() {
+        // TODO need to make a dense copy here and return that as a vector
+        throw new UnsupportedOperationException();
     }
 }
