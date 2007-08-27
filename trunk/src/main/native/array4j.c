@@ -1,3 +1,6 @@
+// XXX this library must be linked against mkl_c and libguide to avoid
+// problems when loading it with JNA
+
 #include "net_lunglet_mkl_fft_DftiDescriptor.h"
 #include "net_lunglet_mkl_fft_DftiError.h"
 
@@ -217,4 +220,10 @@ JNIEXPORT jlong JNICALL Java_net_lunglet_mkl_fft_DftiDescriptor_computeBackward_
         (*env)->FatalError(env, "invalid buffer out");
     }
     return DftiComputeBackward(DFTI_DESCRIPTOR_HANDLE_PTR(handle), in, out);
+}
+
+JNIEXPORT void array4j_sgemm
+  (int order, int transa, int transb, int m, int n, int k, float alpha, const float* a, int lda, const float* b, int ldb, float beta, float *c, int ldc)
+{
+    cblas_sgemm(order, transa, transb, m, n, k, alpha, a, lda, b, ldb, beta, c, ldc);
 }

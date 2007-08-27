@@ -93,11 +93,7 @@ public abstract class AbstractCFloatDense<M extends ComplexFloatMatrix<M, CFloat
     }
 
     public final FloatBuffer data() {
-        return data;
-    }
-
-    public final float[] dataArray() {
-        return data.array();
+        return ((FloatBuffer) data.position(offset)).slice();
     }
 
     @Override

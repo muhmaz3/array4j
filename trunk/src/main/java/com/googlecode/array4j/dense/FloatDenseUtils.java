@@ -23,12 +23,14 @@ public final class FloatDenseUtils {
         return matrix;
     }
 
-    public static FloatDenseMatrix createMatrix(final float[][] values) {
-        return createMatrix(values, Orientation.DEFAULT, Storage.DEFAULT_FOR_DENSE);
+    // TODO change createMatrix functions to valueOf methods of FloatDenseMatrix
+
+    public static FloatDenseMatrix createMatrix(final float[]... values) {
+        return createMatrix(Orientation.DEFAULT, Storage.DEFAULT_FOR_DENSE, values);
     }
 
-
-    public static FloatDenseMatrix createMatrix(float[][] values, Orientation orientation, Storage storage) {
+    public static FloatDenseMatrix createMatrix(final Orientation orientation, final Storage storage,
+            final float[]... values) {
         int rows = values.length;
         int columns = rows > 0 ? values[0].length : 0;
         FloatDenseMatrix matrix = new FloatDenseMatrix(rows, columns, orientation, storage);
