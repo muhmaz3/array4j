@@ -20,7 +20,7 @@
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="2"
-			CharacterSet="1"
+			CharacterSet="2"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\src\generated\native;&quot;C:\Program Files\Intel\MKL\9.1\include&quot;;&quot;C:\Program Files\Java\jdk1.6.0_01\include&quot;;&quot;C:\Program Files\Java\jdk1.6.0_01\include\win32&quot;"
+				AdditionalIncludeDirectories="..\src\generated\native;&quot;C:\Program Files\Intel\MKL\9.1\include&quot;;&quot;C:\Program Files\Java\jdk1.6.0_02\include&quot;;&quot;C:\Program Files\Java\jdk1.6.0_02\include\win32&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;ARRAY4J_EXPORTS"
 				MinimalRebuild="false"
 				BasicRuntimeChecks="3"
@@ -61,7 +61,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="mkl_c_dll.lib libguide40.lib"
+				AdditionalDependencies="mkl_c.lib libguide.lib"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;C:\Program Files\Intel\MKL\9.1\ia32\lib&quot;"
 				GenerateDebugInformation="true"
@@ -98,7 +98,7 @@
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="2"
-			CharacterSet="1"
+			CharacterSet="2"
 			WholeProgramOptimization="1"
 			>
 			<Tool
@@ -118,7 +118,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\src\generated\native;&quot;C:\Program Files\Intel\MKL\9.1\include&quot;;&quot;C:\Program Files\Java\jdk1.6.0_01\include&quot;;&quot;C:\Program Files\Java\jdk1.6.0_01\include\win32&quot;"
+				AdditionalIncludeDirectories="..\src\generated\native;&quot;C:\Program Files\Intel\MKL\9.1\include&quot;;&quot;C:\Program Files\Java\jdk1.6.0_02\include&quot;;&quot;C:\Program Files\Java\jdk1.6.0_02\include\win32&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;ARRAY4J_EXPORTS"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -137,7 +137,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="mkl_c_dll.lib libguide40.lib"
+				AdditionalDependencies="mkl_c.lib libguide.lib"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;C:\Program Files\Intel\MKL\9.1\ia32\lib&quot;"
 				GenerateDebugInformation="true"
