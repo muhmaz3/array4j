@@ -6,52 +6,75 @@ import com.googlecode.array4j.dense.DenseVector;
 public abstract class AbstractPackedMatrix<M extends PackedMatrix<M, V>, V extends DenseVector<V>> extends
         AbstractMatrix<M, V> implements PackedMatrix<M, V> {
     protected enum PackedType {
-        SYMMETRIC,
-        UPPER_TRIANGULAR,
-        LOWER_TRIANGULAR
+        SYMMETRIC {
+            @Override
+            public PackedType transpose() {
+                return SYMMETRIC;
+            }
+        },
+        UPPER_TRIANGULAR {
+            @Override
+            public PackedType transpose() {
+                return LOWER_TRIANGULAR;
+            }
+        },
+        LOWER_TRIANGULAR {
+            @Override
+            public PackedType transpose() {
+                return UPPER_TRIANGULAR;
+            }
+        };
+
+        public abstract PackedType transpose();
     }
 
-    private enum UpLo {
-        UP, LO;
-    }
-
-    private final PackedType packedType;
-
-    private final UpLo uplo;
+    protected final PackedType packedType;
 
     public AbstractPackedMatrix(final int rows, final int columns, final PackedType packedType) {
         super(rows, columns);
-        if (packedType.equals(PackedType.SYMMETRIC)) {
-            if (rows != columns) {
-                throw new IllegalArgumentException();
-            }
+        // TODO can possibly relax this restriction?
+        if (rows != columns) {
+            throw new IllegalArgumentException();
         }
         this.packedType = packedType;
-        if (packedType.equals(PackedType.LOWER_TRIANGULAR)) {
-            this.uplo = UpLo.LO;
-        } else {
-            this.uplo = UpLo.UP;
-        }
     }
 
-    protected final int elementOffset(final int rows, final int columns) {
+    protected final int getBufferSize() {
+        return rows * (rows + 1) / 2;
+    }
+
+    protected final int elementOffset(final int m, final int n) {
+        checkRowIndex(m);
+        checkColumnIndex(n);
         final int i, j;
-        if (rows <= columns) {
-            i = rows;
-            j = columns;
+        if (m <= n) {
+            i = m;
+            j = n;
         } else {
-            j = rows;
-            i = columns;
+            j = m;
+            i = n;
         }
-        if (uplo.equals(UpLo.UP)) {
+        if (!packedType.equals(PackedType.LOWER_TRIANGULAR)) {
             return i + (j + 1) * j / 2;
         } else {
             return i + (2 * columns - (j + 1)) * j / 2;
         }
     }
 
-    public final int offset() {
-        return 0;
+    protected final boolean nonZeroElement(final int row, final int column) {
+        if (packedType.equals(PackedType.UPPER_TRIANGULAR)) {
+            return row <= column;
+        } else if (packedType.equals(PackedType.LOWER_TRIANGULAR)) {
+            return row >= column;
+        } else {
+            return true;
+        }
+    }
+
+    protected final void checkCanSet(final int row, final int column) {
+        if (!nonZeroElement(row, column)) {
+            throw new IllegalArgumentException();
+        }
     }
 
     @Override

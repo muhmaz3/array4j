@@ -167,6 +167,38 @@ public final class FloatMatrixUtils {
         return new FloatDenseMatrix(matrix.rows(), matrix.columns());
     }
 
+    public static String toString(final FloatMatrix<?, ?> x) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(x.rows() + " x " + x.columns());
+//        builder.append(", " + orientation + ", " + x.storage());
+        builder.append("\n");
+        if (x.rows() == 0) {
+            builder.append("[]");
+            return builder.toString();
+        }
+        for (int i = 0; i < x.rows(); i++) {
+            if (i == 0) {
+                builder.append("[");
+            } else {
+                builder.append(" ");
+            }
+            builder.append("[");
+            for (int j = 0; j < x.columns(); j++) {
+                builder.append(String.format("% .16g", x.get(i, j)));
+                if (j < x.columns() - 1) {
+                    builder.append(" ");
+                }
+            }
+            builder.append("]");
+            if (i < x.rows() - 1) {
+                builder.append("\n");
+            } else {
+                builder.append("]");
+            }
+        }
+        return builder.toString();
+    }
+
     private FloatMatrixUtils() {
     }
 }

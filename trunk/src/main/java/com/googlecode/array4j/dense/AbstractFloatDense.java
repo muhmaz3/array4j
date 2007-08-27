@@ -162,6 +162,7 @@ public abstract class AbstractFloatDense<M extends FloatMatrix<M, FloatDenseVect
 
     public final void setColumn(final int column, final FloatVector<?> columnVector) {
         // TODO this code is almost identical to setRow
+        checkColumnIndex(column);
         checkArgument(rows == columnVector.rows());
         int targetOffset = columnOffset(column);
         int targetStride = rowStride;
@@ -178,6 +179,7 @@ public abstract class AbstractFloatDense<M extends FloatMatrix<M, FloatDenseVect
 
     public final void setRow(final int row, final FloatVector<?> rowVector) {
         // TODO this code is almost identical to setColumn
+        checkRowIndex(row);
         checkArgument(columns == rowVector.columns());
         int targetOffset = rowOffset(row);
         int targetStride = columnStride;
@@ -196,39 +198,6 @@ public abstract class AbstractFloatDense<M extends FloatMatrix<M, FloatDenseVect
         for (int i = 0; i < length; i++) {
             set(i, get(i) * value);
         }
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append(rows + " x " + columns);
-        builder.append(", " + orientation + ", " + storage());
-        builder.append("\n");
-        if (rows == 0) {
-            builder.append("[]");
-            return builder.toString();
-        }
-        for (int i = 0; i < rows; i++) {
-            if (i == 0) {
-                builder.append("[");
-            } else {
-                builder.append(" ");
-            }
-            builder.append("[");
-            for (int j = 0; j < columns; j++) {
-                builder.append(String.format("% .16g", get(i, j)));
-                if (j < columns - 1) {
-                    builder.append(" ");
-                }
-            }
-            builder.append("]");
-            if (i < rows - 1) {
-                builder.append("\n");
-            } else {
-                builder.append("]");
-            }
-        }
-        return builder.toString();
     }
 
     private void writeObject(final ObjectOutputStream out) throws IOException {

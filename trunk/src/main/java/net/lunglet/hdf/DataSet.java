@@ -3,8 +3,9 @@ package net.lunglet.hdf;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
+import java.util.Arrays;
 
-public final class DataSet extends AbstractDs {
+public final class DataSet extends AbstractDs implements Comparable<DataSet> {
     private static final int FLOAT_SIZE = 4;
 
     private final String name;
@@ -149,6 +150,20 @@ public final class DataSet extends AbstractDs {
         int err = H5Library.INSTANCE.H5Dwrite(getId(), memTypeId, memSpaceId, fileSpaceId, xferPlistId, buf);
         if (err < 0) {
             throw new H5DataSetException("H5Dwrite failed");
+        }
+    }
+
+    @Override
+    public int compareTo(final DataSet o) {
+        return getName().compareTo(o.getName());
+    }
+
+    @Override
+    public String toString() {
+        if (isValid()) {
+            return "DataSet[name=" + getName() + "]";
+        } else {
+            return "DataSet[invalid]";
         }
     }
 }
