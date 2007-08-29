@@ -2,7 +2,6 @@ package net.lunglet.hdf;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.WeakHashMap;
 
 import net.lunglet.hdf.H5Library.H5G_iterate_t;
 
@@ -12,8 +11,6 @@ import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
 
 public final class Group extends H5Object {
-    private static final WeakHashMap<Integer, Group> GROUPS = new WeakHashMap<Integer, Group>();
-
     private static final int H5G_DATASET = 2;
 
     private static final int H5G_GROUP = 1;
@@ -30,7 +27,7 @@ public final class Group extends H5Object {
     }
 
     public void close() {
-        // don't close root group
+        // never close the root group -- closing the file will close it
         if (name.equals("/")) {
             invalidate();
             return;

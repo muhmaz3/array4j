@@ -27,7 +27,7 @@ public final class DataSet extends AbstractDs implements Comparable<DataSet> {
         } else if (buf instanceof DoubleBuffer) {
             size = DOUBLE_SIZE * buf.capacity();
         } else {
-            // TODO add other buffer above
+            // TODO add other buffers above
             throw new AssertionError();
         }
         checkBufferSize(size, memType, memSpace, fileSpace);
@@ -43,9 +43,11 @@ public final class DataSet extends AbstractDs implements Comparable<DataSet> {
                 space = fileSpace;
             }
         } else {
-            // TODO maybe check that memSpace fits inside fileSpace
             space = memSpace;
         }
+        // TODO need a better check here that takes offset and bounding box into
+        // account, because this check won't catch all buffers that are too
+        // small
         long requiredSize = memType.getSize() * space.getSelectNPoints();
         if (size < requiredSize) {
             throw new IllegalArgumentException();
@@ -143,7 +145,11 @@ public final class DataSet extends AbstractDs implements Comparable<DataSet> {
     }
 
     public void write(final Buffer buf, final DataType memType) {
-        write(buf, memType, DataSpace.ALL, DataSpace.ALL, DataSetMemXferPropList.DEFAULT);
+        write(buf, memType, DataSpace.ALL, DataSpace.ALL);
+    }
+
+    public void write(final Buffer buf, final DataType memType, final DataSpace memSpace, final DataSpace fileSpace) {
+        write(buf, memType, memSpace, fileSpace, DataSetMemXferPropList.DEFAULT);
     }
 
     public void write(final Buffer buf, final DataType memType, final DataSpace memSpace,
@@ -160,7 +166,11 @@ public final class DataSet extends AbstractDs implements Comparable<DataSet> {
     }
 
     public void write(final byte[] buf, final DataType memType) {
-        write(buf, memType, DataSpace.ALL, DataSpace.ALL, DataSetMemXferPropList.DEFAULT);
+        write(buf, memType, DataSpace.ALL, DataSpace.ALL);
+    }
+
+    public void write(final byte[] buf, final DataType memType, final DataSpace memSpace, final DataSpace fileSpace) {
+        write(buf, memType, memSpace, fileSpace, DataSetMemXferPropList.DEFAULT);
     }
 
     public void write(final byte[] buf, final DataType memType, final DataSpace memSpace, final DataSpace fileSpace,
