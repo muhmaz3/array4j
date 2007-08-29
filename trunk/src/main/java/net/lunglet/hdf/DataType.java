@@ -42,7 +42,7 @@ public class DataType extends H5Object {
         }
     }
 
-    public final long getSize() {
+    public final int getSize() {
         // TODO do we need error checking here?
         return H5Library.INSTANCE.H5Tget_size(getId());
     }

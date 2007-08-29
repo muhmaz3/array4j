@@ -2,11 +2,13 @@ package net.lunglet.hdf;
 
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
+import java.nio.DoubleBuffer;
 import java.nio.FloatBuffer;
-import java.util.Arrays;
 
 public final class DataSet extends AbstractDs implements Comparable<DataSet> {
-    private static final int FLOAT_SIZE = 4;
+    private static final int FLOAT_SIZE = Float.SIZE >>> 3;
+
+    private static final int DOUBLE_SIZE = Double.SIZE >>> 3;
 
     private final String name;
 
@@ -22,7 +24,10 @@ public final class DataSet extends AbstractDs implements Comparable<DataSet> {
             size = buf.capacity();
         } else if (buf instanceof FloatBuffer) {
             size = FLOAT_SIZE * buf.capacity();
+        } else if (buf instanceof DoubleBuffer) {
+            size = DOUBLE_SIZE * buf.capacity();
         } else {
+            // TODO add other buffer above
             throw new AssertionError();
         }
         checkBufferSize(size, memType, memSpace, fileSpace);
@@ -30,23 +35,19 @@ public final class DataSet extends AbstractDs implements Comparable<DataSet> {
 
     private void checkBufferSize(final int size, final DataType memType, final DataSpace memSpace,
             final DataSpace fileSpace) {
-        final long minSize;
-        if (DataSpace.ALL.equals(memSpace)) {
-            if (DataSpace.ALL.equals(fileSpace)) {
-                minSize = getStorageSize();
+        final DataSpace space;
+        if (memSpace.equals(DataSpace.ALL)) {
+            if (fileSpace.equals(DataSpace.ALL)) {
+                space = getSpace();
             } else {
-                minSize = memType.getSize() * fileSpace.getSimpleExtentNpoints();
+                space = fileSpace;
             }
         } else {
-            long memSpaceSize = memSpace.getSimpleExtentNpoints();
-            if (!DataSpace.ALL.equals(fileSpace)) {
-                if (memSpaceSize != fileSpace.getSimpleExtentNpoints()) {
-                    throw new IllegalArgumentException();
-                }
-            }
-            minSize = memType.getSize() * memSpaceSize;
+            // TODO maybe check that memSpace fits inside fileSpace
+            space = memSpace;
         }
-        if (size < minSize) {
+        long requiredSize = memType.getSize() * space.getSelectNPoints();
+        if (size < requiredSize) {
             throw new IllegalArgumentException();
         }
     }
@@ -57,6 +58,11 @@ public final class DataSet extends AbstractDs implements Comparable<DataSet> {
             throw new H5DataSetException("H5Dclose failed");
         }
         invalidate();
+    }
+
+    @Override
+    public int compareTo(final DataSet o) {
+        return getName().compareTo(o.getName());
     }
 
     @Override
@@ -86,7 +92,11 @@ public final class DataSet extends AbstractDs implements Comparable<DataSet> {
     }
 
     public void read(final Buffer buf, final DataType memType) {
-        read(buf, memType, DataSpace.ALL, DataSpace.ALL, DataSetMemXferPropList.DEFAULT);
+        read(buf, memType, DataSpace.ALL, DataSpace.ALL);
+    }
+
+    public void read(final Buffer buf, final DataType memType, final DataSpace memSpace, final DataSpace fileSpace) {
+        read(buf, memType, memSpace, fileSpace, DataSetMemXferPropList.DEFAULT);
     }
 
     public void read(final Buffer buf, final DataType memType, final DataSpace memSpace, final DataSpace fileSpace,
@@ -103,7 +113,11 @@ public final class DataSet extends AbstractDs implements Comparable<DataSet> {
     }
 
     public void read(final byte[] buf, final DataType memType) {
-        read(buf, memType, DataSpace.ALL, DataSpace.ALL, DataSetMemXferPropList.DEFAULT);
+        read(buf, memType, DataSpace.ALL, DataSpace.ALL);
+    }
+
+    public void read(final byte[] buf, final DataType memType, final DataSpace memSpace, final DataSpace fileSpace) {
+        read(buf, memType, memSpace, fileSpace, DataSetMemXferPropList.DEFAULT);
     }
 
     public void read(final byte[] buf, final DataType memType, final DataSpace memSpace, final DataSpace fileSpace,
@@ -116,6 +130,15 @@ public final class DataSet extends AbstractDs implements Comparable<DataSet> {
         int err = H5Library.INSTANCE.H5Dread(getId(), memTypeId, memSpaceId, fileSpaceId, xferPlistId, buf);
         if (err < 0) {
             throw new H5DataSetException("H5Dread failed");
+        }
+    }
+
+    @Override
+    public String toString() {
+        if (isValid()) {
+            return "DataSet[name=" + getName() + "]";
+        } else {
+            return "DataSet[invalid]";
         }
     }
 
@@ -150,20 +173,6 @@ public final class DataSet extends AbstractDs implements Comparable<DataSet> {
         int err = H5Library.INSTANCE.H5Dwrite(getId(), memTypeId, memSpaceId, fileSpaceId, xferPlistId, buf);
         if (err < 0) {
             throw new H5DataSetException("H5Dwrite failed");
-        }
-    }
-
-    @Override
-    public int compareTo(final DataSet o) {
-        return getName().compareTo(o.getName());
-    }
-
-    @Override
-    public String toString() {
-        if (isValid()) {
-            return "DataSet[name=" + getName() + "]";
-        } else {
-            return "DataSet[invalid]";
         }
     }
 }

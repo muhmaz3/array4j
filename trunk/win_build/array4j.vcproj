@@ -61,7 +61,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="mkl_c.lib libguide.lib"
+				AdditionalDependencies="mkl_c_dll.lib libguide40.lib"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="&quot;C:\Program Files\Intel\MKL\9.1\ia32\lib&quot;"
 				GenerateDebugInformation="true"
@@ -137,7 +137,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="mkl_c.lib libguide.lib"
+				AdditionalDependencies="mkl_c_dll.lib libguide40.lib"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;C:\Program Files\Intel\MKL\9.1\ia32\lib&quot;"
 				GenerateDebugInformation="true"

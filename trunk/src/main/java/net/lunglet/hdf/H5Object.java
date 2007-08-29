@@ -15,7 +15,7 @@ abstract class H5Object extends IdComponent {
         }
 
         // TODO implement the rest of this function
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     public final int getNumAttrs() {

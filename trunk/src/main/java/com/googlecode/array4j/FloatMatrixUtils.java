@@ -151,9 +151,6 @@ public final class FloatMatrixUtils {
 
     public static float sum(final FloatMatrix<?, ?> matrix) {
         // TODO can use something from level 1 BLAS to compute this sum
-        // TODO need a way to fetch the BLAS for this matrix. however, the
-        // matrix might be sparse or dense, so we will want to call different
-        // BLAS functions
         float sum = 0.0f;
         for (int i = 0; i < matrix.rows(); i++) {
             for (int j = 0; j < matrix.columns(); j++) {

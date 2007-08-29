@@ -39,7 +39,7 @@ public final class FloatDenseBLAS extends AbstractDenseBLAS {
             try {
                 NATIVE_BLAS_LOCK.lock();
                 NativeBLASLibrary.INSTANCE.array4j_sgemm(corder(c), ctrans(c, a), ctrans(c, b), m, n, k, alpha, abuf,
-                    lda, bbuf, ldb, beta, cbuf, ldc);
+                        lda, bbuf, ldb, beta, cbuf, ldc);
                 return;
             } finally {
                 NATIVE_BLAS_LOCK.unlock();

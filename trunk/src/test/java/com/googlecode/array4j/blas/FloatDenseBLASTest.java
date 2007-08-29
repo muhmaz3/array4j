@@ -40,9 +40,9 @@ public final class FloatDenseBLASTest extends AbstractBLASTest {
         final float beta = 1.0f;
         for (Orientation[] o : new Permutations<Orientation>(3, Orientation.values())) {
             for (Storage[] s : new Permutations<Storage>(3, Storage.values())) {
-                for (int m = 0; m < 5; m++) {
-                    for (int n = 0; n < 5; n++) {
-                        for (int k = 0; k < 5; k++) {
+                for (int m = 0; m < 20; m += m < 5 ? 1 : 5) {
+                    for (int n = 0; n < 20; n += n < 5 ? 1 : 5) {
+                        for (int k = 0; k < 20; k += k < 5 ? 1 : 5) {
                             FloatDenseMatrix a = new FloatDenseMatrix(m, n, o[0], s[0]);
                             FloatDenseMatrix b = new FloatDenseMatrix(n, k, o[1], s[1]);
                             FloatDenseMatrix c1 = new FloatDenseMatrix(m, k, o[2], s[2]);
