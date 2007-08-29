@@ -29,6 +29,7 @@ abstract class IdComponent {
     protected void finalize() throws Throwable {
         if (isValid()) {
             System.err.println(this + " wasn't invalidated");
+            System.exit(1);
         }
         super.finalize();
     }

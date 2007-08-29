@@ -1,6 +1,3 @@
-// XXX this library must be linked against mkl_c and libguide to avoid
-// problems when loading it with JNA
-
 #include "net_lunglet_mkl_fft_DftiDescriptor.h"
 #include "net_lunglet_mkl_fft_DftiError.h"
 

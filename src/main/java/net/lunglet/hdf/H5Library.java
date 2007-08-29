@@ -7,12 +7,26 @@ import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.NativeLibrary;
 import com.sun.jna.Pointer;
+import com.sun.jna.Structure;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.LongByReference;
 
 public interface H5Library extends Library {
     interface H5G_iterate_t extends Callback {
         int callback(int locId, String name, Pointer data);
+    }
+
+    interface H5E_walk_t extends Callback {
+        int callback(int n, Pointer err_desc, Pointer client_data);
+    }
+
+    static class H5E_error_t extends Structure {
+        int maj_num;
+        int min_num;
+        String func_name;
+        String file_name;
+        int line;
+        String desc;
     }
 
     static final class Loader {
@@ -25,7 +39,13 @@ public interface H5Library extends Library {
         }
 
         private static H5Library loadLibrary() {
-            return (H5Library) Native.loadLibrary(LIBRARY_NAME, H5Library.class);
+            H5Library lib = (H5Library) Native.loadLibrary(LIBRARY_NAME, H5Library.class);
+            // TODO enable this when we have our own error handler
+//            int err = lib.H5Eset_auto(null, null);
+//            if (err < 0) {
+//                throw new H5Exception("H5Eset_auto failed");
+//            }
+            return lib;
         }
 
         private Loader() {
@@ -230,6 +250,8 @@ public interface H5Library extends Library {
 
     int H5Dclose(int dset_id);
 
+    int H5Eset_auto(Pointer func, Pointer client_data);
+
     int H5Dcreate(int file_id, String name, int type_id, int space_id, int plist_id);
 
     int H5Dget_space(int dset_id);
@@ -251,6 +273,8 @@ public interface H5Library extends Library {
     int H5Fcreate(String filename, int flags, int create_plist, int access_plist);
 
     int H5Fget_filesize(int file_id, LongByReference size);
+
+    long H5Fget_freespace(int file_id);
 
     int H5Fget_name(int obj_id, String name, int size);
 
@@ -274,15 +298,39 @@ public interface H5Library extends Library {
 
     int H5open();
 
+    int H5Pclose(int plist);
+
+    int H5Pcreate(int cls_id);
+
+    int H5Pset_fapl_core(int fapl_id, long increment, int backing_store);
+
+    int H5Pset_fapl_sec2(int fapl_id);
+
     int H5Sclose(int space_id);
 
     int H5Screate(int type);
 
     int H5Screate_simple(int rank, long[] dims, long[] maxdims);
 
+    long H5Sget_select_npoints(int space_id);
+
     int H5Sget_simple_extent_dims(int space_id, long[] dims, long[] maxdims);
 
     int H5Sget_simple_extent_ndims(int space_id);
+
+    long H5Sget_simple_extent_npoints(int space_id);
+
+    int H5Sis_simple(int space_id);
+
+    int H5Soffset_simple(int space_id, long[] offset);
+
+    int H5Sselect_all(int space_id);
+
+    int H5Sselect_hyperslab(int space_id, int op, long[] start, long[] stride, long[] count, long[] block);
+
+    int H5Sselect_none(int space_id);
+
+    int H5Sselect_valid(int space_id);
 
     int H5Tclose(int type_id);
 
@@ -294,5 +342,11 @@ public interface H5Library extends Library {
 
     int H5Tcreate(int type, int size);
 
-    long H5Tget_size(int type_id);
+    int H5Tget_size(int type_id);
+
+    int H5Sget_select_bounds(int space_id, long[] start, long[] end);
+
+    int H5Sget_select_elem_pointlist(int space_id, long startpoint, long numpoints, long[] buf);
+
+    int H5Sget_select_type(int space_id);
 }

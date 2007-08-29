@@ -52,13 +52,16 @@ public final class H5File extends IdComponent {
         this(name, H5F_ACC_TRUNC);
     }
 
+    public H5File(final String name, final FileCreatePropList fcpl, final FileAccessPropList fapl) {
+        this(name, H5F_ACC_TRUNC, fcpl, fapl);
+    }
+
     public H5File(final String name, final int flags) {
         this(name, flags, FileCreatePropList.DEFAULT, FileAccessPropList.DEFAULT);
     }
 
-    public H5File(final String name, final int flags, final FileCreatePropList createPlist,
-            final FileAccessPropList accessPlist) {
-        super(init(name, flags, createPlist, accessPlist));
+    public H5File(final String name, final int flags, final FileCreatePropList fcpl, final FileAccessPropList fapl) {
+        super(init(name, flags, fcpl, fapl));
         this.rootGroup = new Group(getId(), "/");
     }
 
@@ -80,15 +83,13 @@ public final class H5File extends IdComponent {
 
     public String getFileName() {
         // Preliminary call to H5Fget_name to get the length of the file name
-        int nameSize = H5Library.INSTANCE.H5Fget_name(getId(), null, 0);
-
-        // If H5Aget_name returns a negative value, raise an exception,
-        if (nameSize < 0) {
+        int size = H5Library.INSTANCE.H5Fget_name(getId(), null, 0);
+        if (size < 0) {
             throw new H5IdComponentException("H5Fget_name failed");
         }
 
         // TODO implement the rest of this function
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     public long getFileSize() {
@@ -98,6 +99,14 @@ public final class H5File extends IdComponent {
             throw new H5FileException("H5Fget_filesize failed");
         }
         return psize.getValue();
+    }
+
+    public long getFreeSpace() {
+        long size = H5Library.INSTANCE.H5Fget_freespace(getId());
+        if (size < 0) {
+            throw new H5FileException("H5Fget_freespace failed");
+        }
+        return size;
     }
 
     public Group getRootGroup() {

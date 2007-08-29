@@ -86,6 +86,7 @@ public abstract class AbstractDenseBLAS {
         return c.orientation().equals(Orientation.ROW) ? 101 : 102;
     }
 
+    // TODO this ld doesn't take submatrices into account yet
     protected static int ld(final FloatDenseMatrix x) {
         if (x.orientation().equals(Orientation.COLUMN)) {
             return Math.max(1, x.rows());
