@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 import java.nio.DoubleBuffer;
 import java.nio.FloatBuffer;
 import java.util.Arrays;
+import java.util.UUID;
 
 import org.junit.Test;
 
@@ -14,7 +15,7 @@ public final class DataSetTest {
     public void testReadWrite() {
         FileCreatePropList fcpl = FileCreatePropList.DEFAULT;
         FileAccessPropList fapl = new FileAccessPropListBuilder().setCore(1024, false).build();
-        H5File h5file = new H5File("memory", fcpl, fapl);
+        H5File h5file = new H5File(UUID.randomUUID().toString(), fcpl, fapl);
         Group root = h5file.getRootGroup();
         DataSet dataset = root.createDataSet("dataset", PredefinedType.IEEE_F64LE, 2, 2);
         DataSpace space = dataset.getSpace();

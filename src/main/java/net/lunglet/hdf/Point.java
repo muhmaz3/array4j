@@ -13,6 +13,14 @@ public final class Point {
         System.arraycopy(coords, 0, this.coords, 0, coords.length);
     }
 
+    public int getNDims() {
+        return coords.length;
+    }
+
+    public long[] getCoordinates() {
+        return coords;
+    }
+
     @Override
     public boolean equals(final Object obj) {
         if (obj == null || !(obj instanceof Point)) {

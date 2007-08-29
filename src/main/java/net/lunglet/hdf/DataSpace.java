@@ -21,22 +21,11 @@ public final class DataSpace extends IdComponent {
         if (maxdims != null && dims.length != maxdims.length) {
             throw new IllegalArgumentException();
         }
-        int id = H5Library.INSTANCE.H5Screate_simple(dims.length, reverseArray(dims), reverseArray(maxdims));
+        int id = H5Library.INSTANCE.H5Screate_simple(dims.length, dims, maxdims);
         if (id < 0) {
             throw new H5DataSpaceException("H5Screate_simple failed");
         }
         return id;
-    }
-
-    private static long[] reverseArray(final long[] arr) {
-        if (arr == null) {
-            return null;
-        }
-        long[] rarr = new long[arr.length];
-        for (int i = 0; i < arr.length; i++) {
-            rarr[i] = arr[arr.length - i - 1];
-        }
-        return rarr;
     }
 
     DataSpace(final int id) {
@@ -79,7 +68,7 @@ public final class DataSpace extends IdComponent {
         if (err < 0) {
             throw new H5DataSpaceException("H5Sget_simple_extent_dims failed");
         }
-        return reverseArray(dims);
+        return dims;
     }
 
     public long[] getMaxDims() {
@@ -88,7 +77,7 @@ public final class DataSpace extends IdComponent {
         if (err < 0) {
             throw new H5DataSpaceException("H5Sget_simple_extent_dims failed");
         }
-        return reverseArray(maxdims);
+        return maxdims;
     }
 
     private int getNDims() {
@@ -127,7 +116,7 @@ public final class DataSpace extends IdComponent {
         if (offset != null && offset.length != getNDims()) {
             throw new IllegalArgumentException();
         }
-        int err = H5Library.INSTANCE.H5Soffset_simple(getId(), reverseArray(offset));
+        int err = H5Library.INSTANCE.H5Soffset_simple(getId(), offset);
         if (err < 0) {
             throw new H5DataSpaceException("H5Soffset_simple failed");
         }
@@ -138,6 +127,10 @@ public final class DataSpace extends IdComponent {
         if (err < 0) {
             throw new H5DataSpaceException("H5Sselect_all failed");
         }
+    }
+
+    public void selectHyperslab(final SelectionOperator op, final long[] start, final long[] count) {
+        selectHyperslab(op, start, null, count, null);
     }
 
     /**
@@ -152,7 +145,7 @@ public final class DataSpace extends IdComponent {
         if (start.length != rank) {
             throw new IllegalArgumentException();
         }
-        if (stride.length != rank) {
+        if (stride != null && stride.length != rank) {
             throw new IllegalArgumentException();
         }
         if (count.length != rank) {
@@ -161,8 +154,7 @@ public final class DataSpace extends IdComponent {
         if (block != null && block.length != rank) {
             throw new IllegalArgumentException();
         }
-        int err = H5Library.INSTANCE.H5Sselect_hyperslab(getId(), op.intValue(), reverseArray(start),
-                reverseArray(stride), reverseArray(count), reverseArray(block));
+        int err = H5Library.INSTANCE.H5Sselect_hyperslab(getId(), op.intValue(), start, stride, count, block);
         if (err < 0) {
             throw new H5DataSpaceException("H5Sselect_hyperslab failed");
         }
@@ -203,13 +195,10 @@ public final class DataSpace extends IdComponent {
         if (err < 0) {
             throw new H5DataSpaceException("H5Sget_select_bounds failed");
         }
-        return new Point[]{new Point(reverseArray(start)), new Point(reverseArray(end))};
+        return new Point[]{new Point(start), new Point(end)};
     }
 
     public Point[] getSelectedPoints() {
-        if (!getSelectType().equals(SelectionType.POINTS)) {
-            throw new IllegalStateException();
-        }
         if (getSelectNPoints() > Integer.MAX_VALUE) {
             throw new UnsupportedOperationException();
         }
@@ -217,6 +206,12 @@ public final class DataSpace extends IdComponent {
     }
 
     public Point[] getSelectedPoints(final long startpoint, final int numpoints) {
+        if (!getSelectType().equals(SelectionType.POINTS)) {
+            throw new IllegalStateException();
+        }
+        if (numpoints > getSelectNPoints()) {
+            throw new IllegalArgumentException();
+        }
         int rank = getNDims();
         long[] buf = new long[numpoints * rank];
         int err = H5Library.INSTANCE.H5Sget_select_elem_pointlist(getId(), startpoint, numpoints, buf);
@@ -241,5 +236,68 @@ public final class DataSpace extends IdComponent {
             }
         }
         throw new AssertionError();
+    }
+
+    public long getSelectHyperNBlocks() {
+        if (!getSelectType().equals(SelectionType.HYPERSLABS)) {
+            throw new IllegalStateException();
+        }
+        long size = H5Library.INSTANCE.H5Sget_select_hyper_nblocks(getId());
+        if (size < 0) {
+            throw new H5DataSpaceException("H5Sget_select_hyper_nblocks failed");
+        }
+        return size;
+    }
+
+    public Hyperslab[] getHyperslabs() {
+        if (getSelectHyperNBlocks() > Integer.MAX_VALUE) {
+            throw new UnsupportedOperationException();
+        }
+        return getHyperslabs(0, (int) getSelectHyperNBlocks());
+    }
+
+    public Hyperslab[] getHyperslabs(final long startblock, final int numblocks) {
+        if (!getSelectType().equals(SelectionType.HYPERSLABS)) {
+            throw new IllegalStateException();
+        }
+        if (numblocks > getSelectHyperNBlocks()) {
+            throw new IllegalArgumentException();
+        }
+        int rank = getNDims();
+        long[] buf = new long[2 * numblocks * rank];
+        int err = H5Library.INSTANCE.H5Sget_select_hyper_blocklist(getId(), startblock, numblocks, buf);
+        if (err < 0) {
+            throw new H5DataSpaceException("H5Sget_select_hyper_blocklist failed");
+        }
+        Hyperslab[] slabs = new Hyperslab[numblocks];
+        for (int i = 0; i < numblocks; i++) {
+            int j = 2 * rank * i;
+            int k = j + rank;
+            Point start = new Point(Arrays.copyOfRange(buf, j, k));
+            Point end = new Point(Arrays.copyOfRange(buf, k, k + rank));
+            slabs[i] = new Hyperslab(start, end);
+        }
+        return slabs;
+    }
+
+    public void selectElements(final SelectionOperator op, final Point... points) {
+        int rank = getNDims();
+        long[][] coord = new long[rank][];
+        for (int i = 0; i < coord.length; i++) {
+            coord[i] = new long[points.length];
+        }
+        for (int i = 0; i < points.length; i++) {
+            if (points[i].getNDims() != rank) {
+                throw new IllegalArgumentException();
+            }
+            long[] pointCoords = points[i].getCoordinates();
+            for (int j = 0; j < rank; j++) {
+                coord[j][i] = pointCoords[j];
+            }
+        }
+        int err = H5Library.INSTANCE.H5Sselect_elements(getId(), op.intValue(), 0, coord);
+        if (err < 0) {
+            throw new H5DataSpaceException("H5Sselect_elements failed");
+        }
     }
 }

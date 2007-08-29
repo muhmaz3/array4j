@@ -38,7 +38,13 @@ public enum SelectionOperator {
      * existing selection, excluding elements that are members of both
      * selections.
      */
-    XOR(3);
+    XOR(3),
+
+    /** Append elements to end of point selection. */
+    APPEND(6),
+
+    /** Prepend elements to beginning of point selection. */
+    PREPEND(7);
 
     private final int value;
 
