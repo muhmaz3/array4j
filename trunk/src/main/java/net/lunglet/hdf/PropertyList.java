@@ -38,12 +38,4 @@ abstract class PropertyList extends IdComponent {
         }
         invalidate();
     }
-
-    @Override
-    protected void finalize() throws Throwable {
-        if (isValid()) {
-            close();
-        }
-        super.finalize();
-    }
 }

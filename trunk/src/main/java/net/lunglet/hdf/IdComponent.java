@@ -25,15 +25,6 @@ abstract class IdComponent {
         return new EqualsBuilder().append(getId(), other.getId()).isEquals();
     }
 
-    @Override
-    protected void finalize() throws Throwable {
-        if (isValid()) {
-            System.err.println(this + " wasn't invalidated");
-            System.exit(1);
-        }
-        super.finalize();
-    }
-
     protected final int getId() {
         if (!valid) {
             throw new IllegalStateException();

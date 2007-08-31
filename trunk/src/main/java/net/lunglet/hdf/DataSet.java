@@ -67,14 +67,6 @@ public final class DataSet extends AbstractDs implements Comparable<DataSet> {
         return getName().compareTo(o.getName());
     }
 
-    @Override
-    protected void finalize() throws Throwable {
-        if (isValid()) {
-            close();
-        }
-        super.finalize();
-    }
-
     public String getName() {
         return name;
     }
