@@ -101,14 +101,6 @@ public final class Group extends H5Object {
         return new EqualsBuilder().appendSuper(super.equals(obj)).isEquals();
     }
 
-    @Override
-    protected void finalize() throws Throwable {
-        if (isValid()) {
-            close();
-        }
-        super.finalize();
-    }
-
     public Set<DataSet> getDataSets() {
         final IntByReference idx = new IntByReference(0);
         final HashSet<DataSet> datasets = new HashSet<DataSet>();

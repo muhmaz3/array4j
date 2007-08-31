@@ -73,14 +73,6 @@ public final class H5File extends IdComponent {
         invalidate();
     }
 
-    @Override
-    protected void finalize() throws Throwable {
-        if (isValid()) {
-            close();
-        }
-        super.finalize();
-    }
-
     public String getFileName() {
         // Preliminary call to H5Fget_name to get the length of the file name
         int size = H5Library.INSTANCE.H5Fget_name(getId(), null, 0);
