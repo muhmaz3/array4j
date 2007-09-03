@@ -14,7 +14,7 @@ public final class FloatPackedMatrix extends AbstractPackedMatrix<FloatPackedMat
         FloatMatrix<FloatPackedMatrix, FloatDenseVector> {
     private static final long serialVersionUID = 1L;
 
-    private final FloatBuffer data;
+    private transient FloatBuffer data;
 
     public static FloatPackedMatrix createSymmetric(final int rows, final int columns) {
         return new FloatPackedMatrix(rows, columns, PackedType.SYMMETRIC, Storage.DEFAULT_FOR_DENSE);

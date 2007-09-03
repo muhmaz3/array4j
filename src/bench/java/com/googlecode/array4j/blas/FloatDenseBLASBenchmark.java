@@ -21,10 +21,12 @@ public final class FloatDenseBLASBenchmark {
                 r = 500;
             }
             float alpha = 1.0f;
-            FloatDenseMatrix a = new FloatDenseMatrix(n, n, Orientation.ROW, Storage.DIRECT);
-            FloatDenseMatrix b = new FloatDenseMatrix(n, n, Orientation.ROW, Storage.DIRECT);
+            Orientation orient = Orientation.COLUMN;
+            Storage storage = Storage.DIRECT;
+            FloatDenseMatrix a = new FloatDenseMatrix(n, n, orient, storage);
+            FloatDenseMatrix b = new FloatDenseMatrix(n, n, orient, storage);
             float beta = 1.0f;
-            FloatDenseMatrix c = new FloatDenseMatrix(n, n, Orientation.ROW, Storage.DIRECT);
+            FloatDenseMatrix c = new FloatDenseMatrix(n, n, orient, storage);
             FloatMatrixUtils.fillRandom(a, rng);
             FloatMatrixUtils.fillRandom(b, rng);
             FloatMatrixUtils.fillRandom(c, rng);

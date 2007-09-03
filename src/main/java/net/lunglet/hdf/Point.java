@@ -18,7 +18,7 @@ public final class Point {
     }
 
     public long[] getCoordinates() {
-        return coords;
+        return Arrays.copyOf(coords, coords.length);
     }
 
     @Override

@@ -1,5 +1,7 @@
 package com.googlecode.array4j;
 
+// TODO rename to Order and split out the vector stuff
+
 public enum Orientation {
     COLUMN {
         @Override

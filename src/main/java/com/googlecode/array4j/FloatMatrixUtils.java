@@ -141,7 +141,10 @@ public final class FloatMatrixUtils {
                 String.format("column0=%d not in range [0, %d]", column0, x.columns()));
         checkArgument(column1 >= column0 && column1 <= x.columns(),
                 String.format("column1=%d not in range [%d, %d]", column1, column0, x.columns()));
-        // TODO only copy if necessary
+        // TODO optimize this more generally to only copy if necessary
+        if (column0 == 0 && column1 == x.columns()) {
+            return x;
+        }
         FloatDenseMatrix newMatrix = new FloatDenseMatrix(x.rows(), column1 - column0, x.orientation(), x.storage());
         for (int i = column0, j = 0; i < column1; i++, j++) {
             newMatrix.setColumn(j, x.column(i));
