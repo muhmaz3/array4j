@@ -11,7 +11,7 @@ import javax.sound.sampled.AudioFormat.Encoding;
 import javax.sound.sampled.spi.FormatConversionProvider;
 
 public final class ULawtoPCMCodec extends FormatConversionProvider {
-    private final class ULawtoPCMInputStream extends InputStream {
+    private static final class ULawtoPCMInputStream extends InputStream {
         private final byte[] bytebuf;
 
         private final ByteBuffer shortbuf;

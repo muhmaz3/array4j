@@ -1,5 +1,6 @@
 package net.lunglet.cluster;
 
+import java.util.Arrays;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutionException;
@@ -31,7 +32,7 @@ public final class KMeans<T> {
 
         public KMeansTaskResult(final FloatMatrix<?, ?> centroids, final long[] n, final double totalDistortion) {
             this.centroids = centroids;
-            this.n = n;
+            this.n = Arrays.copyOf(n, n.length);
             this.totalDistortion = totalDistortion;
         }
     }

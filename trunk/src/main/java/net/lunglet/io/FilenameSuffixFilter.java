@@ -19,10 +19,13 @@ public final class FilenameSuffixFilter implements FilenameFilter {
 
     public boolean accept(final File dir, final String name) {
         File file = new File(dir, name);
+        if (!file.isFile()) {
+            return false;
+        }
         if (ignoreCase) {
-            return file.isFile() && file.getName().toLowerCase().endsWith(suffix.toLowerCase());
+            return file.getName().toLowerCase().endsWith(suffix.toLowerCase());
         } else {
-            return file.isFile() && file.getName().endsWith(suffix);
+            return file.getName().endsWith(suffix);
         }
     }
 }

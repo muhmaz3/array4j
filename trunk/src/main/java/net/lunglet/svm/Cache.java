@@ -7,7 +7,7 @@ package net.lunglet.svm;
 // size is the cache size limit in bytes
 //
 final class Cache {
-    private final class Entry {
+    private static final class Entry {
         float[] data;
 
         int len; // data[0,len) is cached in this entry
@@ -29,7 +29,7 @@ final class Cache {
         }
         this.size /= 4;
         // sizeof(head_t) == 16
-        this.size -= l * (16 / 4);
+        this.size -= l * (16L / 4L);
         // cache must be large enough for two columns
         this.size = Math.max(size, (long) 2 * l);
         lruHead = new Entry();

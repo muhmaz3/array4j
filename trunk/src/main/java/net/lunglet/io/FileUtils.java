@@ -13,6 +13,10 @@ public final class FileUtils {
         }
     };
 
+    public static File[] listFiles(final String name, final FilenameFilter filter, final boolean recurse) {
+        return listFiles(new File(name), filter, recurse);
+    }
+
     public static File[] listFiles(final File directory, final FilenameFilter filter, final boolean recurse) {
         List<File> files = new ArrayList<File>();
         File[] entries = directory.listFiles();

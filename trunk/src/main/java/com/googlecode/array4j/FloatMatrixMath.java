@@ -1,5 +1,6 @@
 package com.googlecode.array4j;
 
+import com.googlecode.array4j.blas.FloatDenseBLAS;
 import com.googlecode.array4j.dense.FloatDenseMatrix;
 import com.googlecode.array4j.packed.FloatPackedMatrix;
 
@@ -20,7 +21,17 @@ public final class FloatMatrixMath {
     }
 
     public static FloatDenseMatrix times(final FloatMatrix<?, ?> x, final FloatMatrix<?, ?> y) {
-        return null;
+        if (!(x instanceof FloatDenseMatrix)) {
+            throw new IllegalArgumentException();
+        }
+        if (!(y instanceof FloatDenseMatrix)) {
+            throw new IllegalArgumentException();
+        }
+        FloatDenseMatrix a = (FloatDenseMatrix) x;
+        FloatDenseMatrix b = (FloatDenseMatrix) y;
+        FloatDenseMatrix c = new FloatDenseMatrix(a.rows(), b.columns(), Orientation.COLUMN, Storage.DIRECT);
+        FloatDenseBLAS.DEFAULT.gemm(1.0f, a, b, 0.0f, c);
+        return c;
     }
 
     public static FloatPackedMatrix timesTranspose(final FloatDenseMatrix a) {

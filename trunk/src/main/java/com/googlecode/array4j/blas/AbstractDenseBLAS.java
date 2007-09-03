@@ -7,7 +7,6 @@ import java.util.concurrent.locks.Lock;
 import com.googlecode.array4j.Orientation;
 import com.googlecode.array4j.dense.DenseMatrix;
 import com.googlecode.array4j.dense.FloatDenseMatrix;
-import com.googlecode.array4j.packed.PackedMatrix;
 
 public abstract class AbstractDenseBLAS {
     private static final class DummyLock implements Lock {

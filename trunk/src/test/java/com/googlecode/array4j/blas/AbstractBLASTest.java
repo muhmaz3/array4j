@@ -18,7 +18,7 @@ public abstract class AbstractBLASTest {
                 throw new IllegalArgumentException();
             }
             this.length = length;
-            this.values = values;
+            this.values = Arrays.copyOf(values, values.length);
             this.idx = new int[length];
             this.done = false;
         }
