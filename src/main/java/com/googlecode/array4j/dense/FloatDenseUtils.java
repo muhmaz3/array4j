@@ -1,5 +1,9 @@
 package com.googlecode.array4j.dense;
 
+import com.googlecode.array4j.Constants;
+import com.googlecode.array4j.Orientation;
+import com.googlecode.array4j.Storage;
+import com.googlecode.array4j.util.AssertUtils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -8,10 +12,6 @@ import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileChannel.MapMode;
-
-import com.googlecode.array4j.Constants;
-import com.googlecode.array4j.Orientation;
-import com.googlecode.array4j.Storage;
 
 public final class FloatDenseUtils {
     public static FloatDenseMatrix arange(final int rows, final int columns, final Orientation orientation,
@@ -23,11 +23,11 @@ public final class FloatDenseUtils {
         return matrix;
     }
 
-    // TODO change createMatrix functions to valueOf methods of FloatDenseMatrix
-
     public static FloatDenseMatrix createMatrix(final float[]... values) {
         return createMatrix(Orientation.DEFAULT, Storage.DEFAULT_FOR_DENSE, values);
     }
+
+    // TODO change createMatrix functions to valueOf methods of FloatDenseMatrix
 
     public static FloatDenseMatrix createMatrix(final Orientation orientation, final Storage storage,
             final float[]... values) {
@@ -81,6 +81,29 @@ public final class FloatDenseUtils {
         }
         int columns = data.remaining() / nsamples;
         return new FloatDenseMatrix(data, nsamples, columns, 0, 1, Orientation.ROW);
+    }
+
+    /**
+     * Get a submatrix spanning the column range [column0, column1).
+     */
+    public static FloatDenseMatrix subMatrixColumns(final FloatDenseMatrix x, final int column0, final int column1) {
+        AssertUtils.checkArgument(column0 >= 0 && column0 <= x.columns(), String.format(
+            "column0=%d not in range [0, %d]", column0, x.columns()));
+        AssertUtils.checkArgument(column1 >= column0 && column1 <= x.columns(), String.format(
+            "column1=%d not in range [%d, %d]", column1, column0, x.columns()));
+        if (column0 == 0 && column1 == x.columns()) {
+            return x;
+        }
+        int cols = column1 - column0;
+        if (x.orientation().equals(Orientation.COLUMN)) {
+            return new FloatDenseMatrix(x, x.rows(), cols, x.columnOffset(column0), x.stride, x.orientation());
+        } else {
+            FloatDenseMatrix newMatrix = new FloatDenseMatrix(x.rows(), cols, x.orientation(), x.storage());
+            for (int i = column0, j = 0; i < column1; i++, j++) {
+                newMatrix.setColumn(j, x.column(i));
+            }
+            return newMatrix;
+        }
     }
 
     private FloatDenseUtils() {

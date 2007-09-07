@@ -3,7 +3,7 @@ package com.googlecode.array4j;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-
+import com.googlecode.array4j.dense.FloatDenseMatrixFactory;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -11,13 +11,10 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Arrays;
 import java.util.Collection;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-
-import com.googlecode.array4j.dense.FloatDenseMatrixFactory;
 
 @RunWith(value = Parameterized.class)
 public final class FloatMatrixTest<M extends FloatMatrix<M, V>, V extends FloatVector<V>> {

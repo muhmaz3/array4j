@@ -1,20 +1,22 @@
 package com.googlecode.array4j.packed;
 
-import java.nio.FloatBuffer;
-
 import com.googlecode.array4j.FloatMatrix;
 import com.googlecode.array4j.FloatMatrixUtils;
 import com.googlecode.array4j.FloatVector;
 import com.googlecode.array4j.Orientation;
 import com.googlecode.array4j.Storage;
 import com.googlecode.array4j.dense.FloatDenseVector;
-import com.googlecode.array4j.util.BufferUtil;
+import com.googlecode.array4j.util.AssertUtils;
+import com.googlecode.array4j.util.BufferUtils;
+import java.nio.FloatBuffer;
 
 public final class FloatPackedMatrix extends AbstractPackedMatrix<FloatPackedMatrix, FloatDenseVector> implements
         FloatMatrix<FloatPackedMatrix, FloatDenseVector> {
     private static final long serialVersionUID = 1L;
 
-    private transient FloatBuffer data;
+    public static FloatPackedMatrix createLowerTriangular(final int rows, final int columns) {
+        return new FloatPackedMatrix(rows, columns, PackedType.LOWER_TRIANGULAR, Storage.DEFAULT_FOR_DENSE);
+    }
 
     public static FloatPackedMatrix createSymmetric(final int rows, final int columns) {
         return new FloatPackedMatrix(rows, columns, PackedType.SYMMETRIC, Storage.DEFAULT_FOR_DENSE);
@@ -28,23 +30,23 @@ public final class FloatPackedMatrix extends AbstractPackedMatrix<FloatPackedMat
         return new FloatPackedMatrix(rows, columns, PackedType.UPPER_TRIANGULAR, Storage.DEFAULT_FOR_DENSE);
     }
 
-    public static FloatPackedMatrix createLowerTriangular(final int rows, final int columns) {
-        return new FloatPackedMatrix(rows, columns, PackedType.LOWER_TRIANGULAR, Storage.DEFAULT_FOR_DENSE);
-    }
-
-    private FloatPackedMatrix(final int rows, final int columns, final PackedType packedType, final Storage storage) {
-        super(rows, columns, packedType);
-        this.data = BufferUtil.createFloatBuffer(getBufferSize(), storage);
-    }
-
+    private transient FloatBuffer data;
 
     private FloatPackedMatrix(final FloatBuffer data, final int rows, final int columns, final PackedType packedType) {
         super(rows, columns, packedType);
         this.data = data;
     }
 
-    public FloatBuffer data() {
-        return ((FloatBuffer) data.position(0)).slice();
+
+    private FloatPackedMatrix(final int rows, final int columns, final PackedType packedType, final Storage storage) {
+        super(rows, columns, packedType);
+        this.data = BufferUtils.createFloatBuffer(getBufferSize(), storage);
+    }
+
+    @Override
+    public FloatDenseVector asVector() {
+        // TODO need to make a dense copy here and return that as a vector
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -55,6 +57,20 @@ public final class FloatPackedMatrix extends AbstractPackedMatrix<FloatPackedMat
             v.set(row, get(row, column));
         }
         return v;
+    }
+
+    @Override
+    public FloatDenseVector createColumnVector() {
+        return new FloatDenseVector(rows(), Orientation.COLUMN, storage());
+    }
+
+    @Override
+    public FloatDenseVector createRowVector() {
+        return new FloatDenseVector(columns(), Orientation.ROW, storage());
+    }
+
+    public FloatBuffer data() {
+        return ((FloatBuffer) data.position(0)).slice();
     }
 
     @Override
@@ -102,7 +118,7 @@ public final class FloatPackedMatrix extends AbstractPackedMatrix<FloatPackedMat
     @Override
     public void setColumn(final int column, final FloatVector<?> columnVector) {
         checkColumnIndex(column);
-        checkArgument(rows == columnVector.rows());
+        AssertUtils.checkArgument(rows == columnVector.rows());
         for (int row = 0; row < rows; row++) {
             if (nonZeroElement(row, column)) {
                 set(row, column, columnVector.get(row));
@@ -117,7 +133,7 @@ public final class FloatPackedMatrix extends AbstractPackedMatrix<FloatPackedMat
     @Override
     public void setRow(final int row, final FloatVector<?> rowVector) {
         checkRowIndex(row);
-        checkArgument(columns == rowVector.columns());
+        AssertUtils.checkArgument(columns == rowVector.columns());
         for (int column = 0; column < columns; column++) {
             if (nonZeroElement(row, column)) {
                 set(row, column, rowVector.get(column));
@@ -127,6 +143,11 @@ public final class FloatPackedMatrix extends AbstractPackedMatrix<FloatPackedMat
                 }
             }
         }
+    }
+
+    @Override
+    public Storage storage() {
+        return data.isDirect() ? Storage.DIRECT : Storage.HEAP;
     }
 
     @Override
@@ -160,26 +181,5 @@ public final class FloatPackedMatrix extends AbstractPackedMatrix<FloatPackedMat
     @Override
     public FloatPackedMatrix transpose() {
         return new FloatPackedMatrix(data, rows, columns, packedType.transpose());
-    }
-
-    @Override
-    public FloatDenseVector createColumnVector() {
-        return new FloatDenseVector(rows(), Orientation.COLUMN, storage());
-    }
-
-    @Override
-    public FloatDenseVector createRowVector() {
-        return new FloatDenseVector(columns(), Orientation.ROW, storage());
-    }
-
-    @Override
-    public Storage storage() {
-        return data.isDirect() ? Storage.DIRECT : Storage.HEAP;
-    }
-
-    @Override
-    public FloatDenseVector asVector() {
-        // TODO need to make a dense copy here and return that as a vector
-        throw new UnsupportedOperationException();
     }
 }

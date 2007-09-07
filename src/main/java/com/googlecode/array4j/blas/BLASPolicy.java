@@ -5,8 +5,11 @@ import com.googlecode.array4j.Storage;
 import com.googlecode.array4j.dense.DenseMatrix;
 
 public interface BLASPolicy {
-    public enum Method {
-        F2J, NATIVE
+    public static final class AlwaysNative implements BLASPolicy {
+        @Override
+        public Method chooseL3Method(final DenseMatrix<?, ?> a, final DenseMatrix<?, ?> b, final DenseMatrix<?, ?> c) {
+            return Method.NATIVE;
+        }
     }
 
     public static final class BestEffort implements BLASPolicy {
@@ -29,23 +32,8 @@ public interface BLASPolicy {
         }
     }
 
-    public static final class AlwaysNative implements BLASPolicy {
-        @Override
-        public Method chooseL3Method(final DenseMatrix<?, ?> a, final DenseMatrix<?, ?> b, final DenseMatrix<?, ?> c) {
-            return Method.NATIVE;
-        }
-    }
-
-    public static final class OnlyNative implements BLASPolicy {
-        @Override
-        public Method chooseL3Method(final DenseMatrix<?, ?> a, final DenseMatrix<?, ?> b, final DenseMatrix<?, ?> c) {
-            for (DenseMatrix<?, ?> arg : new DenseMatrix<?, ?>[]{a, b, c}) {
-                if (!arg.data().isDirect()) {
-                    throw new IllegalArgumentException();
-                }
-            }
-            return Method.NATIVE;
-        }
+    public enum Method {
+        F2J, NATIVE
     }
 
     public static final class OnlyF2J implements BLASPolicy {
@@ -60,6 +48,18 @@ public interface BLASPolicy {
                 throw new IllegalArgumentException();
             }
             return Method.F2J;
+        }
+    }
+
+    public static final class OnlyNative implements BLASPolicy {
+        @Override
+        public Method chooseL3Method(final DenseMatrix<?, ?> a, final DenseMatrix<?, ?> b, final DenseMatrix<?, ?> c) {
+            for (DenseMatrix<?, ?> arg : new DenseMatrix<?, ?>[]{a, b, c}) {
+                if (!arg.data().isDirect()) {
+                    throw new IllegalArgumentException();
+                }
+            }
+            return Method.NATIVE;
         }
     }
 

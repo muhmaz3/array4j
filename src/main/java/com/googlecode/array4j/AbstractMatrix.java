@@ -1,21 +1,50 @@
 package com.googlecode.array4j;
 
+import com.googlecode.array4j.util.AssertUtils;
 import java.util.Iterator;
-
 import org.apache.commons.lang.builder.EqualsBuilder;
 
 public abstract class AbstractMatrix<M extends Matrix<M, V>, V extends Vector<V>> extends AbstractArray<M> implements
         Matrix<M, V> {
+    protected static int vectorColumns(final int size, final Orientation orientation) {
+        AssertUtils.checkArgument(size >= 0);
+        if (orientation.equals(Orientation.ROW)) {
+            return size;
+        } else {
+            if (size == 0) {
+                return 0;
+            } else {
+                return 1;
+            }
+        }
+    }
+
+    protected static int vectorRows(final int size, final Orientation orientation) {
+        AssertUtils.checkArgument(size >= 0);
+        if (orientation.equals(Orientation.COLUMN)) {
+            return size;
+        } else {
+            if (size == 0) {
+                return 0;
+            } else {
+                return 1;
+            }
+        }
+    }
+
+    protected final AbstractMatrix<?, ?> base;
+
     protected final int columns;
 
     protected final int rows;
 
-    public AbstractMatrix(final int rows, final int columns) {
+    public AbstractMatrix(final AbstractMatrix<?, ?> base, final int rows, final int columns) {
         super(new int[]{rows, columns});
-        checkArgument(rows >= 0);
-        checkArgument(columns >= 0);
+        AssertUtils.checkArgument(rows >= 0);
+        AssertUtils.checkArgument(columns >= 0);
         this.rows = rows;
         this.columns = columns;
+        this.base = base;
     }
 
     protected final void checkColumnIndex(final int column) {
@@ -24,9 +53,21 @@ public abstract class AbstractMatrix<M extends Matrix<M, V>, V extends Vector<V>
         }
     }
 
+    protected final void checkColumnVector(final Vector<?> vector) {
+        if (vector.length() != rows) {
+            throw new IllegalArgumentException();
+        }
+    }
+
     protected final void checkRowIndex(final int row) {
         if (row < 0 || row >= rows) {
             throw new IndexOutOfBoundsException(String.format("Row index out of bounds [0,%d): %d", rows, row));
+        }
+    }
+
+    protected final void checkRowVector(final Vector<?> vector) {
+        if (vector.length() != columns) {
+            throw new IllegalArgumentException();
         }
     }
 

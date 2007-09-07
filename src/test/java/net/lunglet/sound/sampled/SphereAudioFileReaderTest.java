@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-
+import com.sun.media.sound.JDK13Services;
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -14,32 +14,28 @@ import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.sound.sampled.AudioFormat.Encoding;
 import javax.sound.sampled.spi.AudioFileReader;
-
 import org.junit.Test;
 
-import com.sun.media.sound.JDK13Services;
-
 public final class SphereAudioFileReaderTest {
-    /** Maximum size for any of the test segments. */
-    private static final int MAX_SIZE = 131072;
-
     private static final class SegmentInfo {
-        private final int size;
-
         private final String md5sum;
+
+        private final int size;
 
         public SegmentInfo(final int size, final String md5sum) {
             this.size = size;
             this.md5sum = md5sum;
         }
     }
+
+    /** Maximum size for any of the test segments. */
+    private static final int MAX_SIZE = 131072;
 
     private static final Map<String, SegmentInfo> TEST_SEGMENTS = new HashMap<String, SegmentInfo>();
 
@@ -50,24 +46,6 @@ public final class SphereAudioFileReaderTest {
         TEST_SEGMENTS.put("ex4.wav", new SegmentInfo(17024, "73e22ce2e73ac6f110b7ebe140fcc69b"));
         TEST_SEGMENTS.put("ex4_01.wav", new SegmentInfo(33024, "b4deddb6704665087f0ada78211d44c5"));
         TEST_SEGMENTS.put("ex4_10.wav", new SegmentInfo(33024, "eda37911758e16afbf4de61db3a76e39"));
-    }
-
-    private static String md5sum(final InputStream in, final int size) throws IOException {
-        DataInputStream dis = new DataInputStream(in);
-        byte[] buf = new byte[size];
-        dis.readFully(buf);
-        MessageDigest md5;
-        try {
-            md5 = MessageDigest.getInstance("MD5");
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
-        md5.update(buf);
-        StringBuilder md5StringBuilder = new StringBuilder();
-        for (byte b : md5.digest()) {
-            md5StringBuilder.append(String.format("%02x", b));
-        }
-        return md5StringBuilder.toString();
     }
 
     static AudioInputStream getAudioInputStream(final String name) throws IOException, UnsupportedAudioFileException {
@@ -87,6 +65,24 @@ public final class SphereAudioFileReaderTest {
         AudioInputStream ais = AudioSystem.getAudioInputStream(bis);
         assertNotNull(ais);
         return ais;
+    }
+
+    private static String md5sum(final InputStream in, final int size) throws IOException {
+        DataInputStream dis = new DataInputStream(in);
+        byte[] buf = new byte[size];
+        dis.readFully(buf);
+        MessageDigest md5;
+        try {
+            md5 = MessageDigest.getInstance("MD5");
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+        md5.update(buf);
+        StringBuilder md5StringBuilder = new StringBuilder();
+        for (byte b : md5.digest()) {
+            md5StringBuilder.append(String.format("%02x", b));
+        }
+        return md5StringBuilder.toString();
     }
 
     @Test

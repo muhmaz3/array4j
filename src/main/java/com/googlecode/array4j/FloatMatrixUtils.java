@@ -1,20 +1,12 @@
 package com.googlecode.array4j;
 
-import java.util.Random;
-
 import com.googlecode.array4j.dense.FloatDenseMatrix;
 import com.googlecode.array4j.dense.FloatDenseVector;
+import java.util.Random;
 
 // TODO implement unmodifiableMatrix
 
 public final class FloatMatrixUtils {
-    // TODO get rid of this duplication
-    private static void checkArgument(final boolean condition, final String message) {
-        if (!condition) {
-            throw new IllegalArgumentException(message);
-        }
-    }
-
     public static <M extends FloatMatrix<M, V>, V extends FloatVector<V>> V columnMean(final M matrix) {
         final V mean = matrix.createColumnVector();
         int n = 0;
@@ -133,25 +125,6 @@ public final class FloatMatrixUtils {
         return true;
     }
 
-    /**
-     * Get a submatrix spanning the column range [column0, column1).
-     */
-    public static FloatDenseMatrix subMatrixColumns(final FloatDenseMatrix x, final int column0, final int column1) {
-        checkArgument(column0 >= 0 && column0 <= x.columns(),
-                String.format("column0=%d not in range [0, %d]", column0, x.columns()));
-        checkArgument(column1 >= column0 && column1 <= x.columns(),
-                String.format("column1=%d not in range [%d, %d]", column1, column0, x.columns()));
-        // TODO optimize this more generally to only copy if necessary
-        if (column0 == 0 && column1 == x.columns()) {
-            return x;
-        }
-        FloatDenseMatrix newMatrix = new FloatDenseMatrix(x.rows(), column1 - column0, x.orientation(), x.storage());
-        for (int i = column0, j = 0; i < column1; i++, j++) {
-            newMatrix.setColumn(j, x.column(i));
-        }
-        return newMatrix;
-    }
-
     public static float sum(final FloatMatrix<?, ?> matrix) {
         // TODO can use something from level 1 BLAS to compute this sum
         float sum = 0.0f;
@@ -161,10 +134,6 @@ public final class FloatMatrixUtils {
             }
         }
         return sum;
-    }
-
-    public static FloatDenseMatrix zerosLike(final Matrix<?, ?> matrix) {
-        return new FloatDenseMatrix(matrix.rows(), matrix.columns());
     }
 
     public static String toString(final FloatMatrix<?, ?> x) {
@@ -197,6 +166,10 @@ public final class FloatMatrixUtils {
             }
         }
         return builder.toString();
+    }
+
+    public static FloatDenseMatrix zerosLike(final Matrix<?, ?> matrix) {
+        return new FloatDenseMatrix(matrix.rows(), matrix.columns());
     }
 
     private FloatMatrixUtils() {

@@ -1,13 +1,11 @@
 package com.googlecode.array4j.blas;
 
-import java.util.Random;
-
-import org.junit.Test;
-
 import com.googlecode.array4j.FloatMatrixUtils;
 import com.googlecode.array4j.Orientation;
 import com.googlecode.array4j.Storage;
 import com.googlecode.array4j.dense.FloatDenseMatrix;
+import java.util.Random;
+import org.junit.Test;
 
 public final class FloatDenseBLASBenchmark {
     @Test

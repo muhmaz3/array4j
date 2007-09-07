@@ -5,13 +5,13 @@ import java.util.Iterator;
 
 public abstract class AbstractBLASTest {
     protected static final class Permutations<E> implements Iterable<E[]> {
-        private final int length;
-
-        private final E[] values;
+        private boolean done;
 
         private final int[] idx;
 
-        private boolean done;
+        private final int length;
+
+        private final E[] values;
 
         public Permutations(final int length, final E... values) {
             if (length < 1) {

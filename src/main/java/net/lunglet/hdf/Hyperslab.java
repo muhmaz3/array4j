@@ -4,21 +4,13 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
 public final class Hyperslab {
-    private final Point start;
-
     private final Point end;
+
+    private final Point start;
 
     Hyperslab(final Point start, final Point end) {
         this.start = start;
         this.end = end;
-    }
-
-    public Point getStartPoint() {
-        return start;
-    }
-
-    public Point getEndPoint() {
-        return end;
     }
 
     @Override
@@ -31,6 +23,14 @@ public final class Hyperslab {
         }
         Hyperslab other = (Hyperslab) obj;
         return new EqualsBuilder().append(start, other.start).append(end, other.end).isEquals();
+    }
+
+    public Point getEndPoint() {
+        return end;
+    }
+
+    public Point getStartPoint() {
+        return start;
     }
 
     @Override

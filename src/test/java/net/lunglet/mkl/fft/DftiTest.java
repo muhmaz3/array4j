@@ -2,12 +2,10 @@ package net.lunglet.mkl.fft;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.util.Arrays;
-
 import org.junit.Test;
 
 public final class DftiTest {
@@ -15,13 +13,6 @@ public final class DftiTest {
         final ByteBuffer buffer = ByteBuffer.allocateDirect(size * (Float.SIZE >>> 3));
         buffer.order(ByteOrder.nativeOrder());
         return buffer.asFloatBuffer();
-    }
-
-    @Test
-    public void testDescriptorConstructorStress() throws DftiException {
-        for (int i = 0; i < 100000; i++) {
-            testDescriptorConstructor();
-        }
     }
 
     @Test
@@ -51,6 +42,13 @@ public final class DftiTest {
         desc.commit();
         assertEquals(DftiConfigValue.COMMITTED, desc.getValue(DftiConfigParam.COMMIT_STATUS));
         desc.free();
+    }
+
+    @Test
+    public void testDescriptorConstructorStress() throws DftiException {
+        for (int i = 0; i < 100000; i++) {
+            testDescriptorConstructor();
+        }
     }
 
     @Test

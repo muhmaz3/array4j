@@ -1,15 +1,24 @@
 package com.googlecode.array4j.dense;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-
 import com.googlecode.array4j.AbstractMatrix;
 import com.googlecode.array4j.Orientation;
+import java.nio.Buffer;
+import org.apache.commons.lang.builder.EqualsBuilder;
 
 /**
  * Abstract base class for dense (full) matrices.
  */
 public abstract class AbstractDenseMatrix<M extends DenseMatrix<M, V>, V extends DenseVector<V>, T> extends
         AbstractMatrix<M, V> implements DenseMatrix<M, V> {
+    protected final void checkData(final Buffer data) {
+        // TODO only factor in elementSize if buffer is a bytebuffer
+        // TODO might also need to do something for complex on top of a float buffer
+        int requiredSize = offset + stride * elementSize * length;
+        if (data.capacity() < requiredSize) {
+            throw new IllegalArgumentException();
+        }
+    }
+
     /** Stride between elements in a column. */
     protected final int columnStride;
 
@@ -27,9 +36,9 @@ public abstract class AbstractDenseMatrix<M extends DenseMatrix<M, V>, V extends
     /** Stride between elements. */
     protected final int stride;
 
-    public AbstractDenseMatrix(final int elementSize, final int rows, final int columns, final int offset,
-            final int stride, final Orientation orientation) {
-        super(rows, columns);
+    public AbstractDenseMatrix(final AbstractDenseMatrix<?, ?, ?> base, final int elementSize, final int rows,
+            final int columns, final int offset, final int stride, final Orientation orientation) {
+        super(base, rows, columns);
         this.elementSize = elementSize;
         this.offset = offset;
         this.stride = stride;
