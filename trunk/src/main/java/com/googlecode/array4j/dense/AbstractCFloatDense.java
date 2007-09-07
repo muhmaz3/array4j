@@ -1,20 +1,18 @@
 package com.googlecode.array4j.dense;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.nio.FloatBuffer;
-import java.util.Arrays;
-
-import org.apache.commons.lang.builder.EqualsBuilder;
-
 import com.googlecode.array4j.ComplexFloat;
 import com.googlecode.array4j.ComplexFloatMatrix;
 import com.googlecode.array4j.ComplexFloatVector;
 import com.googlecode.array4j.Orientation;
 import com.googlecode.array4j.Storage;
-import com.googlecode.array4j.VectorSupport;
-import com.googlecode.array4j.util.BufferUtil;
+import com.googlecode.array4j.util.AssertUtils;
+import com.googlecode.array4j.util.BufferUtils;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.nio.FloatBuffer;
+import java.util.Arrays;
+import org.apache.commons.lang.builder.EqualsBuilder;
 
 public abstract class AbstractCFloatDense<M extends ComplexFloatMatrix<M, CFloatDenseVector> & DenseMatrix<M, CFloatDenseVector>>
         extends AbstractDenseMatrix<M, CFloatDenseVector, ComplexFloat[]> {
@@ -31,7 +29,7 @@ public abstract class AbstractCFloatDense<M extends ComplexFloatMatrix<M, CFloat
      */
     public AbstractCFloatDense(final FloatBuffer data, final int rows, final int columns, final int offset,
             final int stride, final Orientation orientation) {
-        super(ELEMENT_SIZE, rows, columns, offset, stride, orientation);
+        super(null, ELEMENT_SIZE, rows, columns, offset, stride, orientation);
         this.data = data;
     }
 
@@ -40,23 +38,22 @@ public abstract class AbstractCFloatDense<M extends ComplexFloatMatrix<M, CFloat
      */
     public AbstractCFloatDense(final FloatBuffer data, final int size, final int offset, final int stride,
             final Orientation orientation) {
-        this(data, VectorSupport.rows(size, orientation), VectorSupport.columns(size, orientation), offset, stride,
-                orientation);
+        this(data, vectorRows(size, orientation), vectorColumns(size, orientation), offset, stride, orientation);
     }
 
     /**
      * Constructor for new matrix.
      */
     public AbstractCFloatDense(final int rows, final int columns, final Orientation orientation, final Storage storage) {
-        super(ELEMENT_SIZE, rows, columns, DEFAULT_OFFSET, DEFAULT_STRIDE, orientation);
-        this.data = BufferUtil.createComplexFloatBuffer(length, storage);
+        super(null, ELEMENT_SIZE, rows, columns, DEFAULT_OFFSET, DEFAULT_STRIDE, orientation);
+        this.data = BufferUtils.createComplexFloatBuffer(length, storage);
     }
 
     /**
      * Constructor for new vector.
      */
     public AbstractCFloatDense(final int size, final Orientation orientation, final Storage storage) {
-        this(VectorSupport.rows(size, orientation), VectorSupport.columns(size, orientation), orientation, storage);
+        this(vectorRows(size, orientation), vectorColumns(size, orientation), orientation, storage);
     }
 
     @Override
@@ -142,7 +139,7 @@ public abstract class AbstractCFloatDense<M extends ComplexFloatMatrix<M, CFloat
     private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
         Storage storage = (Storage) in.readObject();
-        this.data = BufferUtil.createComplexFloatBuffer(length, storage);
+        this.data = BufferUtils.createComplexFloatBuffer(length, storage);
         // TODO this stuff can fail when there are offsets and strides involved
         for (int i = 0; i < ELEMENT_SIZE * length; i++) {
             data.put(i, in.readFloat());
@@ -167,8 +164,8 @@ public abstract class AbstractCFloatDense<M extends ComplexFloatMatrix<M, CFloat
     }
 
     public final void setColumn(final int column, final ComplexFloatVector<?> columnVector) {
-        // TODO this code is almost identical to setRow
-        checkArgument(rows == columnVector.length());
+        checkColumnIndex(column);
+        checkColumnVector(columnVector);
         int targetOffset = columnOffset(column);
         int targetStride = rowStride;
         // TODO this could be optimized
@@ -188,9 +185,9 @@ public abstract class AbstractCFloatDense<M extends ComplexFloatMatrix<M, CFloat
     }
 
     public final void setRow(final int row, final ComplexFloatVector<?> rowVector) {
-        // TODO this code is almost identical to setColumn
         checkRowIndex(row);
-        checkArgument(columns == rowVector.length());
+        checkRowVector(rowVector);
+        AssertUtils.checkArgument(columns == rowVector.length());
         int targetOffset = rowOffset(row);
         int targetStride = columnStride;
         // TODO this could be optimized

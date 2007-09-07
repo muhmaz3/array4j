@@ -16,6 +16,27 @@ public final class FloatPackedMatrixTest {
     }
 
     @Test
+    public void testLowerTriangular() {
+        FloatPackedMatrix tril = FloatPackedMatrix.createLowerTriangular(2, 2);
+        assertTrue(tril.isLowerTriangular());
+        tril.set(0, 0, 1.0f);
+        tril.set(1, 0, 2.0f);
+        tril.set(1, 1, 3.0f);
+        try {
+            tril.set(0, 1, 4.0f);
+            assertTrue(false);
+        } catch (IllegalArgumentException e) {
+            assertTrue(true);
+        }
+        assertEquals(1.0f, tril.get(0, 0), 0);
+        assertEquals(0.0f, tril.get(0, 1), 0);
+        assertEquals(2.0f, tril.get(1, 0), 0);
+        assertEquals(3.0f, tril.get(1, 1), 0);
+        assertEquals(2.0f, tril.transpose().get(0, 1), 0);
+        checkRowsColumns(tril);
+    }
+
+    @Test
     public void testSymmetric() {
         FloatPackedMatrix symm = FloatPackedMatrix.createSymmetric(2, 2);
         assertTrue(symm.isSymmetric());
@@ -51,26 +72,5 @@ public final class FloatPackedMatrixTest {
         assertEquals(3.0f, triu.get(1, 1), 0);
         assertEquals(2.0f, triu.transpose().get(1, 0), 0);
         checkRowsColumns(triu);
-    }
-
-    @Test
-    public void testLowerTriangular() {
-        FloatPackedMatrix tril = FloatPackedMatrix.createLowerTriangular(2, 2);
-        assertTrue(tril.isLowerTriangular());
-        tril.set(0, 0, 1.0f);
-        tril.set(1, 0, 2.0f);
-        tril.set(1, 1, 3.0f);
-        try {
-            tril.set(0, 1, 4.0f);
-            assertTrue(false);
-        } catch (IllegalArgumentException e) {
-            assertTrue(true);
-        }
-        assertEquals(1.0f, tril.get(0, 0), 0);
-        assertEquals(0.0f, tril.get(0, 1), 0);
-        assertEquals(2.0f, tril.get(1, 0), 0);
-        assertEquals(3.0f, tril.get(1, 1), 0);
-        assertEquals(2.0f, tril.transpose().get(0, 1), 0);
-        checkRowsColumns(tril);
     }
 }

@@ -3,6 +3,8 @@ package net.lunglet.io;
 import java.io.File;
 import java.io.FilenameFilter;
 
+// TODO maybe this should imeplement FileFilter too, or only that
+
 public final class FilenameSuffixFilter implements FilenameFilter {
     private final boolean ignoreCase;
 

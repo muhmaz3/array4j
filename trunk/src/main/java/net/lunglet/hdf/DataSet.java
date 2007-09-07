@@ -6,9 +6,9 @@ import java.nio.DoubleBuffer;
 import java.nio.FloatBuffer;
 
 public final class DataSet extends AbstractDs implements Comparable<DataSet> {
-    private static final int FLOAT_SIZE = Float.SIZE >>> 3;
-
     private static final int DOUBLE_SIZE = Double.SIZE >>> 3;
+
+    private static final int FLOAT_SIZE = Float.SIZE >>> 3;
 
     private final String name;
 

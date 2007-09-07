@@ -12,11 +12,11 @@ import com.googlecode.array4j.dense.DenseVector;
 public interface PackedMatrix<M extends PackedMatrix<M, V>, V extends DenseVector<V>> extends Matrix<M, V> {
     Buffer data();
 
-    Storage storage();
+    boolean isLowerTriangular();
 
     boolean isSymmetric();
 
     boolean isUpperTriangular();
 
-    boolean isLowerTriangular();
+    Storage storage();
 }

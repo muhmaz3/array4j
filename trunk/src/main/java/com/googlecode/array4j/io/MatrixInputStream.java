@@ -1,11 +1,10 @@
 package com.googlecode.array4j.io;
 
+import com.googlecode.array4j.dense.FloatDenseMatrix;
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-
-import com.googlecode.array4j.dense.FloatDenseMatrix;
 
 public final class MatrixInputStream extends DataInputStream implements MatrixInput {
 

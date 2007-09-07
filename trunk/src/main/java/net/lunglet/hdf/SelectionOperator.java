@@ -1,13 +1,16 @@
 package net.lunglet.hdf;
 
 public enum SelectionOperator {
-    NOOP(-1),
-
     /**
      * Retains only the overlapping portions of the new selection and the
      * existing selection.
      */
     AND(2),
+
+    /** Append elements to end of point selection. */
+    APPEND(6),
+
+    NOOP(-1),
 
     /**
      * Retains only elements of the new selection that are not in the existing
@@ -26,6 +29,9 @@ public enum SelectionOperator {
      */
     OR(1),
 
+    /** Prepend elements to beginning of point selection. */
+    PREPEND(7),
+
     /**
      * Replaces the existing selection with the parameters from this call.
      * <p>
@@ -38,13 +44,7 @@ public enum SelectionOperator {
      * existing selection, excluding elements that are members of both
      * selections.
      */
-    XOR(3),
-
-    /** Append elements to end of point selection. */
-    APPEND(6),
-
-    /** Prepend elements to beginning of point selection. */
-    PREPEND(7);
+    XOR(3);
 
     private final int value;
 

@@ -1,14 +1,14 @@
 package net.lunglet.cluster;
 
-import java.util.Arrays;
-import java.util.concurrent.Callable;
-import java.util.concurrent.CompletionService;
-import java.util.concurrent.ExecutionException;
-
 import com.googlecode.array4j.FloatMatrix;
 import com.googlecode.array4j.FloatMatrixUtils;
 import com.googlecode.array4j.FloatVector;
 import com.googlecode.array4j.dense.FloatDenseMatrix;
+import com.googlecode.array4j.dense.FloatDenseUtils;
+import java.util.Arrays;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CompletionService;
+import java.util.concurrent.ExecutionException;
 
 public final class KMeans<T> {
     public interface KMeansTask extends Callable<KMeansTaskResult> {
@@ -162,7 +162,7 @@ public final class KMeans<T> {
             for (int i = 0; i < data.length; i++) {
                 FloatDenseMatrix currentCentroids = null;
                 if (centroids != null) {
-                    currentCentroids = FloatMatrixUtils.subMatrixColumns(centroids, 0, iter);
+                    currentCentroids = FloatDenseUtils.subMatrixColumns(centroids, 0, iter);
                 }
                 KMeansTask task = taskFactory.createTask2(data[i], currentCentroids);
                 cs.submit(task);

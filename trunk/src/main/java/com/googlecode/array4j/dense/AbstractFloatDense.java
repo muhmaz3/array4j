@@ -1,19 +1,17 @@
 package com.googlecode.array4j.dense;
 
+import com.googlecode.array4j.FloatMatrix;
+import com.googlecode.array4j.FloatVector;
+import com.googlecode.array4j.Orientation;
+import com.googlecode.array4j.Storage;
+import com.googlecode.array4j.util.AssertUtils;
+import com.googlecode.array4j.util.BufferUtils;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.nio.FloatBuffer;
 import java.util.Arrays;
-
 import org.apache.commons.lang.builder.EqualsBuilder;
-
-import com.googlecode.array4j.FloatMatrix;
-import com.googlecode.array4j.FloatVector;
-import com.googlecode.array4j.Orientation;
-import com.googlecode.array4j.Storage;
-import com.googlecode.array4j.VectorSupport;
-import com.googlecode.array4j.util.BufferUtil;
 
 public abstract class AbstractFloatDense<M extends FloatMatrix<M, FloatDenseVector> & DenseMatrix<M, FloatDenseVector>>
         extends AbstractDenseMatrix<M, FloatDenseVector, float[]> {
@@ -23,45 +21,54 @@ public abstract class AbstractFloatDense<M extends FloatMatrix<M, FloatDenseVect
 
     private static final int ELEMENT_SIZE = 1;
 
-    protected transient FloatBuffer data;
-
-    /**
-     * Constructor for matrix with existing data.
-     */
-    public AbstractFloatDense(final FloatBuffer data, final int rows, final int columns, final int offset,
-            final int stride, final Orientation orientation) {
-        super(ELEMENT_SIZE, rows, columns, offset, stride, orientation);
-        this.data = data;
+    private static FloatBuffer createBuffer(final int size, final Storage storage) {
+        return BufferUtils.createFloatBuffer(size, storage);
     }
 
-    /**
-     * Constructor for vector with existing data.
-     */
+    protected transient FloatBuffer data;
+
+    public AbstractFloatDense(final AbstractFloatDense<?> base, final int rows, final int columns, final int offset,
+            final int stride, final Orientation orientation) {
+        super(base, ELEMENT_SIZE, rows, columns, offset, stride, orientation);
+        this.data = base.data;
+        checkData(data);
+    }
+
+    public AbstractFloatDense(final AbstractFloatDense<?> base, final int size, final int offset, final int stride,
+            final Orientation orientation) {
+        this(base, vectorRows(size, orientation), vectorColumns(size, orientation), offset, stride, orientation);
+    }
+
+    public AbstractFloatDense(final FloatBuffer data, final int rows, final int columns, final int offset,
+            final int stride, final Orientation orientation) {
+        super(null, ELEMENT_SIZE, rows, columns, offset, stride, orientation);
+        this.data = data;
+        checkData(data);
+    }
+
     public AbstractFloatDense(final FloatBuffer data, final int size, final int offset, final int stride,
             final Orientation orientation) {
-        this(data, VectorSupport.rows(size, orientation), VectorSupport.columns(size, orientation), offset, stride,
-                orientation);
+        this(data, vectorRows(size, orientation), vectorColumns(size, orientation), offset, stride, orientation);
     }
 
     /**
      * Constructor for new matrix.
      */
     public AbstractFloatDense(final int rows, final int columns, final Orientation orientation, final Storage storage) {
-        super(ELEMENT_SIZE, rows, columns, DEFAULT_OFFSET, DEFAULT_STRIDE, orientation);
-        this.data = BufferUtil.createFloatBuffer(length, storage);
+        this(createBuffer(rows * columns, storage), rows, columns, DEFAULT_OFFSET, DEFAULT_STRIDE, orientation);
     }
 
     /**
      * Constructor for new vector.
      */
     public AbstractFloatDense(final int size, final Orientation orientation, final Storage storage) {
-        this(VectorSupport.rows(size, orientation), VectorSupport.columns(size, orientation), orientation, storage);
+        this(vectorRows(size, orientation), vectorColumns(size, orientation), orientation, storage);
     }
 
     @Override
     public final FloatDenseVector column(final int column) {
         checkColumnIndex(column);
-        return new FloatDenseVector(data, rows, columnOffset(column), rowStride, Orientation.COLUMN);
+        return new FloatDenseVector(this, rows, columnOffset(column), rowStride, Orientation.COLUMN);
     }
 
     @Override
@@ -140,16 +147,18 @@ public abstract class AbstractFloatDense<M extends FloatMatrix<M, FloatDenseVect
     private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
         Storage storage = (Storage) in.readObject();
-        this.data = BufferUtil.createFloatBuffer(length, storage);
+        this.data = createBuffer(length, storage);
+        checkData(data);
         // TODO this stuff can fail when there are offsets and strides involved
-        for (int i = 0; i < length; i++) {
-            data.put(i, in.readFloat());
-        }
+//        for (int i = 0; i < length; i++) {
+//            data.put(i, in.readFloat());
+//        }
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public final FloatDenseVector row(final int row) {
-        return new FloatDenseVector(data, columns, rowOffset(row), columnStride, Orientation.ROW);
+        return new FloatDenseVector(this, columns, rowOffset(row), columnStride, Orientation.ROW);
     }
 
     public final void set(final int index, final float value) {
@@ -163,7 +172,7 @@ public abstract class AbstractFloatDense<M extends FloatMatrix<M, FloatDenseVect
     public final void setColumn(final int column, final FloatVector<?> columnVector) {
         // TODO this code is almost identical to setRow
         checkColumnIndex(column);
-        checkArgument(rows == columnVector.rows());
+        AssertUtils.checkArgument(rows == columnVector.rows());
         int targetOffset = columnOffset(column);
         int targetStride = rowStride;
         // TODO this could be optimized
@@ -180,7 +189,7 @@ public abstract class AbstractFloatDense<M extends FloatMatrix<M, FloatDenseVect
     public final void setRow(final int row, final FloatVector<?> rowVector) {
         // TODO this code is almost identical to setColumn
         checkRowIndex(row);
-        checkArgument(columns == rowVector.columns());
+        AssertUtils.checkArgument(columns == rowVector.columns());
         int targetOffset = rowOffset(row);
         int targetStride = columnStride;
         // TODO this could be optimized
@@ -203,11 +212,9 @@ public abstract class AbstractFloatDense<M extends FloatMatrix<M, FloatDenseVect
     private void writeObject(final ObjectOutputStream out) throws IOException {
         out.defaultWriteObject();
         out.writeObject(storage());
-        // TODO ensure data is written so that when it is read, trans can be set
-        // to Transpose.NORMAL
-        // TODO optimize this
-        for (int i = 0; i < length; i++) {
-            out.writeFloat(get(i));
-        }
+//        for (int i = 0; i < length; i++) {
+//            out.writeFloat(get(i));
+//        }
+        throw new UnsupportedOperationException();
     }
 }

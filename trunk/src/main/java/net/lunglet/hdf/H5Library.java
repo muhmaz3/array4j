@@ -1,7 +1,5 @@
 package net.lunglet.hdf;
 
-import java.nio.Buffer;
-
 import com.sun.jna.Callback;
 import com.sun.jna.Library;
 import com.sun.jna.Native;
@@ -10,6 +8,7 @@ import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.LongByReference;
+import java.nio.Buffer;
 
 public interface H5Library extends Library {
     static class H5E_error_t extends Structure {

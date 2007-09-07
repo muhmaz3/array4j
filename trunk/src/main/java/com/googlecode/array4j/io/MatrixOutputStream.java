@@ -1,14 +1,13 @@
 package com.googlecode.array4j.io;
 
+import com.googlecode.array4j.FloatMatrix;
+import com.googlecode.array4j.FloatVector;
+import com.googlecode.array4j.dense.FloatDenseVector;
 import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Collection;
-
-import com.googlecode.array4j.FloatMatrix;
-import com.googlecode.array4j.FloatVector;
-import com.googlecode.array4j.dense.FloatDenseVector;
 
 // TODO support little-endian output as well as big-endian
 

@@ -1,26 +1,29 @@
 package com.googlecode.array4j.dense;
 
-import java.nio.FloatBuffer;
-
-import org.apache.commons.lang.builder.EqualsBuilder;
-
 import com.googlecode.array4j.FloatMatrixUtils;
 import com.googlecode.array4j.FloatVector;
 import com.googlecode.array4j.Orientation;
 import com.googlecode.array4j.Storage;
+import java.nio.FloatBuffer;
+import org.apache.commons.lang.builder.EqualsBuilder;
 
 public final class FloatDenseVector extends AbstractFloatDense<FloatDenseVector> implements
         FloatVector<FloatDenseVector>, DenseVector<FloatDenseVector> {
     private static final long serialVersionUID = 1L;
 
-    public FloatDenseVector(final float... values) {
-        this(Orientation.DEFAULT_FOR_VECTOR, Storage.DEFAULT_FOR_DENSE, values);
+    public static FloatDenseVector valueOf(final float... values) {
+        return new FloatDenseVector(Orientation.DEFAULT_FOR_VECTOR, Storage.DEFAULT_FOR_DENSE, values);
     }
 
     /**
      * Constructor for internal use.
      */
-    FloatDenseVector(final FloatBuffer data, final int size, final int offset, final int stride,
+    FloatDenseVector(final AbstractFloatDense<?> base, final int size, final int offset, final int stride,
+            final Orientation orientation) {
+        super(base, size, offset, stride, orientation);
+    }
+
+    public FloatDenseVector(final FloatBuffer data, final int size, final int offset, final int stride,
             final Orientation orientation) {
         super(data, size, offset, stride, orientation);
     }
@@ -64,11 +67,6 @@ public final class FloatDenseVector extends AbstractFloatDense<FloatDenseVector>
         return new EqualsBuilder().appendSuper(super.equals(obj)).isEquals();
     }
 
-    @Override
-    public String toString() {
-        return FloatMatrixUtils.toString(this);
-    }
-
     public boolean isColumnVector() {
         return orientation.equals(Orientation.COLUMN);
     }
@@ -100,7 +98,12 @@ public final class FloatDenseVector extends AbstractFloatDense<FloatDenseVector>
     }
 
     @Override
+    public String toString() {
+        return FloatMatrixUtils.toString(this);
+    }
+
+    @Override
     public FloatDenseVector transpose() {
-        return new FloatDenseVector(data, length, offset, stride, orientation.transpose());
+        return new FloatDenseVector(this, length, offset, stride, orientation.transpose());
     }
 }

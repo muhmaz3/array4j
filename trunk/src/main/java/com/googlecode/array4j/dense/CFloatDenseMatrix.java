@@ -1,12 +1,10 @@
 package com.googlecode.array4j.dense;
 
-import java.nio.FloatBuffer;
-
-import org.apache.commons.lang.builder.EqualsBuilder;
-
 import com.googlecode.array4j.ComplexFloatMatrix;
 import com.googlecode.array4j.Orientation;
 import com.googlecode.array4j.Storage;
+import java.nio.FloatBuffer;
+import org.apache.commons.lang.builder.EqualsBuilder;
 
 public final class CFloatDenseMatrix extends AbstractCFloatDense<CFloatDenseMatrix> implements
         ComplexFloatMatrix<CFloatDenseMatrix, CFloatDenseVector> {

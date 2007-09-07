@@ -1,27 +1,20 @@
 package net.lunglet.fft;
 
+import com.googlecode.array4j.dense.CFloatDenseVector;
+import com.googlecode.array4j.dense.FloatDenseVector;
+import com.googlecode.array4j.util.AssertUtils;
+import com.googlecode.array4j.util.BufferUtils;
 import java.nio.FloatBuffer;
-
 import net.lunglet.mkl.fft.DftiConfigParam;
 import net.lunglet.mkl.fft.DftiConfigValue;
 import net.lunglet.mkl.fft.DftiDescriptor;
 import net.lunglet.mkl.fft.DftiException;
 
-import com.googlecode.array4j.dense.CFloatDenseVector;
-import com.googlecode.array4j.dense.FloatDenseVector;
-import com.googlecode.array4j.util.BufferUtil;
-
 public final class MKLFFT implements FFT {
-    private static void checkArgument(final boolean condition) {
-        if (!condition) {
-            throw new IllegalArgumentException();
-        }
-    }
-
     @Override
     public CFloatDenseVector fft(final FloatDenseVector x, final int n) {
         // TODO short circuit on zero-length x instead of throwing
-        checkArgument(x.length() > 0 && n > 0);
+        AssertUtils.checkArgument(x.length() > 0 && n > 0);
         // TODO JNA should convert all the arguments to native arrays
 //        checkArgument(x.isDirect());
 
@@ -29,7 +22,7 @@ public final class MKLFFT implements FFT {
         final int xoffset;
         final int xstride;
         if (n > x.length()) {
-            xdata = BufferUtil.createFloatBuffer(n, x.storage());
+            xdata = BufferUtils.createFloatBuffer(n, x.storage());
             xoffset = 0;
             xstride = 1;
             // TODO optimize this

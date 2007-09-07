@@ -1,16 +1,13 @@
 package com.googlecode.array4j.blas;
 
 import static org.junit.Assert.assertEquals;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import org.junit.Test;
-
 import com.googlecode.array4j.FloatMatrix;
 import com.googlecode.array4j.Orientation;
 import com.googlecode.array4j.Storage;
 import com.googlecode.array4j.dense.FloatDenseMatrix;
+import java.util.HashMap;
+import java.util.Map;
+import org.junit.Test;
 
 public final class FloatDenseBLASTest extends AbstractBLASTest {
     private static void checkMatrix(final FloatDenseMatrix expected, final FloatDenseMatrix actual) {
@@ -26,10 +23,32 @@ public final class FloatDenseBLASTest extends AbstractBLASTest {
         }
     }
 
+    private static void gemm(final float alpha, final FloatMatrix<?, ?> a, final FloatMatrix<?, ?> b, final float beta,
+            final FloatMatrix<?, ?> c) {
+        assertEquals(a.columns(), b.rows());
+        assertEquals(a.rows(), c.rows());
+        assertEquals(b.columns(), c.columns());
+        Map<int[], Float> values = new HashMap<int[], Float>();
+        for (int i = 0; i < a.rows(); i++) {
+            for (int j = 0; j < b.columns(); j++) {
+                float value = beta * c.get(i, j);
+                for (int k = 0; k < a.columns(); k++) {
+                    value += alpha * a.get(i, k) * b.get(k, j);
+                }
+                // don't modify c here, in case it is symmetric
+                values.put(new int[]{i, j}, value);
+            }
+        }
+        for (Map.Entry<int[], Float> entry : values.entrySet()) {
+            int[] ij = entry.getKey();
+            c.set(ij[0], ij[1], entry.getValue());
+        }
+    }
+
     private static void populateMatrix(final FloatMatrix<?, ?> x) {
         for (int i = 0, k = 1; i < x.rows(); i++) {
             for (int j = 0; j < x.columns(); j++, k++) {
-                x.set(i, j, (float) k);
+                x.set(i, j, k);
             }
         }
     }
@@ -58,28 +77,6 @@ public final class FloatDenseBLASTest extends AbstractBLASTest {
                     }
                 }
             }
-        }
-    }
-
-    private static void gemm(final float alpha, final FloatMatrix<?, ?> a, final FloatMatrix<?, ?> b, final float beta,
-            final FloatMatrix<?, ?> c) {
-        assertEquals(a.columns(), b.rows());
-        assertEquals(a.rows(), c.rows());
-        assertEquals(b.columns(), c.columns());
-        Map<int[], Float> values = new HashMap<int[], Float>();
-        for (int i = 0; i < a.rows(); i++) {
-            for (int j = 0; j < b.columns(); j++) {
-                float value = beta * c.get(i, j);
-                for (int k = 0; k < a.columns(); k++) {
-                    value += alpha * a.get(i, k) * b.get(k, j);
-                }
-                // don't modify c here, in case it is symmetric
-                values.put(new int[]{i, j}, value);
-            }
-        }
-        for (Map.Entry<int[], Float> entry : values.entrySet()) {
-            int[] ij = entry.getKey();
-            c.set(ij[0], ij[1], entry.getValue());
         }
     }
 }

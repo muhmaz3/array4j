@@ -1,13 +1,11 @@
 package com.googlecode.array4j.dense;
 
-import java.nio.FloatBuffer;
-
-import org.apache.commons.lang.builder.EqualsBuilder;
-
 import com.googlecode.array4j.FloatMatrix;
 import com.googlecode.array4j.FloatMatrixUtils;
 import com.googlecode.array4j.Orientation;
 import com.googlecode.array4j.Storage;
+import java.nio.FloatBuffer;
+import org.apache.commons.lang.builder.EqualsBuilder;
 
 public final class FloatDenseMatrix extends AbstractFloatDense<FloatDenseMatrix> implements
         FloatMatrix<FloatDenseMatrix, FloatDenseVector> {
@@ -16,8 +14,13 @@ public final class FloatDenseMatrix extends AbstractFloatDense<FloatDenseMatrix>
     /**
      * Constructor for internal use.
      */
-    FloatDenseMatrix(final FloatBuffer data, final int rows, final int columns, final int offset, final int stride,
-            final Orientation orientation) {
+    FloatDenseMatrix(final AbstractFloatDense<?> base, final int rows, final int columns, final int offset,
+            final int stride, final Orientation orientation) {
+        super(base, rows, columns, offset, stride, orientation);
+    }
+
+    public FloatDenseMatrix(final FloatBuffer data, final int rows, final int columns, final int offset,
+            final int stride, final Orientation orientation) {
         super(data, rows, columns, offset, stride, orientation);
     }
 
@@ -53,7 +56,7 @@ public final class FloatDenseMatrix extends AbstractFloatDense<FloatDenseMatrix>
 
     @Override
     public FloatDenseVector asVector() {
-        return new FloatDenseVector(data, length, offset, stride, Orientation.DEFAULT_FOR_VECTOR);
+        return new FloatDenseVector(this, length, offset, stride, Orientation.DEFAULT_FOR_VECTOR);
     }
 
     @Override
@@ -74,6 +77,6 @@ public final class FloatDenseMatrix extends AbstractFloatDense<FloatDenseMatrix>
 
     @Override
     public FloatDenseMatrix transpose() {
-        return new FloatDenseMatrix(data, columns, rows, offset, stride, orientation.transpose());
+        return new FloatDenseMatrix(this, columns, rows, offset, stride, orientation.transpose());
     }
 }

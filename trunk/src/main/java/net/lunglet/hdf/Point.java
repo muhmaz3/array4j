@@ -13,14 +13,6 @@ public final class Point {
         System.arraycopy(coords, 0, this.coords, 0, coords.length);
     }
 
-    public int getNDims() {
-        return coords.length;
-    }
-
-    public long[] getCoordinates() {
-        return Arrays.copyOf(coords, coords.length);
-    }
-
     @Override
     public boolean equals(final Object obj) {
         if (obj == null || !(obj instanceof Point)) {
@@ -31,6 +23,14 @@ public final class Point {
         }
         Point other = (Point) obj;
         return new EqualsBuilder().append(coords, other.coords).isEquals();
+    }
+
+    public long[] getCoordinates() {
+        return Arrays.copyOf(coords, coords.length);
+    }
+
+    public int getNDims() {
+        return coords.length;
     }
 
     @Override

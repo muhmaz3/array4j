@@ -1,38 +1,11 @@
 package com.googlecode.array4j;
 
+import com.googlecode.array4j.util.AssertUtils;
 import java.util.Arrays;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 
 public abstract class AbstractArray<A extends Array<A>> implements Array<A> {
-    protected static final void checkArgument(final boolean condition) {
-        if (!condition) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    protected static final void checkArgument(final boolean condition, final String message) {
-        if (!condition) {
-            throw new IllegalArgumentException(message);
-        }
-    }
-
-    protected static final int checkArgumentNonNegative(final int value) {
-        if (value < 0) {
-            throw new IllegalArgumentException();
-        }
-        return value;
-    }
-
-    /**
-     * Checks that value is in the range [start, stop).
-     */
-    protected static final void checkArgumentRange(final int value, final int start, final int stop) {
-        if (value < start || value >= stop) {
-            throw new IllegalArgumentException(String.format("%d not in range [%d, %d)", value, start, stop));
-        }
-    }
-
     protected final int length;
 
     protected final int[] shape;
@@ -40,7 +13,7 @@ public abstract class AbstractArray<A extends Array<A>> implements Array<A> {
     public AbstractArray(final int[] shape) {
         long length = 1;
         for (int dim : shape) {
-            checkArgument(dim >= 0);
+            AssertUtils.checkArgument(dim >= 0);
             length *= dim;
             if (length < 0 || length > Integer.MAX_VALUE) {
                 throw new IllegalArgumentException();

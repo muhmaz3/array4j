@@ -6,6 +6,12 @@ import com.googlecode.array4j.dense.DenseVector;
 public abstract class AbstractPackedMatrix<M extends PackedMatrix<M, V>, V extends DenseVector<V>> extends
         AbstractMatrix<M, V> implements PackedMatrix<M, V> {
     protected enum PackedType {
+        LOWER_TRIANGULAR {
+            @Override
+            public PackedType transpose() {
+                return UPPER_TRIANGULAR;
+            }
+        },
         SYMMETRIC {
             @Override
             public PackedType transpose() {
@@ -17,12 +23,6 @@ public abstract class AbstractPackedMatrix<M extends PackedMatrix<M, V>, V exten
             public PackedType transpose() {
                 return LOWER_TRIANGULAR;
             }
-        },
-        LOWER_TRIANGULAR {
-            @Override
-            public PackedType transpose() {
-                return UPPER_TRIANGULAR;
-            }
         };
 
         public abstract PackedType transpose();
@@ -31,7 +31,7 @@ public abstract class AbstractPackedMatrix<M extends PackedMatrix<M, V>, V exten
     protected final PackedType packedType;
 
     public AbstractPackedMatrix(final int rows, final int columns, final PackedType packedType) {
-        super(rows, columns);
+        super(null, rows, columns);
         // TODO can possibly relax this restriction in some cases?
         if (rows != columns) {
             throw new IllegalArgumentException();
@@ -39,8 +39,10 @@ public abstract class AbstractPackedMatrix<M extends PackedMatrix<M, V>, V exten
         this.packedType = packedType;
     }
 
-    protected final int getBufferSize() {
-        return rows * (rows + 1) / 2;
+    protected final void checkCanSet(final int row, final int column) {
+        if (!nonZeroElement(row, column)) {
+            throw new IllegalArgumentException();
+        }
     }
 
     protected final int elementOffset(final int m, final int n) {
@@ -61,20 +63,8 @@ public abstract class AbstractPackedMatrix<M extends PackedMatrix<M, V>, V exten
         }
     }
 
-    protected final boolean nonZeroElement(final int row, final int column) {
-        if (packedType.equals(PackedType.UPPER_TRIANGULAR)) {
-            return row <= column;
-        } else if (packedType.equals(PackedType.LOWER_TRIANGULAR)) {
-            return row >= column;
-        } else {
-            return true;
-        }
-    }
-
-    protected final void checkCanSet(final int row, final int column) {
-        if (!nonZeroElement(row, column)) {
-            throw new IllegalArgumentException();
-        }
+    protected final int getBufferSize() {
+        return rows * (rows + 1) / 2;
     }
 
     @Override
@@ -90,5 +80,15 @@ public abstract class AbstractPackedMatrix<M extends PackedMatrix<M, V>, V exten
     @Override
     public final boolean isUpperTriangular() {
         return packedType.equals(PackedType.UPPER_TRIANGULAR);
+    }
+
+    protected final boolean nonZeroElement(final int row, final int column) {
+        if (packedType.equals(PackedType.UPPER_TRIANGULAR)) {
+            return row <= column;
+        } else if (packedType.equals(PackedType.LOWER_TRIANGULAR)) {
+            return row >= column;
+        } else {
+            return true;
+        }
     }
 }
