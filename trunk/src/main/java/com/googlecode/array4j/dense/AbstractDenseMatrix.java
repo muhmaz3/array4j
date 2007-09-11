@@ -63,7 +63,11 @@ public abstract class AbstractDenseMatrix<M extends DenseMatrix<M, V>, V extends
      */
     protected final int columnOffset(final int column) {
         checkColumnIndex(column);
-        return offset + column * elementSize * columnStride;
+        if (length > 0) {
+            return offset + column * elementSize * columnStride;
+        } else {
+            return offset;
+        }
     }
 
     protected abstract T createArray(int length);
@@ -72,13 +76,21 @@ public abstract class AbstractDenseMatrix<M extends DenseMatrix<M, V>, V extends
 
     protected final int elementOffset(final int index) {
         checkIndex(index);
-        return offset + index * elementSize * stride;
+        if (length > 0) {
+            return offset + index * elementSize * stride;
+        } else {
+            return offset;
+        }
     }
 
     protected final int elementOffset(final int row, final int column) {
         checkRowIndex(row);
         checkColumnIndex(column);
-        return rowOffset(row) + column * elementSize * columnStride;
+        if (length > 0) {
+            return rowOffset(row) + column * elementSize * columnStride;
+        } else {
+            return offset;
+        }
     }
 
     @Override
@@ -110,7 +122,11 @@ public abstract class AbstractDenseMatrix<M extends DenseMatrix<M, V>, V extends
      */
     protected final int rowOffset(final int row) {
         checkRowIndex(row);
-        return offset + row * elementSize * rowStride;
+        if (length > 0) {
+            return offset + row * elementSize * rowStride;
+        } else {
+            return offset;
+        }
     }
 
     // TODO give this method a better name
