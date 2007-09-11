@@ -81,6 +81,10 @@ public final class Group extends H5Object {
     }
 
     private String createName(final String name) {
+        if (name.startsWith("/")) {
+            // TODO deal with absolute group and dataset names
+            throw new UnsupportedOperationException();
+        }
         StringBuilder builder = new StringBuilder();
         builder.append(getName());
         if (!getName().equals("/")) {

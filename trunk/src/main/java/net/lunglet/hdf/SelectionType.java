@@ -4,9 +4,6 @@ public enum SelectionType {
     /** The entire dataset is selected. */
     ALL(3),
 
-    /** Error. */
-    ERROR(-1),
-
     /** A hyperslab or compound hyperslab is selected. */
     HYPERSLABS(2),
 

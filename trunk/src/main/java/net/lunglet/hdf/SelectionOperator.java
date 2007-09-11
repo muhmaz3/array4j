@@ -10,8 +10,6 @@ public enum SelectionOperator {
     /** Append elements to end of point selection. */
     APPEND(6),
 
-    NOOP(-1),
-
     /**
      * Retains only elements of the new selection that are not in the existing
      * selection.

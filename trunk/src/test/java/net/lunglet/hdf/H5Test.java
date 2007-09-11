@@ -1,13 +1,12 @@
 package net.lunglet.hdf;
 
 import static org.junit.Assert.assertEquals;
-
-import org.junit.Test;
-
 import com.googlecode.array4j.Orientation;
 import com.googlecode.array4j.Storage;
 import com.googlecode.array4j.dense.FloatDenseMatrix;
 import com.sun.jna.ptr.IntByReference;
+import java.util.UUID;
+import org.junit.Test;
 
 public final class H5Test {
     @Test
@@ -25,9 +24,8 @@ public final class H5Test {
     @Test
     public void testHyperslabReadWrite() {
         FileCreatePropList fcpl = FileCreatePropList.DEFAULT;
-//        FileAccessPropList fapl = new FileAccessPropListBuilder().setCore(1024, false).build();
-//        H5File h5 = new H5File(UUID.randomUUID().toString(), fcpl, fapl);
-        H5File h5 = new H5File("sds.h5");
+        FileAccessPropList fapl = new FileAccessPropListBuilder().setCore(1024, false).build();
+        H5File h5 = new H5File(UUID.randomUUID().toString(), fcpl, fapl);
 
         FloatDenseMatrix data = new FloatDenseMatrix(5, 6, Orientation.ROW, Storage.DIRECT);
         for (int j = 0; j < data.rows(); j++) {
@@ -35,8 +33,6 @@ public final class H5Test {
                 data.set(j, i, (float) i + j);
             }
         }
-        System.out.println(data);
-
         Group root = h5.getRootGroup();
         DataType dtype = PredefinedType.IEEE_F32LE;
         DataSpace dataspace = new DataSpace(data.rows(), data.columns());
@@ -57,7 +53,5 @@ public final class H5Test {
         dataset2.close();
 
         h5.close();
-
-        System.out.println(out);
     }
 }
