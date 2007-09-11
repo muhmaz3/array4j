@@ -32,63 +32,67 @@ public final class SimpleSvm {
         return param;
     }
 
-    private static GramMatrix createGramMatrix(final FloatMatrix<?, ?> data, final FloatMatrix<?, ?> gram) {
-        if (gram == null) {
+    private static PrecomputedKernel createPrecomputedKernel(final FloatMatrix<?, ?> data,
+            final FloatMatrix<?, ?> kernel) {
+        if (kernel == null) {
             throw new NullPointerException();
         }
-        if (data.columns() != gram.rows() || !gram.isSquare()) {
+        if (data.columns() != kernel.rows() || !kernel.isSquare()) {
             throw new IllegalArgumentException();
         }
-        return new GramMatrix() {
+        return new PrecomputedKernel() {
             public float get(final int i, final int j) {
-                return gram.get(i, j);
+                return kernel.get(i, j);
             }
         };
     }
 
     private final FloatMatrix<?, ?> data;
 
-    private final GramMatrix gram;
+    private final PrecomputedKernel kernel;
 
     private SvmModel model;
 
     private final SvmProblem problem;
 
-    public SimpleSvm(final FloatMatrix<?, ?> data, final FloatMatrix<?, ?> gram, final int[] labels) {
-        this(data, createGramMatrix(data, gram), labels);
+    public SimpleSvm(final FloatMatrix<?, ?> data, final FloatMatrix<?, ?> kernel, final int[] labels) {
+        this(data, createPrecomputedKernel(data, kernel), labels);
     }
 
-    public SimpleSvm(final FloatMatrix<?, ?> data, final GramMatrix gram, final int[] labels) {
+    public SimpleSvm(final FloatMatrix<?, ?> data, final PrecomputedKernel kernel, final int[] labels) {
         if (data.columns() != labels.length) {
             throw new IllegalArgumentException();
         }
         this.data = data;
-        this.gram = gram;
+        this.kernel = kernel;
         problem = new SvmProblem();
         problem.l = data.columns();
         problem.y = new double[labels.length];
         problem.x = new SvmNode[problem.l];
         for (int i = 0; i < labels.length; i++) {
             problem.y[i] = labels[i];
-            if (gram != null) {
+            if (kernel != null) {
                 problem.x[i] = new SvmNode(i, null);
             } else {
                 problem.x[i] = new SvmNode(i, data.column(i));
             }
         }
-        if (gram != null) {
-            problem.gram = gram;
+        if (kernel != null) {
+            problem.kernel = kernel;
         }
     }
 
     public SimpleSvm(final FloatMatrix<?, ?> data, final int[] labels) {
-        this(data, (GramMatrix) null, labels);
+        this(data, (PrecomputedKernel) null, labels);
     }
 
     /**
      * Compact model so that it consists of a single support vector per class.
      */
     public void compact() {
+        if (model == null) {
+            throw new IllegalStateException();
+        }
         SvmNode[] supportVectors = new SvmNode[model.nr_class];
         for (int i = 0, j = 0; i < model.nr_class; i++) {
             FloatDenseVector sv = new FloatDenseVector(model.SV[0].value.length());
@@ -132,7 +136,7 @@ public final class SimpleSvm {
         SvmParameter param = createDefaultSvmParameter();
         param.svm_type = SvmParameter.C_SVC;
         param.C = cost;
-        if (gram != null) {
+        if (kernel != null) {
             param.kernel_type = SvmParameter.PRECOMPUTED;
         } else {
             param.kernel_type = SvmParameter.LINEAR;

@@ -1,14 +1,23 @@
-package com.googlecode.array4j;
+package com.googlecode.array4j.math;
 
+import com.googlecode.array4j.FloatMatrix;
+import com.googlecode.array4j.FloatVector;
+import com.googlecode.array4j.Orientation;
+import com.googlecode.array4j.Storage;
 import com.googlecode.array4j.blas.FloatDenseBLAS;
 import com.googlecode.array4j.dense.FloatDenseMatrix;
+import com.googlecode.array4j.dense.FloatDenseVector;
 import com.googlecode.array4j.packed.FloatPackedMatrix;
 
-// TODO move this class to com.googlecode.array4j.math
-
 public final class FloatMatrixMath {
-    public static float dot(final FloatVector<?> x, final FloatVector<?> value) {
-        return 0.0f;
+    public static float dot(final FloatVector<?> x, final FloatVector<?> y) {
+        if (!(x instanceof FloatDenseVector)) {
+            throw new IllegalArgumentException();
+        }
+        if (!(y instanceof FloatDenseVector)) {
+            throw new IllegalArgumentException();
+        }
+        return FloatDenseBLAS.DEFAULT.dot((FloatDenseVector) x, (FloatDenseVector) y);
     }
 
     public static void logEquals(final FloatMatrix<?, ?> matrix) {

@@ -20,7 +20,7 @@ class Solver {
 
     static final byte FREE = 2;
 
-    static final double INF = java.lang.Double.POSITIVE_INFINITY;
+    static final double INF = Double.POSITIVE_INFINITY;
 
     static final byte LOWER_BOUND = 0;
 
@@ -311,8 +311,8 @@ class Solver {
         return 0;
     }
 
-    void Solve(int l, QMatrix Q, double[] p_, byte[] y_, double[] alpha_, double Cp, double Cn, double eps,
-            SolutionInfo si, int shrinking) {
+    void Solve(final int l, final QMatrix Q, final double[] p_, final byte[] y_, final double[] alpha_,
+            final double Cp, final double Cn, final double eps, final SolutionInfo si, final int shrinking) {
         this.l = l;
         this.Q = Q;
         QD = Q.getQD();

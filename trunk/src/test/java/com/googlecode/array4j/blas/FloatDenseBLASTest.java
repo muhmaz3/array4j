@@ -2,10 +2,12 @@ package com.googlecode.array4j.blas;
 
 import static org.junit.Assert.assertEquals;
 import com.googlecode.array4j.FloatMatrix;
+import com.googlecode.array4j.FloatVector;
 import com.googlecode.array4j.Orientation;
 import com.googlecode.array4j.Storage;
 import com.googlecode.array4j.TestSupport;
 import com.googlecode.array4j.dense.FloatDenseMatrix;
+import com.googlecode.array4j.dense.FloatDenseVector;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.Test;
@@ -22,6 +24,15 @@ public final class FloatDenseBLASTest extends AbstractBLASTest {
                 assertEquals(refij, actual.get(i, j), refij * 1.0e-6f);
             }
         }
+    }
+
+    private static float dot(final FloatVector<?> x, final FloatVector<?> y) {
+        assertEquals(x.length(), y.length());
+        float ret = 0.0f;
+        for (int i = 0; i < x.length(); i++) {
+            ret += x.get(i) * y.get(i);
+        }
+        return ret;
     }
 
     private static void gemm(final float alpha, final FloatMatrix<?, ?> a, final FloatMatrix<?, ?> b, final float beta,
@@ -43,6 +54,19 @@ public final class FloatDenseBLASTest extends AbstractBLASTest {
         for (Map.Entry<int[], Float> entry : values.entrySet()) {
             int[] ij = entry.getKey();
             c.set(ij[0], ij[1], entry.getValue());
+        }
+    }
+
+    @Test
+    public void testDot() {
+        for (Storage[] s : new Permutations<Storage>(2, Storage.values())) {
+            for (int i = 0; i < 10; i++) {
+                FloatDenseVector x = new FloatDenseVector(i, Orientation.ROW, s[0]);
+                FloatDenseVector y = new FloatDenseVector(i, Orientation.ROW, s[1]);
+                TestSupport.populateMatrix(x);
+                TestSupport.populateMatrix(y);
+                assertEquals(dot(x, y), FloatDenseBLAS.DEFAULT.dot(x, y), 0);
+            }
         }
     }
 

@@ -1053,7 +1053,7 @@ final class Svm {
                     subProb.l = ci + cj;
                     subProb.x = new SvmNode[subProb.l];
                     subProb.y = new double[subProb.l];
-                    subProb.gram = prob.gram;
+                    subProb.kernel = prob.kernel;
                     int k;
                     for (k = 0; k < ci; k++) {
                         subProb.x[k] = x[si + k];

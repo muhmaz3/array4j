@@ -13,7 +13,6 @@
 	<classpathentry kind="lib" path="lib/f2jutil.jar"/>
 	<classpathentry kind="lib" path="lib/lapack.jar"/>
 	<classpathentry kind="lib" path="lib/commons-logging-1.1.jar"/>
-	<classpathentry kind="lib" path="lib/geronimo-jms_1.1_spec-1.0.jar"/>
 	<classpathentry kind="lib" path="lib/log4j-1.2.13.jar"/>
 	<classpathentry kind="lib" path="lib/commons-lang-2.3.jar"/>
 	<classpathentry kind="lib" path="lib/junit-4.4.jar"/>

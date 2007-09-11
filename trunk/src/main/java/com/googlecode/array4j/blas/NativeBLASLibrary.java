@@ -12,4 +12,6 @@ public interface NativeBLASLibrary extends Library {
 
     void array4j_ssyrk(int order, int uplo, int trans, int n, int k, float alpha, FloatBuffer a, int lda, float beta,
             FloatBuffer c, int ldc);
+
+    float array4j_sdot(int n, FloatBuffer x, int incx, FloatBuffer y, int incy);
 }

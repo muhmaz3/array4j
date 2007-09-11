@@ -455,7 +455,6 @@ class Solver {
 			{
 				counter = Math.min(l,1000);
 				if(shrinking!=0) do_shrinking();
-				System.err.print(".");
 			}
 
 			if(select_working_set(working_set)!=0)
@@ -464,7 +463,6 @@ class Solver {
 				reconstruct_gradient();
 				// reset active set size and check
 				active_size = l;
-				System.err.print("*");
 				if(select_working_set(working_set)!=0)
 					break;
 				else
@@ -640,7 +638,7 @@ class Solver {
 		si.upper_bound_p = Cp;
 		si.upper_bound_n = Cn;
 
-		System.out.print("\noptimization finished, #iter = "+iter+"\n");
+		System.out.print("optimization finished, #iter = "+iter+"\n");
 	}
 
 	// return 1 if already optimal, return 0 otherwise

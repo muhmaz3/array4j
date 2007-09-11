@@ -16,7 +16,7 @@ final class SVRKernel extends Kernel {
     private final byte[] sign;
 
     SVRKernel(final SvmProblem prob, final SvmParameter param) {
-        super(prob.l, prob.x, prob.gram, param);
+        super(prob.l, prob.x, prob.kernel, param);
         l = prob.l;
         cache = new Cache(l, (long) (param.cache_size * (1 << 20)));
         QD = new float[2 * l];

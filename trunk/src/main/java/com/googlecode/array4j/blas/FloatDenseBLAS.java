@@ -1,11 +1,11 @@
 package com.googlecode.array4j.blas;
 
+import com.googlecode.array4j.dense.FloatDenseMatrix;
+import com.googlecode.array4j.dense.FloatDenseVector;
 import java.nio.FloatBuffer;
-
+import org.netlib.blas.Sdot;
 import org.netlib.blas.Sgemm;
 import org.netlib.blas.Ssyrk;
-
-import com.googlecode.array4j.dense.FloatDenseMatrix;
 
 // XXX all BLAS level 3 functions require dense matrices
 
@@ -14,6 +14,28 @@ public final class FloatDenseBLAS extends AbstractDenseBLAS {
 
     public FloatDenseBLAS(final BLASPolicy policy) {
         super(policy);
+    }
+
+    public float dot(final FloatDenseVector x, final FloatDenseVector y) {
+        checkDot(x, y);
+        int n = x.length();
+        FloatBuffer xbuf = x.data();
+        int incx = x.stride();
+        FloatBuffer ybuf = y.data();
+        int incy = y.stride();
+        switch (policy.chooseL1Method(x, y)) {
+        case F2J:
+            return Sdot.sdot(n, xbuf.array(), xbuf.arrayOffset(), incx, ybuf.array(), ybuf.arrayOffset(), incy);
+        case NATIVE:
+            try {
+                NATIVE_BLAS_LOCK.lock();
+                return NativeBLASLibrary.INSTANCE.array4j_sdot(n, xbuf, incx, ybuf, incy);
+            } finally {
+                NATIVE_BLAS_LOCK.unlock();
+            }
+        default:
+            throw new AssertionError();
+        }
     }
 
     /**
