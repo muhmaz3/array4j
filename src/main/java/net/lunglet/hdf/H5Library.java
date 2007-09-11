@@ -259,11 +259,7 @@ public interface H5Library extends Library {
 
     int H5Dread(int dset_id, int mem_type_id, int mem_space_id, int file_space_id, int plist_id, Buffer buf);
 
-    int H5Dread(int dset_id, int mem_type_id, int mem_space_id, int file_space_id, int plist_id, byte[] buf);
-
     int H5Dwrite(int dset_id, int mem_type_id, int mem_space_id, int file_space_id, int plist_id, Buffer buf);
-
-    int H5Dwrite(int dset_id, int mem_type_id, int mem_space_id, int file_space_id, int plist_id, byte[] buf);
 
     int H5Eset_auto(Pointer func, Pointer client_data);
 
@@ -354,4 +350,26 @@ public interface H5Library extends Library {
     int H5Tcreate(int type, int size);
 
     int H5Tget_size(int type_id);
+
+    int H5Pset_fill_time(int plist_id, int fill_time);
+
+    int H5Pset_sieve_buf_size(int fapl_id, long size);
+
+    int H5Aclose(int attr_id);
+
+    int H5Acreate(int loc_id, String name, int type_id, int space_id, int create_plist);
+
+    int H5Aget_space(int attr_id);
+
+    int H5Aopen_name(int loc_id, String name);
+
+    int H5Tequal(int type_id1, int type_id2);
+
+    int H5Aget_type(int attr_id);
+
+    int H5Dget_type(int dataset_id);
+
+    int H5Aread(int attr_id, int mem_type_id, Buffer buf);
+
+    int H5Awrite(int attr_id, int mem_type_id, Buffer buf);
 }

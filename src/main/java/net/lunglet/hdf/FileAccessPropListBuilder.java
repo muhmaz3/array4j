@@ -1,5 +1,7 @@
 package net.lunglet.hdf;
 
+// TODO provide a way to abort the build
+
 public final class FileAccessPropListBuilder {
     private final FileAccessPropList propList;
 
@@ -23,6 +25,14 @@ public final class FileAccessPropListBuilder {
         int err = H5Library.INSTANCE.H5Pset_fapl_sec2(propList.getId());
         if (err < 0) {
             throw new H5PropertyListException("H5Pset_fapl_sec2 failed");
+        }
+        return this;
+    }
+
+    public FileAccessPropListBuilder setSieveBufSize(final long size) {
+        int err = H5Library.INSTANCE.H5Pset_sieve_buf_size(propList.getId(), size);
+        if (err < 0) {
+            throw new H5PropertyListException("H5Pset_sieve_buf_size failed");
         }
         return this;
     }

@@ -7,7 +7,6 @@ public enum DataTypeClass {
     ENUM(8),
     FLOAT(1),
     INTEGER(0),
-    NO_CLASS(-1),
     OPAQUE(5),
     REFERENCE(7),
     STRING(3),

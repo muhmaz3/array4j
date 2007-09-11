@@ -27,17 +27,14 @@ public final class H5File extends IdComponent {
         // These bits only set for creation, so if any of them are set,
         // create the file.
         if ((flags & (H5F_ACC_EXCL | H5F_ACC_TRUNC | H5F_ACC_DEBUG)) != 0) {
-            int createPlistId = createPlist.getId();
-            int accessPlistId = accessPlist.getId();
-            id = H5Library.INSTANCE.H5Fcreate(name, flags, createPlistId, accessPlistId);
+            id = H5Library.INSTANCE.H5Fcreate(name, flags, createPlist.getId(), accessPlist.getId());
             if (id < 0) {
                 // throw an exception when open/create fail
                 throw new H5FileException("H5Fcreate failed");
             }
         } else {
             // Open the file if none of the bits above are set.
-            int accessPlistId = accessPlist.getId();
-            id = H5Library.INSTANCE.H5Fopen(name, flags, accessPlistId);
+            id = H5Library.INSTANCE.H5Fopen(name, flags, accessPlist.getId());
             if (id < 0) {
                 // throw an exception when open/create fail
                 throw new H5FileException("H5Fopen failed");
