@@ -1,7 +1,7 @@
 package net.lunglet.svm;
 
-import com.googlecode.array4j.FloatMatrixMath;
 import com.googlecode.array4j.FloatVector;
+import com.googlecode.array4j.math.FloatMatrixMath;
 
 abstract class Kernel extends QMatrix {
     static double dot(final FloatVector<?> x, final SvmNode y) {
@@ -54,7 +54,7 @@ abstract class Kernel extends QMatrix {
 
     private final double gamma;
 
-    private final GramMatrix gram;
+    private final PrecomputedKernel kernel;
 
     private final int kernel_type;
 
@@ -62,9 +62,9 @@ abstract class Kernel extends QMatrix {
 
     private final double[] x_square;
 
-    Kernel(final int l, final SvmNode[] x, final GramMatrix gram, final SvmParameter param) {
+    Kernel(final int l, final SvmNode[] x, final PrecomputedKernel kernel, final SvmParameter param) {
         this.x = x.clone();
-        this.gram = gram;
+        this.kernel = kernel;
         this.kernel_type = param.kernel_type;
         this.degree = param.degree;
         this.gamma = param.gamma;
@@ -96,7 +96,7 @@ abstract class Kernel extends QMatrix {
         case SvmParameter.SIGMOID:
             return tanh(gamma * dot(x[i], x[j]) + coef0);
         case SvmParameter.PRECOMPUTED:
-            return gram.get(i, j);
+            return kernel.get(x[i].index, x[j].index);
         default:
             throw new AssertionError();
         }

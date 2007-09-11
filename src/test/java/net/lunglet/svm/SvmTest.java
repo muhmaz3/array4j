@@ -3,12 +3,12 @@ package net.lunglet.svm;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import com.googlecode.array4j.FloatMatrix;
-import com.googlecode.array4j.FloatMatrixMath;
 import com.googlecode.array4j.FloatMatrixUtils;
 import com.googlecode.array4j.Orientation;
 import com.googlecode.array4j.Storage;
 import com.googlecode.array4j.dense.FloatDenseMatrix;
 import com.googlecode.array4j.dense.FloatDenseVector;
+import com.googlecode.array4j.math.FloatMatrixMath;
 import com.googlecode.array4j.packed.FloatPackedMatrix;
 import java.util.Random;
 import libsvm.svm;
@@ -82,14 +82,14 @@ public final class SvmTest {
         return scores;
     }
 
-    private FloatDenseVector getPrecomputedScores(final FloatMatrix<?, ?> data, final FloatMatrix<?, ?> gram,
+    private FloatDenseVector getPrecomputedScores(final FloatMatrix<?, ?> data, final FloatMatrix<?, ?> kernel,
             final int[] labels, final double cost) {
-        if (data.columns() != labels.length || !gram.isSquare() || data.columns() != gram.rows()) {
+        if (data.columns() != labels.length || !kernel.isSquare() || data.columns() != kernel.rows()) {
             throw new IllegalArgumentException();
         }
 
         // train
-        svm_problem prob = gramAsSvmProblem(gram, labels);
+        svm_problem prob = precomputedKernelAsSvmProblem(kernel, labels);
         svm_problem dataprob = dataAsSvmProblem(data, labels);
         svm_parameter param = createSvmParameter();
         param.kernel_type = svm_parameter.PRECOMPUTED;
@@ -115,9 +115,9 @@ public final class SvmTest {
         return scores;
     }
 
-    private svm_problem gramAsSvmProblem(final FloatMatrix<?, ?> gram, final int[] labels) {
+    private svm_problem precomputedKernelAsSvmProblem(final FloatMatrix<?, ?> kernel, final int[] labels) {
         svm_problem prob = new svm_problem();
-        prob.l = gram.rows();
+        prob.l = kernel.rows();
         prob.x = new svm_node[prob.l][];
         prob.y = new double[prob.l];
         for (int i = 0; i < prob.l; i++) {
@@ -127,7 +127,7 @@ public final class SvmTest {
             for (int j = 1; j < prob.x[i].length; j++) {
                 prob.x[i][j] = new svm_node();
                 prob.x[i][j].index = j;
-                prob.x[i][j].value = gram.get(i, j - 1);
+                prob.x[i][j].value = kernel.get(i, j - 1);
             }
             prob.y[i] = labels[i];
         }
@@ -142,8 +142,7 @@ public final class SvmTest {
             for (int j = 4; j < 100; j++) {
                 FloatDenseMatrix data = new FloatDenseMatrix(i, j, Orientation.ROW, Storage.HEAP);
                 FloatMatrixUtils.fillRandom(data, rng);
-                FloatPackedMatrix gram = FloatMatrixMath.timesTranspose(data.transpose());
-
+                FloatPackedMatrix kernel = FloatMatrixMath.timesTranspose(data.transpose());
                 int[] labels = new int[data.columns()];
                 // assume there are at least 2 data vectors and make sure we
                 // have at least one vector with each label
@@ -159,29 +158,28 @@ public final class SvmTest {
                 }
 
                 FloatDenseVector linearScores = getLinearScores(data, labels, cost);
-//                FloatDenseVector precomputedScores = getPrecomputedScores(data, gram, labels, cost);
+                FloatDenseVector precomputedScores = getPrecomputedScores(data, kernel, labels, cost);
 
                 // train SVM using linear kernel
                 SimpleSvm svm1 = new SimpleSvm(data, labels);
                 svm1.train(cost);
                 FloatDenseVector scores1 = svm1.score(data);
-//                svm1.compact();
-//                FloatDenseVector scores2 = svm1.score(data);
+                svm1.compact();
+                FloatDenseVector scores2 = svm1.score(data);
 
                 // train SVM using precomputed kernel
-//                SimpleSvm svm2 = new SimpleSvm(data, gram, labels);
-//                svm2.train(cost);
-//                FloatDenseVector scores3 = svm2.score(data);
-//                svm2.compact();
-//                FloatDenseVector scores4 = svm2.score(data);
+                SimpleSvm svm2 = new SimpleSvm(data, kernel, labels);
+                svm2.train(cost);
+                FloatDenseVector scores3 = svm2.score(data);
+                svm2.compact();
+                FloatDenseVector scores4 = svm2.score(data);
 
-//                for (FloatDenseVector scores : new FloatDenseVector[]{scores1, scores2, scores3, scores4}) {
-                for (FloatDenseVector scores : new FloatDenseVector[]{scores1}) {
-//                    assertEquals(linearScores.length(), precomputedScores.length());
+                for (FloatDenseVector scores : new FloatDenseVector[]{scores1, scores2, scores3, scores4}) {
+                    assertEquals(linearScores.length(), precomputedScores.length());
                     assertEquals(linearScores.length(), scores.length());
                     for (int k = 0; i < linearScores.length(); i++) {
                         assertEquals((int) Math.signum(linearScores.get(k)), (int) Math.signum(labels[k]));
-//                        assertEquals(linearScores.get(k), precomputedScores.get(k), 1e-2);
+                        assertEquals(linearScores.get(k), precomputedScores.get(k), 1e-2);
                         assertEquals(linearScores.get(k), scores.get(k), 1e-2);
                     }
                 }

@@ -7,7 +7,6 @@ import com.googlecode.array4j.Orientation;
 import com.googlecode.array4j.Storage;
 import com.googlecode.array4j.dense.FloatDenseMatrix;
 import com.googlecode.array4j.dense.FloatDenseVector;
-import com.googlecode.array4j.util.AssertUtils;
 import com.googlecode.array4j.util.BufferUtils;
 import java.nio.FloatBuffer;
 
@@ -131,7 +130,7 @@ public final class FloatPackedMatrix extends AbstractPackedMatrix<FloatPackedMat
     @Override
     public void setColumn(final int column, final FloatVector<?> columnVector) {
         checkColumnIndex(column);
-        AssertUtils.checkArgument(rows == columnVector.rows());
+        checkColumnVector(columnVector);
         for (int row = 0; row < rows; row++) {
             if (nonZeroElement(row, column)) {
                 set(row, column, columnVector.get(row));
@@ -146,7 +145,7 @@ public final class FloatPackedMatrix extends AbstractPackedMatrix<FloatPackedMat
     @Override
     public void setRow(final int row, final FloatVector<?> rowVector) {
         checkRowIndex(row);
-        AssertUtils.checkArgument(columns == rowVector.columns());
+        checkRowVector(rowVector);
         for (int column = 0; column < columns; column++) {
             if (nonZeroElement(row, column)) {
                 set(row, column, rowVector.get(column));

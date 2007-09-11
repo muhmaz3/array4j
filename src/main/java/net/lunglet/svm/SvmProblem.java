@@ -1,7 +1,7 @@
 package net.lunglet.svm;
 
 class SvmProblem {
-    public GramMatrix gram;
+    public PrecomputedKernel kernel;
 
     public int l;
 

@@ -8,7 +8,7 @@ final class SVCKernel extends Kernel {
     private final byte[] y;
 
     SVCKernel(final SvmProblem prob, final SvmParameter param, final byte[] y_) {
-        super(prob.l, prob.x, prob.gram, param);
+        super(prob.l, prob.x, prob.kernel, param);
         y = y_.clone();
         cache = new Cache(prob.l, (long) (param.cache_size * (1 << 20)));
         QD = new float[prob.l];

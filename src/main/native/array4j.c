@@ -230,3 +230,9 @@ JNIEXPORT void array4j_ssyrk
 {
     cblas_ssyrk(order, uplo, trans, n, k, alpha, a, lda, beta, c, ldc);
 }
+
+JNIEXPORT float array4j_sdot
+  (int n, const float* x, int incx, const float *y, int incy)
+{
+    return cblas_sdot(n, x, incx, y, incy);
+}

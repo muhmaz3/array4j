@@ -7,6 +7,7 @@ import java.util.concurrent.locks.Lock;
 import com.googlecode.array4j.Orientation;
 import com.googlecode.array4j.dense.DenseMatrix;
 import com.googlecode.array4j.dense.FloatDenseMatrix;
+import com.googlecode.array4j.dense.FloatDenseVector;
 
 public abstract class AbstractDenseBLAS {
     private static final class DummyLock implements Lock {
@@ -44,6 +45,12 @@ public abstract class AbstractDenseBLAS {
         // TODO might need to use a proper lock here when dealing with
         // multithreaded libraries like MKL
         NATIVE_BLAS_LOCK = new DummyLock();
+    }
+
+    protected static void checkDot(final FloatDenseVector x, final FloatDenseVector y) {
+        if (x.length() != y.length()) {
+            throw new IllegalArgumentException();
+        }
     }
 
     protected static void checkGemm(final DenseMatrix<?, ?> a, final DenseMatrix<?, ?> b, final DenseMatrix<?, ?> c) {

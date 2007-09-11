@@ -6,7 +6,7 @@ final class OneClassKernel extends Kernel {
     private final float[] QD;
 
     OneClassKernel(final SvmProblem prob, final SvmParameter param) {
-        super(prob.l, prob.x, prob.gram, param);
+        super(prob.l, prob.x, prob.kernel, param);
         cache = new Cache(prob.l, (long) (param.cache_size * (1 << 20)));
         QD = new float[prob.l];
         for (int i = 0; i < prob.l; i++) {
