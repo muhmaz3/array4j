@@ -35,7 +35,9 @@ public final class FloatMatrixMath {
     }
 
     public static FloatPackedMatrix timesTranspose(final FloatDenseMatrix a) {
-        return null;
+        FloatDenseMatrix c = new FloatDenseMatrix(a.rows(), a.rows(), a.orientation(), a.storage());
+        FloatDenseBLAS.DEFAULT.syrk(1.0f, a, 0.0f, c);
+        return FloatPackedMatrix.valueOf(c);
     }
 
     private FloatMatrixMath() {

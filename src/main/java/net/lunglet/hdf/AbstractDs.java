@@ -6,6 +6,8 @@ import java.nio.DoubleBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
+// TODO check datatypes used in read/write methods
+
 abstract class AbstractDs extends H5Object {
     private static final int DOUBLE_BYTES = Double.SIZE >>> 3;
 
@@ -22,6 +24,10 @@ abstract class AbstractDs extends H5Object {
     public abstract DataType getType();
 
     public abstract long getStorageSize();
+
+    public abstract void read(Buffer buf, DataType memType);
+
+    public abstract void write(Buffer buf, DataType memType);
 
     protected void checkBuffer(final Buffer buf, final DataType memType) {
         checkBuffer(buf, memType, DataSpace.ALL, DataSpace.ALL);
@@ -68,5 +74,17 @@ abstract class AbstractDs extends H5Object {
         if (size < requiredSize) {
             throw new IllegalArgumentException();
         }
+    }
+
+    public final void write(final int[] arr) {
+        write(IntBuffer.wrap(arr), PredefinedType.STD_I32LE);
+    }
+
+    public final void write(final float[] arr) {
+        write(FloatBuffer.wrap(arr), PredefinedType.IEEE_F32LE);
+    }
+
+    public final void read(final int[] arr) {
+        read(IntBuffer.wrap(arr), PredefinedType.STD_I32LE);
     }
 }

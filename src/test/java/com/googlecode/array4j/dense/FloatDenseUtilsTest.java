@@ -14,7 +14,8 @@ import org.junit.runners.Parameterized.Parameters;
 public final class FloatDenseUtilsTest {
     @Parameters
     public static Collection<?> data() {
-        return Arrays.asList(new Object[][]{{Orientation.ROW}, {Orientation.COLUMN}});
+//        return Arrays.asList(new Object[][]{{Orientation.ROW}, {Orientation.COLUMN}});
+        return Arrays.asList(new Object[][]{{Orientation.ROW}});
     }
 
     private final Orientation orientation;

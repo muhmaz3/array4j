@@ -5,6 +5,7 @@ import com.googlecode.array4j.FloatMatrixUtils;
 import com.googlecode.array4j.FloatVector;
 import com.googlecode.array4j.Orientation;
 import com.googlecode.array4j.Storage;
+import com.googlecode.array4j.dense.FloatDenseMatrix;
 import com.googlecode.array4j.dense.FloatDenseVector;
 import com.googlecode.array4j.util.AssertUtils;
 import com.googlecode.array4j.util.BufferUtils;
@@ -18,12 +19,24 @@ public final class FloatPackedMatrix extends AbstractPackedMatrix<FloatPackedMat
         return new FloatPackedMatrix(rows, columns, PackedType.LOWER_TRIANGULAR, Storage.DEFAULT_FOR_DENSE);
     }
 
-    public static FloatPackedMatrix createSymmetric(final int rows, final int columns) {
-        return new FloatPackedMatrix(rows, columns, PackedType.SYMMETRIC, Storage.DEFAULT_FOR_DENSE);
+    public static FloatPackedMatrix createSymmetric(final int dim) {
+        return new FloatPackedMatrix(dim, dim, PackedType.SYMMETRIC, Storage.DEFAULT_FOR_DENSE);
     }
 
-    public static FloatPackedMatrix createSymmetric(final int rows, final int columns, final Storage storage) {
-        return new FloatPackedMatrix(rows, columns, PackedType.SYMMETRIC, storage);
+    public static FloatPackedMatrix valueOf(final FloatDenseMatrix other) {
+        if (other.rows() != other.columns()) {
+            throw new IllegalArgumentException();
+        }
+        int dim = other.rows();
+        FloatPackedMatrix symm = new FloatPackedMatrix(dim, dim, PackedType.SYMMETRIC, other.storage());
+        for (int i = 0; i < symm.columns(); i++) {
+            symm.setColumn(i, other.column(i));
+        }
+        return symm;
+    }
+
+    public static FloatPackedMatrix createSymmetric(final int dim, final Storage storage) {
+        return new FloatPackedMatrix(dim, dim, PackedType.SYMMETRIC, storage);
     }
 
     public static FloatPackedMatrix createUpperTriangular(final int rows, final int columns) {

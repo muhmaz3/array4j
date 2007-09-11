@@ -4,7 +4,7 @@ import com.googlecode.array4j.Orientation;
 import com.googlecode.array4j.Storage;
 import com.googlecode.array4j.dense.DenseMatrix;
 
-public interface BLASPolicy {
+interface BLASPolicy {
     public static final class AlwaysNative implements BLASPolicy {
         @Override
         public Method chooseL3Method(final DenseMatrix<?, ?> a, final DenseMatrix<?, ?> b, final DenseMatrix<?, ?> c) {
@@ -16,10 +16,10 @@ public interface BLASPolicy {
         @Override
         public Method chooseL3Method(final DenseMatrix<?, ?> a, final DenseMatrix<?, ?> b, final DenseMatrix<?, ?> c) {
             for (DenseMatrix<?, ?> arg : new DenseMatrix<?, ?>[]{a, b, c}) {
-                // If any matrix is stored in a direct buffer, use native BLAS,
-                // which might cause copies of heap buffers when they are
+                // If any matrix is stored in a direct buffer, use native BLAS.
+                // This might cause copying of heap buffers when they are
                 // pinned.
-                if (arg.storage().equals(Storage.DIRECT)) {
+                if (arg != null && arg.storage().equals(Storage.DIRECT)) {
                     return Method.NATIVE;
                 }
             }
@@ -40,7 +40,7 @@ public interface BLASPolicy {
         @Override
         public Method chooseL3Method(final DenseMatrix<?, ?> a, final DenseMatrix<?, ?> b, final DenseMatrix<?, ?> c) {
             for (DenseMatrix<?, ?> arg : new DenseMatrix<?, ?>[]{a, b, c}) {
-                if (!arg.data().hasArray()) {
+                if (arg != null && !arg.data().hasArray()) {
                     throw new IllegalArgumentException();
                 }
             }
@@ -55,7 +55,7 @@ public interface BLASPolicy {
         @Override
         public Method chooseL3Method(final DenseMatrix<?, ?> a, final DenseMatrix<?, ?> b, final DenseMatrix<?, ?> c) {
             for (DenseMatrix<?, ?> arg : new DenseMatrix<?, ?>[]{a, b, c}) {
-                if (!arg.data().isDirect()) {
+                if (arg != null && !arg.data().isDirect()) {
                     throw new IllegalArgumentException();
                 }
             }

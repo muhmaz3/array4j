@@ -10,6 +10,8 @@ import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.LongByReference;
 import java.nio.Buffer;
 
+// TODO make an H5Constants interface that contains static and DLL constants
+
 public interface H5Library extends Library {
     static class H5E_error_t extends Structure {
         String desc;

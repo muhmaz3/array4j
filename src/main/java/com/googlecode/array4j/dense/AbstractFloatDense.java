@@ -1,5 +1,6 @@
 package com.googlecode.array4j.dense;
 
+import com.googlecode.array4j.Constants;
 import com.googlecode.array4j.FloatMatrix;
 import com.googlecode.array4j.FloatVector;
 import com.googlecode.array4j.Orientation;
@@ -21,6 +22,8 @@ public abstract class AbstractFloatDense<M extends FloatMatrix<M, FloatDenseVect
 
     private static final int ELEMENT_SIZE = 1;
 
+    private static final int ELEMENT_SIZE_BYTES = Constants.FLOAT_BYTES;
+
     private static FloatBuffer createBuffer(final int size, final Storage storage) {
         return BufferUtils.createFloatBuffer(size, storage);
     }
@@ -29,7 +32,7 @@ public abstract class AbstractFloatDense<M extends FloatMatrix<M, FloatDenseVect
 
     public AbstractFloatDense(final AbstractFloatDense<?> base, final int rows, final int columns, final int offset,
             final int stride, final Orientation orientation) {
-        super(base, ELEMENT_SIZE, rows, columns, offset, stride, orientation);
+        super(base, ELEMENT_SIZE, ELEMENT_SIZE_BYTES, rows, columns, offset, stride, orientation);
         this.data = base.data;
         checkData(data);
     }
@@ -41,7 +44,7 @@ public abstract class AbstractFloatDense<M extends FloatMatrix<M, FloatDenseVect
 
     public AbstractFloatDense(final FloatBuffer data, final int rows, final int columns, final int offset,
             final int stride, final Orientation orientation) {
-        super(null, ELEMENT_SIZE, rows, columns, offset, stride, orientation);
+        super(null, ELEMENT_SIZE, ELEMENT_SIZE_BYTES, rows, columns, offset, stride, orientation);
         this.data = data;
         checkData(data);
     }

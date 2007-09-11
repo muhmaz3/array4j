@@ -50,6 +50,7 @@ public final class DataSet extends AbstractDs implements Comparable<DataSet> {
         return H5Library.INSTANCE.H5Dget_storage_size(getId());
     }
 
+    @Override
     public void read(final Buffer buf, final DataType memType) {
         read(buf, memType, DataSpace.ALL, DataSpace.ALL);
     }
@@ -93,6 +94,7 @@ public final class DataSet extends AbstractDs implements Comparable<DataSet> {
         }
     }
 
+    @Override
     public void write(final Buffer buf, final DataType memType) {
         write(buf, memType, DataSpace.ALL, DataSpace.ALL);
     }

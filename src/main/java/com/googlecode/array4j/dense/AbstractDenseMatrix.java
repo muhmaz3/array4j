@@ -2,6 +2,7 @@ package com.googlecode.array4j.dense;
 
 import com.googlecode.array4j.AbstractMatrix;
 import com.googlecode.array4j.Orientation;
+import com.googlecode.array4j.util.BufferUtils;
 import java.nio.Buffer;
 import org.apache.commons.lang.builder.EqualsBuilder;
 
@@ -11,10 +12,10 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 public abstract class AbstractDenseMatrix<M extends DenseMatrix<M, V>, V extends DenseVector<V>, T> extends
         AbstractMatrix<M, V> implements DenseMatrix<M, V> {
     protected final void checkData(final Buffer data) {
-        // TODO only factor in elementSize if buffer is a bytebuffer
-        // TODO might also need to do something for complex on top of a float buffer
-        int requiredSize = offset + stride * elementSize * length;
-        if (data.capacity() < requiredSize) {
+        int start = offset * elementSizeBytes;
+        int end = start + (Math.max(0, length - 1) * stride + (length > 0 ? 1 : 0)) * elementSizeBytes;
+        int capacity = BufferUtils.getBytesCapacity(data);
+        if (start > capacity || end > capacity) {
             throw new IllegalArgumentException();
         }
     }
@@ -22,8 +23,11 @@ public abstract class AbstractDenseMatrix<M extends DenseMatrix<M, V>, V extends
     /** Stride between elements in a column. */
     protected final int columnStride;
 
-    /** Size of each element. */
+    /** Size of each element in buffer positions. */
     protected final int elementSize;
+
+    /** Size of each element in bytes. */
+    protected final int elementSizeBytes;
 
     /** Offset in storage where matrix data begins. */
     protected final int offset;
@@ -36,10 +40,12 @@ public abstract class AbstractDenseMatrix<M extends DenseMatrix<M, V>, V extends
     /** Stride between elements. */
     protected final int stride;
 
-    public AbstractDenseMatrix(final AbstractDenseMatrix<?, ?, ?> base, final int elementSize, final int rows,
-            final int columns, final int offset, final int stride, final Orientation orientation) {
+    public AbstractDenseMatrix(final AbstractDenseMatrix<?, ?, ?> base, final int elementSize,
+            final int elementSizeBytes, final int rows, final int columns, final int offset, final int stride,
+            final Orientation orientation) {
         super(base, rows, columns);
         this.elementSize = elementSize;
+        this.elementSizeBytes = elementSizeBytes;
         this.offset = offset;
         this.stride = stride;
         this.orientation = orientation;

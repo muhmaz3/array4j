@@ -2,7 +2,6 @@ package net.lunglet.hdf;
 
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
 
 public final class Attribute extends AbstractDs {
     private final String name;
@@ -40,6 +39,7 @@ public final class Attribute extends AbstractDs {
         invalidate();
     }
 
+    @Override
     public void read(final Buffer buf, final DataType memType) {
         checkBuffer(buf, memType);
         int err = H5Library.INSTANCE.H5Aread(getId(), memType.getId(), buf);
@@ -52,15 +52,7 @@ public final class Attribute extends AbstractDs {
         read(ByteBuffer.wrap(arr), memType);
     }
 
-    public void write(final int[] arr) {
-        // TODO maybe this shouldn't always be LE?
-        write(IntBuffer.wrap(arr), PredefinedType.STD_I32LE);
-    }
-
-    public void read(final int[] arr) {
-        read(IntBuffer.wrap(arr), PredefinedType.STD_I32LE);
-    }
-
+    @Override
     public void write(final Buffer buf, final DataType memType) {
         checkBuffer(buf, memType);
         int err = H5Library.INSTANCE.H5Awrite(getId(), memType.getId(), buf);
