@@ -53,7 +53,7 @@ public final class FloatDenseBLASTest extends AbstractBLASTest {
         }
     }
 
-    @Test
+//    @Test
     public void testGemm() {
         final float alpha = 1.0f;
         final float beta = 1.0f;
@@ -64,19 +64,47 @@ public final class FloatDenseBLASTest extends AbstractBLASTest {
                         for (int k = 0; k < 20; k += k < 5 ? 1 : 5) {
                             FloatDenseMatrix a = new FloatDenseMatrix(m, n, o[0], s[0]);
                             FloatDenseMatrix b = new FloatDenseMatrix(n, k, o[1], s[1]);
-                            FloatDenseMatrix c1 = new FloatDenseMatrix(m, k, o[2], s[2]);
-                            FloatDenseMatrix c2 = new FloatDenseMatrix(m, k, o[2], s[2]);
+                            FloatDenseMatrix expectedc = new FloatDenseMatrix(m, k, o[2], s[2]);
+                            FloatDenseMatrix actualc = new FloatDenseMatrix(m, k, o[2], s[2]);
                             populateMatrix(a);
                             populateMatrix(b);
-                            populateMatrix(c1);
-                            gemm(alpha, a, b, beta, c1);
-                            populateMatrix(c2);
-                            FloatDenseBLAS.DEFAULT.gemm(alpha, a, b, beta, c2);
-                            checkMatrix(c1, c2);
+                            populateMatrix(expectedc);
+                            gemm(alpha, a, b, beta, expectedc);
+                            populateMatrix(actualc);
+                            FloatDenseBLAS.DEFAULT.gemm(alpha, a, b, beta, actualc);
+                            checkMatrix(expectedc, actualc);
                         }
                     }
                 }
             }
         }
+    }
+
+    @Test
+    public void testSyrk() {
+        final float alpha = 1.0f;
+        final float beta = 0.0f;
+        Storage storage = Storage.DIRECT;
+        FloatDenseMatrix a = new FloatDenseMatrix(2, 3, Orientation.COLUMN, storage);
+        populateMatrix(a);
+        FloatDenseMatrix expectedc1 = new FloatDenseMatrix(2, 2, Orientation.COLUMN, storage);
+        populateMatrix(expectedc1);
+        FloatDenseMatrix actualc1 = new FloatDenseMatrix(2, 2, Orientation.COLUMN, storage);
+        populateMatrix(actualc1);
+        FloatDenseMatrix expectedc2 = new FloatDenseMatrix(3, 3, Orientation.COLUMN, storage);
+        populateMatrix(expectedc2);
+        FloatDenseMatrix actualc2 = new FloatDenseMatrix(3, 3, Orientation.COLUMN, storage);
+        populateMatrix(actualc2);
+        gemm(alpha, a, a.transpose(), beta, expectedc1);
+        gemm(alpha, a.transpose(), a, beta, expectedc2);
+
+        System.out.println(a);
+        System.out.println(expectedc1);
+        System.out.println(expectedc2);
+
+        FloatDenseBLAS.DEFAULT.syrk(alpha, a, beta, actualc1);
+        System.out.println(actualc1);
+        FloatDenseBLAS.DEFAULT.syrk(alpha, a.transpose(), beta, actualc2);
+        System.out.println(actualc2);
     }
 }

@@ -63,7 +63,13 @@ public final class Group extends H5Object {
     }
 
     public DataSet createDataSet(final String name, final DataType dataType, final long... dims) {
-        return createDataSet(name, dataType, new DataSpace(dims));
+        DataSpace space = new DataSpace(dims);
+        try {
+            DataSet dataset = createDataSet(name, dataType, space);
+            return dataset;
+        } finally {
+            space.close();
+        }
     }
 
     public Group createGroup(final String name) {
@@ -82,8 +88,7 @@ public final class Group extends H5Object {
 
     private String createName(final String name) {
         if (name.startsWith("/")) {
-            // TODO deal with absolute group and dataset names
-            throw new UnsupportedOperationException();
+            return name;
         }
         StringBuilder builder = new StringBuilder();
         builder.append(getName());

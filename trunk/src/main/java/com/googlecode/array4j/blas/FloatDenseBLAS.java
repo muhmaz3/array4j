@@ -3,6 +3,7 @@ package com.googlecode.array4j.blas;
 import java.nio.FloatBuffer;
 
 import org.netlib.blas.Sgemm;
+import org.netlib.blas.Ssyrk;
 
 import com.googlecode.array4j.dense.FloatDenseMatrix;
 
@@ -40,6 +41,33 @@ public final class FloatDenseBLAS extends AbstractDenseBLAS {
                 NATIVE_BLAS_LOCK.lock();
                 NativeBLASLibrary.INSTANCE.array4j_sgemm(corder(c), ctrans(c, a), ctrans(c, b), m, n, k, alpha, abuf,
                         lda, bbuf, ldb, beta, cbuf, ldc);
+                return;
+            } finally {
+                NATIVE_BLAS_LOCK.unlock();
+            }
+        default:
+            throw new AssertionError();
+        }
+    }
+
+    public void syrk(final float alpha, final FloatDenseMatrix a, final float beta, final FloatDenseMatrix c) {
+        checkSyrk(a, c);
+        int n = a.rows();
+        int k = a.columns();
+        FloatBuffer abuf = a.data();
+        FloatBuffer cbuf = c.data();
+        int lda = ld(a);
+        int ldc = ld(c);
+        switch (policy.chooseL3Method(a, null, c)) {
+        case F2J:
+            Ssyrk.ssyrk("U", trans(c, a), n, k, alpha, abuf.array(), abuf.arrayOffset(), lda, beta, cbuf.array(),
+                cbuf.arrayOffset(), ldc);
+        case NATIVE:
+            try {
+                NATIVE_BLAS_LOCK.lock();
+                // typedef enum {CblasUpper=121, CblasLower=122} CBLAS_UPLO;
+                NativeBLASLibrary.INSTANCE.array4j_ssyrk(corder(c), 121, ctrans(c, a), n, k, alpha, abuf, lda, beta,
+                    cbuf, ldc);
                 return;
             } finally {
                 NATIVE_BLAS_LOCK.unlock();

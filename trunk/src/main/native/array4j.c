@@ -224,3 +224,9 @@ JNIEXPORT void array4j_sgemm
 {
     cblas_sgemm(order, transa, transb, m, n, k, alpha, a, lda, b, ldb, beta, c, ldc);
 }
+
+JNIEXPORT void array4j_ssyrk
+  (int order, int uplo, int trans, int n, int k, float alpha, const float* a, int lda, float beta, float *c, int ldc)
+{
+    cblas_ssyrk(order, uplo, trans, n, k, alpha, a, lda, beta, c, ldc);
+}

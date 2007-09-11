@@ -38,7 +38,7 @@ public final class FloatPackedMatrixTest {
 
     @Test
     public void testSymmetric() {
-        FloatPackedMatrix symm = FloatPackedMatrix.createSymmetric(2, 2);
+        FloatPackedMatrix symm = FloatPackedMatrix.createSymmetric(2);
         assertTrue(symm.isSymmetric());
         symm.set(0, 0, 1.0f);
         symm.set(0, 1, 2.0f);

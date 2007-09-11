@@ -61,6 +61,18 @@ public abstract class AbstractDenseBLAS {
         }
     }
 
+    protected static void checkSyrk(final DenseMatrix<?, ?> a, final DenseMatrix<?, ?> c) {
+        if (a.rows() != c.rows()) {
+            throw new IllegalArgumentException("rows(a) != rows(c)");
+        }
+        if (a.rows() != c.columns()) {
+            throw new IllegalArgumentException("rows(a) != columns(c)");
+        }
+        if (a.stride() != 1 || c.stride() != 1) {
+            throw new IllegalArgumentException("all matrices must have unit stride");
+        }
+    }
+
     /**
      * Returns the order value for the CBLAS interface.
      */

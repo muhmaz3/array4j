@@ -5,7 +5,6 @@ import com.googlecode.array4j.FloatMatrixUtils;
 import com.googlecode.array4j.FloatVector;
 import com.googlecode.array4j.dense.FloatDenseMatrix;
 import com.googlecode.array4j.dense.FloatDenseUtils;
-import java.util.Arrays;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutionException;
@@ -32,7 +31,7 @@ public final class KMeans<T> {
 
         public KMeansTaskResult(final FloatMatrix<?, ?> centroids, final long[] n, final double totalDistortion) {
             this.centroids = centroids;
-            this.n = Arrays.copyOf(n, n.length);
+            this.n = n;
             this.totalDistortion = totalDistortion;
         }
     }

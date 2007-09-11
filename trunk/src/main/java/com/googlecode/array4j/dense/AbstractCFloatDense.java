@@ -3,6 +3,7 @@ package com.googlecode.array4j.dense;
 import com.googlecode.array4j.ComplexFloat;
 import com.googlecode.array4j.ComplexFloatMatrix;
 import com.googlecode.array4j.ComplexFloatVector;
+import com.googlecode.array4j.Constants;
 import com.googlecode.array4j.Orientation;
 import com.googlecode.array4j.Storage;
 import com.googlecode.array4j.util.AssertUtils;
@@ -22,6 +23,8 @@ public abstract class AbstractCFloatDense<M extends ComplexFloatMatrix<M, CFloat
 
     private static final int ELEMENT_SIZE = 2;
 
+    private static final int ELEMENT_SIZE_BYTES = Constants.FLOAT_BYTES;
+
     protected transient FloatBuffer data;
 
     /**
@@ -29,8 +32,9 @@ public abstract class AbstractCFloatDense<M extends ComplexFloatMatrix<M, CFloat
      */
     public AbstractCFloatDense(final FloatBuffer data, final int rows, final int columns, final int offset,
             final int stride, final Orientation orientation) {
-        super(null, ELEMENT_SIZE, rows, columns, offset, stride, orientation);
+        super(null, ELEMENT_SIZE, ELEMENT_SIZE_BYTES, rows, columns, offset, stride, orientation);
         this.data = data;
+        checkData(data);
     }
 
     /**
@@ -45,8 +49,9 @@ public abstract class AbstractCFloatDense<M extends ComplexFloatMatrix<M, CFloat
      * Constructor for new matrix.
      */
     public AbstractCFloatDense(final int rows, final int columns, final Orientation orientation, final Storage storage) {
-        super(null, ELEMENT_SIZE, rows, columns, DEFAULT_OFFSET, DEFAULT_STRIDE, orientation);
+        super(null, ELEMENT_SIZE, ELEMENT_SIZE_BYTES, rows, columns, DEFAULT_OFFSET, DEFAULT_STRIDE, orientation);
         this.data = BufferUtils.createComplexFloatBuffer(length, storage);
+        checkData(data);
     }
 
     /**
@@ -144,6 +149,7 @@ public abstract class AbstractCFloatDense<M extends ComplexFloatMatrix<M, CFloat
         for (int i = 0; i < ELEMENT_SIZE * length; i++) {
             data.put(i, in.readFloat());
         }
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -212,5 +218,6 @@ public abstract class AbstractCFloatDense<M extends ComplexFloatMatrix<M, CFloat
             out.writeFloat(value.real());
             out.writeFloat(value.imag());
         }
+        throw new UnsupportedOperationException();
     }
 }

@@ -2,8 +2,10 @@ package com.googlecode.array4j.util;
 
 import com.googlecode.array4j.Constants;
 import com.googlecode.array4j.Storage;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.DoubleBuffer;
 import java.nio.FloatBuffer;
 
 public final class BufferUtils {
@@ -30,6 +32,19 @@ public final class BufferUtils {
             return buffer.asFloatBuffer();
         } else {
             return FloatBuffer.allocate(size);
+        }
+    }
+
+    public static int getBytesCapacity(final Buffer buf) {
+        if (buf instanceof ByteBuffer) {
+            return buf.capacity();
+        } else if (buf instanceof FloatBuffer) {
+            return Constants.FLOAT_BYTES * buf.capacity();
+        } else if (buf instanceof DoubleBuffer) {
+            return Constants.DOUBLE_BYTES * buf.capacity();
+        } else {
+            // TODO add other buffers above
+            throw new AssertionError();
         }
     }
 
