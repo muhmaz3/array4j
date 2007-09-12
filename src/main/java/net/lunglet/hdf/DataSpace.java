@@ -1,5 +1,6 @@
 package net.lunglet.hdf;
 
+import com.sun.jna.NativeLong;
 import java.util.Arrays;
 
 public final class DataSpace extends IdComponent {
@@ -82,6 +83,7 @@ public final class DataSpace extends IdComponent {
             throw new IllegalArgumentException();
         }
         int rank = getNDims();
+        // TODO use a direct buffer here to avoid a copy
         long[] buf = new long[2 * numblocks * rank];
         int err = H5Library.INSTANCE.H5Sget_select_hyper_blocklist(getId(), startblock, numblocks, buf);
         if (err < 0) {
@@ -144,6 +146,7 @@ public final class DataSpace extends IdComponent {
             throw new IllegalArgumentException();
         }
         int rank = getNDims();
+        // TODO use a direct buffer here to avoid a copy
         long[] buf = new long[numpoints * rank];
         int err = H5Library.INSTANCE.H5Sget_select_elem_pointlist(getId(), startpoint, numpoints, buf);
         if (err < 0) {
@@ -236,7 +239,7 @@ public final class DataSpace extends IdComponent {
                 coord[j][i] = pointCoords[j];
             }
         }
-        int err = H5Library.INSTANCE.H5Sselect_elements(getId(), op.intValue(), 0, coord);
+        int err = H5Library.INSTANCE.H5Sselect_elements(getId(), op.intValue(), new NativeLong(points.length), coord);
         if (err < 0) {
             throw new H5DataSpaceException("H5Sselect_elements failed");
         }

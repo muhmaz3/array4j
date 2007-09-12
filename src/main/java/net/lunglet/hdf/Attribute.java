@@ -3,6 +3,8 @@ package net.lunglet.hdf;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 
+// TODO Attribute#getName should return full name
+
 public final class Attribute extends AbstractDs {
     private final String name;
 

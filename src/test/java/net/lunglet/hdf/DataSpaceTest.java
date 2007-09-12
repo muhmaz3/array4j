@@ -18,8 +18,13 @@ public final class DataSpaceTest {
         long j = 1;
         long k = 2;
         DataSpace space = new DataSpace(i, j, k);
-        // TODO need to finish this implementation
-//        space.selectElements(SelectionOperator.SET, new Point(0, 0, 0));
+        Point point000 = new Point(0, 0, 0);
+        space.selectElements(SelectionOperator.SET, point000);
+        assertEquals(1L, space.getSelectNPoints());
+        Point[] points = space.getSelectedPoints(0, 1);
+        assertEquals(1, points.length);
+        // TODO fix this
+        assertEquals(point000, points[0]);
     }
 
     @Test

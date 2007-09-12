@@ -9,12 +9,6 @@ import java.nio.IntBuffer;
 // TODO check datatypes used in read/write methods
 
 abstract class AbstractDs extends H5Object {
-    private static final int DOUBLE_BYTES = Double.SIZE >>> 3;
-
-    private static final int FLOAT_BYTES = Float.SIZE >>> 3;
-
-    private static final int INTEGER_BYTES = Integer.SIZE >>> 3;
-
     public AbstractDs(final int id) {
         super(id);
     }
@@ -43,11 +37,11 @@ abstract class AbstractDs extends H5Object {
         if (buf instanceof ByteBuffer) {
             size = buf.capacity();
         } else if (buf instanceof FloatBuffer) {
-            size = FLOAT_BYTES * buf.capacity();
+            size = H5Library.FLOAT_BYTES * buf.capacity();
         } else if (buf instanceof DoubleBuffer) {
-            size = DOUBLE_BYTES * buf.capacity();
+            size = H5Library.DOUBLE_BYTES * buf.capacity();
         } else if (buf instanceof IntBuffer) {
-            size = INTEGER_BYTES * buf.capacity();
+            size = H5Library.INTEGER_BYTES * buf.capacity();
         } else {
             // TODO add other buffers above
             throw new AssertionError();
