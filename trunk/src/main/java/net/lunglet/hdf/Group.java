@@ -1,14 +1,11 @@
 package net.lunglet.hdf;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import net.lunglet.hdf.H5Library.H5G_iterate_t;
-
-import org.apache.commons.lang.builder.EqualsBuilder;
-
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
+import java.util.HashSet;
+import java.util.Set;
+import net.lunglet.hdf.H5Library.H5G_iterate_t;
+import org.apache.commons.lang.builder.EqualsBuilder;
 
 public final class Group extends H5Object {
     private static final int H5G_DATASET = 2;
@@ -73,20 +70,15 @@ public final class Group extends H5Object {
     }
 
     public Group createGroup(final String name) {
-        // Call C routine H5Gcreate to create the named group, giving the
-        // location id which can be a file id or a group id
         int groupId = H5Library.INSTANCE.H5Gcreate(getId(), name, 0);
-
-        // If the creation of the group failed, throw an exception
         if (groupId < 0) {
             throw new H5GroupException("H5Gcreate failed");
         }
-
-        // No failure, create and return the Group object
         return new Group(groupId, createName(name));
     }
 
     private String createName(final String name) {
+        // TODO put this code somewhere where Attribute can also use it
         if (name.startsWith("/")) {
             return name;
         }
@@ -149,30 +141,18 @@ public final class Group extends H5Object {
     }
 
     public DataSet openDataSet(final String name) {
-        // Call C function H5Dopen to open the specified dataset, giving
-        // the location id and the dataset's name
         int datasetId = H5Library.INSTANCE.H5Dopen(getId(), name);
-
-        // If the dataset's opening failed, throw an exception
         if (datasetId < 0) {
             throw new H5GroupException("H5Dopen failed");
         }
-
-        // No failure, create and return the DataSet object
         return new DataSet(datasetId, createName(name));
     }
 
     public Group openGroup(final String name) {
-        // Call C routine H5Gopen to open the named group, giving the
-        // location id which can be a file id or a group id
         int groupId = H5Library.INSTANCE.H5Gopen(getId(), name);
-
-        // If the opening of the group failed, throw an exception
         if (groupId < 0) {
             throw new H5GroupException("H5Gopen failed");
         }
-
-        // No failure, create and return the Group object
         return new Group(groupId, createName(name));
     }
 }

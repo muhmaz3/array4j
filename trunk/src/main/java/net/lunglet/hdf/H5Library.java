@@ -1,24 +1,49 @@
 package net.lunglet.hdf;
 
 import com.sun.jna.Callback;
+import com.sun.jna.DefaultTypeMapper;
 import com.sun.jna.Library;
+import com.sun.jna.Memory;
 import com.sun.jna.Native;
 import com.sun.jna.NativeLibrary;
+import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
+import com.sun.jna.ToNativeContext;
+import com.sun.jna.ToNativeConverter;
+import com.sun.jna.TypeMapper;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.LongByReference;
 import java.nio.Buffer;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 // TODO make an H5Constants interface that contains static and DLL constants
 
+// TODO look at opening of absolute names from arbitrary groups or datasets
+
 public interface H5Library extends Library {
+    int DOUBLE_BYTES = Double.SIZE >>> 3;
+
+    int FLOAT_BYTES = Float.SIZE >>> 3;
+
+    int INTEGER_BYTES = Integer.SIZE >>> 3;
+
+    int LONG_BYTES = Long.SIZE >>> 3;
+
     static class H5E_error_t extends Structure {
         String desc;
+
         String file_name;
+
         String func_name;
+
         int line;
+
         int maj_num;
+
         int min_num;
     }
 
@@ -28,6 +53,21 @@ public interface H5Library extends Library {
 
     interface H5G_iterate_t extends Callback {
         int callback(int locId, String name, Pointer data);
+    }
+
+    static final class LongArrays extends Memory {
+        private final List<Memory> buffers;
+
+        public LongArrays(final long[][] arrs) {
+            super(arrs.length * Pointer.SIZE);
+            this.buffers = new ArrayList<Memory>(arrs.length);
+            for (int i = 0; i < arrs.length; i++) {
+                Memory buf = new Memory(arrs[i].length * LONG_BYTES);
+                buf.getByteBuffer(0, buf.getSize()).asLongBuffer().put(arrs[i]);
+                buffers.add(buf);
+                setPointer(i * Pointer.SIZE, buf);
+            }
+        }
     }
 
     static final class Loader {
@@ -40,7 +80,19 @@ public interface H5Library extends Library {
         }
 
         private static H5Library loadLibrary() {
-            H5Library lib = (H5Library) Native.loadLibrary(LIBRARY_NAME, H5Library.class);
+            Map<String, TypeMapper> options = new HashMap<String, TypeMapper>();
+            DefaultTypeMapper mapper = new DefaultTypeMapper();
+            mapper.addToNativeConverter(long[][].class, new ToNativeConverter() {
+                public Class<LongArrays> nativeType() {
+                    return LongArrays.class;
+                }
+
+                public Object toNative(final Object obj, final ToNativeContext context) {
+                    return new LongArrays((long[][]) obj);
+                }
+            });
+            options.put(Library.OPTION_TYPE_MAPPER, mapper);
+            H5Library lib = (H5Library) Native.loadLibrary(LIBRARY_NAME, H5Library.class, options);
             // TODO enable this when we have our own error handler
 //            int err = lib.H5Eset_auto(null, null);
 //            if (err < 0) {
@@ -333,7 +385,7 @@ public interface H5Library extends Library {
 
     int H5Sselect_all(int space_id);
 
-    int H5Sselect_elements(int space_id, int op, long num_elements, long[][] coord);
+    int H5Sselect_elements(int space_id, int op, NativeLong num_elements, long[][] coord);
 
     int H5Sselect_hyperslab(int space_id, int op, long[] start, long[] stride, long[] count, long[] block);
 

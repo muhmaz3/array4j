@@ -53,6 +53,8 @@ public final class DataSetTest {
         attr.write(buf, dtype);
         attr.close();
         attr = dataset.openAttribute("attr");
+        // TODO fix this
+        assertEquals("/dataset/attr", attr.getName());
         DataType dtype2 = attr.getType();
         assertSame(dtype, dtype2);
         ByteBuffer buf2 = ByteBuffer.allocate(4 * buf.capacity()).order(ByteOrder.nativeOrder());
