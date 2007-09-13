@@ -82,7 +82,7 @@ public final class Attribute extends AbstractDs {
         if (dataspaceId < 0) {
             throw new H5AttributeException("H5Aget_space failed");
         }
-        return new DataSpace(dataspaceId);
+        return new DataSpace(dataspaceId, true);
     }
 
     @Override

@@ -1,12 +1,15 @@
 package net.lunglet.hdf;
 
 import com.sun.jna.NativeLong;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.LongBuffer;
 import java.util.Arrays;
 
 public final class DataSpace extends IdComponent {
     private static final int H5S_ALL = 0;
 
-    public static final DataSpace ALL = new DataSpace(H5S_ALL);
+    public static final DataSpace ALL = new DataSpace(H5S_ALL, true);
 
     private static final int H5S_UNLIMITED = -1;
 
@@ -29,7 +32,8 @@ public final class DataSpace extends IdComponent {
         return id;
     }
 
-    DataSpace(final int id) {
+    DataSpace(final int id, final boolean tag) {
+        // tag helps to avoid confusion with long... constructor
         super(id);
     }
 
@@ -154,7 +158,7 @@ public final class DataSpace extends IdComponent {
         }
         Point[] points = new Point[numpoints];
         for (int i = 0; i < numpoints; i++) {
-            points[i] = new Point(Arrays.copyOfRange(buf, i * rank, i * rank + 3));
+            points[i] = new Point(Arrays.copyOfRange(buf, i * rank, (i + 1) * rank));
         }
         return points;
     }
@@ -226,18 +230,13 @@ public final class DataSpace extends IdComponent {
 
     public void selectElements(final SelectionOperator op, final Point... points) {
         int rank = getNDims();
-        long[][] coord = new long[rank][];
-        for (int i = 0; i < coord.length; i++) {
-            coord[i] = new long[points.length];
-        }
+        ByteBuffer buf = ByteBuffer.allocateDirect(H5Library.LONG_BYTES * points.length * rank);
+        LongBuffer coord = buf.order(ByteOrder.nativeOrder()).asLongBuffer();
         for (int i = 0; i < points.length; i++) {
             if (points[i].getNDims() != rank) {
                 throw new IllegalArgumentException();
             }
-            long[] pointCoords = points[i].getCoordinates();
-            for (int j = 0; j < rank; j++) {
-                coord[j][i] = pointCoords[j];
-            }
+            coord.put(points[i].getCoordinates());
         }
         int err = H5Library.INSTANCE.H5Sselect_elements(getId(), op.intValue(), new NativeLong(points.length), coord);
         if (err < 0) {

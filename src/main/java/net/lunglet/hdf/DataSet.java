@@ -42,7 +42,7 @@ public final class DataSet extends AbstractDs implements Comparable<DataSet> {
         if (dataspaceId < 0) {
             throw new H5DataSetException("H5Dget_space failed");
         }
-        return new DataSpace(dataspaceId);
+        return new DataSpace(dataspaceId, true);
     }
 
     @Override
