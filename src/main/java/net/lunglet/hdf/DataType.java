@@ -1,8 +1,6 @@
 package net.lunglet.hdf;
 
 public class DataType extends H5Object {
-    private final boolean predefined;
-
     static DataType createTypeFromId(final int id) {
         if (id < 0) {
             throw new IllegalArgumentException();
@@ -17,6 +15,8 @@ public class DataType extends H5Object {
         // TODO support other types
         throw new UnsupportedOperationException();
     }
+
+    private final boolean predefined;
 
     DataType(final int id, final boolean predefined) {
         super(id);
@@ -37,22 +37,6 @@ public class DataType extends H5Object {
         }
     }
 
-    @Override
-    public boolean equals(final Object obj) {
-        if (obj == null || !(obj instanceof DataType)) {
-            return false;
-        }
-        if (obj == this) {
-            return true;
-        }
-        DataType other = (DataType) obj;
-        int tri = H5Library.INSTANCE.H5Tequal(getId(), other.getId());
-        if (tri < 0) {
-            throw new H5DataTypeException("H5Tequal failed");
-        }
-        return tri > 0;
-    }
-
     final void commit(final Group group, final String name) {
         int err = H5Library.INSTANCE.H5Tcommit(group.getId(), name, getId());
         if (err < 0) {
@@ -69,6 +53,22 @@ public class DataType extends H5Object {
         } else {
             throw new RuntimeException("H5Tcommitted return negative value");
         }
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == null || !(obj instanceof DataType)) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        DataType other = (DataType) obj;
+        int tri = H5Library.INSTANCE.H5Tequal(getId(), other.getId());
+        if (tri < 0) {
+            throw new H5DataTypeException("H5Tequal failed");
+        }
+        return tri > 0;
     }
 
     public final int getSize() {

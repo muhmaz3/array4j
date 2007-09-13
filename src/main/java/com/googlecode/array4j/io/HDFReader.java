@@ -7,6 +7,11 @@ import net.lunglet.hdf.DataSpace;
 import net.lunglet.hdf.H5File;
 import net.lunglet.hdf.PredefinedType;
 
+// TODO handle any orientation, stride, offset, size, etc.
+
+// TODO read via an intermediate direct buffer if matrix is
+// stored on the heap and exceeds some maximum size
+
 public final class HDFReader {
     private final H5File h5file;
 
@@ -33,8 +38,6 @@ public final class HDFReader {
             if (matrix.rows() != n) {
                 throw new IllegalArgumentException();
             }
-            // TODO read into an intermediate direct buffer if matrix exceeds
-            // some maximum size
             dataset.read(matrix.data(), PredefinedType.IEEE_F32LE);
         } finally {
             if (space != null) {

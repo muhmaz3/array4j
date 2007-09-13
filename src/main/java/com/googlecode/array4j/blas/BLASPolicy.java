@@ -8,17 +8,25 @@ import com.googlecode.array4j.dense.DenseVector;
 interface BLASPolicy {
     public static final class AlwaysNative implements BLASPolicy {
         @Override
-        public Method chooseL3Method(final DenseMatrix<?, ?> a, final DenseMatrix<?, ?> b, final DenseMatrix<?, ?> c) {
+        public Method chooseL1Method(final DenseVector<?> x, final DenseVector<?> y) {
             return Method.NATIVE;
         }
 
         @Override
-        public Method chooseL1Method(final DenseVector<?> x, final DenseVector<?> y) {
+        public Method chooseL3Method(final DenseMatrix<?, ?> a, final DenseMatrix<?, ?> b, final DenseMatrix<?, ?> c) {
             return Method.NATIVE;
         }
     }
 
     public static final class BestEffort implements BLASPolicy {
+        @Override
+        public Method chooseL1Method(final DenseVector<?> x, final DenseVector<?> y) {
+            if (x.storage().equals(Storage.DIRECT) || y.storage().equals(Storage.DIRECT)) {
+                return Method.NATIVE;
+            }
+            return Method.F2J;
+        }
+
         @Override
         public Method chooseL3Method(final DenseMatrix<?, ?> a, final DenseMatrix<?, ?> b, final DenseMatrix<?, ?> c) {
             for (DenseMatrix<?, ?> arg : new DenseMatrix<?, ?>[]{a, b, c}) {
@@ -34,14 +42,6 @@ interface BLASPolicy {
                 return Method.NATIVE;
             }
             // If all the buffers are heap buffers, use F2J'ed BLAS.
-            return Method.F2J;
-        }
-
-        @Override
-        public Method chooseL1Method(final DenseVector<?> x, final DenseVector<?> y) {
-            if (x.storage().equals(Storage.DIRECT) || y.storage().equals(Storage.DIRECT)) {
-                return Method.NATIVE;
-            }
             return Method.F2J;
         }
     }
@@ -60,17 +60,17 @@ interface BLASPolicy {
         }
 
         @Override
+        public Method chooseL1Method(final DenseVector<?> x, final DenseVector<?> y) {
+            checkHasArray(x, y);
+            return Method.F2J;
+        }
+
+        @Override
         public Method chooseL3Method(final DenseMatrix<?, ?> a, final DenseMatrix<?, ?> b, final DenseMatrix<?, ?> c) {
             checkHasArray(a, b, c);
             if (c.orientation().equals(Orientation.ROW)) {
                 throw new IllegalArgumentException();
             }
-            return Method.F2J;
-        }
-
-        @Override
-        public Method chooseL1Method(final DenseVector<?> x, final DenseVector<?> y) {
-            checkHasArray(x, y);
             return Method.F2J;
         }
     }
@@ -85,14 +85,14 @@ interface BLASPolicy {
         }
 
         @Override
-        public Method chooseL3Method(final DenseMatrix<?, ?> a, final DenseMatrix<?, ?> b, final DenseMatrix<?, ?> c) {
-            checkDirect(a, b, c);
+        public Method chooseL1Method(final DenseVector<?> x, final DenseVector<?> y) {
+            checkDirect(x, y);
             return Method.NATIVE;
         }
 
         @Override
-        public Method chooseL1Method(final DenseVector<?> x, final DenseVector<?> y) {
-            checkDirect(x, y);
+        public Method chooseL3Method(final DenseMatrix<?, ?> a, final DenseMatrix<?, ?> b, final DenseMatrix<?, ?> c) {
+            checkDirect(a, b, c);
             return Method.NATIVE;
         }
     }

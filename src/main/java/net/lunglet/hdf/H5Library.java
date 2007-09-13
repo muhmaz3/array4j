@@ -25,14 +25,6 @@ import java.util.Map;
 // TODO look at opening of absolute names from arbitrary groups or datasets
 
 public interface H5Library extends Library {
-    int DOUBLE_BYTES = Double.SIZE >>> 3;
-
-    int FLOAT_BYTES = Float.SIZE >>> 3;
-
-    int INTEGER_BYTES = Integer.SIZE >>> 3;
-
-    int LONG_BYTES = Long.SIZE >>> 3;
-
     static class H5E_error_t extends Structure {
         String desc;
 
@@ -53,21 +45,6 @@ public interface H5Library extends Library {
 
     interface H5G_iterate_t extends Callback {
         int callback(int locId, String name, Pointer data);
-    }
-
-    static final class LongArrays extends Memory {
-        private final List<Memory> buffers;
-
-        public LongArrays(final long[][] arrs) {
-            super(arrs.length * Pointer.SIZE);
-            this.buffers = new ArrayList<Memory>(arrs.length);
-            for (int i = 0; i < arrs.length; i++) {
-                Memory buf = new Memory(arrs[i].length * LONG_BYTES);
-                buf.getByteBuffer(0, buf.getSize()).asLongBuffer().put(arrs[i]);
-                buffers.add(buf);
-                setPointer(i * Pointer.SIZE, buf);
-            }
-        }
     }
 
     static final class Loader {
@@ -92,18 +69,34 @@ public interface H5Library extends Library {
                 }
             });
             options.put(Library.OPTION_TYPE_MAPPER, mapper);
-            H5Library lib = (H5Library) Native.loadLibrary(LIBRARY_NAME, H5Library.class, options);
-            // TODO enable this when we have our own error handler
-//            int err = lib.H5Eset_auto(null, null);
-//            if (err < 0) {
-//                throw new H5Exception("H5Eset_auto failed");
-//            }
+            // TODO loadLibrary with options at some stage
+            H5Library lib = (H5Library) Native.loadLibrary(LIBRARY_NAME, H5Library.class);
+            // TODO set error handle with H5Eset_auto(..., ...)
             return lib;
         }
 
         private Loader() {
         }
     }
+
+    static final class LongArrays extends Memory {
+        private final List<Memory> buffers;
+
+        public LongArrays(final long[][] arrs) {
+            super(arrs.length * Pointer.SIZE);
+            this.buffers = new ArrayList<Memory>(arrs.length);
+            for (int i = 0; i < arrs.length; i++) {
+                Memory buf = new Memory(arrs[i].length * LONG_BYTES);
+                buf.getByteBuffer(0, buf.getSize()).asLongBuffer().put(arrs[i]);
+                buffers.add(buf);
+                setPointer(i * Pointer.SIZE, buf);
+            }
+        }
+    }
+
+    int DOUBLE_BYTES = Double.SIZE >>> 3;
+
+    int FLOAT_BYTES = Float.SIZE >>> 3;
 
     int H5P_DATASET_CREATE = Loader.loadIntValue("H5P_CLS_DATASET_CREATE_g");
 
@@ -130,6 +123,10 @@ public interface H5Library extends Library {
     int H5P_NO_CLASS = Loader.loadIntValue("H5P_CLS_NO_CLASS_g");
 
     int H5P_NO_CLASS_DEFAULT = Loader.loadIntValue("H5P_LST_NO_CLASS_g");
+
+    int H5S_ALL = 0;
+
+    int H5S_UNLIMITED = -1;
 
     int H5T_C_S1 = Loader.loadIntValue("H5T_C_S1_g");
 
@@ -299,7 +296,27 @@ public interface H5Library extends Library {
 
     H5Library INSTANCE = Loader.loadLibrary();
 
-    String LIBRARY_NAME = "hdf5ddll";
+    int INTEGER_BYTES = Integer.SIZE >>> 3;
+
+    String LIBRARY_NAME = "hdf5dll";
+
+    int LONG_BYTES = Long.SIZE >>> 3;
+
+    int H5Aclose(int attr_id);
+
+    int H5Acreate(int loc_id, String name, int type_id, int space_id, int create_plist);
+
+    NativeLong H5Aget_name(int attr_id, NativeLong buf_size, byte[] buf);
+
+    int H5Aget_space(int attr_id);
+
+    int H5Aget_type(int attr_id);
+
+    int H5Aopen_name(int loc_id, String name);
+
+    int H5Aread(int attr_id, int mem_type_id, Buffer buf);
+
+    int H5Awrite(int attr_id, int mem_type_id, Buffer buf);
 
     int H5Dclose(int dset_id);
 
@@ -308,6 +325,8 @@ public interface H5Library extends Library {
     int H5Dget_space(int dset_id);
 
     long H5Dget_storage_size(int dset_id);
+
+    int H5Dget_type(int dataset_id);
 
     int H5Dopen(int loc_id, String name);
 
@@ -325,7 +344,7 @@ public interface H5Library extends Library {
 
     long H5Fget_freespace(int file_id);
 
-    int H5Fget_name(int obj_id, String name, int size);
+    NativeLong H5Fget_name(int obj_id, byte[] name, NativeLong size);
 
     int H5Fis_hdf5(String filename);
 
@@ -345,6 +364,8 @@ public interface H5Library extends Library {
 
     int H5Gopen(int loc_id, String name);
 
+    NativeLong H5Iget_name(int obj_id, byte[] name, NativeLong size);
+
     int H5open();
 
     int H5Pclose(int plist);
@@ -354,6 +375,10 @@ public interface H5Library extends Library {
     int H5Pset_fapl_core(int fapl_id, long increment, int backing_store);
 
     int H5Pset_fapl_sec2(int fapl_id);
+
+    int H5Pset_fill_time(int plist_id, int fill_time);
+
+    int H5Pset_sieve_buf_size(int fapl_id, long size);
 
     int H5Sclose(int space_id);
 
@@ -403,27 +428,7 @@ public interface H5Library extends Library {
 
     int H5Tcreate(int type, int size);
 
-    int H5Tget_size(int type_id);
-
-    int H5Pset_fill_time(int plist_id, int fill_time);
-
-    int H5Pset_sieve_buf_size(int fapl_id, long size);
-
-    int H5Aclose(int attr_id);
-
-    int H5Acreate(int loc_id, String name, int type_id, int space_id, int create_plist);
-
-    int H5Aget_space(int attr_id);
-
-    int H5Aopen_name(int loc_id, String name);
-
     int H5Tequal(int type_id1, int type_id2);
 
-    int H5Aget_type(int attr_id);
-
-    int H5Dget_type(int dataset_id);
-
-    int H5Aread(int attr_id, int mem_type_id, Buffer buf);
-
-    int H5Awrite(int attr_id, int mem_type_id, Buffer buf);
+    int H5Tget_size(int type_id);
 }

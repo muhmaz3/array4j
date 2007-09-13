@@ -7,11 +7,11 @@ import java.nio.LongBuffer;
 import java.util.Arrays;
 
 public final class DataSpace extends IdComponent {
-    private static final int H5S_ALL = 0;
+    public static final DataSpace ALL = new DataSpace(H5Library.H5S_ALL, true);
 
-    public static final DataSpace ALL = new DataSpace(H5S_ALL, true);
-
-    private static final int H5S_UNLIMITED = -1;
+    public static DataSpace createScalar() {
+        return new DataSpace(DataSpaceClass.SCALAR);
+    }
 
     private static int init(final DataSpaceClass type) {
         int id = H5Library.INSTANCE.H5Screate(type.intValue());
@@ -32,6 +32,10 @@ public final class DataSpace extends IdComponent {
         return id;
     }
 
+    private DataSpace(final DataSpaceClass type) {
+        super(init(type));
+    }
+
     DataSpace(final int id, final boolean tag) {
         // tag helps to avoid confusion with long... constructor
         super(id);
@@ -46,7 +50,7 @@ public final class DataSpace extends IdComponent {
     }
 
     public void close() {
-        if (getId() != H5S_ALL) {
+        if (getId() != H5Library.H5S_ALL) {
             // not a constant, should call H5Sclose
             int err = H5Library.INSTANCE.H5Sclose(getId());
             if (err < 0) {

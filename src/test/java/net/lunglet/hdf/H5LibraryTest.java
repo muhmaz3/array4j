@@ -8,7 +8,9 @@ import com.sun.jna.ptr.IntByReference;
 import java.util.UUID;
 import org.junit.Test;
 
-public final class H5Test {
+// TODO move testHyperslabReadWrite and refactor to not use array4j classes
+
+public final class H5LibraryTest {
     @Test
     public void testH5get_libversion() {
         IntByReference pmajnum = new IntByReference();
@@ -26,6 +28,7 @@ public final class H5Test {
         FileCreatePropList fcpl = FileCreatePropList.DEFAULT;
         FileAccessPropList fapl = new FileAccessPropListBuilder().setCore(1024, false).build();
         H5File h5 = new H5File(UUID.randomUUID().toString(), fcpl, fapl);
+        fapl.close();
 
         FloatDenseMatrix data = new FloatDenseMatrix(5, 6, Orientation.ROW, Storage.DIRECT);
         for (int j = 0; j < data.rows(); j++) {

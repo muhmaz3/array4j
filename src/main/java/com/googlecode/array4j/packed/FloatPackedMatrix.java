@@ -22,6 +22,14 @@ public final class FloatPackedMatrix extends AbstractPackedMatrix<FloatPackedMat
         return new FloatPackedMatrix(dim, dim, PackedType.SYMMETRIC, Storage.DEFAULT_FOR_DENSE);
     }
 
+    public static FloatPackedMatrix createSymmetric(final int dim, final Storage storage) {
+        return new FloatPackedMatrix(dim, dim, PackedType.SYMMETRIC, storage);
+    }
+
+    public static FloatPackedMatrix createUpperTriangular(final int rows, final int columns) {
+        return new FloatPackedMatrix(rows, columns, PackedType.UPPER_TRIANGULAR, Storage.DEFAULT_FOR_DENSE);
+    }
+
     public static FloatPackedMatrix valueOf(final FloatDenseMatrix other) {
         if (other.rows() != other.columns()) {
             throw new IllegalArgumentException();
@@ -32,14 +40,6 @@ public final class FloatPackedMatrix extends AbstractPackedMatrix<FloatPackedMat
             symm.setColumn(i, other.column(i));
         }
         return symm;
-    }
-
-    public static FloatPackedMatrix createSymmetric(final int dim, final Storage storage) {
-        return new FloatPackedMatrix(dim, dim, PackedType.SYMMETRIC, storage);
-    }
-
-    public static FloatPackedMatrix createUpperTriangular(final int rows, final int columns) {
-        return new FloatPackedMatrix(rows, columns, PackedType.UPPER_TRIANGULAR, Storage.DEFAULT_FOR_DENSE);
     }
 
     private transient FloatBuffer data;
