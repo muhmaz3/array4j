@@ -3,16 +3,8 @@ package net.lunglet.hdf;
 // TODO provide a way to abort the build
 
 public final class DataSetCreatePropListBuilder {
-    private static final int H5D_FILL_TIME_ERROR = -1;
-
-    private static final int H5D_FILL_TIME_ALLOC = 0;
-
-    private static final int H5D_FILL_TIME_NEVER = 1;
-
-    private static final int H5D_FILL_TIME_IFSET = 2;
-
     public enum FillTime {
-        IFSET(H5D_FILL_TIME_IFSET), ALLOC(H5D_FILL_TIME_ALLOC), NEVER(H5D_FILL_TIME_NEVER);
+        ALLOC(H5D_FILL_TIME_ALLOC), IFSET(H5D_FILL_TIME_IFSET), NEVER(H5D_FILL_TIME_NEVER);
 
         private final int value;
 
@@ -26,10 +18,18 @@ public final class DataSetCreatePropListBuilder {
     }
 
     public enum Layout {
+        CHUNKED,
         COMPACT,
-        CONTIGUOUS,
-        CHUNKED
+        CONTIGUOUS
     }
+
+    private static final int H5D_FILL_TIME_ALLOC = 0;
+
+    private static final int H5D_FILL_TIME_ERROR = -1;
+
+    private static final int H5D_FILL_TIME_IFSET = 2;
+
+    private static final int H5D_FILL_TIME_NEVER = 1;
 
     private final DataSetCreatePropList propList;
 

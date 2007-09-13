@@ -3,7 +3,7 @@ package com.googlecode.array4j.dense;
 import static org.junit.Assert.assertEquals;
 import com.googlecode.array4j.Orientation;
 import com.googlecode.array4j.Storage;
-import com.googlecode.array4j.TestSupport;
+import com.googlecode.array4j.MatrixTestSupport;
 import java.util.Arrays;
 import java.util.Collection;
 import org.junit.Test;
@@ -29,7 +29,7 @@ public final class FloatDenseUtilsTest {
         for (int rows = 0; rows < 5; rows++) {
             for (int columns = 0; columns < 8; columns++) {
                 FloatDenseMatrix x = new FloatDenseMatrix(rows, columns, orientation, Storage.HEAP);
-                TestSupport.populateMatrix(x);
+                MatrixTestSupport.populateMatrix(x);
                 for (int i = 0; i < columns; i++) {
                     for (int j = i; j <= columns; j++) {
                         FloatDenseMatrix y = FloatDenseUtils.subMatrixColumns(x, i, j);

@@ -4,11 +4,8 @@ import java.nio.Buffer;
 import java.nio.ByteBuffer;
 
 public final class DataSet extends AbstractDs implements Comparable<DataSet> {
-    private final String name;
-
-    DataSet(final int id, final String name) {
+    DataSet(final int id) {
         super(id);
-        this.name = name;
     }
 
     public void close() {
@@ -19,21 +16,9 @@ public final class DataSet extends AbstractDs implements Comparable<DataSet> {
         invalidate();
     }
 
-    public Attribute createAttribute(final String name, final DataType type, final DataSpace space) {
-        return Attribute.create(getId(), name, type, space);
-    }
-
-    public Attribute openAttribute(final String name) {
-        return Attribute.open(getId(), name);
-    }
-
     @Override
     public int compareTo(final DataSet o) {
         return getName().compareTo(o.getName());
-    }
-
-    public String getName() {
-        return name;
     }
 
     @Override
@@ -48,6 +33,15 @@ public final class DataSet extends AbstractDs implements Comparable<DataSet> {
     @Override
     public long getStorageSize() {
         return H5Library.INSTANCE.H5Dget_storage_size(getId());
+    }
+
+    @Override
+    public DataType getType() {
+        int typeId = H5Library.INSTANCE.H5Dget_type(getId());
+        if (typeId < 0) {
+            throw new H5DataSetException("H5Aget_type failed");
+        }
+        return DataType.createTypeFromId(typeId);
     }
 
     @Override
@@ -127,14 +121,5 @@ public final class DataSet extends AbstractDs implements Comparable<DataSet> {
     public void write(final byte[] arr, final DataType memType, final DataSpace memSpace, final DataSpace fileSpace,
             final DataSetMemXferPropList xferPlist) {
         write(ByteBuffer.wrap(arr), memType, memSpace, fileSpace, xferPlist);
-    }
-
-    @Override
-    public DataType getType() {
-        int typeId = H5Library.INSTANCE.H5Dget_type(getId());
-        if (typeId < 0) {
-            throw new H5DataSetException("H5Aget_type failed");
-        }
-        return DataType.createTypeFromId(typeId);
     }
 }

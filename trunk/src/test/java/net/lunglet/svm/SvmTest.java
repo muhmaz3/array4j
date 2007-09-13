@@ -4,12 +4,15 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import com.googlecode.array4j.FloatMatrix;
 import com.googlecode.array4j.FloatMatrixUtils;
+import com.googlecode.array4j.FloatVector;
 import com.googlecode.array4j.Orientation;
 import com.googlecode.array4j.Storage;
 import com.googlecode.array4j.dense.FloatDenseMatrix;
 import com.googlecode.array4j.dense.FloatDenseVector;
 import com.googlecode.array4j.math.FloatMatrixMath;
 import com.googlecode.array4j.packed.FloatPackedMatrix;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import libsvm.svm;
 import libsvm.svm_model;
@@ -21,6 +24,20 @@ import org.junit.Test;
 // TODO test with heap and direct data oriented both ways
 
 public final class SvmTest {
+    @SuppressWarnings("unchecked")
+    private static Handle<FloatVector<?>>[] createHandles(final Iterable<? extends FloatVector<?>> c) {
+        List<Handle<FloatVector<?>>> list = new ArrayList<Handle<FloatVector<?>>>();
+        for (final FloatVector<?> e : c) {
+            list.add(new Handle<FloatVector<?>>() {
+                @Override
+                public FloatVector<?> get() {
+                    return e;
+                }
+            });
+        }
+        return (Handle<FloatVector<?>>[]) list.toArray(new Handle<?>[0]);
+    }
+
     private svm_parameter createSvmParameter() {
         // TODO make sure these values match those in SimpleSvm#createDefaultSvmParameter()
         svm_parameter param = new svm_parameter();
@@ -161,14 +178,14 @@ public final class SvmTest {
                 FloatDenseVector precomputedScores = getPrecomputedScores(data, kernel, labels, cost);
 
                 // train SVM using linear kernel
-                SimpleSvm svm1 = new SimpleSvm(data, labels);
+                SimpleSvm svm1 = new SimpleSvm(createHandles(data.columnsIterator()), labels);
                 svm1.train(cost);
                 FloatDenseVector scores1 = svm1.score(data);
                 svm1.compact();
                 FloatDenseVector scores2 = svm1.score(data);
 
                 // train SVM using precomputed kernel
-                SimpleSvm svm2 = new SimpleSvm(data, kernel, labels);
+                SimpleSvm svm2 = new SimpleSvm(createHandles(data.columnsIterator()), kernel, labels);
                 svm2.train(cost);
                 FloatDenseVector scores3 = svm2.score(data);
                 svm2.compact();

@@ -13,22 +13,8 @@ abstract class AbstractDs extends H5Object {
         super(id);
     }
 
-    public abstract DataSpace getSpace();
-
-    public abstract DataType getType();
-
-    public abstract long getStorageSize();
-
-    public abstract void read(Buffer buf, DataType memType);
-
-    public abstract void write(Buffer buf, DataType memType);
-
     protected void checkBuffer(final Buffer buf, final DataType memType) {
         checkBuffer(buf, memType, DataSpace.ALL, DataSpace.ALL);
-    }
-
-    protected void checkBuffer(final int size, final DataType memType) {
-        checkBuffer(size, memType, DataSpace.ALL, DataSpace.ALL);
     }
 
     protected void checkBuffer(final Buffer buf, final DataType memType, final DataSpace memSpace,
@@ -47,6 +33,10 @@ abstract class AbstractDs extends H5Object {
             throw new AssertionError();
         }
         checkBuffer(size, memType, memSpace, fileSpace);
+    }
+
+    protected void checkBuffer(final int size, final DataType memType) {
+        checkBuffer(size, memType, DataSpace.ALL, DataSpace.ALL);
     }
 
     protected void checkBuffer(final int size, final DataType memType, final DataSpace memSpace,
@@ -70,15 +60,25 @@ abstract class AbstractDs extends H5Object {
         }
     }
 
-    public final void write(final int[] arr) {
-        write(IntBuffer.wrap(arr), PredefinedType.STD_I32LE);
+    public abstract DataSpace getSpace();
+
+    public abstract long getStorageSize();
+
+    public abstract DataType getType();
+
+    public abstract void read(Buffer buf, DataType memType);
+
+    public final void read(final int[] arr) {
+        read(IntBuffer.wrap(arr), PredefinedType.STD_I32LE);
     }
+
+    public abstract void write(Buffer buf, DataType memType);
 
     public final void write(final float[] arr) {
         write(FloatBuffer.wrap(arr), PredefinedType.IEEE_F32LE);
     }
 
-    public final void read(final int[] arr) {
-        read(IntBuffer.wrap(arr), PredefinedType.STD_I32LE);
+    public final void write(final int[] arr) {
+        write(IntBuffer.wrap(arr), PredefinedType.STD_I32LE);
     }
 }

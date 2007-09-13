@@ -11,15 +11,6 @@ import org.apache.commons.lang.builder.EqualsBuilder;
  */
 public abstract class AbstractDenseMatrix<M extends DenseMatrix<M, V>, V extends DenseVector<V>, T> extends
         AbstractMatrix<M, V> implements DenseMatrix<M, V> {
-    protected final void checkData(final Buffer data) {
-        int start = offset * elementSizeBytes;
-        int end = start + (Math.max(0, length - 1) * stride + (length > 0 ? 1 : 0)) * elementSizeBytes;
-        int capacity = BufferUtils.getBytesCapacity(data);
-        if (start > capacity || end > capacity) {
-            throw new IllegalArgumentException();
-        }
-    }
-
     /** Stride between elements in a column. */
     protected final int columnStride;
 
@@ -55,6 +46,15 @@ public abstract class AbstractDenseMatrix<M extends DenseMatrix<M, V>, V extends
         } else {
             this.rowStride = stride;
             this.columnStride = stride * rows;
+        }
+    }
+
+    protected final void checkData(final Buffer data) {
+        int start = offset * elementSizeBytes;
+        int end = start + (Math.max(0, length - 1) * stride + (length > 0 ? 1 : 0)) * elementSizeBytes;
+        int capacity = BufferUtils.getBytesCapacity(data);
+        if (start > capacity || end > capacity) {
+            throw new IllegalArgumentException();
         }
     }
 

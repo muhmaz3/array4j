@@ -1,10 +1,9 @@
 package net.lunglet.svm;
 
-import java.util.Arrays;
-
 import com.googlecode.array4j.FloatMatrix;
 import com.googlecode.array4j.FloatVector;
 import com.googlecode.array4j.dense.FloatDenseVector;
+import java.util.Arrays;
 
 // TODO make data an array of T or an Iterable<FloatVector> or something
 
@@ -32,12 +31,12 @@ public final class SimpleSvm {
         return param;
     }
 
-    private static PrecomputedKernel createPrecomputedKernel(final FloatMatrix<?, ?> data,
+    private static PrecomputedKernel createPrecomputedKernel(final Handle<? extends FloatVector<?>>[] data,
             final FloatMatrix<?, ?> kernel) {
         if (kernel == null) {
             throw new NullPointerException();
         }
-        if (data.columns() != kernel.rows() || !kernel.isSquare()) {
+        if (data.length != kernel.rows() || !kernel.isSquare()) {
             throw new IllegalArgumentException();
         }
         return new PrecomputedKernel() {
@@ -47,7 +46,7 @@ public final class SimpleSvm {
         };
     }
 
-    private final FloatMatrix<?, ?> data;
+    private final Handle<? extends FloatVector<?>>[] data;
 
     private final PrecomputedKernel kernel;
 
@@ -55,18 +54,22 @@ public final class SimpleSvm {
 
     private final SvmProblem problem;
 
-    public SimpleSvm(final FloatMatrix<?, ?> data, final FloatMatrix<?, ?> kernel, final int[] labels) {
+    public SimpleSvm(final Handle<? extends FloatVector<?>>[] data, final FloatMatrix<?, ?> kernel, final int[] labels) {
         this(data, createPrecomputedKernel(data, kernel), labels);
     }
 
-    public SimpleSvm(final FloatMatrix<?, ?> data, final PrecomputedKernel kernel, final int[] labels) {
-        if (data.columns() != labels.length) {
+    public SimpleSvm(final Handle<? extends FloatVector<?>>[] data, final int[] labels) {
+        this(data, (PrecomputedKernel) null, labels);
+    }
+
+    public SimpleSvm(final Handle<? extends FloatVector<?>>[] data, final PrecomputedKernel kernel, final int[] labels) {
+        if (data.length != labels.length) {
             throw new IllegalArgumentException();
         }
         this.data = data;
         this.kernel = kernel;
         problem = new SvmProblem();
-        problem.l = data.columns();
+        problem.l = data.length;
         problem.y = new double[labels.length];
         problem.x = new SvmNode[problem.l];
         for (int i = 0; i < labels.length; i++) {
@@ -74,16 +77,12 @@ public final class SimpleSvm {
             if (kernel != null) {
                 problem.x[i] = new SvmNode(i, null);
             } else {
-                problem.x[i] = new SvmNode(i, data.column(i));
+                problem.x[i] = new SvmNode(i, data[i].get());
             }
         }
         if (kernel != null) {
             problem.kernel = kernel;
         }
-    }
-
-    public SimpleSvm(final FloatMatrix<?, ?> data, final int[] labels) {
-        this(data, (PrecomputedKernel) null, labels);
     }
 
     /**
@@ -147,7 +146,7 @@ public final class SimpleSvm {
             param.kernel_type = SvmParameter.LINEAR;
             // obtain actual support vectors
             for (int i = 0; i < model.SV.length; i++) {
-                model.SV[i] = new SvmNode(i, data.column(model.SV[i].index));
+                model.SV[i] = new SvmNode(i, data[model.SV[i].index].get());
             }
         }
         if (model.SV.length == 0) {

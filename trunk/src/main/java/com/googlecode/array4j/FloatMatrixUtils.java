@@ -65,18 +65,14 @@ public final class FloatMatrixUtils {
         }
     }
 
+    public static void fillRandom(final FloatMatrix<?, ?> matrix) {
+        fillRandom(matrix, new Random());
+    }
+
     public static void fillRandom(final FloatMatrix<?, ?> matrix, final Random rng) {
         for (int i = 0; i < matrix.rows(); i++) {
             for (int j = 0; j < matrix.columns(); j++) {
                 matrix.set(i, j, rng.nextFloat());
-            }
-        }
-    }
-
-    public static void fillRandom(final Random rng, final FloatMatrix<?, ?> x) {
-        for (int i = 0; i < x.rows(); i++) {
-            for (int j = 0; j < x.columns(); j++) {
-                x.set(i, j, rng.nextFloat());
             }
         }
     }
@@ -153,7 +149,7 @@ public final class FloatMatrixUtils {
             }
             builder.append("[");
             for (int j = 0; j < x.columns(); j++) {
-                builder.append(String.format("% .16g", x.get(i, j)));
+                builder.append(String.format("% .15e", x.get(i, j)));
                 if (j < x.columns() - 1) {
                     builder.append(" ");
                 }

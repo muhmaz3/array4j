@@ -1,6 +1,9 @@
 package net.lunglet.hdf;
 
+import com.sun.jna.NativeLong;
 import com.sun.jna.ptr.LongByReference;
+import java.nio.charset.Charset;
+import java.util.Arrays;
 
 public final class H5File extends IdComponent {
     /* create non-existing files */
@@ -59,7 +62,7 @@ public final class H5File extends IdComponent {
 
     public H5File(final String name, final int flags, final FileCreatePropList fcpl, final FileAccessPropList fapl) {
         super(init(name, flags, fcpl, fapl));
-        this.rootGroup = new Group(getId(), "/");
+        this.rootGroup = new Group(getId());
     }
 
     public void close() {
@@ -71,14 +74,16 @@ public final class H5File extends IdComponent {
     }
 
     public String getFileName() {
-        // Preliminary call to H5Fget_name to get the length of the file name
-        int size = H5Library.INSTANCE.H5Fget_name(getId(), null, 0);
-        if (size < 0) {
-            throw new H5IdComponentException("H5Fget_name failed");
+        NativeLong size = H5Library.INSTANCE.H5Fget_name(getId(), null, new NativeLong(0));
+        if (size.longValue() < 0) {
+            throw new H5FileException("H5Fget_name failed");
         }
-
-        // TODO implement the rest of this function
-        throw new UnsupportedOperationException();
+        byte[] buf = new byte[size.intValue() + 1];
+        NativeLong err = H5Library.INSTANCE.H5Fget_name(getId(), buf, new NativeLong(buf.length));
+        if (err.longValue() < 0) {
+            throw new H5FileException("H5Fget_name failed");
+        }
+        return new String(Arrays.copyOf(buf, buf.length - 1), Charset.forName("US-ASCII"));
     }
 
     public long getFileSize() {

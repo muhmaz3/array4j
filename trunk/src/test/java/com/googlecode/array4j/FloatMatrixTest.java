@@ -11,6 +11,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Arrays;
 import java.util.Collection;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -234,7 +235,7 @@ public final class FloatMatrixTest<M extends FloatMatrix<M, V>, V extends FloatV
         }
     }
 
-    @Test
+    @Ignore
     public void testSerialization() throws IOException, ClassNotFoundException {
         for (int rows = 0; rows < 4; rows++) {
             for (int columns = 0; columns < 4; columns++) {

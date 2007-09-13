@@ -16,16 +16,13 @@ public final class Group extends H5Object {
 
     private static final int H5G_TYPE = 3;
 
-    private final String name;
-
-    Group(final int id, final String name) {
+    Group(final int id) {
         super(id);
-        this.name = name;
     }
 
     public void close() {
-        // never close the root group -- closing the file will close it
-        if (name.equals("/")) {
+        // never close the root group
+        if (getName().equals("/")) {
             invalidate();
             return;
         }
@@ -56,7 +53,7 @@ public final class Group extends H5Object {
         }
 
         // No failure, create and return the DataSet object
-        return new DataSet(datasetId, createName(name));
+        return new DataSet(datasetId);
     }
 
     public DataSet createDataSet(final String name, final DataType dataType, final long... dims) {
@@ -74,21 +71,7 @@ public final class Group extends H5Object {
         if (groupId < 0) {
             throw new H5GroupException("H5Gcreate failed");
         }
-        return new Group(groupId, createName(name));
-    }
-
-    private String createName(final String name) {
-        // TODO put this code somewhere where Attribute can also use it
-        if (name.startsWith("/")) {
-            return name;
-        }
-        StringBuilder builder = new StringBuilder();
-        builder.append(getName());
-        if (!getName().equals("/")) {
-            builder.append("/");
-        }
-        builder.append(name);
-        return builder.toString();
+        return new Group(groupId);
     }
 
     @Override
@@ -136,16 +119,12 @@ public final class Group extends H5Object {
         return groups;
     }
 
-    public String getName() {
-        return name;
-    }
-
     public DataSet openDataSet(final String name) {
         int datasetId = H5Library.INSTANCE.H5Dopen(getId(), name);
         if (datasetId < 0) {
             throw new H5GroupException("H5Dopen failed");
         }
-        return new DataSet(datasetId, createName(name));
+        return new DataSet(datasetId);
     }
 
     public Group openGroup(final String name) {
@@ -153,6 +132,6 @@ public final class Group extends H5Object {
         if (groupId < 0) {
             throw new H5GroupException("H5Gopen failed");
         }
-        return new Group(groupId, createName(name));
+        return new Group(groupId);
     }
 }
