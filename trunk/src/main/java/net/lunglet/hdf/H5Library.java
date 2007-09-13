@@ -299,7 +299,7 @@ public interface H5Library extends Library {
 
     H5Library INSTANCE = Loader.loadLibrary();
 
-    String LIBRARY_NAME = "hdf5dll";
+    String LIBRARY_NAME = "hdf5ddll";
 
     int H5Dclose(int dset_id);
 
@@ -385,7 +385,7 @@ public interface H5Library extends Library {
 
     int H5Sselect_all(int space_id);
 
-    int H5Sselect_elements(int space_id, int op, NativeLong num_elements, long[][] coord);
+    int H5Sselect_elements(int space_id, int op, NativeLong num_elements, Buffer coord);
 
     int H5Sselect_hyperslab(int space_id, int op, long[] start, long[] stride, long[] count, long[] block);
 

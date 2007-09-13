@@ -1,7 +1,10 @@
 package net.lunglet.hdf;
 
 import static org.junit.Assert.assertEquals;
-
+import static org.junit.Assert.assertTrue;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import org.junit.Test;
 
 public final class DataSpaceTest {
@@ -14,17 +17,26 @@ public final class DataSpaceTest {
 
     @Test
     public void testSelectElements() {
-        long i = 3;
-        long j = 1;
-        long k = 2;
-        DataSpace space = new DataSpace(i, j, k);
-        Point point000 = new Point(0, 0, 0);
-        space.selectElements(SelectionOperator.SET, point000);
-        assertEquals(1L, space.getSelectNPoints());
-        Point[] points = space.getSelectedPoints(0, 1);
-        assertEquals(1, points.length);
-        // TODO fix this
-        assertEquals(point000, points[0]);
+        DataSpace space = new DataSpace(3, 4, 2);
+        long[] dims = space.getDims();
+        assertEquals(3, dims.length);
+        assertTrue(Arrays.equals(new long[]{3, 4, 2}, dims));
+        List<Point> pointList = new ArrayList<Point>();
+        for (long i = 0; i < dims[0]; i++) {
+            for (long j = 0; j < dims[1]; j++) {
+                for (long k = 0; k < dims[2]; k++) {
+                    pointList.add(new Point(i, j, k));
+                    Point[] points = pointList.toArray(new Point[0]);
+                    space.selectElements(SelectionOperator.SET, points);
+                    assertEquals(points.length, space.getSelectNPoints());
+                    Point[] selectedPoints = space.getSelectedPoints();
+                    assertEquals(points.length, selectedPoints.length);
+                    for (Point point : selectedPoints) {
+                        assertTrue(pointList.contains(point));
+                    }
+                }
+            }
+        }
     }
 
     @Test
