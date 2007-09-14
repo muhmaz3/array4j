@@ -5,6 +5,8 @@ import java.nio.charset.Charset;
 import java.util.Arrays;
 
 abstract class H5Object extends IdComponent {
+    private static final Charset CHARSET = Charset.forName("US-ASCII");
+
     public H5Object(final int id) {
         super(id);
     }
@@ -14,9 +16,24 @@ abstract class H5Object extends IdComponent {
     }
 
     public final void createAttribute(final String name, final String value) {
-//        DataSpace space = DataSpace.createScalar();
-//        space.close();
-        throw new UnsupportedOperationException();
+        DataSpace space = DataSpace.createScalar();
+        StringType stype = null;
+        Attribute attr = null;
+        try {
+            stype = StringType.C_S1.copy();
+            stype.setSize(value.length());
+            attr = createAttribute(name, stype, space);
+            byte[] buf = value.getBytes(CHARSET);
+            attr.write(buf, stype);
+        } finally {
+            if (attr != null) {
+                attr.close();
+            }
+            if (stype != null) {
+                stype.close();
+            }
+            space.close();
+        }
     }
 
     public String getName() {
@@ -29,15 +46,29 @@ abstract class H5Object extends IdComponent {
         if (err.longValue() < 0) {
             throw new H5IdComponentException("H5Iget_name failed");
         }
-        return new String(Arrays.copyOf(buf, buf.length - 1), Charset.forName("US-ASCII"));
+        return new String(Arrays.copyOf(buf, buf.length - 1), CHARSET);
     }
 
     public final int getNumAttrs() {
-        return 0;
+        throw new UnsupportedOperationException();
     }
 
     public final String getStringAttribute(final String name) {
-        throw new UnsupportedOperationException();
+        Attribute attr = openAttribute(name);
+        try {
+            DataType dtype = attr.getType();
+            if (!(dtype instanceof StringType)) {
+                dtype.close();
+                throw new IllegalArgumentException();
+            }
+            StringType stype = (StringType) dtype;
+            byte[] buf = new byte[stype.getSize()];
+            attr.read(buf, stype);
+            stype.close();
+            return new String(buf, CHARSET);
+        } finally {
+            attr.close();
+        }
     }
 
     public final Attribute openAttribute(final String name) {

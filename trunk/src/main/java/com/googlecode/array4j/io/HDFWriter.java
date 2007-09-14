@@ -4,8 +4,8 @@ import com.googlecode.array4j.dense.FloatDenseMatrix;
 import com.googlecode.array4j.packed.FloatPackedMatrix;
 import net.lunglet.hdf.DataSet;
 import net.lunglet.hdf.DataType;
+import net.lunglet.hdf.FloatType;
 import net.lunglet.hdf.H5File;
-import net.lunglet.hdf.PredefinedType;
 
 // TODO handle any orientation, stride, offset, size, etc.
 
@@ -24,7 +24,7 @@ public final class HDFWriter {
     }
 
     public void write(final FloatDenseMatrix matrix, final String name) {
-        DataType memType = PredefinedType.IEEE_F32LE;
+        DataType memType = FloatType.IEEE_F32LE;
         DataSet dataset = h5file.getRootGroup().createDataSet(name, memType, matrix.rows(), matrix.columns());
         try {
             dataset.write(matrix.data(), memType);
@@ -38,7 +38,7 @@ public final class HDFWriter {
         try {
             long n = matrix.rows();
             long k = n * (n + 1) / 2;
-            DataType memType = PredefinedType.IEEE_F32LE;
+            DataType memType = FloatType.IEEE_F32LE;
             dataset = h5file.getRootGroup().createDataSet(name, memType, k);
             dataset.write(matrix.data(), memType);
         } finally {

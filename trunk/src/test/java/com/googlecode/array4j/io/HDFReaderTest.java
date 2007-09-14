@@ -10,10 +10,10 @@ import java.util.Random;
 import net.lunglet.hdf.DataSet;
 import net.lunglet.hdf.DataSpace;
 import net.lunglet.hdf.DataType;
+import net.lunglet.hdf.FloatType;
 import net.lunglet.hdf.Group;
 import net.lunglet.hdf.H5File;
 import net.lunglet.hdf.Point;
-import net.lunglet.hdf.PredefinedType;
 import net.lunglet.hdf.SelectionOperator;
 import org.junit.Test;
 
@@ -31,7 +31,7 @@ public final class HDFReaderTest extends AbstractHDFTest {
         H5File h5 = createMemoryH5File();
         Group group = h5.getRootGroup().createGroup("/foo");
         group.close();
-        DataSet ds = h5.getRootGroup().createDataSet("/foo/bar", PredefinedType.IEEE_F32LE, 3);
+        DataSet ds = h5.getRootGroup().createDataSet("/foo/bar", FloatType.IEEE_F32LE, 3);
         ds.write(new float[]{1.0f, 2.0f, 3.0f});
         ds.close();
         HDFReader reader = new HDFReader(h5);
@@ -47,7 +47,7 @@ public final class HDFReaderTest extends AbstractHDFTest {
     @Test
     public void testReadPackedRowsColumns() {
         H5File h5 = createMemoryH5File();
-        DataType dtype = PredefinedType.IEEE_F32LE;
+        DataType dtype = FloatType.IEEE_F32LE;
         int n = 5;
         int k = n * (n + 1) / 2;
         DataSet ds = h5.getRootGroup().createDataSet("data", dtype, k);
