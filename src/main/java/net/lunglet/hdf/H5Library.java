@@ -430,5 +430,9 @@ public interface H5Library extends Library {
 
     int H5Tequal(int type_id1, int type_id2);
 
+    int H5Tget_class(int type_id);
+
     int H5Tget_size(int type_id);
+
+    int H5Tset_size(int type_id, NativeLong size);
 }

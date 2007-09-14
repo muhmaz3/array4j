@@ -1,5 +1,6 @@
 package net.lunglet.hdf;
 
+import static org.junit.Assert.assertEquals;
 import java.util.UUID;
 import org.junit.Test;
 
@@ -10,9 +11,11 @@ public final class AttributeTest {
         FileAccessPropList fapl = new FileAccessPropListBuilder().setCore(1024, false).build();
         H5File h5file = new H5File(UUID.randomUUID().toString(), fcpl, fapl);
         fapl.close();
-        Group root = h5file.getRootGroup();
-        Group foo = root.createGroup("/foo");
-        foo.close();
+        String name = "attrname";
+        String expectedValue = "attrval123";
+        h5file.getRootGroup().createAttribute(name, expectedValue);
+        String actualValue = h5file.getRootGroup().getStringAttribute(name);
+        assertEquals(expectedValue, actualValue);
         h5file.close();
     }
 }

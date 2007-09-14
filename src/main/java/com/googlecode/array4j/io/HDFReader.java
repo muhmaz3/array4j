@@ -4,8 +4,8 @@ import com.googlecode.array4j.packed.FloatPackedMatrix;
 import java.io.IOException;
 import net.lunglet.hdf.DataSet;
 import net.lunglet.hdf.DataSpace;
+import net.lunglet.hdf.FloatType;
 import net.lunglet.hdf.H5File;
-import net.lunglet.hdf.PredefinedType;
 
 // TODO handle any orientation, stride, offset, size, etc.
 
@@ -38,7 +38,7 @@ public final class HDFReader {
             if (matrix.rows() != n) {
                 throw new IllegalArgumentException();
             }
-            dataset.read(matrix.data(), PredefinedType.IEEE_F32LE);
+            dataset.read(matrix.data(), FloatType.IEEE_F32LE);
         } finally {
             if (space != null) {
                 space.close();

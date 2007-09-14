@@ -1,19 +1,39 @@
 package net.lunglet.hdf;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class DataType extends H5Object {
     static DataType createTypeFromId(final int id) {
         if (id < 0) {
             throw new IllegalArgumentException();
         }
-        DataType dtype = new DataType(id, false);
-        for (PredefinedType type : PredefinedType.TYPES) {
-            if (dtype.equals(type)) {
-                dtype.close();
-                return type;
+        // TODO this set should be static, but if we put it in this class, some
+        // of the fields might still be null when initializing it
+        Set<DataType> types = new HashSet<DataType>();
+        types.add(FloatType.IEEE_F32LE);
+        types.add(FloatType.IEEE_F64LE);
+        types.add(FloatType.NATIVE_FLOAT);
+        types.add(IntType.STD_I32LE);
+        types.add(IntType.STD_I8BE);
+        types.add(StringType.C_S1);
+        for (DataType dtype : types) {
+            int tri = H5Library.INSTANCE.H5Tequal(id, dtype.getId());
+            if (tri < 0) {
+                throw new H5DataTypeException("H5Tequal failed");
+            }
+            if (tri > 0) {
+                return dtype;
             }
         }
-        // TODO support other types
-        throw new UnsupportedOperationException();
+        int dtypeClass = H5Library.INSTANCE.H5Tget_class(id);
+        if (dtypeClass < 0) {
+            throw new H5DataTypeException("H5Tget_class failed");
+        }
+        if (dtypeClass == DataTypeClass.STRING.intValue()) {
+            return new StringType(id, false);
+        }
+        throw new AssertionError();
     }
 
     private final boolean predefined;
@@ -24,17 +44,16 @@ public class DataType extends H5Object {
     }
 
     public final void close() {
-        // If this datatype is not a predefined type, call H5Tclose on it.
-        if (!predefined) {
-            int err = H5Library.INSTANCE.H5Tclose(getId());
-            if (err < 0) {
-                throw new H5DataTypeException("H5Tclose failed");
-            }
-            invalidate();
-        } else {
-            // cannot close a predefined type
-            throw new H5DataTypeException("Cannot close a predefined type");
+        if (predefined) {
+            // cannot close a predefined type, so just ignore it, instead of
+            // requiring the user to check before they close
+            return;
         }
+        int err = H5Library.INSTANCE.H5Tclose(getId());
+        if (err < 0) {
+            throw new H5DataTypeException("H5Tclose failed");
+        }
+        invalidate();
     }
 
     final void commit(final Group group, final String name) {
@@ -51,28 +70,15 @@ public class DataType extends H5Object {
         } else if (committed == 0) {
             return false;
         } else {
-            throw new RuntimeException("H5Tcommitted return negative value");
+            throw new RuntimeException("H5Tcommitted failed");
         }
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (obj == null || !(obj instanceof DataType)) {
-            return false;
-        }
-        if (obj == this) {
-            return true;
-        }
-        DataType other = (DataType) obj;
-        int tri = H5Library.INSTANCE.H5Tequal(getId(), other.getId());
-        if (tri < 0) {
-            throw new H5DataTypeException("H5Tequal failed");
-        }
-        return tri > 0;
     }
 
     public final int getSize() {
-        // TODO do we need error checking here?
-        return H5Library.INSTANCE.H5Tget_size(getId());
+        int size = H5Library.INSTANCE.H5Tget_size(getId());
+        if (size == 0) {
+            throw new H5DataTypeException("H5Tget_size failed");
+        }
+        return size;
     }
 }

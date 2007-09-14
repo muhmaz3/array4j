@@ -20,9 +20,9 @@ public final class DataSetTest {
         H5File h5file = new H5File(UUID.randomUUID().toString(), fcpl, fapl);
         fapl.close();
         Group root = h5file.getRootGroup();
-        DataSet dataset = root.createDataSet("dataset", PredefinedType.IEEE_F64LE, 2, 2);
+        DataSet dataset = root.createDataSet("dataset", FloatType.IEEE_F64LE, 2, 2);
 
-        DataType dtype = PredefinedType.STD_I32LE;
+        DataType dtype = IntType.STD_I32LE;
         DataSpace space = new DataSpace(7L);
         Attribute attr = dataset.createAttribute("attr", dtype, space);
         IntBuffer buf = IntBuffer.allocate(7);
@@ -62,15 +62,15 @@ public final class DataSetTest {
         H5File h5file = new H5File(UUID.randomUUID().toString(), fcpl, fapl);
         fapl.close();
         Group root = h5file.getRootGroup();
-        DataSet dataset = root.createDataSet("dataset", PredefinedType.IEEE_F64LE, 2, 2);
+        DataSet dataset = root.createDataSet("dataset", FloatType.IEEE_F64LE, 2, 2);
         DataSpace space = dataset.getSpace();
         assertEquals(4, space.getSimpleExtentNpoints());
         assertEquals(4, space.getSelectNPoints());
         DoubleBuffer buf = DoubleBuffer.allocate((int) space.getSelectNPoints());
         buf.put(new double[]{1.0, 2.0, 3.0, 4.0}, 0, 4);
-        dataset.write(buf, PredefinedType.IEEE_F64LE);
+        dataset.write(buf, FloatType.IEEE_F64LE);
         FloatBuffer buf2 = FloatBuffer.allocate(buf.capacity());
-        dataset.read(buf2, PredefinedType.IEEE_F32LE);
+        dataset.read(buf2, FloatType.IEEE_F32LE);
         assertTrue(Arrays.equals(buf2.array(), new float[]{1.0f, 2.0f, 3.0f, 4.0f}));
         space.close();
         dataset.close();

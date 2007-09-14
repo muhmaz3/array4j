@@ -69,16 +69,16 @@ abstract class AbstractDs extends H5Object {
     public abstract void read(Buffer buf, DataType memType);
 
     public final void read(final int[] arr) {
-        read(IntBuffer.wrap(arr), PredefinedType.STD_I32LE);
+        read(IntBuffer.wrap(arr), IntType.STD_I32LE);
     }
 
     public abstract void write(Buffer buf, DataType memType);
 
     public final void write(final float[] arr) {
-        write(FloatBuffer.wrap(arr), PredefinedType.IEEE_F32LE);
+        write(FloatBuffer.wrap(arr), FloatType.IEEE_F32LE);
     }
 
     public final void write(final int[] arr) {
-        write(IntBuffer.wrap(arr), PredefinedType.STD_I32LE);
+        write(IntBuffer.wrap(arr), IntType.STD_I32LE);
     }
 }

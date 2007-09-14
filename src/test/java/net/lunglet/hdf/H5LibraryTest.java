@@ -37,11 +37,11 @@ public final class H5LibraryTest {
             }
         }
         Group root = h5.getRootGroup();
-        DataType dtype = PredefinedType.IEEE_F32LE;
+        DataType dtype = FloatType.IEEE_F32LE;
         DataSpace dataspace = new DataSpace(data.rows(), data.columns());
         String name = "FloatArray";
         DataSet dataset = root.createDataSet(name, dtype, dataspace);
-        dataset.write(data.data(), PredefinedType.IEEE_F32LE);
+        dataset.write(data.data(), FloatType.IEEE_F32LE);
         dataspace.close();
         dataset.close();
 
