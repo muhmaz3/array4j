@@ -11,6 +11,14 @@ public final class FloatDenseVector extends AbstractFloatDense<FloatDenseVector>
         FloatVector<FloatDenseVector>, DenseVector<FloatDenseVector> {
     private static final long serialVersionUID = 1L;
 
+    public static FloatDenseVector valueOf(final double... values) {
+        float[] floatValues = new float[values.length];
+        for (int i = 0; i < values.length; i++) {
+            floatValues[i] = (float) values[i];
+        }
+        return new FloatDenseVector(Orientation.DEFAULT_FOR_VECTOR, Storage.DEFAULT_FOR_DENSE, floatValues);
+    }
+
     public static FloatDenseVector valueOf(final float... values) {
         return new FloatDenseVector(Orientation.DEFAULT_FOR_VECTOR, Storage.DEFAULT_FOR_DENSE, values);
     }
@@ -51,9 +59,9 @@ public final class FloatDenseVector extends AbstractFloatDense<FloatDenseVector>
         this(Orientation.DEFAULT_FOR_VECTOR, storage, values);
     }
 
-    @Override
-    public FloatDenseVector asVector() {
-        return this;
+    public FloatDenseMatrix asMatrix() {
+        Orientation orient = isRowVector() ? Orientation.ROW : Orientation.COLUMN;
+        return new FloatDenseMatrix(data(), rows, columns, offset, stride, orient);
     }
 
     @Override

@@ -15,6 +15,20 @@ abstract class H5Object extends IdComponent {
         return Attribute.create(getId(), name, type, space);
     }
 
+    public void createAttribute(final String name, final int[] value) {
+        DataSpace space = new DataSpace(value.length);
+        Attribute attr = null;
+        try {
+            attr = createAttribute(name, IntType.STD_I32LE, space);
+            attr.write(value);
+        } finally {
+            if (attr != null) {
+                attr.close();
+            }
+            space.close();
+        }
+    }
+
     public final void createAttribute(final String name, final String value) {
         DataSpace space = DataSpace.createScalar();
         StringType stype = null;
@@ -33,6 +47,34 @@ abstract class H5Object extends IdComponent {
                 stype.close();
             }
             space.close();
+        }
+    }
+
+    public final int[] getIntArrayAttribute(final String name) {
+        Attribute attr = openAttribute(name);
+        DataType dtype = null;
+        DataSpace space = null;
+        try {
+            dtype = attr.getType();
+            if (!dtype.equals(IntType.STD_I32LE)) {
+                throw new IllegalArgumentException("invalid datatype for " + attr.getName());
+            }
+            space = attr.getSpace();
+            if (space.getNDims() != 1) {
+                throw new IllegalArgumentException();
+            }
+            int[] arr = new int[(int) space.getDim(0)];
+            // TODO check datatype issues
+            attr.read(arr);
+            return arr;
+        } finally {
+            if (space != null) {
+                space.close();
+            }
+            if (dtype != null) {
+                dtype.close();
+            }
+            attr.close();
         }
     }
 
@@ -55,18 +97,20 @@ abstract class H5Object extends IdComponent {
 
     public final String getStringAttribute(final String name) {
         Attribute attr = openAttribute(name);
+        DataType dtype = null;
         try {
-            DataType dtype = attr.getType();
+            dtype = attr.getType();
             if (!(dtype instanceof StringType)) {
-                dtype.close();
-                throw new IllegalArgumentException();
+                throw new IllegalArgumentException("invalid datatype for " + attr.getName());
             }
             StringType stype = (StringType) dtype;
             byte[] buf = new byte[stype.getSize()];
             attr.read(buf, stype);
-            stype.close();
             return new String(buf, CHARSET);
         } finally {
+            if (dtype != null) {
+                dtype.close();
+            }
             attr.close();
         }
     }

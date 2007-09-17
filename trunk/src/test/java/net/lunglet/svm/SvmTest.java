@@ -2,18 +2,20 @@ package net.lunglet.svm;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import com.googlecode.array4j.FloatMatrix;
 import com.googlecode.array4j.FloatMatrixUtils;
 import com.googlecode.array4j.FloatVector;
 import com.googlecode.array4j.Orientation;
 import com.googlecode.array4j.Storage;
 import com.googlecode.array4j.dense.FloatDenseMatrix;
-import com.googlecode.array4j.dense.FloatDenseVector;
 import com.googlecode.array4j.math.FloatMatrixMath;
 import com.googlecode.array4j.packed.FloatPackedMatrix;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 import libsvm.svm;
 import libsvm.svm_model;
 import libsvm.svm_node;
@@ -25,21 +27,28 @@ import org.junit.Test;
 
 public final class SvmTest {
     @SuppressWarnings("unchecked")
-    private static Handle<FloatVector<?>>[] createHandles(final Iterable<? extends FloatVector<?>> c) {
-        List<Handle<FloatVector<?>>> list = new ArrayList<Handle<FloatVector<?>>>();
-        for (final FloatVector<?> e : c) {
-            list.add(new Handle<FloatVector<?>>() {
+    private static List<Handle> createHandles(final List<? extends FloatVector<?>> data, final int[] labels) {
+        List<Handle> handles = new ArrayList<Handle>();
+        int i = 0;
+        for (final FloatVector<?> x : data) {
+            final int j = i++;
+            handles.add(new Handle() {
                 @Override
-                public FloatVector<?> get() {
-                    return e;
+                public FloatVector<?> getData() {
+                    return x;
+                }
+
+                @Override
+                public int getLabel() {
+                    return labels[j];
                 }
             });
         }
-        return (Handle<FloatVector<?>>[]) list.toArray(new Handle<?>[0]);
+        return handles;
     }
 
     private svm_parameter createSvmParameter() {
-        // TODO make sure these values match those in SimpleSvm#createDefaultSvmParameter()
+        // TODO get these values from somewhere instead of hardcoding them here
         svm_parameter param = new svm_parameter();
         param.svm_type = svm_parameter.C_SVC;
         param.degree = 3;
@@ -74,10 +83,17 @@ public final class SvmTest {
         return prob;
     }
 
-    private FloatDenseVector getLinearScores(final FloatDenseMatrix data, final int[] labels, final double cost) {
+    private FloatDenseMatrix getLinearScores(final FloatDenseMatrix data, final int[] labels, final double cost) {
         if (data.columns() != labels.length) {
             throw new IllegalArgumentException();
         }
+
+        // get number of classes
+        Set<Integer> uniqueLabels = new HashSet<Integer>();
+        for (int label : labels) {
+            uniqueLabels.add(label);
+        }
+        int classes = uniqueLabels.size();
 
         // predict
         svm_problem prob = dataAsSvmProblem(data, labels);
@@ -88,22 +104,34 @@ public final class SvmTest {
         svm_model model = svm.svm_train(prob, param);
 
         // train
-        FloatDenseVector scores = new FloatDenseVector(prob.l);
-        double[] decvalues = new double[1];
+        double[] decvalues = new double[classes * (classes - 1) / 2];
+        FloatDenseMatrix scores = new FloatDenseMatrix(decvalues.length, prob.l);
         for (int i = 0; i < prob.l; i++) {
             svm.svm_predict_values(model, prob.x[i], decvalues);
-            scores.set(i, (float) decvalues[0]);
+            for (int j = 0; j < decvalues.length; j++) {
+                scores.set(j, i, (float) decvalues[j]);
+            }
         }
-        scores.timesEquals(labels[0] > 0 ? 1.0f : -1.0f);
+
+        // XXX fix sign... might need something more complex heren when dealing
+        // with arbitrary labels. this assumes labels start at 0.
+        scores.timesEquals(labels[0] == 0 ? 1.0f : -1.0f);
 
         return scores;
     }
 
-    private FloatDenseVector getPrecomputedScores(final FloatMatrix<?, ?> data, final FloatMatrix<?, ?> kernel,
+    private FloatDenseMatrix getPrecomputedScores(final FloatMatrix<?, ?> data, final FloatMatrix<?, ?> kernel,
             final int[] labels, final double cost) {
         if (data.columns() != labels.length || !kernel.isSquare() || data.columns() != kernel.rows()) {
             throw new IllegalArgumentException();
         }
+
+        // get number of classes
+        Set<Integer> uniqueLabels = new HashSet<Integer>();
+        for (int label : labels) {
+            uniqueLabels.add(label);
+        }
+        int classes = uniqueLabels.size();
 
         // train
         svm_problem prob = precomputedKernelAsSvmProblem(kernel, labels);
@@ -120,14 +148,18 @@ public final class SvmTest {
         }
 
         // predict
-        FloatDenseVector scores = new FloatDenseVector(prob.l);
-        double[] decvalues = new double[1];
+        double[] decvalues = new double[classes * (classes - 1) / 2];
+        FloatDenseMatrix scores = new FloatDenseMatrix(decvalues.length, prob.l);
         for (int i = 0; i < prob.l; i++) {
             svm.svm_predict_values(model, dataprob.x[i], decvalues);
-            scores.set(i, (float) decvalues[0]);
+            for (int j = 0; j < decvalues.length; j++) {
+                scores.set(j, i, (float) decvalues[j]);
+            }
         }
-        // make sign consistent
-        scores.timesEquals(labels[0] > 0 ? 1.0f : -1.0f);
+
+        // XXX fix sign... might need something more complex heren when dealing
+        // with arbitrary labels. this assumes labels start at 0.
+        scores.timesEquals(labels[0] == 0 ? 1.0f : -1.0f);
 
         return scores;
     }
@@ -155,8 +187,8 @@ public final class SvmTest {
     public void test() {
         final double cost = 100.0;
         final Random rng = new Random(1234);
-        for (int i = 2; i < 100; i++) {
-            for (int j = 4; j < 100; j++) {
+        for (int i = 2; i < 100; i += 10) {
+            for (int j = 4; j < 100; j += 10) {
                 FloatDenseMatrix data = new FloatDenseMatrix(i, j, Orientation.ROW, Storage.HEAP);
                 FloatMatrixUtils.fillRandom(data, rng);
                 FloatPackedMatrix kernel = FloatMatrixMath.timesTranspose(data.transpose());
@@ -164,40 +196,45 @@ public final class SvmTest {
                 // assume there are at least 2 data vectors and make sure we
                 // have at least one vector with each label
                 if (rng.nextBoolean()) {
-                    labels[0] = 1;
-                    labels[1] = -1;
-                } else {
-                    labels[0] = -1;
+                    labels[0] = 0;
                     labels[1] = 1;
+                } else {
+                    labels[0] = 1;
+                    labels[1] = 0;
                 }
                 for (int k = 2; k < labels.length; k++) {
-                    labels[k] = rng.nextBoolean() ? 1 : -1;
+                    // TODO increase this number to test with more than 2 classes
+                    labels[k] = rng.nextInt(2);
                 }
 
-                FloatDenseVector linearScores = getLinearScores(data, labels, cost);
-                FloatDenseVector precomputedScores = getPrecomputedScores(data, kernel, labels, cost);
+                FloatDenseMatrix linearScores = getLinearScores(data, labels, cost);
+                FloatDenseMatrix precomputedScores = getPrecomputedScores(data, kernel, labels, cost);
 
                 // train SVM using linear kernel
-                SimpleSvm svm1 = new SimpleSvm(createHandles(data.columnsIterator()), labels);
+                SimpleSvm svm1 = new SimpleSvm(createHandles(data.columnsList(), labels));
                 svm1.train(cost);
-                FloatDenseVector scores1 = svm1.score(data);
+                FloatDenseMatrix scores1 = svm1.score(data);
                 svm1.compact();
-                FloatDenseVector scores2 = svm1.score(data);
+                FloatDenseMatrix scores2 = svm1.score(data);
 
                 // train SVM using precomputed kernel
-                SimpleSvm svm2 = new SimpleSvm(createHandles(data.columnsIterator()), kernel, labels);
+                SimpleSvm svm2 = new SimpleSvm(createHandles(data.columnsList(), labels), kernel);
                 svm2.train(cost);
-                FloatDenseVector scores3 = svm2.score(data);
+                FloatDenseMatrix scores3 = svm2.score(data);
                 svm2.compact();
-                FloatDenseVector scores4 = svm2.score(data);
+                FloatDenseMatrix scores4 = svm2.score(data);
 
-                for (FloatDenseVector scores : new FloatDenseVector[]{scores1, scores2, scores3, scores4}) {
-                    assertEquals(linearScores.length(), precomputedScores.length());
-                    assertEquals(linearScores.length(), scores.length());
-                    for (int k = 0; i < linearScores.length(); i++) {
-                        assertEquals((int) Math.signum(linearScores.get(k)), (int) Math.signum(labels[k]));
-                        assertEquals(linearScores.get(k), precomputedScores.get(k), 1e-2);
-                        assertEquals(linearScores.get(k), scores.get(k), 1e-2);
+                for (FloatDenseMatrix scores : new FloatDenseMatrix[]{scores1, scores2, scores3, scores4}) {
+                    assertEquals(linearScores.rows(), precomputedScores.rows());
+                    assertEquals(linearScores.columns(), precomputedScores.columns());
+                    assertEquals(linearScores.rows(), scores.rows());
+                    assertEquals(linearScores.columns(), scores.columns());
+                    for (int k = 0; k < linearScores.length(); k++) {
+                        float linearScore = linearScores.get(k);
+                        float precomputedScore = precomputedScores.get(k);
+                        float score = scores.get(k);
+                        assertTrue(Math.abs(linearScore - precomputedScore) < 0.2f);
+                        assertTrue(Math.abs(linearScore - score) < 0.2f);
                     }
                 }
             }

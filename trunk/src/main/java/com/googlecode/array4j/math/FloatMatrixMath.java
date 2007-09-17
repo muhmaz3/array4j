@@ -4,7 +4,9 @@ import com.googlecode.array4j.FloatMatrix;
 import com.googlecode.array4j.FloatVector;
 import com.googlecode.array4j.Orientation;
 import com.googlecode.array4j.Storage;
+import com.googlecode.array4j.Vector;
 import com.googlecode.array4j.blas.FloatDenseBLAS;
+import com.googlecode.array4j.dense.DenseMatrix;
 import com.googlecode.array4j.dense.FloatDenseMatrix;
 import com.googlecode.array4j.dense.FloatDenseVector;
 import com.googlecode.array4j.packed.FloatPackedMatrix;
@@ -30,17 +32,26 @@ public final class FloatMatrixMath {
     }
 
     public static FloatDenseMatrix times(final FloatMatrix<?, ?> x, final FloatMatrix<?, ?> y) {
-        if (!(x instanceof FloatDenseMatrix)) {
-            throw new IllegalArgumentException();
+        if (x instanceof DenseMatrix && y instanceof DenseMatrix) {
+            final FloatDenseMatrix a;
+            final FloatDenseMatrix b;
+            if (x instanceof Vector) {
+                a = ((FloatDenseVector) x).asMatrix();
+            } else {
+                a = (FloatDenseMatrix) x;
+            }
+            if (y instanceof Vector) {
+                b = ((FloatDenseVector) y).asMatrix();
+            } else {
+                b = (FloatDenseMatrix) y;
+            }
+            FloatDenseMatrix c = new FloatDenseMatrix(a.rows(), b.columns(), Orientation.COLUMN, Storage.DIRECT);
+            // TODO can handle non-unit strides here by using gemv or dot
+            FloatDenseBLAS.DEFAULT.gemm(1.0f, a, b, 0.0f, c);
+            return c;
+        } else {
+            throw new UnsupportedOperationException();
         }
-        if (!(y instanceof FloatDenseMatrix)) {
-            throw new IllegalArgumentException();
-        }
-        FloatDenseMatrix a = (FloatDenseMatrix) x;
-        FloatDenseMatrix b = (FloatDenseMatrix) y;
-        FloatDenseMatrix c = new FloatDenseMatrix(a.rows(), b.columns(), Orientation.COLUMN, Storage.DIRECT);
-        FloatDenseBLAS.DEFAULT.gemm(1.0f, a, b, 0.0f, c);
-        return c;
     }
 
     public static FloatPackedMatrix timesTranspose(final FloatDenseMatrix a) {

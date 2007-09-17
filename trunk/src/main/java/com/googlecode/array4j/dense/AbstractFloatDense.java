@@ -13,7 +13,11 @@ import java.nio.FloatBuffer;
 import java.util.Arrays;
 import org.apache.commons.lang.builder.EqualsBuilder;
 
-public abstract class AbstractFloatDense<M extends FloatMatrix<M, FloatDenseVector> & DenseMatrix<M, FloatDenseVector>>
+// TODO if we go for FloatDenseMatrix and FloatDenseVector as
+// interfaces, this class becomes FloatDenseImpl that
+// implements both
+
+abstract class AbstractFloatDense<M extends FloatMatrix<M, FloatDenseVector> & DenseMatrix<M, FloatDenseVector>>
         extends AbstractDenseMatrix<M, FloatDenseVector, float[]> {
     private static final int DEFAULT_OFFSET = 0;
 

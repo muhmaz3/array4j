@@ -55,11 +55,6 @@ public final class FloatDenseMatrix extends AbstractFloatDense<FloatDenseMatrix>
     }
 
     @Override
-    public FloatDenseVector asVector() {
-        return new FloatDenseVector(this, length, offset, stride, Orientation.DEFAULT_FOR_VECTOR);
-    }
-
-    @Override
     public boolean equals(final Object obj) {
         if (obj == null || !(obj instanceof FloatDenseMatrix)) {
             return false;

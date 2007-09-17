@@ -1,15 +1,15 @@
 package com.googlecode.array4j;
 
-// TODO deepTranspose
+import java.util.List;
 
 public interface Matrix<M extends Matrix<M, V>, V extends Vector<V>> extends Array<M> {
-    V asVector();
-
     V column(int column);
 
     int columns();
 
     Iterable<V> columnsIterator();
+
+    List<V> columnsList();
 
     V createColumnVector();
 

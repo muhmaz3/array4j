@@ -98,6 +98,14 @@ public interface H5Library extends Library {
 
     int FLOAT_BYTES = Float.SIZE >>> 3;
 
+    int H5G_DATASET = 2;
+
+    int H5G_GROUP = 1;
+
+    int H5G_LINK = 0;
+
+    int H5G_TYPE = 3;
+
     int H5P_DATASET_CREATE = Loader.loadIntValue("H5P_CLS_DATASET_CREATE_g");
 
     int H5P_DATASET_CREATE_DEFAULT = Loader.loadIntValue("H5P_LST_DATASET_CREATE_g");
