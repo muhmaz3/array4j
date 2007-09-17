@@ -117,7 +117,7 @@ public final class DataSpace extends IdComponent {
         return maxdims;
     }
 
-    private int getNDims() {
+    public int getNDims() {
         int ndims = H5Library.INSTANCE.H5Sget_simple_extent_ndims(getId());
         if (ndims < 0) {
             throw new H5DataSpaceException("H5Sget_simple_extent_ndims failed");

@@ -1,7 +1,9 @@
 package com.googlecode.array4j;
 
 import com.googlecode.array4j.util.AssertUtils;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import org.apache.commons.lang.builder.EqualsBuilder;
 
 public abstract class AbstractMatrix<M extends Matrix<M, V>, V extends Vector<V>> extends AbstractArray<M> implements
@@ -95,6 +97,14 @@ public abstract class AbstractMatrix<M extends Matrix<M, V>, V extends Vector<V>
                 };
             }
         };
+    }
+
+    public final List<V> columnsList() {
+        List<V> columnsList = new ArrayList<V>();
+        for (V column : columnsIterator()) {
+            columnsList.add(column);
+        }
+        return columnsList;
     }
 
     @Override

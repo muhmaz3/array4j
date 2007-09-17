@@ -5,6 +5,9 @@ import java.util.Arrays;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 
+// TODO if we go for FloatDenseMatrix and FloatDenseVector as
+// interfaces, we can move length method up to AbstractMatrix
+
 public abstract class AbstractArray<A extends Array<A>> implements Array<A> {
     protected final int length;
 

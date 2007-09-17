@@ -5,17 +5,8 @@ import com.sun.jna.ptr.IntByReference;
 import java.util.HashSet;
 import java.util.Set;
 import net.lunglet.hdf.H5Library.H5G_iterate_t;
-import org.apache.commons.lang.builder.EqualsBuilder;
 
 public final class Group extends H5Object {
-    private static final int H5G_DATASET = 2;
-
-    private static final int H5G_GROUP = 1;
-
-    private static final int H5G_LINK = 0;
-
-    private static final int H5G_TYPE = 3;
-
     Group(final int id) {
         super(id);
     }
@@ -74,17 +65,6 @@ public final class Group extends H5Object {
         return new Group(groupId);
     }
 
-    @Override
-    public boolean equals(final Object obj) {
-        if (obj == null || !(obj instanceof Group)) {
-            return false;
-        }
-        if (this == obj) {
-            return true;
-        }
-        return new EqualsBuilder().appendSuper(super.equals(obj)).isEquals();
-    }
-
     public Set<DataSet> getDataSets() {
         final IntByReference idx = new IntByReference(0);
         final HashSet<DataSet> datasets = new HashSet<DataSet>();
@@ -92,7 +72,7 @@ public final class Group extends H5Object {
             @Override
             public int callback(final int locId, final String datasetName, final Pointer data) {
                 int type = H5Library.INSTANCE.H5Gget_objtype_by_idx(locId, idx.getValue());
-                if (type == H5G_DATASET) {
+                if (type == H5Library.H5G_DATASET) {
                     datasets.add(openDataSet(datasetName));
                 }
                 return 0;
@@ -109,7 +89,7 @@ public final class Group extends H5Object {
             @Override
             public int callback(final int locId, final String groupName, final Pointer data) {
                 int type = H5Library.INSTANCE.H5Gget_objtype_by_idx(locId, idx.getValue());
-                if (type == H5G_GROUP) {
+                if (type == H5Library.H5G_GROUP) {
                     groups.add(openGroup(groupName));
                 }
                 return 0;

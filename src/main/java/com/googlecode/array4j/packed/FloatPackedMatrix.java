@@ -56,12 +56,6 @@ public final class FloatPackedMatrix extends AbstractPackedMatrix<FloatPackedMat
     }
 
     @Override
-    public FloatDenseVector asVector() {
-        // TODO need to make a dense copy here and return that as a vector
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public FloatDenseVector column(final int column) {
         checkColumnIndex(column);
         FloatDenseVector v = createColumnVector();

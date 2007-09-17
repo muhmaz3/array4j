@@ -1,14 +1,15 @@
 package com.googlecode.array4j;
 
+// TODO implement BigIntegerArray on top of ObjectArray
+
+// TODO implement BigDecimalArray on top of ObjectArray
+
 public class ObjectArray<T> extends AbstractArray<ObjectArray<T>> {
-    // TODO rename size to length
-    public ObjectArray(final int size) {
-        super(new int[]{size});
+    public ObjectArray(final int[] shape) {
+        super(shape);
     }
 
     public final T[] toArray() {
-        return null;
+        throw new UnsupportedOperationException();
     }
-
-    // TODO implement BigIntegerArray on top of ObjectArray
 }

@@ -15,7 +15,7 @@ import java.nio.FloatBuffer;
 import java.util.Arrays;
 import org.apache.commons.lang.builder.EqualsBuilder;
 
-public abstract class AbstractCFloatDense<M extends ComplexFloatMatrix<M, CFloatDenseVector> & DenseMatrix<M, CFloatDenseVector>>
+abstract class AbstractCFloatDense<M extends ComplexFloatMatrix<M, CFloatDenseVector> & DenseMatrix<M, CFloatDenseVector>>
         extends AbstractDenseMatrix<M, CFloatDenseVector, ComplexFloat[]> {
     private static final int DEFAULT_OFFSET = 0;
 

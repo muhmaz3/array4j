@@ -47,11 +47,6 @@ public final class CFloatDenseVector extends AbstractCFloatDense<CFloatDenseVect
     }
 
     @Override
-    public CFloatDenseVector asVector() {
-        return this;
-    }
-
-    @Override
     public CFloatDenseVector conjTranpose() {
         throw new UnsupportedOperationException();
     }

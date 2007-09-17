@@ -2,15 +2,10 @@ package net.lunglet.svm;
 
 import com.googlecode.array4j.FloatMatrix;
 import com.googlecode.array4j.FloatVector;
+import com.googlecode.array4j.dense.FloatDenseMatrix;
 import com.googlecode.array4j.dense.FloatDenseVector;
-import java.util.Arrays;
-
-// TODO make data an array of T or an Iterable<FloatVector> or something
-
-// TODO support arbitrary labels
-
-// TODO implement copyWithoutRowsColumns(int[]) for removing certain trials
-// from a gram matrix for doing cross-validation
+import java.util.ArrayList;
+import java.util.List;
 
 public final class SimpleSvm {
     static SvmParameter createDefaultSvmParameter() {
@@ -31,12 +26,11 @@ public final class SimpleSvm {
         return param;
     }
 
-    private static PrecomputedKernel createPrecomputedKernel(final Handle<? extends FloatVector<?>>[] data,
-            final FloatMatrix<?, ?> kernel) {
+    private static PrecomputedKernel createPrecomputedKernel(final List<Handle> data, final FloatMatrix<?, ?> kernel) {
         if (kernel == null) {
             throw new NullPointerException();
         }
-        if (data.length != kernel.rows() || !kernel.isSquare()) {
+        if (data.size() != kernel.rows() || !kernel.isSquare()) {
             throw new IllegalArgumentException();
         }
         return new PrecomputedKernel() {
@@ -46,7 +40,7 @@ public final class SimpleSvm {
         };
     }
 
-    private final Handle<? extends FloatVector<?>>[] data;
+    private final List<Handle> data;
 
     private final PrecomputedKernel kernel;
 
@@ -54,35 +48,30 @@ public final class SimpleSvm {
 
     private final SvmProblem problem;
 
-    public SimpleSvm(final Handle<? extends FloatVector<?>>[] data, final FloatMatrix<?, ?> kernel, final int[] labels) {
-        this(data, createPrecomputedKernel(data, kernel), labels);
+    public SimpleSvm(final List<Handle> data) {
+        this(data, (PrecomputedKernel) null);
     }
 
-    public SimpleSvm(final Handle<? extends FloatVector<?>>[] data, final int[] labels) {
-        this(data, (PrecomputedKernel) null, labels);
+    public SimpleSvm(final List<Handle> data, final FloatMatrix<?, ?> kernel) {
+        this(data, createPrecomputedKernel(data, kernel));
     }
 
-    public SimpleSvm(final Handle<? extends FloatVector<?>>[] data, final PrecomputedKernel kernel, final int[] labels) {
-        if (data.length != labels.length) {
-            throw new IllegalArgumentException();
-        }
-        this.data = data;
+    public SimpleSvm(final List<Handle> data, final PrecomputedKernel kernel) {
+        this.data = new ArrayList<Handle>(data);
         this.kernel = kernel;
         problem = new SvmProblem();
-        problem.l = data.length;
-        problem.y = new double[labels.length];
+        problem.l = data.size();
+        problem.y = new double[data.size()];
         problem.x = new SvmNode[problem.l];
-        for (int i = 0; i < labels.length; i++) {
-            problem.y[i] = labels[i];
+        for (int i = 0; i < data.size(); i++) {
+            problem.y[i] = data.get(i).getLabel();
             if (kernel != null) {
                 problem.x[i] = new SvmNode(i, null);
             } else {
-                problem.x[i] = new SvmNode(i, data[i].get());
+                problem.x[i] = new SvmNode(i, data.get(i).getData());
             }
         }
-        if (kernel != null) {
-            problem.kernel = kernel;
-        }
+        problem.kernel = kernel;
     }
 
     /**
@@ -92,40 +81,73 @@ public final class SimpleSvm {
         if (model == null) {
             throw new IllegalStateException();
         }
-        SvmNode[] supportVectors = new SvmNode[model.nr_class];
-        for (int i = 0, j = 0; i < model.nr_class; i++) {
-            FloatDenseVector sv = new FloatDenseVector(model.SV[0].value.length());
-            for (int k = 0; k < model.nSV[i]; k++, j++) {
-                final float alpha = (float) model.sv_coef[0][j];
-                // TODO replace this with an axpy operation
+        if (model.nr_class != 2) {
+            throw new UnsupportedOperationException();
+        }
+        FloatDenseVector sv = new FloatDenseVector(model.SV[0].value.length());
+        for (int i = 0, k = 0; i < model.nr_class; i++) {
+            for (int j = 0; j < model.nSV[i]; j++, k++) {
+                final float alpha = (float) model.sv_coef[0][k];
                 for (int m = 0; m < sv.length(); m++) {
-                    sv.set(m, sv.get(m) + alpha * model.SV[j].value.get(m));
+                    sv.set(m, sv.get(m) + alpha * model.SV[k].value.get(m));
                 }
             }
-            supportVectors[i] = new SvmNode(0, sv);
         }
-        model.SV = supportVectors;
-        model.sv_coef = new double[][]{new double[model.nr_class]};
-        Arrays.fill(model.sv_coef[0], 1.0);
-        model.nSV = new int[model.nr_class];
-        Arrays.fill(model.nSV, 1);
-        model.l = model.nr_class;
+        model.SV = new SvmNode[]{new SvmNode(0, sv)};
+        model.sv_coef = new double[][]{{1.0, 0.0}};
+        model.nSV = new int[]{1, 0};
+        model.l = 1;
     }
 
-    public FloatDenseVector score(final FloatMatrix<?, ?> testData) {
+    public float getRho() {
         if (model == null) {
             throw new IllegalStateException();
         }
-        double[] decvalues = new double[model.nr_class * (model.nr_class - 1) / 2];
-        FloatDenseVector scores = new FloatDenseVector(testData.columns());
-        int i = 0;
-        for (FloatVector<?> x : testData.columnsIterator()) {
-            Svm.svm_predict_values(model, x, decvalues);
-            scores.set(i++, (float) decvalues[0]);
+        if (model.rho.length != 1) {
+            throw new UnsupportedOperationException();
         }
-        // make sign consistent regardless of data/label ordering
-        if (problem.y[0] < 0) {
-            scores.timesEquals(-1.0f);
+        return (float) model.rho[0];
+    }
+
+    public FloatVector<?> getSupportVector() {
+        if (model == null) {
+            throw new IllegalStateException();
+        }
+        if (model.SV.length != 1) {
+            throw new UnsupportedOperationException();
+        }
+        return model.SV[0].value;
+    }
+
+    public FloatDenseMatrix score(final FloatMatrix<?, ?> testData) {
+        List<Handle> handles = new ArrayList<Handle>();
+        for (final FloatVector<?> x : testData.columnsIterator()) {
+            handles.add(new Handle() {
+                @Override
+                public FloatVector<?> getData() {
+                    return x;
+                }
+
+                @Override
+                public int getLabel() {
+                    throw new UnsupportedOperationException();
+                }
+            });
+        }
+        return score(handles);
+    }
+
+    public FloatDenseMatrix score(final List<Handle> testData) {
+        if (model == null) {
+            throw new IllegalStateException();
+        }
+        int n = model.nr_class * (model.nr_class - 1) / 2;
+        FloatDenseMatrix scores = new FloatDenseMatrix(n, testData.size());
+        double[] decvalues = new double[n];
+        for (int i = 0; i < testData.size(); i++) {
+            Handle handle = testData.get(i);
+            Svm.svm_predict_values(model, handle.getData(), decvalues);
+            scores.setColumn(i, FloatDenseVector.valueOf(decvalues));
         }
         return scores;
     }
@@ -142,11 +164,28 @@ public final class SimpleSvm {
         }
         Svm.svm_check_parameter(problem, param);
         model = new Svm().svm_train(problem, param);
+
+        // make sign consistent regardless of data/label order
+        double minLabel = problem.y[0];
+        for (int i = 1; i < problem.y.length; i++) {
+            minLabel = Math.min(minLabel, problem.y[i]);
+        }
+        if (problem.y[0] != minLabel) {
+            for (int i = 0; i < model.sv_coef.length; i++) {
+                for (int j = 0; j < model.sv_coef[i].length; j++) {
+                    model.sv_coef[i][j] *= -1.0;
+                }
+            }
+            for (int i = 0; i < model.rho.length; i++) {
+                model.rho[i] *= -1.0;
+            }
+        }
+
+        // fix support vectors after using precomputed kernel
         if (param.kernel_type == SvmParameter.PRECOMPUTED) {
             param.kernel_type = SvmParameter.LINEAR;
-            // obtain actual support vectors
             for (int i = 0; i < model.SV.length; i++) {
-                model.SV[i] = new SvmNode(i, data[model.SV[i].index].get());
+                model.SV[i] = new SvmNode(i, data.get(model.SV[i].index).getData());
             }
         }
         if (model.SV.length == 0) {

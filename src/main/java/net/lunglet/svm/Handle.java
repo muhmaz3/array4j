@@ -1,5 +1,9 @@
 package net.lunglet.svm;
 
-public interface Handle<E> {
-    E get();
+import com.googlecode.array4j.FloatVector;
+
+public interface Handle {
+    FloatVector<?> getData();
+
+    int getLabel();
 }

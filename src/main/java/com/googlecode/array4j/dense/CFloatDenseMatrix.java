@@ -49,11 +49,6 @@ public final class CFloatDenseMatrix extends AbstractCFloatDense<CFloatDenseMatr
     }
 
     @Override
-    public CFloatDenseVector asVector() {
-        return new CFloatDenseVector(data, length, offset, stride, Orientation.DEFAULT_FOR_VECTOR);
-    }
-
-    @Override
     public CFloatDenseMatrix conjTranpose() {
         throw new UnsupportedOperationException();
     }

@@ -65,6 +65,15 @@ public final class FloatMatrixUtils {
         }
     }
 
+    public static void fillGaussian(final FloatMatrix<?, ?> matrix, final double mean, final double stdDev,
+            final Random rng) {
+        for (int i = 0; i < matrix.rows(); i++) {
+            for (int j = 0; j < matrix.columns(); j++) {
+                matrix.set(i, j, (float) (mean + (rng.nextGaussian() * stdDev)));
+            }
+        }
+    }
+
     public static void fillRandom(final FloatMatrix<?, ?> matrix) {
         fillRandom(matrix, new Random());
     }
