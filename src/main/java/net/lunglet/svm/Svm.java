@@ -6,9 +6,6 @@ import org.apache.commons.logging.LogFactory;
 import com.googlecode.array4j.FloatVector;
 
 final class Svm {
-    //
-    // decision_function
-    //
     static class decision_function {
         double[] alpha;
 
@@ -742,7 +739,7 @@ final class Svm {
                 SvmModel submodel = svm_train(subprob, subparam);
                 for (j = begin; j < end; j++) {
                     double[] dec_value = new double[1];
-                    svm_predict_values(submodel, prob.x[perm[j]].value, dec_value);
+                    svm_predict_values(submodel, prob.x[perm[j]].getValue(), dec_value);
                     dec_values[perm[j]] = dec_value[0];
                     // ensure +1 -1 order; reason not using CV subroutine
                     dec_values[perm[j]] *= submodel.label[0];
@@ -859,11 +856,11 @@ final class Svm {
                     && (param.svm_type == SvmParameter.C_SVC || param.svm_type == SvmParameter.NU_SVC)) {
                 double[] probEstimates = new double[svm_get_nr_class(submodel)];
                 for (j = begin; j < end; j++) {
-                    target[perm[j]] = svm_predict_probability(submodel, prob.x[perm[j]].value, probEstimates);
+                    target[perm[j]] = svm_predict_probability(submodel, prob.x[perm[j]].getValue(), probEstimates);
                 }
             } else {
                 for (j = begin; j < end; j++) {
-                    target[perm[j]] = svm_predict(submodel, prob.x[perm[j]].value);
+                    target[perm[j]] = svm_predict(submodel, prob.x[perm[j]].getValue());
                 }
             }
         }

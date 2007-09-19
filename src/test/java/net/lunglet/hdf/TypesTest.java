@@ -1,7 +1,7 @@
 package net.lunglet.hdf;
 
 import static org.junit.Assert.assertEquals;
-
+import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 public final class TypesTest {
@@ -11,6 +11,13 @@ public final class TypesTest {
         assertEquals(4, IntType.STD_I32LE.getSize());
         assertEquals(8, FloatType.IEEE_F64LE.getSize());
         assertEquals(1, IntType.STD_I8BE.getSize());
+    }
+
+    @Test
+    public void testPrefinedClose() {
+        assertTrue(FloatType.IEEE_F32LE.getId() >= 0);
+        FloatType.IEEE_F32LE.close();
+        assertTrue(FloatType.IEEE_F32LE.getId() >= 0);
     }
 
     @Test

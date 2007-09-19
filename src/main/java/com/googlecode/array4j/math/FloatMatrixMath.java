@@ -10,6 +10,7 @@ import com.googlecode.array4j.dense.DenseMatrix;
 import com.googlecode.array4j.dense.FloatDenseMatrix;
 import com.googlecode.array4j.dense.FloatDenseVector;
 import com.googlecode.array4j.packed.FloatPackedMatrix;
+import java.util.Arrays;
 
 public final class FloatMatrixMath {
     public static float dot(final FloatVector<?> x, final FloatVector<?> y) {
@@ -27,6 +28,18 @@ public final class FloatMatrixMath {
         for (int i = 0; i < matrix.rows(); i++) {
             for (int j = 0; j < matrix.columns(); j++) {
                 matrix.set(i, j, (float) Math.log(matrix.get(i, j)));
+            }
+        }
+    }
+
+    public static void plusEquals(final FloatMatrix<?, ?> x, final FloatMatrix<?, ?> y) {
+        // TODO optimize this function by using BLAS when possible
+        if (!Arrays.equals(x.shape(), y.shape())) {
+            throw new IllegalArgumentException();
+        }
+        for (int i = 0; i < x.rows(); i++) {
+            for (int j = 0; j < x.columns(); j++) {
+                x.set(i, j, x.get(i, j) + y.get(i, j));
             }
         }
     }

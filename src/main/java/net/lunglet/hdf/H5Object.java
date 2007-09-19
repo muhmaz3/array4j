@@ -7,8 +7,8 @@ import java.util.Arrays;
 abstract class H5Object extends IdComponent {
     private static final Charset CHARSET = Charset.forName("US-ASCII");
 
-    public H5Object(final int id) {
-        super(id);
+    public H5Object(final int id, final CloseAction closeAction) {
+        super(id, closeAction);
     }
 
     public final Attribute createAttribute(final String name, final DataType type, final DataSpace space) {

@@ -9,6 +9,19 @@ import java.util.Arrays;
 public final class DataSpace extends IdComponent {
     public static final DataSpace ALL = new DataSpace(H5Library.H5S_ALL, true);
 
+    private static final CloseAction CLOSE_ACTION = new CloseAction() {
+        @Override
+        public void close(final int id) {
+            if (id != H5Library.H5S_ALL) {
+                // not a constant, should call H5Sclose
+                int err = H5Library.INSTANCE.H5Sclose(id);
+                if (err < 0) {
+                    throw new H5DataSpaceException("H5Sclose failed");
+                }
+            }
+        }
+    };
+
     public static DataSpace createScalar() {
         return new DataSpace(DataSpaceClass.SCALAR);
     }
@@ -33,12 +46,12 @@ public final class DataSpace extends IdComponent {
     }
 
     private DataSpace(final DataSpaceClass type) {
-        super(init(type));
+        this(init(type), true);
     }
 
     DataSpace(final int id, final boolean tag) {
         // tag helps to avoid confusion with long... constructor
-        super(id);
+        super(id, CLOSE_ACTION);
     }
 
     public DataSpace(final long... dims) {
@@ -46,21 +59,7 @@ public final class DataSpace extends IdComponent {
     }
 
     public DataSpace(final long[] dims, final long[] maxdims) {
-        super(init(dims, maxdims));
-    }
-
-    public void close() {
-        if (getId() != H5Library.H5S_ALL) {
-            // not a constant, should call H5Sclose
-            int err = H5Library.INSTANCE.H5Sclose(getId());
-            if (err < 0) {
-                throw new H5DataSpaceException("H5Sclose failed");
-            }
-            invalidate();
-        } else {
-            // cannot close a constant
-            throw new H5DataSpaceException("Cannot close a constant");
-        }
+        this(init(dims, maxdims), true);
     }
 
     public long getDim(final int index) {
@@ -301,7 +300,7 @@ public final class DataSpace extends IdComponent {
 
     @Override
     public String toString() {
-        if (isValid()) {
+        if (isOpen()) {
             return "DataSpace[dims=" + Arrays.toString(getDims()) + ", maxdims=" + Arrays.toString(getMaxDims()) + "]";
         } else {
             return "DataSpace[invalid]";

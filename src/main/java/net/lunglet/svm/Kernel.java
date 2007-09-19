@@ -5,11 +5,11 @@ import com.googlecode.array4j.math.FloatMatrixMath;
 
 abstract class Kernel extends QMatrix {
     static double dot(final FloatVector<?> x, final SvmNode y) {
-        return FloatMatrixMath.dot(x, y.value);
+        return FloatMatrixMath.dot(x, y.getValue());
     }
 
     static double dot(final SvmNode x, final SvmNode y) {
-        return FloatMatrixMath.dot(x.value, y.value);
+        return FloatMatrixMath.dot(x.getValue(), y.getValue());
     }
 
     static double k_function(final FloatVector<?> x, final SvmNode y, final SvmParameter param) {
@@ -96,7 +96,7 @@ abstract class Kernel extends QMatrix {
         case SvmParameter.SIGMOID:
             return tanh(gamma * dot(x[i], x[j]) + coef0);
         case SvmParameter.PRECOMPUTED:
-            return kernel.get(x[i].index, x[j].index);
+            return kernel.get(x[i].getIndex(), x[j].getIndex());
         default:
             throw new AssertionError();
         }

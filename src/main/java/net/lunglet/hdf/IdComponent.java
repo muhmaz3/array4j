@@ -4,13 +4,15 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
 abstract class IdComponent {
-    private final int id;
+    private final NativeIdComponent nativeId;
 
-    private boolean valid;
+    public IdComponent(final int id, final CloseAction closeAction) {
+        this.nativeId = new NativeIdComponent(this, id, closeAction);
+        NativeIdComponent.cleanup();
+    }
 
-    public IdComponent(final int id) {
-        this.id = id;
-        this.valid = true;
+    public final void close() {
+        nativeId.close();
     }
 
     @Override
@@ -26,10 +28,7 @@ abstract class IdComponent {
     }
 
     protected final int getId() {
-        if (!valid) {
-            throw new IllegalStateException();
-        }
-        return id;
+        return nativeId.getId();
     }
 
     @Override
@@ -37,11 +36,7 @@ abstract class IdComponent {
         return new HashCodeBuilder().append(getId()).toHashCode();
     }
 
-    protected final void invalidate() {
-        this.valid = false;
-    }
-
-    protected final boolean isValid() {
-        return valid;
+    protected final boolean isOpen() {
+        return nativeId.isOpen();
     }
 }

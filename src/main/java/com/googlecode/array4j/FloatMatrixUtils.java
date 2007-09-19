@@ -27,6 +27,17 @@ public final class FloatMatrixUtils {
         return sum;
     }
 
+    public static FloatDenseVector columnsVector(final FloatMatrix<?, ?> matrix) {
+        int length = matrix.rows() * matrix.columns();
+        FloatDenseVector vec = new FloatDenseVector(length, Orientation.COLUMN, Storage.DEFAULT_FOR_DENSE);
+        for (int i = 0, k = 0; i < matrix.columns(); i++) {
+            for (int j = 0; j < matrix.rows(); j++, k++) {
+                vec.set(k, matrix.get(j, i));
+            }
+        }
+        return vec;
+    }
+
     public static FloatDenseVector concatenate(final FloatVector<?>... vectors) {
         if (!sameOrientation(vectors)) {
             throw new IllegalArgumentException("all vectors must have the same orientation");
@@ -115,6 +126,17 @@ public final class FloatMatrixUtils {
             sum.plusEquals(row);
         }
         return sum;
+    }
+
+    public static FloatDenseVector rowsVector(final FloatMatrix<?, ?> matrix) {
+        int length = matrix.rows() * matrix.columns();
+        FloatDenseVector vec = new FloatDenseVector(length, Orientation.ROW, Storage.DEFAULT_FOR_DENSE);
+        for (int i = 0, k = 0; i < matrix.rows(); i++) {
+            for (int j = 0; j < matrix.columns(); j++, k++) {
+                vec.set(k, matrix.get(i, j));
+            }
+        }
+        return vec;
     }
 
     private static boolean sameOrientation(final FloatVector<?>... vectors) {

@@ -7,7 +7,10 @@ import com.googlecode.array4j.dense.FloatDenseVector;
 import java.util.ArrayList;
 import java.util.List;
 
+// TODO rename to SvmClassifier
+
 public final class SimpleSvm {
+    // TODO make a SvmParameterBuilder so anything can be configured
     static SvmParameter createDefaultSvmParameter() {
         SvmParameter param = new SvmParameter();
         param.svm_type = SvmParameter.C_SVC;
@@ -15,7 +18,9 @@ public final class SimpleSvm {
         param.gamma = 0;
         param.coef0 = 0;
         param.nu = 0.5;
-        param.cache_size = 100;
+        // TODO tune cache size depending on whether a precomputed kernel is
+        // being used or not
+        param.cache_size = 10;
         param.eps = 1e-3;
         param.p = 0.1;
         param.shrinking = 1;
@@ -66,9 +71,9 @@ public final class SimpleSvm {
         for (int i = 0; i < data.size(); i++) {
             problem.y[i] = data.get(i).getLabel();
             if (kernel != null) {
-                problem.x[i] = new SvmNode(i, null);
+                problem.x[i] = new SvmNode(i);
             } else {
-                problem.x[i] = new SvmNode(i, data.get(i).getData());
+                problem.x[i] = new SvmNode(i, data.get(i));
             }
         }
         problem.kernel = kernel;
@@ -84,12 +89,13 @@ public final class SimpleSvm {
         if (model.nr_class != 2) {
             throw new UnsupportedOperationException();
         }
-        FloatDenseVector sv = new FloatDenseVector(model.SV[0].value.length());
+        FloatDenseVector sv = new FloatDenseVector(model.SV[0].getValue().length());
         for (int i = 0, k = 0; i < model.nr_class; i++) {
             for (int j = 0; j < model.nSV[i]; j++, k++) {
                 final float alpha = (float) model.sv_coef[0][k];
+                FloatVector<?> modelSV = model.SV[k].getValue();
                 for (int m = 0; m < sv.length(); m++) {
-                    sv.set(m, sv.get(m) + alpha * model.SV[k].value.get(m));
+                    sv.set(m, sv.get(m) + alpha * modelSV.get(m));
                 }
             }
         }
@@ -116,7 +122,7 @@ public final class SimpleSvm {
         if (model.SV.length != 1) {
             throw new UnsupportedOperationException();
         }
-        return model.SV[0].value;
+        return model.SV[0].getValue();
     }
 
     public FloatDenseMatrix score(final FloatMatrix<?, ?> testData) {
@@ -185,7 +191,7 @@ public final class SimpleSvm {
         if (param.kernel_type == SvmParameter.PRECOMPUTED) {
             param.kernel_type = SvmParameter.LINEAR;
             for (int i = 0; i < model.SV.length; i++) {
-                model.SV[i] = new SvmNode(i, data.get(model.SV[i].index).getData());
+                model.SV[i] = new SvmNode(i, data.get(model.SV[i].getIndex()).getData());
             }
         }
         if (model.SV.length == 0) {
