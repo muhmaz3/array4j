@@ -4,6 +4,16 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class DataType extends H5Object {
+    private static final CloseAction CLOSE_ACTION = new CloseAction() {
+        @Override
+        public void close(final int id) {
+            int err = H5Library.INSTANCE.H5Tclose(id);
+            if (err < 0) {
+                throw new H5DataTypeException("H5Tclose failed");
+            }
+        }
+    };
+
     static DataType createTypeFromId(final int id) {
         if (id < 0) {
             throw new IllegalArgumentException();
@@ -36,24 +46,8 @@ public class DataType extends H5Object {
         throw new AssertionError();
     }
 
-    private final boolean predefined;
-
     DataType(final int id, final boolean predefined) {
-        super(id);
-        this.predefined = predefined;
-    }
-
-    public final void close() {
-        if (predefined) {
-            // cannot close a predefined type, so just ignore it, instead of
-            // requiring the user to check before they close
-            return;
-        }
-        int err = H5Library.INSTANCE.H5Tclose(getId());
-        if (err < 0) {
-            throw new H5DataTypeException("H5Tclose failed");
-        }
-        invalidate();
+        super(id, predefined ? null : CLOSE_ACTION);
     }
 
     final void commit(final Group group, final String name) {

@@ -6,6 +6,16 @@ import java.nio.charset.Charset;
 import java.util.Arrays;
 
 public final class H5File extends IdComponent {
+    private static final CloseAction CLOSE_ACTION = new CloseAction() {
+        @Override
+        public void close(final int id) {
+            int err = H5Library.INSTANCE.H5Fclose(id);
+            if (err < 0) {
+                throw new H5FileException("H5Fclose failed");
+            }
+        }
+    };
+
     /* create non-existing files */
     private static final int H5F_ACC_CREAT = 0x0010;
 
@@ -61,16 +71,8 @@ public final class H5File extends IdComponent {
     }
 
     public H5File(final String name, final int flags, final FileCreatePropList fcpl, final FileAccessPropList fapl) {
-        super(init(name, flags, fcpl, fapl));
-        this.rootGroup = new Group(getId());
-    }
-
-    public void close() {
-        int err = H5Library.INSTANCE.H5Fclose(getId());
-        if (err < 0) {
-            throw new H5FileException("H5Fclose failed");
-        }
-        invalidate();
+        super(init(name, flags, fcpl, fapl), CLOSE_ACTION);
+        this.rootGroup = new Group(getId(), true);
     }
 
     public String getFileName() {

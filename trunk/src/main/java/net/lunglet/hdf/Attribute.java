@@ -6,9 +6,19 @@ import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 
-// TODO Attribute#getName should return full name
+// TODO Attribute#getName should return full name or make a new getFullName
 
 public final class Attribute extends AbstractDs {
+    private static final CloseAction CLOSE_ACTION = new CloseAction() {
+        @Override
+        public void close(final int id) {
+            int err = H5Library.INSTANCE.H5Aclose(id);
+            if (err < 0) {
+                throw new H5AttributeException("H5Aclose failed");
+            }
+        }
+    };
+
     static Attribute create(final int locId, final String name, final DataType type, final DataSpace space) {
         int id = H5Library.INSTANCE.H5Acreate(locId, name, type.getId(), space.getId(), H5Library.H5P_DEFAULT);
         if (id < 0) {
@@ -26,15 +36,7 @@ public final class Attribute extends AbstractDs {
     }
 
     private Attribute(final int id) {
-        super(id);
-    }
-
-    public void close() {
-        int err = H5Library.INSTANCE.H5Aclose(getId());
-        if (err < 0) {
-            throw new H5AttributeException("H5Aclose failed");
-        }
-        invalidate();
+        super(id, CLOSE_ACTION);
     }
 
     @Override
@@ -93,7 +95,7 @@ public final class Attribute extends AbstractDs {
 
     @Override
     public String toString() {
-        if (isValid()) {
+        if (isOpen()) {
             return "Attribute[name=" + getName() + "]";
         } else {
             return "Attribute[invalid]";

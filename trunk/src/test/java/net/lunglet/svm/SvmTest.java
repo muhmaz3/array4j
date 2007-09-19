@@ -23,6 +23,8 @@ import libsvm.svm_parameter;
 import libsvm.svm_problem;
 import org.junit.Test;
 
+// TODO rename to SvmClassifierTest
+
 // TODO test with heap and direct data oriented both ways
 
 public final class SvmTest {

@@ -9,8 +9,8 @@ import java.nio.IntBuffer;
 // TODO check datatypes used in read/write methods
 
 abstract class AbstractDs extends H5Object {
-    public AbstractDs(final int id) {
-        super(id);
+    public AbstractDs(final int id, final CloseAction closeAction) {
+        super(id, closeAction);
     }
 
     protected void checkBuffer(final Buffer buf, final DataType memType) {

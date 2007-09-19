@@ -7,21 +7,18 @@ import java.util.Set;
 import net.lunglet.hdf.H5Library.H5G_iterate_t;
 
 public final class Group extends H5Object {
-    Group(final int id) {
-        super(id);
-    }
+    private static final CloseAction CLOSE_ACTION = new CloseAction() {
+        @Override
+        public void close(final int id) {
+            int err = H5Library.INSTANCE.H5Gclose(id);
+            if (err < 0) {
+                throw new H5GroupException("H5Gclose failed");
+            }
+        }
+    };
 
-    public void close() {
-        // never close the root group
-        if (getName().equals("/")) {
-            invalidate();
-            return;
-        }
-        int err = H5Library.INSTANCE.H5Gclose(getId());
-        if (err < 0) {
-            throw new H5GroupException("H5Gclose failed");
-        }
-        invalidate();
+    Group(final int id, final boolean isRootGroup) {
+        super(id, isRootGroup ? null : CLOSE_ACTION);
     }
 
     public DataSet createDataSet(final String name, final DataType dataType, final DataSpace dataSpace) {
@@ -62,7 +59,7 @@ public final class Group extends H5Object {
         if (groupId < 0) {
             throw new H5GroupException("H5Gcreate failed");
         }
-        return new Group(groupId);
+        return new Group(groupId, false);
     }
 
     public Set<DataSet> getDataSets() {
@@ -112,6 +109,6 @@ public final class Group extends H5Object {
         if (groupId < 0) {
             throw new H5GroupException("H5Gopen failed");
         }
-        return new Group(groupId);
+        return new Group(groupId, false);
     }
 }

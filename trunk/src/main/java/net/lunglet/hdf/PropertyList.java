@@ -19,6 +19,16 @@ abstract class PropertyList extends IdComponent {
         }
     }
 
+    private static final CloseAction CLOSE_ACTION = new CloseAction() {
+        @Override
+        public void close(final int id) {
+            int err = H5Library.INSTANCE.H5Pclose(id);
+            if (err < 0) {
+                throw new H5PropertyListException("H5Pclose failed");
+            }
+        }
+    };
+
     protected static int create(final PropertyListClass cls) {
         int id = H5Library.INSTANCE.H5Pcreate(cls.intValue());
         if (id < 0) {
@@ -28,14 +38,6 @@ abstract class PropertyList extends IdComponent {
     }
 
     public PropertyList(final int id) {
-        super(id);
-    }
-
-    public final void close() {
-        int err = H5Library.INSTANCE.H5Pclose(getId());
-        if (err < 0) {
-            throw new H5PropertyListException("H5Pclose failed");
-        }
-        invalidate();
+        super(id, CLOSE_ACTION);
     }
 }

@@ -4,16 +4,18 @@ import java.nio.Buffer;
 import java.nio.ByteBuffer;
 
 public final class DataSet extends AbstractDs implements Comparable<DataSet> {
-    DataSet(final int id) {
-        super(id);
-    }
-
-    public void close() {
-        int err = H5Library.INSTANCE.H5Dclose(getId());
-        if (err < 0) {
-            throw new H5DataSetException("H5Dclose failed");
+    private static final CloseAction CLOSE_ACTION = new CloseAction() {
+        @Override
+        public void close(final int id) {
+            int err = H5Library.INSTANCE.H5Dclose(id);
+            if (err < 0) {
+                throw new H5DataSetException("H5Dclose failed");
+            }
         }
-        invalidate();
+    };
+
+    DataSet(final int id) {
+        super(id, CLOSE_ACTION);
     }
 
     @Override
@@ -81,7 +83,7 @@ public final class DataSet extends AbstractDs implements Comparable<DataSet> {
 
     @Override
     public String toString() {
-        if (isValid()) {
+        if (isOpen()) {
             return "DataSet[name=" + getName() + "]";
         } else {
             return "DataSet[invalid]";
@@ -97,8 +99,8 @@ public final class DataSet extends AbstractDs implements Comparable<DataSet> {
         write(buf, memType, memSpace, fileSpace, DataSetMemXferPropList.DEFAULT);
     }
 
-    public void write(final Buffer buf, final DataType memType, final DataSpace memSpace,
-            final DataSpace fileSpace, final DataSetMemXferPropList xferPlist) {
+    public void write(final Buffer buf, final DataType memType, final DataSpace memSpace, final DataSpace fileSpace,
+            final DataSetMemXferPropList xferPlist) {
         checkBuffer(buf, memType, memSpace, fileSpace);
         final int memTypeId = memType.getId();
         final int memSpaceId = memSpace.getId();
