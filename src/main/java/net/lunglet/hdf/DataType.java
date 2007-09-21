@@ -3,6 +3,8 @@ package net.lunglet.hdf;
 import java.util.HashSet;
 import java.util.Set;
 
+// TODO implement createTypeFromId with a TreeSet? will need Comparable on IdComponent
+
 public class DataType extends H5Object {
     private static final CloseAction CLOSE_ACTION = new CloseAction() {
         @Override
@@ -27,23 +29,32 @@ public class DataType extends H5Object {
         types.add(IntType.STD_I32LE);
         types.add(IntType.STD_I8BE);
         types.add(StringType.C_S1);
-        for (DataType dtype : types) {
-            int tri = H5Library.INSTANCE.H5Tequal(id, dtype.getId());
+        for (DataType predefinedType : types) {
+            int tri = H5Library.INSTANCE.H5Tequal(id, predefinedType.getId());
             if (tri < 0) {
                 throw new H5DataTypeException("H5Tequal failed");
             }
             if (tri > 0) {
-                return dtype;
+                CLOSE_ACTION.close(id);
+                return predefinedType;
             }
         }
-        int dtypeClass = H5Library.INSTANCE.H5Tget_class(id);
-        if (dtypeClass < 0) {
-            throw new H5DataTypeException("H5Tget_class failed");
+        DataType dtype = null;
+        try {
+            int dtypeClass = H5Library.INSTANCE.H5Tget_class(id);
+            if (dtypeClass < 0) {
+                throw new H5DataTypeException("H5Tget_class failed");
+            }
+            if (dtypeClass == DataTypeClass.STRING.intValue()) {
+                dtype = new StringType(id, false);
+            }
+            throw new AssertionError();
+        } finally {
+            if (dtype != null) {
+                return dtype;
+            }
+            CLOSE_ACTION.close(id);
         }
-        if (dtypeClass == DataTypeClass.STRING.intValue()) {
-            return new StringType(id, false);
-        }
-        throw new AssertionError();
     }
 
     DataType(final int id, final boolean predefined) {

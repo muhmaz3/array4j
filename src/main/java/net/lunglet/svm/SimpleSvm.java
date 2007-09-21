@@ -9,6 +9,10 @@ import java.util.List;
 
 // TODO rename to SvmClassifier
 
+// TODO handle more than 2 classes everywhere
+
+// TODO support model compaction by data being pushed to the model instead of pulling data
+
 public final class SimpleSvm {
     // TODO make a SvmParameterBuilder so anything can be configured
     static SvmParameter createDefaultSvmParameter() {
@@ -159,7 +163,6 @@ public final class SimpleSvm {
     }
 
     public void train(final double cost) {
-        // TODO might want to increase cache size
         SvmParameter param = createDefaultSvmParameter();
         param.svm_type = SvmParameter.C_SVC;
         param.C = cost;
@@ -191,11 +194,11 @@ public final class SimpleSvm {
         if (param.kernel_type == SvmParameter.PRECOMPUTED) {
             param.kernel_type = SvmParameter.LINEAR;
             for (int i = 0; i < model.SV.length; i++) {
-                model.SV[i] = new SvmNode(i, data.get(model.SV[i].getIndex()).getData());
+                model.SV[i] = new SvmNode(i, data.get(model.SV[i].getIndex()));
             }
         }
         if (model.SV.length == 0) {
-            throw new RuntimeException();
+            throw new RuntimeException("SVM training failed");
         }
     }
 }

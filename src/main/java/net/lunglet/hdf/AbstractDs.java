@@ -42,9 +42,11 @@ abstract class AbstractDs extends H5Object {
     protected void checkBuffer(final int size, final DataType memType, final DataSpace memSpace,
             final DataSpace fileSpace) {
         final DataSpace space;
+        boolean closeSpace = false;
         if (memSpace.equals(DataSpace.ALL)) {
             if (fileSpace.equals(DataSpace.ALL)) {
                 space = getSpace();
+                closeSpace = true;
             } else {
                 space = fileSpace;
             }
@@ -57,6 +59,9 @@ abstract class AbstractDs extends H5Object {
         long requiredSize = memType.getSize() * space.getSelectNPoints();
         if (size < requiredSize) {
             throw new IllegalArgumentException();
+        }
+        if (closeSpace) {
+            space.close();
         }
     }
 

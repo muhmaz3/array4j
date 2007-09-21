@@ -358,6 +358,8 @@ public interface H5Library extends Library {
 
     int H5Fopen(String filename, int flags, int access_plist);
 
+    int H5garbage_collect();
+
     int H5Gclose(int group_id);
 
     int H5Gcreate(int loc_id, String name, int size_hint);
