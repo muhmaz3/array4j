@@ -5,6 +5,11 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+ * http://hdfgroup.com/hdf-java-html/JNI/index.html
+ * http://hdfgroup.org/HDF5/doc/TechNotes/ThreadSafeLibrary.html
+ */
+
 final class NativeIdComponent extends WeakReference<IdComponent> {
     private static final int MAX_ITERATIONS = 100;
 
@@ -27,7 +32,9 @@ final class NativeIdComponent extends WeakReference<IdComponent> {
         NativeIdComponent nativeId = (NativeIdComponent) r.poll();
         int iterations = 0;
         while (nativeId != null && iterations < MAX_ITERATIONS) {
-            nativeId.close();
+            if (nativeId.open) {
+                nativeId.close();
+            }
             iterations++;
             nativeId = (NativeIdComponent) r.poll();
         }
@@ -50,7 +57,7 @@ final class NativeIdComponent extends WeakReference<IdComponent> {
     public void close() {
         // Ignore close if there is no close action. This is required for
         // components that cannot be closed, e.g. predefined types.
-        if (open && closeAction != null) {
+        if (closeAction != null) {
             refList.get().remove(this);
             closeAction.close(getId());
             open = false;
