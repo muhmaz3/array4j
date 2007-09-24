@@ -70,9 +70,9 @@ public interface H5Library extends Library {
             });
             options.put(Library.OPTION_TYPE_MAPPER, mapper);
             // TODO loadLibrary with options at some stage
-            H5Library lib = (H5Library) Native.loadLibrary(LIBRARY_NAME, H5Library.class);
+            Library lib = (Library) Native.loadLibrary(LIBRARY_NAME, H5Library.class);
             // TODO set error handle with H5Eset_auto(..., ...)
-            return lib;
+            return (H5Library) Native.synchronizedLibrary(lib);
         }
 
         private Loader() {
@@ -306,7 +306,7 @@ public interface H5Library extends Library {
 
     int INTEGER_BYTES = Integer.SIZE >>> 3;
 
-    String LIBRARY_NAME = "hdf5dll";
+    String LIBRARY_NAME = "hdf5";
 
     int LONG_BYTES = Long.SIZE >>> 3;
 

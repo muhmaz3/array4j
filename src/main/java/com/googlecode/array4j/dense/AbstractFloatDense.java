@@ -17,6 +17,14 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 // interfaces, this class becomes FloatDenseImpl that
 // implements both
 
+// TODO always align at 16-byte boundaries
+
+// TODO always make leading dimension values (n*element_size) of
+// two-dimensional arrays are divisible by 16
+
+// TODO for two-dimensional arrays, leading dimension values
+// divisible by 2048 are avoided.
+
 abstract class AbstractFloatDense<M extends FloatMatrix<M, FloatDenseVector> & DenseMatrix<M, FloatDenseVector>>
         extends AbstractDenseMatrix<M, FloatDenseVector, float[]> {
     private static final int DEFAULT_OFFSET = 0;
@@ -216,9 +224,8 @@ abstract class AbstractFloatDense<M extends FloatMatrix<M, FloatDenseVector> & D
     private void writeObject(final ObjectOutputStream out) throws IOException {
         out.defaultWriteObject();
         out.writeObject(storage());
-//        for (int i = 0; i < length; i++) {
-//            out.writeFloat(get(i));
-//        }
-        throw new UnsupportedOperationException();
+        for (int i = 0; i < length; i++) {
+            out.writeFloat(get(i));
+        }
     }
 }

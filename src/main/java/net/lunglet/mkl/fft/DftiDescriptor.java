@@ -2,7 +2,29 @@ package net.lunglet.mkl.fft;
 
 import java.nio.Buffer;
 
-// TODO implement copyDescriptor if it could be useful
+//JNIEXPORT jintArray JNICALL Java_net_lunglet_mkl_fft_DftiDescriptor_getIntArrayValue
+//  (JNIEnv *env, jclass clazz, jlong handle, jint param, jlongArray statusHolder)
+//{
+//    long status = -1;
+//    jsize dimension;
+//    jintArray value;
+//    jint *value1;
+//    status = DftiGetValue(DFTI_DESCRIPTOR_HANDLE_PTR(handle), DFTI_DIMENSION, &dimension);
+//    if (!DftiErrorClass(status, DFTI_NO_ERROR)) {
+//        (*env)->SetLongArrayRegion(env, statusHolder, 0, 1, (const jlong*) &status);
+//        return NULL;
+//    }
+//    // array has an extra element for these parameters
+//    if (param == DFTI_INPUT_STRIDES || param == DFTI_OUTPUT_STRIDES) {
+//        dimension++;
+//    }
+//    value = (*env)->NewIntArray(env, dimension);
+//    value1 = (*env)->GetPrimitiveArrayCritical(env, value, NULL);
+//    status = DftiGetValue(DFTI_DESCRIPTOR_HANDLE_PTR(handle), param, value1);
+//    (*env)->ReleasePrimitiveArrayCritical(env, value, value1, JNI_ABORT);
+//    (*env)->SetLongArrayRegion(env, statusHolder, 0, 1, (const jlong*) &status);
+//    return value;
+//}
 
 public final class DftiDescriptor {
     static {

@@ -2,6 +2,7 @@ package net.lunglet.io;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -12,6 +13,25 @@ public final class FileUtils {
             return new File(dir, name).isFile();
         }
     };
+
+    public static File createTempDirectory(final String prefix, final String suffix) {
+        return createTempDirectory(prefix, suffix, null);
+    }
+
+    public static File createTempDirectory(final String prefix, final String suffix, final File directory) {
+        try {
+            File file = File.createTempFile(prefix, suffix, directory);
+            if (!file.delete()) {
+                throw new RuntimeException();
+            }
+            if (!file.mkdirs()) {
+                throw new RuntimeException();
+            }
+            return file;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     public static File[] listFiles(final File directory, final FilenameFilter filter) {
         return listFiles(directory, filter, false);

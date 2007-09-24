@@ -4,7 +4,9 @@ import com.sun.jna.NativeLong;
 import com.sun.jna.ptr.LongByReference;
 import java.nio.charset.Charset;
 import java.util.Arrays;
+import net.jcip.annotations.NotThreadSafe;
 
+@NotThreadSafe
 public final class H5File extends IdComponent {
     private static final CloseAction CLOSE_ACTION = new CloseAction() {
         @Override
