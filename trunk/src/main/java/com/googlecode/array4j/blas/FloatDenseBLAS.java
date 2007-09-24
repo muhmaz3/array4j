@@ -27,12 +27,7 @@ public final class FloatDenseBLAS extends AbstractDenseBLAS {
         case F2J:
             return Sdot.sdot(n, xbuf.array(), xbuf.arrayOffset(), incx, ybuf.array(), ybuf.arrayOffset(), incy);
         case NATIVE:
-            try {
-                NATIVE_BLAS_LOCK.lock();
-                return NativeBLASLibrary.INSTANCE.array4j_sdot(n, xbuf, incx, ybuf, incy);
-            } finally {
-                NATIVE_BLAS_LOCK.unlock();
-            }
+            return BLASLibrary.INSTANCE.array4j_sdot(n, xbuf, incx, ybuf, incy);
         default:
             throw new AssertionError();
         }
@@ -59,14 +54,9 @@ public final class FloatDenseBLAS extends AbstractDenseBLAS {
                 bbuf.arrayOffset(), ldb, beta, cbuf.array(), cbuf.arrayOffset(), ldc);
             return;
         case NATIVE:
-            try {
-                NATIVE_BLAS_LOCK.lock();
-                NativeBLASLibrary.INSTANCE.array4j_sgemm(corder(c), ctrans(c, a), ctrans(c, b), m, n, k, alpha, abuf,
-                        lda, bbuf, ldb, beta, cbuf, ldc);
-                return;
-            } finally {
-                NATIVE_BLAS_LOCK.unlock();
-            }
+            BLASLibrary.INSTANCE.array4j_sgemm(corder(c), ctrans(c, a), ctrans(c, b), m, n, k, alpha, abuf, lda, bbuf,
+                ldb, beta, cbuf, ldc);
+            return;
         default:
             throw new AssertionError();
         }
@@ -84,16 +74,11 @@ public final class FloatDenseBLAS extends AbstractDenseBLAS {
         case F2J:
             Ssyrk.ssyrk("U", trans(c, a), n, k, alpha, abuf.array(), abuf.arrayOffset(), lda, beta, cbuf.array(),
                 cbuf.arrayOffset(), ldc);
+            return;
         case NATIVE:
-            try {
-                NATIVE_BLAS_LOCK.lock();
-                // typedef enum {CblasUpper=121, CblasLower=122} CBLAS_UPLO;
-                NativeBLASLibrary.INSTANCE.array4j_ssyrk(corder(c), 121, ctrans(c, a), n, k, alpha, abuf, lda, beta,
-                    cbuf, ldc);
-                return;
-            } finally {
-                NATIVE_BLAS_LOCK.unlock();
-            }
+            // typedef enum {CblasUpper=121, CblasLower=122} CBLAS_UPLO;
+            BLASLibrary.INSTANCE.array4j_ssyrk(corder(c), 121, ctrans(c, a), n, k, alpha, abuf, lda, beta, cbuf, ldc);
+            return;
         default:
             throw new AssertionError();
         }

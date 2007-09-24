@@ -1,11 +1,21 @@
 package net.lunglet.hdf;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import com.googlecode.array4j.Orientation;
 import com.googlecode.array4j.Storage;
 import com.googlecode.array4j.dense.FloatDenseMatrix;
 import com.sun.jna.ptr.IntByReference;
 import java.util.UUID;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CompletionService;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorCompletionService;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import org.junit.Ignore;
 import org.junit.Test;
 
 // TODO move testHyperslabReadWrite and refactor to not use array4j classes
@@ -56,5 +66,38 @@ public final class H5LibraryTest {
         dataset2.close();
 
         h5.close();
+    }
+
+    @Ignore
+    public void testMultipleThreads() throws InterruptedException, ExecutionException {
+        int nThreads = 16;
+        int iterations = 50;
+        int loops = iterations * nThreads;
+        ExecutorService threadPool = Executors.newFixedThreadPool(nThreads);
+        CompletionService<Boolean> completionService = new ExecutorCompletionService<Boolean>(threadPool);
+        for (int i = 0; i < loops; i++) {
+            completionService.submit(new Callable<Boolean>() {
+                @Override
+                public Boolean call() throws Exception {
+                    System.gc();
+                    FileCreatePropList fcpl = FileCreatePropList.DEFAULT;
+                    FileAccessPropList fapl = new FileAccessPropListBuilder().setCore(1024, false).build();
+                    String name = UUID.randomUUID().toString();
+                    H5File h5 = new H5File(name, fcpl, fapl);
+                    Group group = h5.getRootGroup().createGroup("/foo");
+                    for (int j = 0; j < 100; j++) {
+                        group.createAttribute("attr" + j, "value" + j);
+                        System.gc();
+                    }
+                    return Boolean.TRUE;
+                }
+            });
+        }
+        threadPool.shutdown();
+        threadPool.awaitTermination(0L, TimeUnit.MILLISECONDS);
+        for (int i = 0; i < loops; i++) {
+            Future<Boolean> future = completionService.take();
+            assertTrue(future.get());
+        }
     }
 }

@@ -3,6 +3,7 @@ package net.lunglet.hdf;
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /*
@@ -13,31 +14,23 @@ import java.util.List;
 final class NativeIdComponent extends WeakReference<IdComponent> {
     private static final int MAX_ITERATIONS = 100;
 
-    private static ThreadLocal<List<NativeIdComponent>> refList = new ThreadLocal<List<NativeIdComponent>>() {
-        @Override
-        protected List<NativeIdComponent> initialValue() {
-            return new ArrayList<NativeIdComponent>();
-        }
-    };
+    private static final List<NativeIdComponent> REF_LIST =
+        Collections.synchronizedList(new ArrayList<NativeIdComponent>());
 
-    private static ThreadLocal<ReferenceQueue<IdComponent>> refQueue = new ThreadLocal<ReferenceQueue<IdComponent>>() {
-        @Override
-        protected ReferenceQueue<IdComponent> initialValue() {
-            return new ReferenceQueue<IdComponent>();
-        }
-    };
+    private static final ReferenceQueue<IdComponent> REF_QUEUE = new ReferenceQueue<IdComponent>();
 
     static void cleanup() {
-        ReferenceQueue<IdComponent> r = refQueue.get();
-        NativeIdComponent nativeId = (NativeIdComponent) r.poll();
         int iterations = 0;
-        while (nativeId != null && iterations < MAX_ITERATIONS) {
-            if (nativeId.open) {
-                nativeId.close();
-            }
+        do {
+            NativeIdComponent nativeId = null;
+            nativeId = (NativeIdComponent) REF_QUEUE.poll();
             iterations++;
-            nativeId = (NativeIdComponent) r.poll();
-        }
+            if (nativeId != null) {
+                nativeId.close();
+            } else {
+                break;
+            }
+        } while (iterations < MAX_ITERATIONS);
     }
 
     private final CloseAction closeAction;
@@ -47,19 +40,23 @@ final class NativeIdComponent extends WeakReference<IdComponent> {
     private boolean open;
 
     public NativeIdComponent(final IdComponent component, final int id, final CloseAction closeAction) {
-        super(component, refQueue.get());
+        super(component, REF_QUEUE);
         this.id = id;
         this.open = true;
         this.closeAction = closeAction;
-        refList.get().add(this);
+        REF_LIST.add(this);
     }
 
     public void close() {
         // Ignore close if there is no close action. This is required for
         // components that cannot be closed, e.g. predefined types.
-        if (closeAction != null) {
-            refList.get().remove(this);
-            closeAction.close(getId());
+        if (open && closeAction != null) {
+            REF_LIST.remove(this);
+            try {
+                closeAction.close(getId());
+            } catch (RuntimeException e) {
+                throw e;
+            }
             open = false;
         }
     }

@@ -1,52 +1,11 @@
 package com.googlecode.array4j.blas;
 
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.Lock;
-
 import com.googlecode.array4j.Orientation;
 import com.googlecode.array4j.dense.DenseMatrix;
 import com.googlecode.array4j.dense.FloatDenseMatrix;
 import com.googlecode.array4j.dense.FloatDenseVector;
 
 public abstract class AbstractDenseBLAS {
-    private static final class DummyLock implements Lock {
-        @Override
-        public void lock() {
-        }
-
-        @Override
-        public void lockInterruptibly() throws InterruptedException {
-        }
-
-        @Override
-        public Condition newCondition() {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public boolean tryLock() {
-            return true;
-        }
-
-        @Override
-        public boolean tryLock(final long time, final TimeUnit unit) throws InterruptedException {
-            return true;
-        }
-
-        @Override
-        public void unlock() {
-        }
-    }
-
-    protected static final Lock NATIVE_BLAS_LOCK;
-
-    static {
-        // TODO might need to use a proper lock here when dealing with
-        // multithreaded libraries like MKL
-        NATIVE_BLAS_LOCK = new DummyLock();
-    }
-
     protected static void checkDot(final FloatDenseVector x, final FloatDenseVector y) {
         if (x.length() != y.length()) {
             throw new IllegalArgumentException();
