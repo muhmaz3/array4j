@@ -23,7 +23,7 @@ public final class HDFWriter {
         h5file.close();
     }
 
-    public void write(final FloatDenseMatrix matrix, final String name) {
+    public void write(final String name, final FloatDenseMatrix matrix) {
         DataType memType = FloatType.IEEE_F32LE;
         DataSet dataset = h5file.getRootGroup().createDataSet(name, memType, matrix.rows(), matrix.columns());
         try {
@@ -33,7 +33,7 @@ public final class HDFWriter {
         }
     }
 
-    public void write(final FloatPackedMatrix matrix, final String name) {
+    public void write(final String name, final FloatPackedMatrix matrix) {
         DataSet dataset = null;
         try {
             long n = matrix.rows();

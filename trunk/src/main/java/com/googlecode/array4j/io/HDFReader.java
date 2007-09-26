@@ -1,19 +1,27 @@
 package com.googlecode.array4j.io;
 
+import com.googlecode.array4j.Storage;
 import com.googlecode.array4j.packed.FloatPackedMatrix;
+import com.googlecode.array4j.util.BufferUtils;
 import java.io.IOException;
+import java.nio.FloatBuffer;
 import net.lunglet.hdf.DataSet;
 import net.lunglet.hdf.DataSpace;
 import net.lunglet.hdf.FloatType;
 import net.lunglet.hdf.H5File;
+import net.lunglet.hdf.SelectionOperator;
 
 // TODO handle any orientation, stride, offset, size, etc.
 
 // TODO read via an intermediate direct buffer if matrix is
 // stored on the heap and exceeds some maximum size
 
+// TODO write generic function to do direct buffered reads from any dataset into a heap buffer
+
 public final class HDFReader {
     private final H5File h5file;
+
+    private static final int DEFAULT_BUFFER_SIZE = 4 * 1024 * 1024;
 
     public HDFReader(final H5File h5file) {
         this.h5file = h5file;
@@ -23,7 +31,14 @@ public final class HDFReader {
         h5file.close();
     }
 
-    public void read(final FloatPackedMatrix matrix, final String name) {
+    public void read(final String name, final FloatPackedMatrix matrix) {
+        read(name, matrix, DEFAULT_BUFFER_SIZE);
+    }
+
+    public void read(final String name, final FloatPackedMatrix matrix, final int bufSize) {
+        if (bufSize <= 0) {
+            throw new IllegalArgumentException();
+        }
         DataSet dataset = null;
         DataSpace space = null;
         try {
@@ -38,7 +53,24 @@ public final class HDFReader {
             if (matrix.rows() != n) {
                 throw new IllegalArgumentException();
             }
-            dataset.read(matrix.data(), FloatType.IEEE_F32LE);
+            if (matrix.storage().equals(Storage.DIRECT)) {
+                dataset.read(matrix.data(), FloatType.IEEE_F32LE);
+            } else {
+                FloatBuffer data = matrix.data();
+                FloatBuffer buf = BufferUtils.createFloatBuffer(bufSize, Storage.DIRECT);
+                DataSpace memSpace = new DataSpace(buf.capacity());
+                for (int i = 0; i < data.capacity(); i += buf.capacity()) {
+                    int remaining = data.capacity() - i;
+                    int count = Math.min(remaining, buf.capacity());
+                    buf.limit(count);
+                    memSpace.selectHyperslab(SelectionOperator.SET, new long[]{0}, new long[]{count});
+                    space.selectHyperslab(SelectionOperator.SET, new long[]{i}, new long[]{count});
+                    dataset.read(buf, FloatType.IEEE_F32LE, memSpace, space);
+                    buf.rewind();
+                    data.put(buf);
+                }
+                memSpace.close();
+            }
         } finally {
             if (space != null) {
                 space.close();

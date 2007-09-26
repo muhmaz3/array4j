@@ -19,9 +19,9 @@ public final class HDFWriterTest extends AbstractHDFTest {
             FloatPackedMatrix x = FloatPackedMatrix.createSymmetric(n, storage);
             MatrixTestSupport.populateMatrix(x);
             String name = String.valueOf(n);
-            writer.write(x, name);
+            writer.write(name, x);
             FloatPackedMatrix y = FloatPackedMatrix.createSymmetric(n, storage);
-            reader.read(y, name);
+            reader.read(name, y);
             assertEquals(x, y);
         }
         h5.close();

@@ -164,10 +164,9 @@ abstract class AbstractFloatDense<M extends FloatMatrix<M, FloatDenseVector> & D
         this.data = createBuffer(length, storage);
         checkData(data);
         // TODO this stuff can fail when there are offsets and strides involved
-//        for (int i = 0; i < length; i++) {
-//            data.put(i, in.readFloat());
-//        }
-        throw new UnsupportedOperationException();
+        for (int i = 0; i < length; i++) {
+            data.put(i, in.readFloat());
+        }
     }
 
     @Override
