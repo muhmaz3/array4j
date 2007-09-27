@@ -6,6 +6,8 @@ import java.util.HashSet;
 import java.util.Set;
 import net.lunglet.hdf.H5Library.H5G_iterate_t;
 
+// TODO implement existsGroup
+
 public final class Group extends H5Object {
     private static final CloseAction CLOSE_ACTION = new CloseAction() {
         @Override
