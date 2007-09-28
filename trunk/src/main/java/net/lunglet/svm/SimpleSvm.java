@@ -4,6 +4,7 @@ import com.googlecode.array4j.FloatMatrix;
 import com.googlecode.array4j.FloatVector;
 import com.googlecode.array4j.dense.FloatDenseMatrix;
 import com.googlecode.array4j.dense.FloatDenseVector;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,7 +14,7 @@ import java.util.List;
 
 // TODO support model compaction by data being pushed to the model instead of pulling data
 
-public final class SimpleSvm {
+public final class SimpleSvm implements Serializable {
     // TODO make a SvmParameterBuilder so anything can be configured
     static SvmParameter createDefaultSvmParameter() {
         SvmParameter param = new SvmParameter();
@@ -24,7 +25,7 @@ public final class SimpleSvm {
         param.nu = 0.5;
         // TODO tune cache size depending on whether a precomputed kernel is
         // being used or not
-        param.cache_size = 10;
+        param.cache_size = 32;
         param.eps = 1e-3;
         param.p = 0.1;
         param.shrinking = 1;
@@ -49,9 +50,9 @@ public final class SimpleSvm {
         };
     }
 
-    private final List<Handle> data;
+    private final transient List<Handle> data;
 
-    private final PrecomputedKernel kernel;
+    private final transient PrecomputedKernel kernel;
 
     private SvmModel model;
 
@@ -72,6 +73,7 @@ public final class SimpleSvm {
         problem.l = data.size();
         problem.y = new double[data.size()];
         problem.x = new SvmNode[problem.l];
+        // XXX here indexes start from 0
         for (int i = 0; i < data.size(); i++) {
             problem.y[i] = data.get(i).getLabel();
             if (kernel != null) {
@@ -107,6 +109,10 @@ public final class SimpleSvm {
         model.sv_coef = new double[][]{{1.0, 0.0}};
         model.nSV = new int[]{1, 0};
         model.l = 1;
+    }
+
+    public SvmNode[] getSvmNodes() {
+        return model.SV;
     }
 
     public float getRho() {

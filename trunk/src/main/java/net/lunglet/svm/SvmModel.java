@@ -1,6 +1,10 @@
 package net.lunglet.svm;
 
-final class SvmModel {
+import java.io.Serializable;
+
+final class SvmModel implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     // total #SV
     int l;
 

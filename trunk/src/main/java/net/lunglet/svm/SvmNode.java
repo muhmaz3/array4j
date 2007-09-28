@@ -1,11 +1,14 @@
 package net.lunglet.svm;
 
 import com.googlecode.array4j.FloatVector;
+import java.io.Serializable;
 
-final class SvmNode {
-    private final Handle handle;
+public final class SvmNode implements Serializable {
+    private static final long serialVersionUID = 1L;
 
-    private final int index;
+    private transient Handle handle;
+
+    private int index;
 
     public SvmNode(final int index) {
         this(index, (Handle) null);
@@ -39,5 +42,13 @@ final class SvmNode {
             throw new IllegalStateException();
         }
         return handle.getData();
+    }
+
+    public void setHandle(final Handle handle) {
+        this.handle = handle;
+    }
+
+    public void setIndex(final int index) {
+        this.index = index;
     }
 }
