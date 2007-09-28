@@ -1,11 +1,15 @@
 package net.lunglet.svm;
 
-class SvmProblem {
-    public PrecomputedKernel kernel;
+import java.io.Serializable;
 
-    public int l;
+class SvmProblem implements Serializable {
+    private static final long serialVersionUID = 1L;
 
-    public SvmNode[] x;
+    transient PrecomputedKernel kernel;
 
-    public double[] y;
+    int l;
+
+    SvmNode[] x;
+
+    double[] y;
 }

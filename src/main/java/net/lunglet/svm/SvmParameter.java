@@ -1,6 +1,10 @@
 package net.lunglet.svm;
 
-final class SvmParameter implements Cloneable {
+import java.io.Serializable;
+
+final class SvmParameter implements Cloneable, Serializable {
+    private static final long serialVersionUID = 1L;
+
     /* svm_type */
     public static final int C_SVC = 1;
 
