@@ -2,6 +2,7 @@ package net.lunglet.hdf;
 
 import com.sun.jna.NativeLong;
 import com.sun.jna.ptr.LongByReference;
+import java.io.File;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import net.jcip.annotations.NotThreadSafe;
@@ -61,7 +62,11 @@ public final class H5File extends IdComponent {
     private final Group rootGroup;
 
     public H5File(final String name) {
-        this(name, H5F_ACC_TRUNC);
+        this(new File(name));
+    }
+
+    public H5File(final File file) {
+        this(file, H5F_ACC_TRUNC);
     }
 
     public H5File(final String name, final FileCreatePropList fcpl, final FileAccessPropList fapl) {
@@ -69,12 +74,20 @@ public final class H5File extends IdComponent {
     }
 
     public H5File(final String name, final int flags) {
-        this(name, flags, FileCreatePropList.DEFAULT, FileAccessPropList.DEFAULT);
+        this(new File(name), flags);
+    }
+
+    public H5File(final File file, final int flags) {
+        this(file, flags, FileCreatePropList.DEFAULT, FileAccessPropList.DEFAULT);
+    }
+
+    public H5File(final File file, final int flags, final FileCreatePropList fcpl, final FileAccessPropList fapl) {
+        super(init(file.getPath(), flags, fcpl, fapl), CLOSE_ACTION);
+        this.rootGroup = new Group(getId(), true);
     }
 
     public H5File(final String name, final int flags, final FileCreatePropList fcpl, final FileAccessPropList fapl) {
-        super(init(name, flags, fcpl, fapl), CLOSE_ACTION);
-        this.rootGroup = new Group(getId(), true);
+        this(new File(name), flags, fcpl, fapl);
     }
 
     public String getFileName() {

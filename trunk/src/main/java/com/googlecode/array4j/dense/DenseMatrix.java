@@ -15,4 +15,6 @@ public interface DenseMatrix<M extends DenseMatrix<M, V>, V extends DenseVector<
     Storage storage();
 
     int stride();
+
+    int leadingDimension();
 }

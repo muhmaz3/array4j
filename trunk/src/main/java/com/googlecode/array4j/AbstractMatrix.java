@@ -69,7 +69,8 @@ public abstract class AbstractMatrix<M extends Matrix<M, V>, V extends Vector<V>
 
     protected final void checkRowVector(final Vector<?> vector) {
         if (vector.length() != columns) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("vector with length " + columns + " required (length is "
+                    + vector.length() + ")");
         }
     }
 
