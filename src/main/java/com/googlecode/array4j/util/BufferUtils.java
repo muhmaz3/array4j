@@ -8,6 +8,8 @@ import java.nio.ByteOrder;
 import java.nio.DoubleBuffer;
 import java.nio.FloatBuffer;
 
+// TODO in createAlignedBuffer slice buffer depending on absolute address
+
 public final class BufferUtils {
     public static FloatBuffer createComplexFloatBuffer(final int size, final Storage storage) {
         if (size < 0) {
@@ -33,6 +35,15 @@ public final class BufferUtils {
         } else {
             return FloatBuffer.allocate(size);
         }
+    }
+
+    public static Buffer createAlignedBuffer(final int size, final int alignment) {
+        if (alignment < 1) {
+            throw new IllegalArgumentException();
+        }
+        ByteBuffer buffer = ByteBuffer.allocateDirect(size + alignment - 1);
+        buffer.order(ByteOrder.nativeOrder());
+        return buffer;
     }
 
     public static int getBytesCapacity(final Buffer buf) {

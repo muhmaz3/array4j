@@ -20,6 +20,12 @@ public final class AssertUtils {
         return value;
     }
 
+    public static void assertEquals(final int expected, final int actual) {
+        if (expected != actual) {
+            throw new AssertionError();
+        }
+    }
+
     /**
      * Checks that value is in the range [start, stop).
      */

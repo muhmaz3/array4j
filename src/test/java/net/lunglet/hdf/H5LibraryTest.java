@@ -15,7 +15,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-import org.junit.Ignore;
 import org.junit.Test;
 
 // TODO move testHyperslabReadWrite and refactor to not use array4j classes
@@ -68,11 +67,10 @@ public final class H5LibraryTest {
         h5.close();
     }
 
-    @Ignore
+    @Test
     public void testMultipleThreads() throws InterruptedException, ExecutionException {
-        int nThreads = 16;
-        int iterations = 50;
-        int loops = iterations * nThreads;
+        int nThreads = 4;
+        int loops = 10 * nThreads;
         ExecutorService threadPool = Executors.newFixedThreadPool(nThreads);
         CompletionService<Boolean> completionService = new ExecutorCompletionService<Boolean>(threadPool);
         for (int i = 0; i < loops; i++) {
@@ -85,10 +83,13 @@ public final class H5LibraryTest {
                     String name = UUID.randomUUID().toString();
                     H5File h5 = new H5File(name, fcpl, fapl);
                     Group group = h5.getRootGroup().createGroup("/foo");
-                    for (int j = 0; j < 100; j++) {
+                    for (int j = 0; j < 4; j++) {
                         group.createAttribute("attr" + j, "value" + j);
                         System.gc();
                     }
+                    DataSpace.createScalar();
+                    DataSpace space = new DataSpace(4, 2, 1, 3);
+                    space.selectElements(SelectionOperator.SET, new Point(0, 0, 0, 0));
                     return Boolean.TRUE;
                 }
             });

@@ -132,8 +132,18 @@ public abstract class AbstractDenseMatrix<M extends DenseMatrix<M, V>, V extends
     // TODO give this method a better name
     protected abstract void setFrom(T dest, int destPos, int srcPos);
 
+    @Override
     public final int stride() {
         return stride;
+    }
+
+    @Override
+    public final int leadingDimension() {
+        if (orientation.equals(Orientation.COLUMN)) {
+            return Math.max(1, base != null ? base.rows() : rows);
+        } else {
+            return Math.max(1, base != null ? base.columns() : columns);
+        }
     }
 
     public final T toArray() {
