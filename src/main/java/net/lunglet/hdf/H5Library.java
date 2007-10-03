@@ -376,6 +376,8 @@ public interface H5Library extends Library {
 
     NativeLong H5Iget_name(int obj_id, byte[] name, NativeLong size);
 
+    int H5Iget_type(int obj_id);
+
     int H5open();
 
     int H5Pclose(int plist);
@@ -445,4 +447,6 @@ public interface H5Library extends Library {
     int H5Tget_size(int type_id);
 
     int H5Tset_size(int type_id, NativeLong size);
+
+    int H5Zfilter_avail(int filter);
 }

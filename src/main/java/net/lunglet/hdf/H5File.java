@@ -61,20 +61,8 @@ public final class H5File extends IdComponent {
 
     private final Group rootGroup;
 
-    public H5File(final String name) {
-        this(new File(name));
-    }
-
     public H5File(final File file) {
         this(file, H5F_ACC_TRUNC);
-    }
-
-    public H5File(final String name, final FileCreatePropList fcpl, final FileAccessPropList fapl) {
-        this(name, H5F_ACC_TRUNC, fcpl, fapl);
-    }
-
-    public H5File(final String name, final int flags) {
-        this(new File(name), flags);
     }
 
     public H5File(final File file, final int flags) {
@@ -84,6 +72,18 @@ public final class H5File extends IdComponent {
     public H5File(final File file, final int flags, final FileCreatePropList fcpl, final FileAccessPropList fapl) {
         super(init(file.getPath(), flags, fcpl, fapl), CLOSE_ACTION);
         this.rootGroup = new Group(getId(), true);
+    }
+
+    public H5File(final String name) {
+        this(new File(name));
+    }
+
+    public H5File(final String name, final FileCreatePropList fcpl, final FileAccessPropList fapl) {
+        this(name, H5F_ACC_TRUNC, fcpl, fapl);
+    }
+
+    public H5File(final String name, final int flags) {
+        this(new File(name), flags);
     }
 
     public H5File(final String name, final int flags, final FileCreatePropList fcpl, final FileAccessPropList fapl) {

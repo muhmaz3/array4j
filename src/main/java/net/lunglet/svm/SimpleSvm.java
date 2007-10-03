@@ -2,6 +2,8 @@ package net.lunglet.svm;
 
 import com.googlecode.array4j.FloatMatrix;
 import com.googlecode.array4j.FloatVector;
+import com.googlecode.array4j.Orientation;
+import com.googlecode.array4j.Storage;
 import com.googlecode.array4j.dense.FloatDenseMatrix;
 import com.googlecode.array4j.dense.FloatDenseVector;
 import java.io.Serializable;
@@ -111,8 +113,14 @@ public final class SimpleSvm implements Serializable {
         model.l = 1;
     }
 
-    public SvmNode[] getSvmNodes() {
-        return model.SV;
+    public FloatDenseVector getModel() {
+        FloatVector<?> sv = getSupportVector();
+        FloatDenseVector modelvec = new FloatDenseVector(sv.length() + 1, Orientation.COLUMN, Storage.DIRECT);
+        for (int i = 0; i < sv.length(); i++) {
+            modelvec.set(i, sv.get(i));
+        }
+        modelvec.set(modelvec.length() - 1, getRho());
+        return modelvec;
     }
 
     public float getRho() {
@@ -133,6 +141,10 @@ public final class SimpleSvm implements Serializable {
             throw new UnsupportedOperationException();
         }
         return model.SV[0].getValue();
+    }
+
+    public SvmNode[] getSvmNodes() {
+        return model.SV;
     }
 
     public FloatDenseMatrix score(final FloatMatrix<?, ?> testData) {
@@ -200,7 +212,8 @@ public final class SimpleSvm implements Serializable {
         if (param.kernel_type == SvmParameter.PRECOMPUTED) {
             param.kernel_type = SvmParameter.LINEAR;
             for (int i = 0; i < model.SV.length; i++) {
-                model.SV[i] = new SvmNode(i, data.get(model.SV[i].getIndex()));
+                int index = model.SV[i].getIndex();
+                model.SV[i] = new SvmNode(index, data.get(index));
             }
         }
         if (model.SV.length == 0) {
