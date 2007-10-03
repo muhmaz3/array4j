@@ -47,8 +47,4 @@ public final class SvmNode implements Serializable {
     public void setHandle(final Handle handle) {
         this.handle = handle;
     }
-
-    public void setIndex(final int index) {
-        this.index = index;
-    }
 }

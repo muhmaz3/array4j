@@ -1,6 +1,8 @@
 package com.googlecode.array4j.io;
 
+import com.googlecode.array4j.Orientation;
 import com.googlecode.array4j.Storage;
+import com.googlecode.array4j.dense.FloatDenseMatrix;
 import com.googlecode.array4j.packed.FloatPackedMatrix;
 import com.googlecode.array4j.util.BufferUtils;
 import java.io.IOException;
@@ -13,15 +15,12 @@ import net.lunglet.hdf.SelectionOperator;
 
 // TODO handle any orientation, stride, offset, size, etc.
 
-// TODO read via an intermediate direct buffer if matrix is
-// stored on the heap and exceeds some maximum size
-
 // TODO write generic function to do direct buffered reads from any dataset into a heap buffer
 
 public final class HDFReader {
-    private final H5File h5file;
-
     private static final int DEFAULT_BUFFER_SIZE = 4 * 1024 * 1024;
+
+    private final H5File h5file;
 
     public HDFReader(final H5File h5file) {
         this.h5file = h5file;
@@ -29,6 +28,37 @@ public final class HDFReader {
 
     public void close() {
         h5file.close();
+    }
+
+    public void read(final String name, final FloatDenseMatrix matrix) {
+        if (matrix.orientation() != Orientation.ROW) {
+            throw new UnsupportedOperationException();
+        }
+        DataSet dataset = null;
+        DataSpace space = null;
+        try {
+            dataset = h5file.getRootGroup().openDataSet(name);
+            space = dataset.getSpace();
+            long[] dims = space.getDims();
+            if (dims.length != 2) {
+                throw new RuntimeException(new IOException());
+            }
+            if (matrix.rows() != dims[0] || matrix.columns() != dims[1]) {
+                throw new IllegalArgumentException();
+            }
+            if (matrix.storage().equals(Storage.DIRECT)) {
+                dataset.read(matrix.data(), FloatType.IEEE_F32LE);
+            } else {
+                throw new UnsupportedOperationException();
+            }
+        } finally {
+            if (space != null) {
+                space.close();
+            }
+            if (dataset != null) {
+                dataset.close();
+            }
+        }
     }
 
     public void read(final String name, final FloatPackedMatrix matrix) {

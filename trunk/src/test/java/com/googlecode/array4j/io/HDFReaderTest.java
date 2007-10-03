@@ -2,7 +2,9 @@ package com.googlecode.array4j.io;
 
 import static org.junit.Assert.assertEquals;
 import com.googlecode.array4j.MatrixTestSupport;
+import com.googlecode.array4j.Orientation;
 import com.googlecode.array4j.Storage;
+import com.googlecode.array4j.dense.FloatDenseMatrix;
 import com.googlecode.array4j.packed.FloatPackedMatrix;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,16 +30,42 @@ public final class HDFReaderTest extends AbstractHDFTest {
         return m + (n + 1L) * n / 2L;
     }
 
-    @Ignore
-    public void testSpeed() {
-        System.out.println("reading kernel " + System.currentTimeMillis());
-        H5File kernelh5 = new H5File("G:/ngrams_kernel.h5", H5File.H5F_ACC_RDONLY);
-        DataSet kernelds = kernelh5.getRootGroup().openDataSet("/kernel");
-        int[] order = kernelds.getIntArrayAttribute("order");
-        FloatPackedMatrix kernel = FloatPackedMatrix.createSymmetric(order.length, Storage.HEAP);
-        new HDFReader(kernelh5).read("/kernel", kernel);
-        kernelh5.close();
-        System.out.println("read kernel " + System.currentTimeMillis());
+    @Test
+    public void testReadFloatDenseMatrix() {
+        H5File h5 = createMemoryH5File();
+        Group group = h5.getRootGroup().createGroup("/foo");
+        group.close();
+        DataSet ds = h5.getRootGroup().createDataSet("/foo/bar", FloatType.IEEE_F32LE, 2, 3);
+        ds.write(new float[]{1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f});
+        ds.close();
+        HDFReader reader = new HDFReader(h5);
+        FloatDenseMatrix x = new FloatDenseMatrix(2, 3, Orientation.ROW, Storage.DIRECT);
+        reader.read("/foo/bar", x);
+        reader.close();
+        assertEquals(1.0f, x.get(0, 0), 0);
+        assertEquals(2.0f, x.get(0, 1), 0);
+        assertEquals(3.0f, x.get(0, 2), 0);
+        assertEquals(4.0f, x.get(1, 0), 0);
+        assertEquals(5.0f, x.get(1, 1), 0);
+        assertEquals(6.0f, x.get(1, 2), 0);
+    }
+
+    @Test
+    public void testReadFloatPackedMatrix() {
+        H5File h5 = createMemoryH5File();
+        Group group = h5.getRootGroup().createGroup("/foo");
+        group.close();
+        DataSet ds = h5.getRootGroup().createDataSet("/foo/bar", FloatType.IEEE_F32LE, 3);
+        ds.write(new float[]{1.0f, 2.0f, 3.0f});
+        ds.close();
+        HDFReader reader = new HDFReader(h5);
+        FloatPackedMatrix x = FloatPackedMatrix.createSymmetric(2);
+        reader.read("/foo/bar", x);
+        reader.close();
+        assertEquals(1.0f, x.get(0, 0), 0);
+        assertEquals(2.0f, x.get(0, 1), 0);
+        assertEquals(2.0f, x.get(1, 0), 0);
+        assertEquals(3.0f, x.get(1, 1), 0);
     }
 
     @Test
@@ -66,24 +94,6 @@ public final class HDFReaderTest extends AbstractHDFTest {
             }
         }
         h5.close();
-    }
-
-    @Test
-    public void testReadFloatPackedMatrix() {
-        H5File h5 = createMemoryH5File();
-        Group group = h5.getRootGroup().createGroup("/foo");
-        group.close();
-        DataSet ds = h5.getRootGroup().createDataSet("/foo/bar", FloatType.IEEE_F32LE, 3);
-        ds.write(new float[]{1.0f, 2.0f, 3.0f});
-        ds.close();
-        HDFReader reader = new HDFReader(h5);
-        FloatPackedMatrix x = FloatPackedMatrix.createSymmetric(2);
-        reader.read("/foo/bar", x);
-        reader.close();
-        assertEquals(1.0f, x.get(0, 0), 0);
-        assertEquals(2.0f, x.get(0, 1), 0);
-        assertEquals(2.0f, x.get(1, 0), 0);
-        assertEquals(3.0f, x.get(1, 1), 0);
     }
 
     @Ignore

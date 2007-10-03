@@ -8,6 +8,8 @@ import java.nio.Buffer;
 public interface DenseMatrix<M extends DenseMatrix<M, V>, V extends DenseVector<V>> extends Matrix<M, V> {
     Buffer data();
 
+    int leadingDimension();
+
     int offset();
 
     Orientation orientation();
@@ -15,6 +17,4 @@ public interface DenseMatrix<M extends DenseMatrix<M, V>, V extends DenseVector<
     Storage storage();
 
     int stride();
-
-    int leadingDimension();
 }

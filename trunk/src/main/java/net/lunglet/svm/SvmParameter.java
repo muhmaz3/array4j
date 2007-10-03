@@ -3,8 +3,6 @@ package net.lunglet.svm;
 import java.io.Serializable;
 
 final class SvmParameter implements Cloneable, Serializable {
-    private static final long serialVersionUID = 1L;
-
     /* svm_type */
     public static final int C_SVC = 1;
 
@@ -24,6 +22,8 @@ final class SvmParameter implements Cloneable, Serializable {
     public static final int PRECOMPUTED = 5;
 
     public static final int RBF = 3;
+
+    private static final long serialVersionUID = 1L;
 
     public static final int SIGMOID = 4;
 

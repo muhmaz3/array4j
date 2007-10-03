@@ -7,10 +7,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 public interface BLASLibrary extends Library {
-    BLASLibrary INSTANCE = new Loader().loadLibrary();
-
     static final class Loader {
         private Log log = LogFactory.getLog(BLASLibrary.class);
+
+        private Loader() {
+        }
 
         private BLASLibrary loadLibrary() {
             Library lib = (Library) Native.loadLibrary("array4j", BLASLibrary.class);
@@ -26,10 +27,9 @@ public interface BLASLibrary extends Library {
             }
             return (BLASLibrary) lib;
         }
-
-        private Loader() {
-        }
     }
+
+    BLASLibrary INSTANCE = new Loader().loadLibrary();
 
     float array4j_sdot(int n, FloatBuffer x, int incx, FloatBuffer y, int incy);
 
