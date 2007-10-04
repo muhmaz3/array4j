@@ -2,11 +2,10 @@ package com.googlecode.array4j.blas;
 
 import com.googlecode.array4j.Orientation;
 import com.googlecode.array4j.dense.DenseMatrix;
-import com.googlecode.array4j.dense.FloatDenseMatrix;
-import com.googlecode.array4j.dense.FloatDenseVector;
+import com.googlecode.array4j.dense.DenseVector;
 
 public abstract class AbstractDenseBLAS {
-    protected static void checkDot(final FloatDenseVector x, final FloatDenseVector y) {
+    protected static void checkDot(final DenseVector<?> x, final DenseVector<?> y) {
         if (x.length() != y.length()) {
             throw new IllegalArgumentException();
         }
@@ -42,19 +41,18 @@ public abstract class AbstractDenseBLAS {
     /**
      * Returns the order value for the CBLAS interface.
      */
-    protected static int corder(final FloatDenseMatrix c) {
+    protected static int corder(final DenseMatrix<?, ?> c) {
         return c.orientation().equals(Orientation.ROW) ? 101 : 102;
     }
 
     /**
      * Returns the trans value for the CBLAS interface.
      */
-    protected static int ctrans(final FloatDenseMatrix c, final FloatDenseMatrix x) {
+    protected static int ctrans(final DenseMatrix<?, ?> c, final DenseMatrix<?, ?> x) {
         return c.orientation().equals(x.orientation()) ? 111 : 112;
     }
 
-    // TODO this ld doesn't take submatrices into account yet
-    protected static int ld(final FloatDenseMatrix x) {
+    protected static int leadingDimension(final DenseMatrix<?, ?> x) {
         if (x.orientation().equals(Orientation.COLUMN)) {
             return Math.max(1, x.rows());
         } else {
@@ -62,7 +60,7 @@ public abstract class AbstractDenseBLAS {
         }
     }
 
-    protected static String trans(final FloatDenseMatrix c, final FloatDenseMatrix x) {
+    protected static String trans(final DenseMatrix<?, ?> c, final DenseMatrix<?, ?> x) {
         return c.orientation().equals(x.orientation()) ? "N" : "T";
     }
 

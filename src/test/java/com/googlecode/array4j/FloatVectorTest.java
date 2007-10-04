@@ -3,16 +3,13 @@ package com.googlecode.array4j;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-
+import com.googlecode.array4j.dense.FloatDenseMatrixFactory;
 import java.util.Arrays;
 import java.util.Collection;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-
-import com.googlecode.array4j.dense.FloatDenseMatrixFactory;
 
 @RunWith(value = Parameterized.class)
 public final class FloatVectorTest<M extends FloatMatrix<M, V>, V extends FloatVector<V>> {
@@ -30,10 +27,11 @@ public final class FloatVectorTest<M extends FloatMatrix<M, V>, V extends FloatV
 
     @Test(expected=IllegalArgumentException.class)
     public void testConstructorDataTooSmall() {
+        // XXX this test might start failing when we start allocating aligned
+        // buffers... do something about it then
         factory.createVector(new float[1], 2, 0, 1, Orientation.ROW);
     }
 
-    // TODO should probably throw IllegalArgumentException instead?
     @Test(expected=IllegalArgumentException.class)
     public void testConstructorNegativeSize() {
         factory.createVector(-1, Orientation.DEFAULT_FOR_VECTOR);

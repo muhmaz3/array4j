@@ -7,10 +7,10 @@ import org.junit.Test;
 public final class TypesTest {
     @Test
     public void testGetSize() {
-        assertEquals(4, FloatType.IEEE_F32LE.getSize());
-        assertEquals(4, IntType.STD_I32LE.getSize());
-        assertEquals(8, FloatType.IEEE_F64LE.getSize());
-        assertEquals(1, IntType.STD_I8BE.getSize());
+        assertEquals(4L, FloatType.IEEE_F32LE.getSize());
+        assertEquals(4L, IntType.STD_I32LE.getSize());
+        assertEquals(8L, FloatType.IEEE_F64LE.getSize());
+        assertEquals(1L, IntType.STD_I8BE.getSize());
     }
 
     @Test

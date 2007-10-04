@@ -104,7 +104,7 @@ abstract class H5Object extends IdComponent {
                 throw new IllegalArgumentException("invalid datatype for " + attr.getName());
             }
             StringType stype = (StringType) dtype;
-            byte[] buf = new byte[stype.getSize()];
+            byte[] buf = new byte[(int) stype.getSize()];
             attr.read(buf, stype);
             return new String(buf, CHARSET);
         } finally {

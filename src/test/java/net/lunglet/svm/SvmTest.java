@@ -41,6 +41,11 @@ public final class SvmTest {
                 }
 
                 @Override
+                public int getIndex() {
+                    return j;
+                }
+
+                @Override
                 public int getLabel() {
                     return labels[j];
                 }
@@ -115,7 +120,7 @@ public final class SvmTest {
             }
         }
 
-        // XXX fix sign... might need something more complex heren when dealing
+        // XXX fix sign... might need something more complex here when dealing
         // with arbitrary labels. this assumes labels start at 0.
         scores.timesEquals(labels[0] == 0 ? 1.0f : -1.0f);
 
@@ -216,15 +221,15 @@ public final class SvmTest {
                 SimpleSvm svm1 = new SimpleSvm(createHandles(data.columnsList(), labels));
                 svm1.train(cost);
                 FloatDenseMatrix scores1 = svm1.score(data);
-                svm1.compact();
-                FloatDenseMatrix scores2 = svm1.score(data);
+                SimpleSvm svm1compact = svm1.compact();
+                FloatDenseMatrix scores2 = svm1compact.score(data);
 
                 // train SVM using precomputed kernel
                 SimpleSvm svm2 = new SimpleSvm(createHandles(data.columnsList(), labels), kernel);
                 svm2.train(cost);
                 FloatDenseMatrix scores3 = svm2.score(data);
-                svm2.compact();
-                FloatDenseMatrix scores4 = svm2.score(data);
+                SimpleSvm svm2compact = svm2.compact();
+                FloatDenseMatrix scores4 = svm2compact.score(data);
 
                 for (FloatDenseMatrix scores : new FloatDenseMatrix[]{scores1, scores2, scores3, scores4}) {
                     assertEquals(linearScores.rows(), precomputedScores.rows());

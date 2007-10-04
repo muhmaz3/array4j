@@ -12,8 +12,10 @@ import com.sun.jna.Structure;
 import com.sun.jna.ToNativeContext;
 import com.sun.jna.ToNativeConverter;
 import com.sun.jna.TypeMapper;
+import com.sun.jna.ptr.DoubleByReference;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.LongByReference;
+import com.sun.jna.ptr.NativeLongByReference;
 import java.nio.Buffer;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -314,6 +316,9 @@ public interface H5Library extends Library {
 
     int H5Acreate(int loc_id, String name, int type_id, int space_id, int create_plist);
 
+    /**
+     * <CODE>ssize_t H5Aget_name(hid_t attr_id, size_t buf_size, char *buf)</CODE>
+     */
     NativeLong H5Aget_name(int attr_id, NativeLong buf_size, byte[] buf);
 
     int H5Aget_space(int attr_id);
@@ -332,6 +337,9 @@ public interface H5Library extends Library {
 
     int H5Dget_space(int dset_id);
 
+    /**
+     * <CODE>hsize_t H5Dget_storage_size(hid_t dataset_id)</CODE>
+     */
     long H5Dget_storage_size(int dset_id);
 
     int H5Dget_type(int dataset_id);
@@ -348,10 +356,23 @@ public interface H5Library extends Library {
 
     int H5Fcreate(String filename, int flags, int create_plist, int access_plist);
 
+    int H5Fget_access_plist(int file_id);
+
+    int H5Fget_create_plist(int file_id);
+
+    /**
+     * <CODE>herr_t H5Fget_filesize(hid_t file_id, hsize_t *size)</CODE>
+     */
     int H5Fget_filesize(int file_id, LongByReference size);
 
+    /**
+     * <CODE>hssize_t H5Fget_freespace(hid_t file_id)</CODE>
+     */
     long H5Fget_freespace(int file_id);
 
+    /**
+     * <CODE>ssize_t H5Fget_name(hid_t obj_id, char *name, size_t size)</CODE>
+     */
     NativeLong H5Fget_name(int obj_id, byte[] name, NativeLong size);
 
     int H5Fis_hdf5(String filename);
@@ -362,18 +383,33 @@ public interface H5Library extends Library {
 
     int H5Gclose(int group_id);
 
-    int H5Gcreate(int loc_id, String name, int size_hint);
+    /**
+     * <CODE>hid_t H5Gcreate(hid_t loc_id, const char *name, size_t size_hint)</CODE>
+     */
+    int H5Gcreate(int loc_id, String name, NativeLong size_hint);
 
     int H5get_libversion(IntByReference majnum, IntByReference minnum, IntByReference relnum);
 
+    /**
+     * <CODE>herr_t H5Gget_num_objs(hid_t loc_id, hsize_t* num_obj)</CODE>
+     */
     int H5Gget_num_objs(int loc_id, LongByReference num_objs);
 
+    /**
+     * <CODE>int H5Gget_objtype_by_idx(hid_t loc_id, hsize_t idx)</CODE>
+     */
     int H5Gget_objtype_by_idx(int loc_id, long idx);
 
+    /**
+     * <CODE>int H5Giterate(hid_t loc_id, const char *name, int *idx, H5G_iterate_t operator, void *operator_data)</CODE>
+     */
     int H5Giterate(int loc_id, String name, IntByReference idx, H5G_iterate_t operator, Pointer operator_data);
 
     int H5Gopen(int loc_id, String name);
 
+    /**
+     * <CODE>ssize_t H5Iget_name(hid_t obj_id, char *name, size_t size)</CODE>
+     */
     NativeLong H5Iget_name(int obj_id, byte[] name, NativeLong size);
 
     int H5Iget_type(int obj_id);
@@ -384,18 +420,46 @@ public interface H5Library extends Library {
 
     int H5Pcreate(int cls_id);
 
-    int H5Pset_fapl_core(int fapl_id, long increment, int backing_store);
+    /**
+     * <CODE>herr_t H5Pget_cache(hid_t plist_id, int *mdc_nelmts, int *rdcc_nelmts, size_t *rdcc_nbytes, double *rdcc_w0)</CODE>
+     */
+    int H5Pget_cache(int plist_id, IntByReference mdc_nelmts, IntByReference rdcc_nelmts,
+            NativeLongByReference rdcc_nbytes, DoubleByReference rdcc_w);
+
+    /**
+     * <CODE>herr_t H5Pset_cache(hid_t plist_id, int mdc_nelmts, int rdcc_nelmts, size_t rdcc_nbytes, double rdcc_w0)</CODE>
+     */
+    int H5Pset_cache(int plist_id, int mdc_nelmts, int rdcc_nelmts, NativeLong rdcc_nbytes, double rdcc_w);
+
+    /**
+     * <CODE>herr_t H5Pset_fapl_core(hid_t fapl_id, size_t increment, hbool_t backing_store)</CODE>
+     */
+    int H5Pset_fapl_core(int fapl_id, NativeLong increment, int backing_store);
 
     int H5Pset_fapl_sec2(int fapl_id);
 
+    /**
+     * <CODE>herr_t H5Pset_fill_time(hid_t plist_id, H5D_fill_time_t fill_time)</CODE>
+     */
     int H5Pset_fill_time(int plist_id, int fill_time);
 
+    /**
+     * <CODE>herr_t H5Pset_meta_block_size(hid_t fapl_id, hsize_t size)</CODE>
+     */
+    int H5Pset_meta_block_size(int fapl_id, long size);
+
+    /**
+     * <CODE>herr_t H5Pset_sieve_buf_size(hid_t fapl_id, hsize_t size)</CODE>
+     */
     int H5Pset_sieve_buf_size(int fapl_id, long size);
 
     int H5Sclose(int space_id);
 
     int H5Screate(int type);
 
+    /**
+     * <CODE>hid_t H5Screate_simple(int rank, const hsize_t * dims, const hsize_t * maxdims)</CODE>
+     */
     int H5Screate_simple(int rank, long[] dims, long[] maxdims);
 
     int H5Sget_select_bounds(int space_id, long[] start, long[] end);
@@ -410,6 +474,9 @@ public interface H5Library extends Library {
 
     int H5Sget_select_type(int space_id);
 
+    /**
+     * <CODE>int H5Sget_simple_extent_dims(hid_t space_id, hsize_t *dims, hsize_t *maxdims)</CODE>
+     */
     int H5Sget_simple_extent_dims(int space_id, long[] dims, long[] maxdims);
 
     int H5Sget_simple_extent_ndims(int space_id);
@@ -418,10 +485,16 @@ public interface H5Library extends Library {
 
     int H5Sis_simple(int space_id);
 
+    /**
+     * <CODE>herr_t H5Soffset_simple(hid_t space_id, const hssize_t *offset)</CODE>
+     */
     int H5Soffset_simple(int space_id, long[] offset);
 
     int H5Sselect_all(int space_id);
 
+    /**
+     * <CODE>herr_t H5Sselect_elements(hid_t space_id, H5S_seloper_t op, const size_t num_elements, const hsize_t *coord[])</CODE>
+     */
     int H5Sselect_elements(int space_id, int op, NativeLong num_elements, Buffer coord);
 
     int H5Sselect_hyperslab(int space_id, int op, long[] start, long[] stride, long[] count, long[] block);
@@ -438,15 +511,27 @@ public interface H5Library extends Library {
 
     int H5Tcopy(int type_id);
 
-    int H5Tcreate(int type, int size);
+    /**
+     * <CODE>hid_t H5Tcreate(H5T_class_t class, size_t size)</CODE>
+     */
+    int H5Tcreate(int type, NativeLong size);
 
     int H5Tequal(int type_id1, int type_id2);
 
     int H5Tget_class(int type_id);
 
-    int H5Tget_size(int type_id);
+    /**
+     * <CODE>size_t H5Tget_size(hid_t type_id)</CODE>
+     */
+    NativeLong H5Tget_size(int type_id);
 
+    /**
+     * <CODE>herr_t H5Tset_size(hid_t type_id, size_t size)</CODE>
+     */
     int H5Tset_size(int type_id, NativeLong size);
 
+    /**
+     * <CODE>herr_t H5Zfilter_avail(H5Z_filter_t filter)</CODE>
+     */
     int H5Zfilter_avail(int filter);
 }

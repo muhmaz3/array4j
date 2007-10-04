@@ -1,5 +1,6 @@
 package net.lunglet.hdf;
 
+import com.sun.jna.NativeLong;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -79,11 +80,11 @@ public class DataType extends H5Object {
         }
     }
 
-    public final int getSize() {
-        int size = H5Library.INSTANCE.H5Tget_size(getId());
-        if (size == 0) {
+    public final long getSize() {
+        NativeLong size = H5Library.INSTANCE.H5Tget_size(getId());
+        if (size.longValue() == 0) {
             throw new H5DataTypeException("H5Tget_size failed");
         }
-        return size;
+        return size.longValue();
     }
 }
