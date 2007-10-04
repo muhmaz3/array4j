@@ -13,7 +13,8 @@ public final class BufferUtils {
         if (alignment < 1) {
             throw new IllegalArgumentException();
         }
-        ByteBuffer buffer = ByteBuffer.allocateDirect(size + alignment - 1);
+//        ByteBuffer buffer = ByteBuffer.allocateDirect(size + alignment - 1);
+        ByteBuffer buffer = ByteBuffer.allocateDirect(size);
         // TODO get buffer address to calculate position for slice
         return ((ByteBuffer) buffer.order(ByteOrder.nativeOrder()).position(0)).slice();
     }

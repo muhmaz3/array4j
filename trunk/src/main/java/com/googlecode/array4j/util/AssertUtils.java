@@ -7,6 +7,18 @@ public final class AssertUtils {
         }
     }
 
+    public static void assertFalse(final boolean condition) {
+        if (condition) {
+            throw new AssertionError();
+        }
+    }
+
+    public static void assertTrue(final boolean condition) {
+        if (!condition) {
+            throw new AssertionError();
+        }
+    }
+
     public static void checkArgument(final boolean condition) {
         if (!condition) {
             throw new IllegalArgumentException();

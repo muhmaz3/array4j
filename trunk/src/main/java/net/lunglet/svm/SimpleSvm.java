@@ -14,9 +14,11 @@ import java.util.List;
 
 // TODO handle more than 2 classes everywhere
 
-// TODO support model compaction by data being pushed to the model instead of pulling data
+// TODO factor out compact-only methods into their own class, an instance of which is returned by compact
 
 public final class SimpleSvm implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     // TODO make a SvmParameterBuilder so anything can be configured
     static SvmParameter createDefaultSvmParameter() {
         SvmParameter param = new SvmParameter();
@@ -87,30 +89,31 @@ public final class SimpleSvm implements Serializable {
         problem.kernel = kernel;
     }
 
+    SimpleSvm(final SvmModel model) {
+        this.data = null;
+        this.kernel = null;
+        this.model = model;
+        this.problem = null;
+    }
+
     /**
      * Compact model so that it consists of a single support vector per class.
      */
-    public void compact() {
+    public SimpleSvm compact() {
         if (model == null) {
             throw new IllegalStateException();
         }
-        if (model.nr_class != 2) {
-            throw new UnsupportedOperationException();
-        }
-        FloatDenseVector sv = new FloatDenseVector(model.SV[0].getValue().length());
+        CompactSimpleSvmBuilder builder = getCompactBuilder();
         for (int i = 0, k = 0; i < model.nr_class; i++) {
             for (int j = 0; j < model.nSV[i]; j++, k++) {
-                final float alpha = (float) model.sv_coef[0][k];
-                FloatVector<?> modelSV = model.SV[k].getValue();
-                for (int m = 0; m < sv.length(); m++) {
-                    sv.set(m, sv.get(m) + alpha * modelSV.get(m));
-                }
+                builder.present(model.SV[k].getValue(), model.SV[k].getIndex());
             }
         }
-        model.SV = new SvmNode[]{new SvmNode(0, sv)};
-        model.sv_coef = new double[][]{{1.0, 0.0}};
-        model.nSV = new int[]{1, 0};
-        model.l = 1;
+        return builder.build();
+    }
+
+    public CompactSimpleSvmBuilder getCompactBuilder() {
+        return new CompactSimpleSvmBuilder(model);
     }
 
     public FloatDenseVector getModel() {
@@ -154,6 +157,11 @@ public final class SimpleSvm implements Serializable {
                 @Override
                 public FloatVector<?> getData() {
                     return x;
+                }
+
+                @Override
+                public int getIndex() {
+                    throw new UnsupportedOperationException();
                 }
 
                 @Override

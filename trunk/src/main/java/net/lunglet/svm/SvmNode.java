@@ -22,6 +22,11 @@ public final class SvmNode implements Serializable {
             }
 
             @Override
+            public int getIndex() {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
             public int getLabel() {
                 throw new UnsupportedOperationException();
             }
@@ -31,6 +36,10 @@ public final class SvmNode implements Serializable {
     public SvmNode(final int index, final Handle handle) {
         this.index = index;
         this.handle = handle;
+    }
+
+    public int getHandleIndex() {
+        return handle.getIndex();
     }
 
     public int getIndex() {

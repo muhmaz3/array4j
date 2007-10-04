@@ -3,13 +3,9 @@ package com.googlecode.array4j.blas;
 import com.sun.jna.Library;
 import com.sun.jna.Native;
 import java.nio.FloatBuffer;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 public interface BLASLibrary extends Library {
     static final class Loader {
-        private Log log = LogFactory.getLog(BLASLibrary.class);
-
         private Loader() {
         }
 
@@ -22,7 +18,6 @@ public interface BLASLibrary extends Library {
                 openmpThreads = 1;
             }
             if (openmpThreads > 1) {
-                log.info("OMP_NUM_THREADS is equal to " + openmpThreads + ". Will synchronize calls to BLAS library.");
                 return (BLASLibrary) Native.synchronizedLibrary(lib);
             }
             return (BLASLibrary) lib;

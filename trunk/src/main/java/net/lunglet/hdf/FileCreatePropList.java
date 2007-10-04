@@ -7,7 +7,7 @@ public final class FileCreatePropList extends PropertyList {
         this(create(PropertyListClass.H5P_FILE_CREATE));
     }
 
-    private FileCreatePropList(final int id) {
+    FileCreatePropList(final int id) {
         super(id);
     }
 }

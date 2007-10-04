@@ -1,5 +1,6 @@
 package net.lunglet.hdf;
 
+import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
 import java.util.HashSet;
@@ -57,7 +58,7 @@ public final class Group extends H5Object {
     }
 
     public Group createGroup(final String name) {
-        int groupId = H5Library.INSTANCE.H5Gcreate(getId(), name, 0);
+        int groupId = H5Library.INSTANCE.H5Gcreate(getId(), name, new NativeLong(0));
         if (groupId < 0) {
             throw new H5GroupException("H5Gcreate failed");
         }

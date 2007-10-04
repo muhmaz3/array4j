@@ -35,7 +35,7 @@ public final class H5File extends IdComponent {
     public static final int H5F_ACC_RDWR = 0x0001;
 
     /* overwrite existing files */
-    private static final int H5F_ACC_TRUNC = 0x0002;
+    public static final int H5F_ACC_TRUNC = 0x0002;
 
     private static int init(final String name, final int flags, final FileCreatePropList createPlist,
             final FileAccessPropList accessPlist) {
@@ -62,6 +62,7 @@ public final class H5File extends IdComponent {
     private final Group rootGroup;
 
     public H5File(final File file) {
+        // TODO change default to open read-only, so files don't get nuked by default
         this(file, H5F_ACC_TRUNC);
     }
 
@@ -88,6 +89,22 @@ public final class H5File extends IdComponent {
 
     public H5File(final String name, final int flags, final FileCreatePropList fcpl, final FileAccessPropList fapl) {
         this(new File(name), flags, fcpl, fapl);
+    }
+
+    public FileAccessPropList getAccessPropertyList() {
+        int id = H5Library.INSTANCE.H5Fget_access_plist(getId());
+        if (id < 0) {
+            throw new H5FileException("H5Fget_access_plist failed");
+        }
+        return new FileAccessPropList(id);
+    }
+
+    public FileCreatePropList getCreatePropertyList() {
+        int id = H5Library.INSTANCE.H5Fget_create_plist(getId());
+        if (id < 0) {
+            throw new H5FileException("H5Fget_create_plist failed");
+        }
+        return new FileCreatePropList(id);
     }
 
     public String getFileName() {

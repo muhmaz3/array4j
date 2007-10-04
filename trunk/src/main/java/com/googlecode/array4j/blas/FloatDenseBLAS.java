@@ -45,12 +45,12 @@ public final class FloatDenseBLAS extends AbstractDenseBLAS {
         FloatBuffer abuf = a.data();
         FloatBuffer bbuf = b.data();
         FloatBuffer cbuf = c.data();
-        int lda = ld(a);
+        int lda = leadingDimension(a);
         // XXX this fails when doing CalculateKernel
 //        AssertUtils.assertEquals(lda, a.leadingDimension());
-        int ldb = ld(b);
+        int ldb = leadingDimension(b);
 //        AssertUtils.assertEquals(ldb, b.leadingDimension());
-        int ldc = ld(c);
+        int ldc = leadingDimension(c);
 //        AssertUtils.assertEquals(ldc, c.leadingDimension());
         switch (policy.chooseL3Method(a, b, c)) {
         case F2J:
@@ -72,8 +72,8 @@ public final class FloatDenseBLAS extends AbstractDenseBLAS {
         int k = a.columns();
         FloatBuffer abuf = a.data();
         FloatBuffer cbuf = c.data();
-        int lda = ld(a);
-        int ldc = ld(c);
+        int lda = leadingDimension(a);
+        int ldc = leadingDimension(c);
         switch (policy.chooseL3Method(a, null, c)) {
         case F2J:
             Ssyrk.ssyrk("U", trans(c, a), n, k, alpha, abuf.array(), abuf.arrayOffset(), lda, beta, cbuf.array(),
