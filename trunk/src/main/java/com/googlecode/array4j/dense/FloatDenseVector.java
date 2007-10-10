@@ -61,7 +61,7 @@ public final class FloatDenseVector extends AbstractFloatDense<FloatDenseVector>
 
     public FloatDenseMatrix asMatrix() {
         Orientation orient = isRowVector() ? Orientation.ROW : Orientation.COLUMN;
-        return new FloatDenseMatrix(data(), rows, columns, offset, stride, orient);
+        return new FloatDenseMatrix(data, rows, columns, offset, stride, orient);
     }
 
     @Override

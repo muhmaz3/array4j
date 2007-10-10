@@ -44,8 +44,8 @@ abstract class AbstractFloatDense<M extends FloatMatrix<M, FloatDenseVector> & D
     public AbstractFloatDense(final AbstractFloatDense<?> base, final int rows, final int columns, final int offset,
             final int stride, final Orientation orientation) {
         super(base, ELEMENT_SIZE, ELEMENT_SIZE_BYTES, rows, columns, offset, stride, orientation);
+        checkData(base.data);
         this.data = base.data;
-        checkData(data);
     }
 
     public AbstractFloatDense(final AbstractFloatDense<?> base, final int size, final int offset, final int stride,
@@ -56,8 +56,8 @@ abstract class AbstractFloatDense<M extends FloatMatrix<M, FloatDenseVector> & D
     public AbstractFloatDense(final FloatBuffer data, final int rows, final int columns, final int offset,
             final int stride, final Orientation orientation) {
         super(null, ELEMENT_SIZE, ELEMENT_SIZE_BYTES, rows, columns, offset, stride, orientation);
-        this.data = data;
         checkData(data);
+        this.data = data;
     }
 
     public AbstractFloatDense(final FloatBuffer data, final int size, final int offset, final int stride,
