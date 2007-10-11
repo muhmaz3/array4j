@@ -56,10 +56,10 @@ public abstract class AbstractPackedMatrix<M extends PackedMatrix<M, V>, V exten
             j = m;
             i = n;
         }
-        if (!packedType.equals(PackedType.LOWER_TRIANGULAR)) {
-            return i + (j + 1) * j / 2;
-        } else {
+        if (packedType.equals(PackedType.LOWER_TRIANGULAR)) {
             return i + (2 * columns - (j + 1)) * j / 2;
+        } else {
+            return i + (j + 1) * j / 2;
         }
     }
 
