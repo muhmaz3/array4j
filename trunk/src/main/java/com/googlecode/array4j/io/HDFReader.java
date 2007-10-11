@@ -31,7 +31,7 @@ public final class HDFReader {
     }
 
     public void read(final String name, final FloatDenseMatrix matrix) {
-        if (matrix.orientation() != Orientation.ROW) {
+        if (!matrix.orientation().equals(Orientation.ROW)) {
             throw new UnsupportedOperationException();
         }
         DataSet dataset = null;
