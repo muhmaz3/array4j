@@ -58,10 +58,10 @@ public final class FloatMatrixUtils {
             length += vector.length();
         }
         FloatDenseVector output = new FloatDenseVector(length);
-        int i = 0;
+        FloatBuffer data = output.data();
         for (FloatVector<?> vector : vectors) {
-            for (int j = 0; j < vector.length(); j++, i++) {
-                output.set(i, vector.get(j));
+            for (int j = 0; j < vector.length(); j++) {
+                data.put(vector.get(j));
             }
         }
         return output;

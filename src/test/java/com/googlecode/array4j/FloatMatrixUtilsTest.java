@@ -5,8 +5,11 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import com.googlecode.array4j.dense.FloatDenseMatrixFactory;
 import com.googlecode.array4j.dense.FloatDenseVector;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
+import java.util.Random;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -126,6 +129,25 @@ public final class FloatMatrixUtilsTest<M extends FloatMatrix<M, V>, V extends F
                     for (int m = 0; m < x.rows(); m++) {
                         assertEquals(v.get(k++), x.get(m, n), 0);
                     }
+                }
+            }
+        }
+    }
+
+    @Test
+    public void testConcatenate() {
+        Random rng = new Random(0);
+        for (int i = 0; i < 5; i++) {
+            List<FloatVector<?>> vectors = new ArrayList<FloatVector<?>>();
+            for (int j = 0; j < i; j++) {
+                int length = rng.nextInt(5);
+                vectors.add(matrixFactory.createVector(length, orientation));
+            }
+            FloatVector<?>[] vecArr = vectors.toArray(new FloatVector<?>[0]);
+            FloatDenseVector x = FloatMatrixUtils.concatenate(vecArr);
+            for (int m = 0, k = 0; i < vecArr.length; m++) {
+                for (int n = 0; n < vecArr[m].length(); n++) {
+                    assertEquals(x.get(k++), vecArr[m].get(n), 0);
                 }
             }
         }
