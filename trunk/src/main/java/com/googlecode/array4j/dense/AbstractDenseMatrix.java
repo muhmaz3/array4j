@@ -75,8 +75,8 @@ public abstract class AbstractDenseMatrix<M extends DenseMatrix<M, V>, V extends
     protected abstract T[] createArrayArray(int length);
 
     protected final int elementOffset(final int index) {
-        checkIndex(index);
         if (length > 0) {
+            checkIndex(index);
             return offset + index * elementSize * stride;
         } else {
             return offset;
@@ -84,9 +84,8 @@ public abstract class AbstractDenseMatrix<M extends DenseMatrix<M, V>, V extends
     }
 
     protected final int elementOffset(final int row, final int column) {
-        checkRowIndex(row);
-        checkColumnIndex(column);
         if (length > 0) {
+            checkColumnIndex(column);
             return rowOffset(row) + column * elementSize * columnStride;
         } else {
             return offset;
@@ -130,8 +129,8 @@ public abstract class AbstractDenseMatrix<M extends DenseMatrix<M, V>, V extends
      * Calculate the offset of the beginning of the specified row.
      */
     protected final int rowOffset(final int row) {
-        checkRowIndex(row);
         if (length > 0) {
+            checkRowIndex(row);
             return offset + row * elementSize * rowStride;
         } else {
             return offset;
