@@ -4,6 +4,7 @@ import com.googlecode.array4j.FloatMatrixUtils;
 import com.googlecode.array4j.FloatVector;
 import com.googlecode.array4j.Orientation;
 import com.googlecode.array4j.Storage;
+import com.googlecode.array4j.blas.FloatDenseBLAS;
 import java.nio.FloatBuffer;
 import org.apache.commons.lang.builder.EqualsBuilder;
 
@@ -85,6 +86,7 @@ public final class FloatDenseVector extends AbstractFloatDense<FloatDenseVector>
 
     @Override
     public FloatDenseVector minus(final FloatVector<?> other) {
+        // TODO use axpy here
         if (length != other.length()) {
             throw new IllegalArgumentException();
         }
@@ -97,11 +99,15 @@ public final class FloatDenseVector extends AbstractFloatDense<FloatDenseVector>
 
     @Override
     public void plusEquals(final FloatVector<?> other) {
-        if (length != other.length()) {
-            throw new IllegalArgumentException();
-        }
-        for (int i = 0; i < length; i++) {
-            set(i, get(i) + other.get(i));
+        if (other instanceof FloatDenseVector) {
+            FloatDenseBLAS.DEFAULT.axpy(1.0f, (FloatDenseVector) other, this);
+        } else {
+            if (length != other.length()) {
+                throw new IllegalArgumentException();
+            }
+            for (int i = 0; i < length; i++) {
+                set(i, get(i) + other.get(i));
+            }
         }
     }
 

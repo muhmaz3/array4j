@@ -33,4 +33,6 @@ public interface BLASLibrary extends Library {
 
     void array4j_ssyrk(int order, int uplo, int trans, int n, int k, float alpha, FloatBuffer a, int lda, float beta,
             FloatBuffer c, int ldc);
+
+    void array4j_saxpy(int n, float a, FloatBuffer x, int incx, FloatBuffer y, int incy);
 }

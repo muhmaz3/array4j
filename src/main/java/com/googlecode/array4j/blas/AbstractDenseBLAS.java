@@ -11,6 +11,12 @@ public abstract class AbstractDenseBLAS {
         }
     }
 
+    protected static void checkAxpy(final DenseVector<?> x, final DenseVector<?> y) {
+        if (x.length() != y.length()) {
+            throw new IllegalArgumentException();
+        }
+    }
+
     protected static void checkGemm(final DenseMatrix<?, ?> a, final DenseMatrix<?, ?> b, final DenseMatrix<?, ?> c) {
         if (a.rows() != c.rows()) {
             throw new IllegalArgumentException("rows(a) != rows(c)");

@@ -50,3 +50,9 @@ ARRAY4J_EXPORT float array4j_sdot
 {
     return cblas_sdot(n, x, incx, y, incy);
 }
+
+ARRAY4J_EXPORT void array4j_saxpy
+  (int n, float a, const float* x, int incx, float *y, int incy)
+{
+    cblas_saxpy(n, a, x, incx, y, incy);
+}

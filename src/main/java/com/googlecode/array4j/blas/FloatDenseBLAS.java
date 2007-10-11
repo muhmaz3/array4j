@@ -3,6 +3,7 @@ package com.googlecode.array4j.blas;
 import com.googlecode.array4j.dense.FloatDenseMatrix;
 import com.googlecode.array4j.dense.FloatDenseVector;
 import java.nio.FloatBuffer;
+import org.netlib.blas.Saxpy;
 import org.netlib.blas.Sdot;
 import org.netlib.blas.Sgemm;
 import org.netlib.blas.Ssyrk;
@@ -28,6 +29,28 @@ public final class FloatDenseBLAS extends AbstractDenseBLAS {
             return Sdot.sdot(n, xbuf.array(), xbuf.arrayOffset(), incx, ybuf.array(), ybuf.arrayOffset(), incy);
         case NATIVE:
             return BLASLibrary.INSTANCE.array4j_sdot(n, xbuf, incx, ybuf, incy);
+        default:
+            throw new AssertionError();
+        }
+    }
+
+    /**
+     * <CODE>y := a*x + y</CODE>
+     */
+    public void axpy(final float a, final FloatDenseVector x, final FloatDenseVector y) {
+        checkAxpy(x, y);
+        int n = x.length();
+        FloatBuffer xbuf = x.data();
+        int incx = x.stride();
+        FloatBuffer ybuf = y.data();
+        int incy = y.stride();
+        switch (policy.chooseL1Method(x, y)) {
+        case F2J:
+            Saxpy.saxpy(n, a, xbuf.array(), xbuf.arrayOffset(), incx, ybuf.array(), ybuf.arrayOffset(), incy);
+            return;
+        case NATIVE:
+            BLASLibrary.INSTANCE.array4j_saxpy(n, a, xbuf, incx, ybuf, incy);
+            return;
         default:
             throw new AssertionError();
         }
