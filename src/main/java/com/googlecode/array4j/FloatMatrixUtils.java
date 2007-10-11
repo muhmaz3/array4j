@@ -1,7 +1,9 @@
 package com.googlecode.array4j;
 
+import com.googlecode.array4j.dense.DenseMatrix;
 import com.googlecode.array4j.dense.FloatDenseMatrix;
 import com.googlecode.array4j.dense.FloatDenseVector;
+import java.nio.FloatBuffer;
 import java.util.Random;
 
 // TODO implement unmodifiableMatrix
@@ -29,13 +31,22 @@ public final class FloatMatrixUtils {
 
     public static FloatDenseVector columnsVector(final FloatMatrix<?, ?> matrix) {
         int length = matrix.rows() * matrix.columns();
-        FloatDenseVector vec = new FloatDenseVector(length, Orientation.COLUMN, Storage.DEFAULT_FOR_DENSE);
-        for (int i = 0, k = 0; i < matrix.columns(); i++) {
-            for (int j = 0; j < matrix.rows(); j++, k++) {
-                vec.set(k, matrix.get(j, i));
+        final FloatDenseVector v;
+        if (matrix instanceof DenseMatrix) {
+            if (((DenseMatrix<?, ?>) matrix).orientation().equals(Orientation.ROW)) {
+                throw new UnsupportedOperationException();
+            }
+            FloatBuffer data = (FloatBuffer) ((DenseMatrix<?, ?>) matrix).data();
+            v = new FloatDenseVector(data, length, 0, 1, Orientation.COLUMN);
+        } else {
+            v = new FloatDenseVector(length, Orientation.COLUMN, Storage.DEFAULT_FOR_DENSE);
+            for (int i = 0, k = 0; i < matrix.columns(); i++) {
+                for (int j = 0; j < matrix.rows(); j++, k++) {
+                    v.set(k, matrix.get(j, i));
+                }
             }
         }
-        return vec;
+        return v;
     }
 
     public static FloatDenseVector concatenate(final FloatVector<?>... vectors) {
