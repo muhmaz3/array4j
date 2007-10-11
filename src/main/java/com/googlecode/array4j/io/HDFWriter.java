@@ -1,5 +1,6 @@
 package com.googlecode.array4j.io;
 
+import com.googlecode.array4j.Orientation;
 import com.googlecode.array4j.dense.FloatDenseMatrix;
 import com.googlecode.array4j.packed.FloatPackedMatrix;
 import net.lunglet.hdf.DataSet;
@@ -24,6 +25,9 @@ public final class HDFWriter {
     }
 
     public void write(final String name, final FloatDenseMatrix matrix) {
+        if (!matrix.orientation().equals(Orientation.ROW)) {
+            throw new IllegalArgumentException();
+        }
         DataType memType = FloatType.IEEE_F32LE;
         DataSet dataset = h5file.getRootGroup().createDataSet(name, memType, matrix.rows(), matrix.columns());
         try {
