@@ -3,16 +3,14 @@ package com.googlecode.array4j;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-
+import com.googlecode.array4j.dense.FloatDenseMatrixFactory;
+import com.googlecode.array4j.dense.FloatDenseVector;
 import java.util.Arrays;
 import java.util.Collection;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-
-import com.googlecode.array4j.dense.FloatDenseMatrixFactory;
 
 @RunWith(value = Parameterized.class)
 public final class FloatMatrixUtilsTest<M extends FloatMatrix<M, V>, V extends FloatVector<V>> {
@@ -115,5 +113,21 @@ public final class FloatMatrixUtilsTest<M extends FloatMatrix<M, V>, V extends F
         float[] values = {1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f};
         M matrix = matrixFactory.createMatrix(values, 3, 2, 0, 1, orientation);
         assertEquals(21.0f, FloatMatrixUtils.sum(matrix), 0.0);
+    }
+
+    @Test
+    public void testColumnsVector() {
+        for (int i = 0; i <= 5; i++) {
+            for (int j = 0; j <= 5; j++) {
+                M x = matrixFactory.createMatrix(i, j, orientation);
+                MatrixTestSupport.populateMatrix(x);
+                FloatDenseVector v = FloatMatrixUtils.columnsVector(x);
+                for (int n = 0, k = 0; n < x.columns(); n++) {
+                    for (int m = 0; m < x.rows(); m++) {
+                        assertEquals(v.get(k++), x.get(m, n), 0);
+                    }
+                }
+            }
+        }
     }
 }

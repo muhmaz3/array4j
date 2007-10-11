@@ -46,12 +46,8 @@ public final class FloatDenseBLAS extends AbstractDenseBLAS {
         FloatBuffer bbuf = b.data();
         FloatBuffer cbuf = c.data();
         int lda = leadingDimension(a);
-        // XXX this fails when doing CalculateKernel
-//        AssertUtils.assertEquals(lda, a.leadingDimension());
         int ldb = leadingDimension(b);
-//        AssertUtils.assertEquals(ldb, b.leadingDimension());
         int ldc = leadingDimension(c);
-//        AssertUtils.assertEquals(ldc, c.leadingDimension());
         switch (policy.chooseL3Method(a, b, c)) {
         case F2J:
             Sgemm.sgemm(trans(c, a), trans(c, b), m, n, k, alpha, abuf.array(), abuf.arrayOffset(), lda, bbuf.array(),
