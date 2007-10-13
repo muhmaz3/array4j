@@ -13,11 +13,6 @@ public interface MXLibrary extends MXConstants, Library {
     MXLibrary INSTANCE = (MXLibrary) Native.loadLibrary("libmx", MXLibrary.class);
 
     /**
-     * Return the name of an array's class.
-     */
-    String GetClassName(MXArray pa);
-
-    /**
      * Add a field to a structure array. Returns field number on success or -1
      * if inputs are invalid or an out of memory condition occurs.
      */
@@ -172,6 +167,11 @@ public interface MXLibrary extends MXConstants, Library {
      * Return the class (catergory) of data that the array holds.
      */
     int mxGetClassID(MXArray pa);
+
+    /**
+     * Return the name of an array's class.
+     */
+    String mxGetClassName(MXArray pa);
 
     /**
      * Get pointer to data.
