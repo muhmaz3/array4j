@@ -1,4 +1,5 @@
 #include <mkl.h>
+#include <stdlib.h>
 
 #ifdef _WIN32
 #define ARRAY4J_EXPORT __declspec(dllexport)
@@ -55,4 +56,22 @@ ARRAY4J_EXPORT void array4j_saxpy
   (int n, float a, const float* x, int incx, float *y, int incy)
 {
     cblas_saxpy(n, a, x, incx, y, incy);
+}
+
+ARRAY4J_EXPORT void array4j_log
+  (int n, const float* x, int incx, float* y, int incy)
+{
+    float* a = incx == 1 ? x : malloc(n * sizeof(float));
+    float* r = incy == 1 ? y : malloc(n * sizeof(float));
+    if (incx != 1) {
+        vsPackI(n, x, incx, a);
+    }
+    vsLn(n, a, r);
+    if (incx != 1) {
+        free(a);
+    }
+    if (incy != 1) {
+        vsUnpackI(n, r, y, incy);
+        free(r);
+    }
 }
