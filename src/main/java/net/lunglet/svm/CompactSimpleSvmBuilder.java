@@ -1,6 +1,9 @@
 package net.lunglet.svm;
 
 import com.googlecode.array4j.FloatVector;
+import com.googlecode.array4j.Orientation;
+import com.googlecode.array4j.Storage;
+import com.googlecode.array4j.blas.FloatDenseBLAS;
 import com.googlecode.array4j.dense.FloatDenseVector;
 import com.googlecode.array4j.util.AssertUtils;
 import java.util.HashMap;
@@ -30,7 +33,7 @@ public final class CompactSimpleSvmBuilder {
                 weights.put(index, (float) model.sv_coef[0][k]);
             }
         }
-        this.sv = new FloatDenseVector(model.SV[0].getValue().length());
+        this.sv = new FloatDenseVector(model.SV[0].getValue().length(), Orientation.COLUMN, Storage.DIRECT);
     }
 
     public SimpleSvm build() {
@@ -49,9 +52,7 @@ public final class CompactSimpleSvmBuilder {
             return;
         }
         float alpha = weights.get(index);
-        for (int m = 0; m < sv.length(); m++) {
-            sv.set(m, sv.get(m) + alpha * x.get(m));
-        }
+        FloatDenseBLAS.DEFAULT.axpy(alpha, (FloatDenseVector) x, sv);
         weights.remove(index);
     }
 }

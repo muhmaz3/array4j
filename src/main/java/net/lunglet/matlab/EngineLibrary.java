@@ -16,7 +16,7 @@ public interface EngineLibrary extends Library {
      * @param ep
      *                engine pointer
      */
-    int engClose(Engine ep);
+    int engClose(EnginePointer ep);
 
     /**
      * Execute matlab statement.
@@ -26,7 +26,7 @@ public interface EngineLibrary extends Library {
      * @param string
      *                string for matlab to execute
      */
-    int engEvalString(Engine ep, String string);
+    int engEvalString(EnginePointer ep, String string);
 
     /**
      * Get a variable with the specified name from MATLAB's workspace.
@@ -36,9 +36,9 @@ public interface EngineLibrary extends Library {
      * @param name
      *                name of variable to get
      */
-    MXArray engGetVariable(Engine ep, String name);
+    MXArray engGetVariable(EnginePointer ep, String name);
 
-    int engGetVisible(Engine ep, ByteByReference bVal);
+    int engGetVisible(EnginePointer ep, ByteByReference bVal);
 
     /**
      * Start matlab process.
@@ -47,7 +47,7 @@ public interface EngineLibrary extends Library {
      *                exec command string used to start matlab
      * @return
      */
-    Engine engOpen(String startcmd);
+    EnginePointer engOpen(String startcmd);
 
     /**
      * Start matlab process for single use.
@@ -61,7 +61,7 @@ public interface EngineLibrary extends Library {
      * @param retstatus
      *                return status
      */
-    Engine engOpenSingleUse(String startcmd, Pointer reserved, IntByReference retstatus);
+    EnginePointer engOpenSingleUse(String startcmd, Pointer reserved, IntByReference retstatus);
 
     /**
      * Register a buffer to hold matlab text output.
@@ -73,7 +73,7 @@ public interface EngineLibrary extends Library {
      * @param buflen
      *                buffer array length
      */
-    int engOutputBuffer(Engine ep, ByteBuffer buffer, int buflen);
+    int engOutputBuffer(EnginePointer ep, ByteBuffer buffer, int buflen);
 
     /**
      * Put a variable into MATLAB's workspace with the specified name.
@@ -85,7 +85,7 @@ public interface EngineLibrary extends Library {
      * @param ap
      *                array pointer
      */
-    int engPutVariable(Engine ep, String name, MXArray ap);
+    int engPutVariable(EnginePointer ep, String name, MXArray ap);
 
-    int engSetVisible(Engine ep, boolean newVal);
+    int engSetVisible(EnginePointer ep, boolean newVal);
 }

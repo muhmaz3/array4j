@@ -29,7 +29,7 @@ public final class SimpleSvm implements Serializable {
         param.nu = 0.5;
         // TODO tune cache size depending on whether a precomputed kernel is
         // being used or not
-        param.cache_size = 32;
+        param.cache_size = 1;
         param.eps = 1e-3;
         param.p = 0.1;
         param.shrinking = 1;

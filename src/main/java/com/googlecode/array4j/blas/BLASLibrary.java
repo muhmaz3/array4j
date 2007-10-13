@@ -15,7 +15,9 @@ public interface BLASLibrary extends Library {
             try {
                 openmpThreads = Integer.valueOf(System.getenv("OMP_NUM_THREADS"));
             } catch (NumberFormatException e) {
-                openmpThreads = 1;
+                // if OMP_NUM_THREADS contains an invalid value the library will
+                // choose the number of threads, so synchronize in this case
+                openmpThreads = Integer.MAX_VALUE;
             }
             if (openmpThreads > 1) {
                 return (BLASLibrary) Native.synchronizedLibrary(lib);
@@ -35,4 +37,6 @@ public interface BLASLibrary extends Library {
             FloatBuffer c, int ldc);
 
     void array4j_saxpy(int n, float a, FloatBuffer x, int incx, FloatBuffer y, int incy);
+
+    void array4j_log(int n, FloatBuffer x, int incx, FloatBuffer y, int incy);
 }
