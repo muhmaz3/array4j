@@ -14,10 +14,16 @@ public final class Engine {
         this(false);
     }
 
-    public Engine(final boolean visible) {
-        this.ep = EngineLibrary.INSTANCE.engOpen(null);
+    public Engine(final String startcmd, final boolean visible) {
+        this.ep = EngineLibrary.INSTANCE.engOpen(startcmd);
         EngineLibrary.INSTANCE.engOutputBuffer(ep, null, 0);
         setVisible(visible);
+    }
+
+    public Engine(final boolean visible) {
+        // TODO detect if we're running on the Windows platform, in which case
+        // the startcmd should be null, otherwise default to "matlab"
+        this(null, visible);
     }
 
     private String eval(final byte[] command) {
