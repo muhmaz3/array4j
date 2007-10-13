@@ -1,6 +1,9 @@
 package net.lunglet.matlab;
 
 import com.sun.jna.ptr.ByteByReference;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import net.jcip.annotations.NotThreadSafe;
 
 @NotThreadSafe
@@ -17,13 +20,30 @@ public final class Engine {
         setVisible(visible);
     }
 
-    public String eval(final String command) {
+    private String eval(final byte[] command) {
         int result = EngineLibrary.INSTANCE.engEvalString(ep, command);
         if (result != 0) {
             throw new RuntimeException("MATLAB session no longer running");
         }
         // TODO return contents of temporary output buffer
         return null;
+    }
+
+    public String eval(final String command) {
+        return eval(command.getBytes());
+    }
+
+    public String eval(final InputStream stream) throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        byte[] b = new byte[16384];
+        int len = 0;
+        while (len != -1) {
+            len = stream.read(b);
+            if (len > 0) {
+                baos.write(b, 0, len);
+            }
+        }
+        return eval(baos.toByteArray());
     }
 
     public MXArray getVariable(final String name) {

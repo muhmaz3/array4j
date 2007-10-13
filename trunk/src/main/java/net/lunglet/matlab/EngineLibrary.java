@@ -26,7 +26,7 @@ public interface EngineLibrary extends Library {
      * @param string
      *                string for matlab to execute
      */
-    int engEvalString(EnginePointer ep, String string);
+    int engEvalString(EnginePointer ep, byte[] string);
 
     /**
      * Get a variable with the specified name from MATLAB's workspace.
