@@ -1,5 +1,6 @@
 package net.lunglet.matlab;
 
+import com.sun.jna.Callback;
 import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.NativeLong;
@@ -8,6 +9,10 @@ import java.nio.ByteBuffer;
 import java.nio.DoubleBuffer;
 
 public interface MXLibrary extends MXConstants, Library {
+    interface MXFunctionPtr extends Callback {
+        void callback(int nlhs, MXArray[] plhs, int nrhs, MXArray[] prhs);
+    }
+
     MXLibrary INSTANCE = (MXLibrary) Native.loadLibrary("libmx", MXLibrary.class);
 
     /**
