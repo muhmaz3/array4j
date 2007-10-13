@@ -7,8 +7,6 @@ import com.sun.jna.Pointer;
 import java.nio.ByteBuffer;
 import java.nio.DoubleBuffer;
 
-// TODO need to free return value of mxArrayToString
-
 public interface MXLibrary extends MXConstants, Library {
     MXLibrary INSTANCE = (MXLibrary) Native.loadLibrary("libmx", MXLibrary.class);
 
@@ -23,7 +21,7 @@ public interface MXLibrary extends MXConstants, Library {
      * Supports multibyte character sets. The resulting string must be freed
      * with mxFree. Returns NULL on out of memory or non-character arrays.
      */
-    String mxArrayToString(MXArray pa);
+    Pointer mxArrayToString(MXArray pa);
 
     /**
      * Return the offset (in number of elements) from the beginning of the array
