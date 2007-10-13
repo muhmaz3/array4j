@@ -65,6 +65,9 @@ public interface EngineLibrary extends Library {
 
     /**
      * Register a buffer to hold matlab text output.
+     * <p>
+     * The buffer returned by engEvalString is not guaranteed to be NULL
+     * terminated.
      *
      * @param engine
      *                pointer

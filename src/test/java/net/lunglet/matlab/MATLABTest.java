@@ -8,6 +8,8 @@ import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -18,6 +20,14 @@ public final class MATLABTest {
 
     private static void destroy(final MXArray ap) {
         MXLibrary.INSTANCE.mxDestroyArray(ap);
+    }
+
+    private static NativeLong[] toNativeLongs(final int... values) {
+        List<NativeLong> nativeLongs = new ArrayList<NativeLong>(values.length);
+        for (int value : values) {
+            nativeLongs.add(new NativeLong(value));
+        }
+        return nativeLongs.toArray(new NativeLong[0]);
     }
 
     @Test
@@ -62,14 +72,6 @@ public final class MATLABTest {
         assertFalse(MXLibrary.INSTANCE.mxIsFinite(Double.NaN));
         assertFalse(MXLibrary.INSTANCE.mxIsFinite(Double.POSITIVE_INFINITY));
         assertFalse(MXLibrary.INSTANCE.mxIsFinite(Double.NEGATIVE_INFINITY));
-    }
-
-    @Test
-    public void testFunctionHandle() {
-        NativeLong dim = new NativeLong(1);
-        MXArray handle = MXLibrary.INSTANCE.mxCreateNumericMatrix(dim, dim, MXLibrary.FUNCTION_CLASS, 0);
-        assertTrue(MXLibrary.INSTANCE.mxIsFunctionHandle(handle));
-        destroy(handle);
     }
 
     @Test
@@ -118,6 +120,24 @@ public final class MATLABTest {
         Pointer dims = MXLibrary.INSTANCE.mxGetDimensions(a);
         assertEquals(123L, dims.getNativeLong(0).longValue());
         assertEquals(456L, dims.getNativeLong(NativeLong.SIZE).longValue());
+        NativeLong[] subs = null;
+        NativeLong singleSub = null;
+        // check single subscript of first element
+        subs = toNativeLongs(0, 0);
+        singleSub = MXLibrary.INSTANCE.mxCalcSingleSubscript(a, new NativeLong(subs.length), subs);
+        assertEquals(0L, singleSub.longValue());
+        // check single subscript of second element (MATLAB always uses column-major order)
+        subs = toNativeLongs(1, 0);
+        singleSub = MXLibrary.INSTANCE.mxCalcSingleSubscript(a, new NativeLong(subs.length), subs);
+        assertEquals(1L, singleSub.longValue());
+        // check single subscript of first element in second row
+        subs = toNativeLongs(0, 1);
+        singleSub = MXLibrary.INSTANCE.mxCalcSingleSubscript(a, new NativeLong(subs.length), subs);
+        assertEquals(123L, singleSub.longValue());
+        // check single subscript of last element
+        subs = toNativeLongs(122, 455);
+        singleSub = MXLibrary.INSTANCE.mxCalcSingleSubscript(a, new NativeLong(subs.length), subs);
+        assertEquals(123L * 456L - 1, singleSub.longValue());
         destroy(a);
     }
 

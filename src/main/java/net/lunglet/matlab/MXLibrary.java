@@ -1,19 +1,56 @@
 package net.lunglet.matlab;
 
 import com.sun.jna.Callback;
+import com.sun.jna.DefaultTypeMapper;
 import com.sun.jna.Library;
+import com.sun.jna.Memory;
 import com.sun.jna.Native;
 import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
+import com.sun.jna.ToNativeContext;
+import com.sun.jna.ToNativeConverter;
+import com.sun.jna.TypeMapper;
 import java.nio.ByteBuffer;
 import java.nio.DoubleBuffer;
+import java.util.HashMap;
+import java.util.Map;
 
 public interface MXLibrary extends MXConstants, Library {
+    static final class Loader {
+        private static MXLibrary loadLibrary() {
+            Map<String, TypeMapper> options = new HashMap<String, TypeMapper>();
+            DefaultTypeMapper mapper = new DefaultTypeMapper();
+            mapper.addToNativeConverter(NativeLong[].class, new ToNativeConverter() {
+                public Class<NativeLongArray> nativeType() {
+                    return NativeLongArray.class;
+                }
+
+                public Object toNative(final Object obj, final ToNativeContext context) {
+                    return new NativeLongArray((NativeLong[]) obj);
+                }
+            });
+            options.put(Library.OPTION_TYPE_MAPPER, mapper);
+            return (MXLibrary) Native.loadLibrary("libmx", MXLibrary.class, options);
+        }
+
+        private Loader() {
+        }
+    }
+
     interface MXFunctionPtr extends Callback {
         void callback(int nlhs, MXArray[] plhs, int nrhs, MXArray[] prhs);
     }
 
-    MXLibrary INSTANCE = (MXLibrary) Native.loadLibrary("libmx", MXLibrary.class);
+    static final class NativeLongArray extends Memory {
+        public NativeLongArray(final NativeLong[] nativeLongs) {
+            super(nativeLongs.length * NativeLong.SIZE);
+            for (int i = 0; i < nativeLongs.length; i++) {
+                setNativeLong(i * NativeLong.SIZE, nativeLongs[i]);
+            }
+        }
+    }
+
+    MXLibrary INSTANCE = Loader.loadLibrary();
 
     /**
      * Add a field to a structure array. Returns field number on success or -1

@@ -14,16 +14,20 @@ public final class Engine {
         this(false);
     }
 
+    public Engine(final boolean visible) {
+        // TODO detect if we're running on the Windows platform, in which case
+        // the startcmd should be null, otherwise default to "matlab"
+        this(null, visible);
+    }
+
     public Engine(final String startcmd, final boolean visible) {
         this.ep = EngineLibrary.INSTANCE.engOpen(startcmd);
         EngineLibrary.INSTANCE.engOutputBuffer(ep, null, 0);
         setVisible(visible);
     }
 
-    public Engine(final boolean visible) {
-        // TODO detect if we're running on the Windows platform, in which case
-        // the startcmd should be null, otherwise default to "matlab"
-        this(null, visible);
+    public void close() {
+        EngineLibrary.INSTANCE.engClose(ep);
     }
 
     private String eval(final byte[] command) {
@@ -33,10 +37,6 @@ public final class Engine {
         }
         // TODO return contents of temporary output buffer
         return null;
-    }
-
-    public String eval(final String command) {
-        return eval(command.getBytes());
     }
 
     public String eval(final InputStream stream) throws IOException {
@@ -52,19 +52,12 @@ public final class Engine {
         return eval(baos.toByteArray());
     }
 
+    public String eval(final String command) {
+        return eval(command.getBytes());
+    }
+
     public MXArray getVariable(final String name) {
         return EngineLibrary.INSTANCE.engGetVariable(ep, name);
-    }
-
-    public void putVariable(final String name, final MXArray value) {
-        int result = EngineLibrary.INSTANCE.engPutVariable(ep, name, value);
-        if (result != 0) {
-            throw new RuntimeException("engPutVariable failed");
-        }
-    }
-
-    public void close() {
-        EngineLibrary.INSTANCE.engClose(ep);
     }
 
     public boolean isVisible() {
@@ -74,6 +67,13 @@ public final class Engine {
             throw new RuntimeException("engGetVisible failed");
         }
         return visible.getByte(0) == 1;
+    }
+
+    public void putVariable(final String name, final MXArray value) {
+        int result = EngineLibrary.INSTANCE.engPutVariable(ep, name, value);
+        if (result != 0) {
+            throw new RuntimeException("engPutVariable failed");
+        }
     }
 
     public void setVisible(final boolean visible) {
