@@ -1,7 +1,8 @@
-﻿
 Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual Studio 2005
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "array4j", "array4j.vcproj", "{D1AFC317-177D-40F2-B4A4-C4FA5E5B70FF}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PRIMME", "PRIMME.vcproj", "{DBE85C08-BEC3-4F99-8202-105657458F87}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,6 +14,10 @@ Global
 		{D1AFC317-177D-40F2-B4A4-C4FA5E5B70FF}.Debug|Win32.Build.0 = Debug|Win32
 		{D1AFC317-177D-40F2-B4A4-C4FA5E5B70FF}.Release|Win32.ActiveCfg = Release|Win32
 		{D1AFC317-177D-40F2-B4A4-C4FA5E5B70FF}.Release|Win32.Build.0 = Release|Win32
+		{DBE85C08-BEC3-4F99-8202-105657458F87}.Debug|Win32.ActiveCfg = Debug|Win32
+		{DBE85C08-BEC3-4F99-8202-105657458F87}.Debug|Win32.Build.0 = Debug|Win32
+		{DBE85C08-BEC3-4F99-8202-105657458F87}.Release|Win32.ActiveCfg = Release|Win32
+		{DBE85C08-BEC3-4F99-8202-105657458F87}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
