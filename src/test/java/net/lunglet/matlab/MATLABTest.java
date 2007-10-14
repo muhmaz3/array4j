@@ -51,6 +51,7 @@ public final class MATLABTest {
     }
 
     @Ignore
+    @Test
     public void testEngineOpenClose() {
         Engine engine = new Engine(false);
         assertFalse(engine.isVisible());
@@ -151,6 +152,7 @@ public final class MATLABTest {
     }
 
     @Ignore
+    @Test
     public void testVersion() throws IOException {
         Engine engine = new Engine(false);
         InputStream stream = getClass().getResourceAsStream("version.m");
