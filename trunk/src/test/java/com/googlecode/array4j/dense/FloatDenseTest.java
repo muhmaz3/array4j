@@ -58,6 +58,7 @@ public final class FloatDenseTest {
     }
 
     @Ignore
+    @Test
     public void testSerialization() throws IOException, ClassNotFoundException {
         List<FloatMatrix<?, ?>> matrices = new ArrayList<FloatMatrix<?, ?>>();
         matrices.add(new FloatDenseMatrix(0, 0));

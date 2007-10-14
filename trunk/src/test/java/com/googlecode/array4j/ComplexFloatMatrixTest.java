@@ -241,6 +241,7 @@ public final class ComplexFloatMatrixTest<M extends ComplexFloatMatrix<M, V>, V 
     }
 
     @Ignore
+    @Test
     public void testSerialization() throws IOException, ClassNotFoundException {
         for (int rows = 0; rows < 4; rows++) {
             for (int columns = 0; columns < 4; columns++) {

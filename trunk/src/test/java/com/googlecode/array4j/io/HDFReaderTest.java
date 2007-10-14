@@ -97,6 +97,7 @@ public final class HDFReaderTest extends AbstractHDFTest {
     }
 
     @Ignore
+    @Test
     public void testReadPackedRowsColumns() {
         H5File h5 = createMemoryH5File();
         DataType dtype = FloatType.IEEE_F32LE;
@@ -141,6 +142,7 @@ public final class HDFReaderTest extends AbstractHDFTest {
     }
 
     @Ignore
+    @Test
     public void testXXX() {
         FloatPackedMatrix x = FloatPackedMatrix.createSymmetric(4);
         MatrixTestSupport.populateMatrix(x);

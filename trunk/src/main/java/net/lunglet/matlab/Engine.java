@@ -1,5 +1,6 @@
 package net.lunglet.matlab;
 
+import com.sun.jna.Platform;
 import com.sun.jna.ptr.ByteByReference;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -15,9 +16,7 @@ public final class Engine {
     }
 
     public Engine(final boolean visible) {
-        // TODO detect if we're running on the Windows platform, in which case
-        // the startcmd should be null, otherwise default to "matlab"
-        this(null, visible);
+        this(Platform.isWindows() ? null : "matlab", visible);
     }
 
     public Engine(final String startcmd, final boolean visible) {
