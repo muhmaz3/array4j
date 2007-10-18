@@ -2,6 +2,7 @@ package net.lunglet.matlab;
 
 import com.sun.jna.Platform;
 import com.sun.jna.ptr.ByteByReference;
+import com.sun.jna.ptr.IntByReference;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,11 +22,25 @@ public final class Engine {
     }
 
     public Engine(final boolean visible) {
-        this(Platform.isWindows() ? null : "matlab", visible, DEFAULT_OUTPUT_BUFFER_SIZE);
+        this(Platform.isWindows() ? null : "matlab", visible, true, DEFAULT_OUTPUT_BUFFER_SIZE);
     }
 
-    public Engine(final String startcmd, final boolean visible, final int outputBufferSize) {
-        this.ep = EngineLibrary.INSTANCE.engOpen(startcmd);
+    public Engine(final String startcmd, final boolean visible, final boolean singleUse, final int outputBufferSize) {
+        if (startcmd != null && Platform.isWindows()) {
+            throw new IllegalArgumentException("startcmd must be null on Windows");
+        }
+        if (singleUse) {
+            IntByReference retstatus = new IntByReference();
+            this.ep = EngineLibrary.INSTANCE.engOpenSingleUse(startcmd, null, retstatus);
+            if (ep == null) {
+                throw new RuntimeException("engOpenSingleUse failed (retstatus=" + retstatus.getValue() + ")");
+            }
+        } else {
+            this.ep = EngineLibrary.INSTANCE.engOpen(startcmd);
+            if (ep == null) {
+                throw new RuntimeException("engOpen failed");
+            }
+        }
         this.outputBufferSize = outputBufferSize;
         EngineLibrary.INSTANCE.engOutputBuffer(ep, null, 0);
         setVisible(visible);
@@ -44,6 +59,7 @@ public final class Engine {
         }
         ByteBuffer buffer = ByteBuffer.allocateDirect(outputBufferSize);
         EngineLibrary.INSTANCE.engOutputBuffer(ep, buffer, buffer.capacity());
+        // TODO might want engEvalString(ep, "evalin('base', expression)") here
         int result = EngineLibrary.INSTANCE.engEvalString(ep, command);
         if (result != 0) {
             throw new RuntimeException("MATLAB session no longer running");
