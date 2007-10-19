@@ -7,17 +7,31 @@ EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
+		DebugACML|Win32 = DebugACML|Win32
+		DebugIntelMKL|Win32 = DebugIntelMKL|Win32
 		Release|Win32 = Release|Win32
+		ReleaseACML|Win32 = ReleaseACML|Win32
+		ReleaseIntelMKL|Win32 = ReleaseIntelMKL|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{D1AFC317-177D-40F2-B4A4-C4FA5E5B70FF}.Debug|Win32.ActiveCfg = Debug|Win32
-		{D1AFC317-177D-40F2-B4A4-C4FA5E5B70FF}.Debug|Win32.Build.0 = Debug|Win32
-		{D1AFC317-177D-40F2-B4A4-C4FA5E5B70FF}.Release|Win32.ActiveCfg = Release|Win32
-		{D1AFC317-177D-40F2-B4A4-C4FA5E5B70FF}.Release|Win32.Build.0 = Release|Win32
+		{D1AFC317-177D-40F2-B4A4-C4FA5E5B70FF}.Debug|Win32.ActiveCfg = DebugIntelMKL|Win32
+		{D1AFC317-177D-40F2-B4A4-C4FA5E5B70FF}.Debug|Win32.Build.0 = DebugIntelMKL|Win32
+		{D1AFC317-177D-40F2-B4A4-C4FA5E5B70FF}.DebugACML|Win32.ActiveCfg = DebugACML|Win32
+		{D1AFC317-177D-40F2-B4A4-C4FA5E5B70FF}.DebugACML|Win32.Build.0 = DebugACML|Win32
+		{D1AFC317-177D-40F2-B4A4-C4FA5E5B70FF}.DebugIntelMKL|Win32.ActiveCfg = DebugIntelMKL|Win32
+		{D1AFC317-177D-40F2-B4A4-C4FA5E5B70FF}.DebugIntelMKL|Win32.Build.0 = DebugIntelMKL|Win32
+		{D1AFC317-177D-40F2-B4A4-C4FA5E5B70FF}.Release|Win32.ActiveCfg = ReleaseIntelMKL|Win32
+		{D1AFC317-177D-40F2-B4A4-C4FA5E5B70FF}.Release|Win32.Build.0 = ReleaseIntelMKL|Win32
+		{D1AFC317-177D-40F2-B4A4-C4FA5E5B70FF}.ReleaseACML|Win32.ActiveCfg = ReleaseACML|Win32
+		{D1AFC317-177D-40F2-B4A4-C4FA5E5B70FF}.ReleaseACML|Win32.Build.0 = ReleaseACML|Win32
+		{D1AFC317-177D-40F2-B4A4-C4FA5E5B70FF}.ReleaseIntelMKL|Win32.ActiveCfg = ReleaseIntelMKL|Win32
+		{D1AFC317-177D-40F2-B4A4-C4FA5E5B70FF}.ReleaseIntelMKL|Win32.Build.0 = ReleaseIntelMKL|Win32
 		{DBE85C08-BEC3-4F99-8202-105657458F87}.Debug|Win32.ActiveCfg = Debug|Win32
-		{DBE85C08-BEC3-4F99-8202-105657458F87}.Debug|Win32.Build.0 = Debug|Win32
+		{DBE85C08-BEC3-4F99-8202-105657458F87}.DebugACML|Win32.ActiveCfg = Debug|Win32
+		{DBE85C08-BEC3-4F99-8202-105657458F87}.DebugIntelMKL|Win32.ActiveCfg = Debug|Win32
 		{DBE85C08-BEC3-4F99-8202-105657458F87}.Release|Win32.ActiveCfg = Release|Win32
-		{DBE85C08-BEC3-4F99-8202-105657458F87}.Release|Win32.Build.0 = Release|Win32
+		{DBE85C08-BEC3-4F99-8202-105657458F87}.ReleaseACML|Win32.ActiveCfg = Release|Win32
+		{DBE85C08-BEC3-4F99-8202-105657458F87}.ReleaseIntelMKL|Win32.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
