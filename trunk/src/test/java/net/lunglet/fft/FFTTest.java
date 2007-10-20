@@ -1,19 +1,16 @@
 package net.lunglet.fft;
 
 import static org.junit.Assert.assertEquals;
-
-import java.util.Arrays;
-import java.util.Collection;
-
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
-
 import com.googlecode.array4j.ComplexFloat;
 import com.googlecode.array4j.Storage;
 import com.googlecode.array4j.dense.CFloatDenseVector;
 import com.googlecode.array4j.dense.FloatDenseVector;
+import java.util.Arrays;
+import java.util.Collection;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 
 @RunWith(value = Parameterized.class)
 public final class FFTTest {

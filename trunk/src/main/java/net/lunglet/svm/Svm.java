@@ -1,9 +1,8 @@
 package net.lunglet.svm;
 
+import com.googlecode.array4j.FloatVector;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import com.googlecode.array4j.FloatVector;
 
 final class Svm {
     static class decision_function {

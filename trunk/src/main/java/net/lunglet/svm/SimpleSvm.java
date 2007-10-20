@@ -12,7 +12,7 @@ import java.util.List;
 
 // TODO rename to SvmClassifier
 
-// TODO handle more than 2 classes everywhere
+// TODO handle more than 2 classes everywhere (major benefit: kernel cache is probably reused)
 
 // TODO factor out compact-only methods into their own class, an instance of which is returned by compact
 
@@ -27,9 +27,8 @@ public final class SimpleSvm implements Serializable {
         param.gamma = 0;
         param.coef0 = 0;
         param.nu = 0.5;
-        // TODO tune cache size depending on whether a precomputed kernel is
-        // being used or not
-        param.cache_size = 1;
+        // TODO do some benchmarks with different cache sizes
+        param.cache_size = 32;
         param.eps = 1e-3;
         param.p = 0.1;
         param.shrinking = 1;

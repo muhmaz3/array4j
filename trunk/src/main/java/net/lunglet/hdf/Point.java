@@ -1,7 +1,6 @@
 package net.lunglet.hdf;
 
 import java.util.Arrays;
-
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 

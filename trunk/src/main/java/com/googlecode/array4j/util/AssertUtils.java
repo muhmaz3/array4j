@@ -3,7 +3,7 @@ package com.googlecode.array4j.util;
 public final class AssertUtils {
     public static void assertEquals(final int expected, final int actual) {
         if (expected != actual) {
-            throw new AssertionError();
+            throw new AssertionError("expected = " + expected + " != actual = " + actual);
         }
     }
 

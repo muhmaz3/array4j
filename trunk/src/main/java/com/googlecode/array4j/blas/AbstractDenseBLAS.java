@@ -5,13 +5,13 @@ import com.googlecode.array4j.dense.DenseMatrix;
 import com.googlecode.array4j.dense.DenseVector;
 
 public abstract class AbstractDenseBLAS {
-    protected static void checkDot(final DenseVector<?> x, final DenseVector<?> y) {
+    protected static void checkAxpy(final DenseVector<?> x, final DenseVector<?> y) {
         if (x.length() != y.length()) {
             throw new IllegalArgumentException();
         }
     }
 
-    protected static void checkAxpy(final DenseVector<?> x, final DenseVector<?> y) {
+    protected static void checkDot(final DenseVector<?> x, final DenseVector<?> y) {
         if (x.length() != y.length()) {
             throw new IllegalArgumentException();
         }
@@ -19,13 +19,13 @@ public abstract class AbstractDenseBLAS {
 
     protected static void checkGemm(final DenseMatrix<?, ?> a, final DenseMatrix<?, ?> b, final DenseMatrix<?, ?> c) {
         if (a.rows() != c.rows()) {
-            throw new IllegalArgumentException("rows(a) != rows(c)");
+            throw new IllegalArgumentException(String.format("rows(a)=%d != rows(c)=%d", a.rows(), c.rows()));
         }
         if (a.columns() != b.rows()) {
-            throw new IllegalArgumentException("columns(a) != rows(b)");
+            throw new IllegalArgumentException(String.format("columns(a)=%d != rows(b)=%d", a.columns(), b.rows()));
         }
         if (b.columns() != c.columns()) {
-            throw new IllegalArgumentException("columns(b) != columns(c)");
+            throw new IllegalArgumentException(String.format("columns(b)=%d != columns(c)=%d", b.columns(), c.columns()));
         }
         if (a.stride() != 1 || b.stride() != 1 || c.stride() != 1) {
             throw new IllegalArgumentException("all matrices must have unit stride");

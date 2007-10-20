@@ -28,6 +28,10 @@ public interface BLASLibrary extends Library {
 
     BLASLibrary INSTANCE = new Loader().loadLibrary();
 
+    void array4j_log(int n, FloatBuffer x, int incx, FloatBuffer y, int incy);
+
+    void array4j_saxpy(int n, float a, FloatBuffer x, int incx, FloatBuffer y, int incy);
+
     float array4j_sdot(int n, FloatBuffer x, int incx, FloatBuffer y, int incy);
 
     void array4j_sgemm(int order, int transa, int transb, int m, int n, int k, float alpha, FloatBuffer a, int lda,
@@ -35,8 +39,4 @@ public interface BLASLibrary extends Library {
 
     void array4j_ssyrk(int order, int uplo, int trans, int n, int k, float alpha, FloatBuffer a, int lda, float beta,
             FloatBuffer c, int ldc);
-
-    void array4j_saxpy(int n, float a, FloatBuffer x, int incx, FloatBuffer y, int incy);
-
-    void array4j_log(int n, FloatBuffer x, int incx, FloatBuffer y, int incy);
 }

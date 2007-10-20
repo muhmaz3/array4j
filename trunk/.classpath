@@ -2,7 +2,7 @@
 <classpath>
 	<classpathentry kind="src" path="src/main/java">
 		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="array4j/win_build/Debug"/>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="array4j/build/native"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="src" path="src/main/resources"/>
@@ -18,6 +18,6 @@
 	<classpathentry kind="lib" path="lib/jcip-annotations.jar"/>
 	<classpathentry kind="lib" path="lib/commons-logging-1.1.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="lib/jna.jar" sourcepath="/jnalib/src"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/jnalib"/>
 	<classpathentry kind="output" path="eclipse-classes"/>
 </classpath>

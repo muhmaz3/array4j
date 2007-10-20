@@ -76,6 +76,16 @@ public final class MATLABTest {
     }
 
     @Test
+    public void testEval() throws IOException {
+        Engine engine = new Engine(false);
+        assertTrue(engine.eval("version").contains("ans"));
+        InputStream stream = getClass().getResourceAsStream("version.m");
+        assertNotNull(stream);
+        assertTrue(engine.eval(stream).contains("ans"));
+        engine.close();
+    }
+
+    @Test
     public void testGetIsClass() {
         MXArray a = createDoubleMatrix(0, 0);
         assertEquals(MXLibrary.INSTANCE.mxGetClassName(a), "double");
@@ -149,15 +159,5 @@ public final class MATLABTest {
         MXLibrary.INSTANCE.mxSetUserBits(a, bits);
         assertEquals(MXLibrary.INSTANCE.mxGetUserBits(a), bits);
         destroy(a);
-    }
-
-    @Ignore
-    @Test
-    public void testVersion() throws IOException {
-        Engine engine = new Engine(false);
-        InputStream stream = getClass().getResourceAsStream("version.m");
-        assertNotNull(stream);
-        engine.eval(stream);
-        engine.close();
     }
 }
