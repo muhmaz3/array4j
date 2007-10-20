@@ -2,7 +2,6 @@ package com.googlecode.array4j;
 
 import com.googlecode.array4j.util.AssertUtils;
 import java.util.Arrays;
-
 import org.apache.commons.lang.builder.EqualsBuilder;
 
 // TODO if we go for FloatDenseMatrix and FloatDenseVector as

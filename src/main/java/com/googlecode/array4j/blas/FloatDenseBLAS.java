@@ -17,23 +17,6 @@ public final class FloatDenseBLAS extends AbstractDenseBLAS {
         super(policy);
     }
 
-    public float dot(final FloatDenseVector x, final FloatDenseVector y) {
-        checkDot(x, y);
-        int n = x.length();
-        FloatBuffer xbuf = x.data();
-        int incx = x.stride();
-        FloatBuffer ybuf = y.data();
-        int incy = y.stride();
-        switch (policy.chooseL1Method(x, y)) {
-        case F2J:
-            return Sdot.sdot(n, xbuf.array(), xbuf.arrayOffset(), incx, ybuf.array(), ybuf.arrayOffset(), incy);
-        case NATIVE:
-            return BLASLibrary.INSTANCE.array4j_sdot(n, xbuf, incx, ybuf, incy);
-        default:
-            throw new AssertionError();
-        }
-    }
-
     /**
      * <CODE>y := a*x + y</CODE>
      */
@@ -51,6 +34,23 @@ public final class FloatDenseBLAS extends AbstractDenseBLAS {
         case NATIVE:
             BLASLibrary.INSTANCE.array4j_saxpy(n, a, xbuf, incx, ybuf, incy);
             return;
+        default:
+            throw new AssertionError();
+        }
+    }
+
+    public float dot(final FloatDenseVector x, final FloatDenseVector y) {
+        checkDot(x, y);
+        int n = x.length();
+        FloatBuffer xbuf = x.data();
+        int incx = x.stride();
+        FloatBuffer ybuf = y.data();
+        int incy = y.stride();
+        switch (policy.chooseL1Method(x, y)) {
+        case F2J:
+            return Sdot.sdot(n, xbuf.array(), xbuf.arrayOffset(), incx, ybuf.array(), ybuf.arrayOffset(), incy);
+        case NATIVE:
+            return BLASLibrary.INSTANCE.array4j_sdot(n, xbuf, incx, ybuf, incy);
         default:
             throw new AssertionError();
         }

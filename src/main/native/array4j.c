@@ -14,32 +14,50 @@
 #define ARRAY4J_EXPORT
 #endif
 
-#if 0
-ARRAY4J_EXPORT long array4j_mkl_DftiCreateDescriptor(DFTI_DESCRIPTOR_HANDLE* handle)
+ARRAY4J_EXPORT long array4j_DftiCreateDescriptor(DFTI_DESCRIPTOR_HANDLE handle)
 {
+#if defined(ARRAY4J_HAVE_MKL)
     return DftiCommitDescriptor(handle);
-}
-
-ARRAY4J_EXPORT long array4j_mkl_DftiCommitDescriptor(DFTI_DESCRIPTOR_HANDLE handle)
-{
-    return DftiCommitDescriptor(handle);
-}
-
-ARRAY4J_EXPORT long array4j_mkl_DftiFreeDescriptor(DFTI_DESCRIPTOR_HANDLE* handle)
-{
-    return DftiFreeDescriptor(handle);
-}
-
-ARRAY4J_EXPORT char* array4j_mkl_DftiErrorMessage(long i)
-{
-    return DftiErrorMessage(i);
-}
-
-ARRAY4J_EXPORT long array4j_mkl_DftiErrorClass(long i, long j)
-{
-    return DftiErrorClass(i, j);
-}
+#else
+    return 0;
 #endif
+}
+
+ARRAY4J_EXPORT long array4j_DftiCommitDescriptor(DFTI_DESCRIPTOR_HANDLE handle)
+{
+#if defined(ARRAY4J_HAVE_MKL)
+    return DftiCommitDescriptor(handle);
+#else
+    return 0;
+#endif
+}
+
+ARRAY4J_EXPORT long array4j_DftiFreeDescriptor(DFTI_DESCRIPTOR_HANDLE* handle)
+{
+#if defined(ARRAY4J_HAVE_MKL)
+    return DftiFreeDescriptor(handle);
+#else
+    return 0;
+#endif
+}
+
+ARRAY4J_EXPORT char* array4j_DftiErrorMessage(long i)
+{
+#if defined(ARRAY4J_HAVE_MKL)
+    return DftiErrorMessage(i);
+#else
+    return 0;
+#endif
+}
+
+ARRAY4J_EXPORT long array4j_DftiErrorClass(long i, long j)
+{
+#if defined(ARRAY4J_HAVE_MKL)
+    return DftiErrorClass(i, j);
+#else
+    return 0;
+#endif
+}
 
 ARRAY4J_EXPORT void array4j_sgemm
   (int order, int transa, int transb, int m, int n, int k, float alpha, float* a, int lda, float* b, int ldb, float beta, float *c, int ldc)

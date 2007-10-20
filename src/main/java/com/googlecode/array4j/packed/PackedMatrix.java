@@ -1,10 +1,9 @@
 package com.googlecode.array4j.packed;
 
-import java.nio.Buffer;
-
 import com.googlecode.array4j.Matrix;
 import com.googlecode.array4j.Storage;
 import com.googlecode.array4j.dense.DenseVector;
+import java.nio.Buffer;
 
 /**
  * Matrix packed by columns.

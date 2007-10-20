@@ -13,21 +13,6 @@ public final class PRIMMETest {
     }
 
     @Test
-    public void testRestartSchemeOrdinals() {
-        assertEquals(RestartScheme.thick.ordinal(), 0);
-        assertEquals(RestartScheme.dtr.ordinal(), 1);
-    }
-
-    @Test
-    public void testTargetOrdinals() {
-        assertEquals(Target.smallest.ordinal(), 0);
-        assertEquals(Target.largest.ordinal(), 1);
-        assertEquals(Target.closest_geq.ordinal(), 2);
-        assertEquals(Target.closest_leq.ordinal(), 3);
-        assertEquals(Target.closest_abs.ordinal(), 4);
-    }
-
-    @Test
     public void testPresetMethodOrdinals() {
         assertEquals(PresetMethod.DYNAMIC.ordinal(), 0);
         assertEquals(PresetMethod.DEFAULT_MIN_TIME.ordinal(), 1);
@@ -44,5 +29,20 @@ public final class PRIMMETest {
         assertEquals(PresetMethod.SUBSPACE_ITERATION.ordinal(), 12);
         assertEquals(PresetMethod.LOBPCG_OrthoBasis.ordinal(), 13);
         assertEquals(PresetMethod.LOBPCG_OrthoBasis_Window.ordinal(), 14);
+    }
+
+    @Test
+    public void testRestartSchemeOrdinals() {
+        assertEquals(RestartScheme.thick.ordinal(), 0);
+        assertEquals(RestartScheme.dtr.ordinal(), 1);
+    }
+
+    @Test
+    public void testTargetOrdinals() {
+        assertEquals(Target.smallest.ordinal(), 0);
+        assertEquals(Target.largest.ordinal(), 1);
+        assertEquals(Target.closest_geq.ordinal(), 2);
+        assertEquals(Target.closest_leq.ordinal(), 3);
+        assertEquals(Target.closest_abs.ordinal(), 4);
     }
 }

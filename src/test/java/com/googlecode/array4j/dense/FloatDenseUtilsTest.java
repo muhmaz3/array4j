@@ -1,9 +1,9 @@
 package com.googlecode.array4j.dense;
 
 import static org.junit.Assert.assertEquals;
+import com.googlecode.array4j.MatrixTestSupport;
 import com.googlecode.array4j.Orientation;
 import com.googlecode.array4j.Storage;
-import com.googlecode.array4j.MatrixTestSupport;
 import java.util.Arrays;
 import java.util.Collection;
 import org.junit.Test;

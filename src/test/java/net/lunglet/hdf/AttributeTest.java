@@ -6,6 +6,19 @@ import org.junit.Test;
 
 public final class AttributeTest {
     @Test
+    public void testSize() {
+        FileCreatePropList fcpl = FileCreatePropList.DEFAULT;
+        FileAccessPropList fapl = new FileAccessPropListBuilder().setCore(1024, false).build();
+        H5File h5file = new H5File(UUID.randomUUID().toString(), fcpl, fapl);
+        fapl.close();
+        DataSpace space = new DataSpace(16372);
+        Attribute attr = h5file.getRootGroup().createAttribute("attr", IntType.STD_I32LE, space);
+        attr.close();
+        space.close();
+        h5file.close();
+    }
+
+    @Test
     public void testStringAttribute() {
         FileCreatePropList fcpl = FileCreatePropList.DEFAULT;
         FileAccessPropList fapl = new FileAccessPropListBuilder().setCore(1024, false).build();

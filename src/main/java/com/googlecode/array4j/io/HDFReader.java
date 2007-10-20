@@ -40,8 +40,13 @@ public final class HDFReader {
             dataset = h5file.getRootGroup().openDataSet(name);
             space = dataset.getSpace();
             long[] dims = space.getDims();
-            if (dims.length != 2) {
+            if (dims.length != 2 && dims.length != 1) {
                 throw new RuntimeException(new IOException());
+            }
+            if (dims.length == 1) {
+                // TODO allow matrices with a single row or column when the
+                // dimension is 1
+                dims = new long[]{dims[0], 1};
             }
             if (matrix.rows() != dims[0] || matrix.columns() != dims[1]) {
                 throw new IllegalArgumentException();
