@@ -14,10 +14,10 @@
 #define ARRAY4J_EXPORT
 #endif
 
-ARRAY4J_EXPORT long array4j_DftiCreateDescriptor(DFTI_DESCRIPTOR_HANDLE handle)
+ARRAY4J_EXPORT long array4j_DftiCreateDescriptor(DFTI_DESCRIPTOR_HANDLE* handle)
 {
 #if defined(ARRAY4J_HAVE_MKL)
-    return DftiCommitDescriptor(handle);
+    return 0;
 #else
     return 0;
 #endif
@@ -128,4 +128,9 @@ ARRAY4J_EXPORT void array4j_log
 #else
 #error log function required
 #endif
+}
+
+ARRAY4J_EXPORT void* array4j_addressof(void* addr)
+{
+    return addr;
 }

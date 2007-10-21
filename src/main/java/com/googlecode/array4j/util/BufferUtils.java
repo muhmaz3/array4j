@@ -16,6 +16,7 @@ public final class BufferUtils {
 //        ByteBuffer buffer = ByteBuffer.allocateDirect(size + alignment - 1);
         ByteBuffer buffer = ByteBuffer.allocateDirect(size);
         // TODO get buffer address to calculate position for slice
+        // TODO use array4j_addressof here
         return ((ByteBuffer) buffer.order(ByteOrder.nativeOrder()).position(0)).slice();
     }
 
