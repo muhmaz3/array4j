@@ -1,4 +1,4 @@
-package net.lunglet.mkl.fft;
+package net.lunglet.fft.mkl;
 
 import java.nio.Buffer;
 
@@ -27,42 +27,6 @@ import java.nio.Buffer;
 //}
 
 public final class DftiDescriptor {
-    static {
-        System.loadLibrary("array4j");
-    }
-
-    private static native long commitDescriptor(long handle);
-
-    private static native long computeBackward(long handle, Buffer inout);
-
-    private static native long computeBackward(long handle, Buffer in, Buffer out);
-
-    private static native long computeForward(long handle, Buffer inout);
-
-    private static native long computeForward(long handle, Buffer in, Buffer out);
-
-    private static native long createDescriptor(long[] handleHolder, int precision, int forwardDomain, int[] length);
-
-    private static native long freeDescriptor(long handle);
-
-    private static native float getFloatValue(long handle, int param, long[] statusHolder);
-
-    private static native int[] getIntArrayValue(long handle, int param, long[] statusHolder);
-
-    private static native int getIntValue(long handle, int param, long[] statusHolder);
-
-    private static native String getStringValue(long handle, int param, long[] statusHolder);
-
-    private static native long setValue(long handle, int param, float value);
-
-    private static native long setValue(long handle, int param, int value);
-
-    private static native long setValue(long handle, int param, int[] value);
-
-    private static native long setValue(long handle, int param, String value);
-
-    private final long handle;
-
     /**
      * Constructor.
      *
@@ -83,9 +47,9 @@ public final class DftiDescriptor {
             throw new IllegalArgumentException();
         }
         long[] handleHolder = new long[1];
-        long status = createDescriptor(handleHolder, precision.intValue(), forwardDomain.intValue(), lengths);
-        DftiError.checkStatus(status);
-        this.handle = handleHolder[0];
+//        long status = createDescriptor(handleHolder, precision.intValue(), forwardDomain.intValue(), lengths);
+//        DftiError.checkStatus(status);
+//        this.handle = handleHolder[0];
         // TODO initialize descriptor name to empty string
         // TODO this still crashes
 //        setValue(DftiConfigParam.DESCRIPTOR_NAME, "");
@@ -101,8 +65,8 @@ public final class DftiDescriptor {
      */
     public void commit() throws DftiException {
         // TODO what happens when commit is called more than once?
-        long status = commitDescriptor(handle);
-        DftiError.checkStatus(status);
+//        long status = commitDescriptor(handle);
+//        DftiError.checkStatus(status);
     }
 
     /**
@@ -115,8 +79,8 @@ public final class DftiDescriptor {
             throw new DftiException("Must use inplace placement");
         }
         // TODO check that buffer is large enough to support calculation
-        long status = computeBackward(handle, inout);
-        DftiError.checkStatus(status);
+//        long status = computeBackward(handle, inout);
+//        DftiError.checkStatus(status);
     }
 
     /**
@@ -131,8 +95,8 @@ public final class DftiDescriptor {
             throw new DftiException("Must not use inplace placement");
         }
         // TODO check that buffers are large enough to support calculation
-        long status = computeBackward(handle, in, out);
-        DftiError.checkStatus(status);
+//        long status = computeBackward(handle, in, out);
+//        DftiError.checkStatus(status);
     }
 
     /**
@@ -145,8 +109,8 @@ public final class DftiDescriptor {
             throw new DftiException("Must use inplace placement");
         }
         // TODO check that buffer is large enough to support calculation
-        long status = computeForward(handle, inout);
-        DftiError.checkStatus(status);
+//        long status = computeForward(handle, inout);
+//        DftiError.checkStatus(status);
     }
 
     /**
@@ -160,15 +124,15 @@ public final class DftiDescriptor {
             throw new DftiException("Must not use inplace placement");
         }
         // TODO check that buffers are large enough to support calculation
-        long status = computeForward(handle, in, out);
-        DftiError.checkStatus(status);
+//        long status = computeForward(handle, in, out);
+//        DftiError.checkStatus(status);
     }
 
     /**
      * Free resources allocated to the descriptor.
      */
     public void free() {
-        freeDescriptor(handle);
+//        freeDescriptor(handle);
     }
 
     public double getFloatValue(final DftiConfigParam param) throws DftiException {
@@ -176,9 +140,10 @@ public final class DftiDescriptor {
             throw new IllegalArgumentException();
         }
         long[] status = new long[1];
-        double value = getFloatValue(handle, param.intValue(), status);
-        DftiError.checkStatus(status[0]);
-        return value;
+//        double value = getFloatValue(handle, param.intValue(), status);
+//        DftiError.checkStatus(status[0]);
+//        return value;
+        return 0.0;
     }
 
     public int[] getIntArrayValue(final DftiConfigParam param) throws DftiException {
@@ -186,9 +151,10 @@ public final class DftiDescriptor {
             throw new IllegalArgumentException();
         }
         long[] status = new long[1];
-        int[] value = getIntArrayValue(handle, param.intValue(), status);
-        DftiError.checkStatus(status[0]);
-        return value;
+//        int[] value = getIntArrayValue(handle, param.intValue(), status);
+//        DftiError.checkStatus(status[0]);
+//        return value;
+        return null;
     }
 
     public int getIntValue(final DftiConfigParam param) throws DftiException {
@@ -196,9 +162,10 @@ public final class DftiDescriptor {
             throw new IllegalArgumentException();
         }
         long[] status = new long[1];
-        int value = getIntValue(handle, param.intValue(), status);
-        DftiError.checkStatus(status[0]);
-        return value;
+//        int value = getIntValue(handle, param.intValue(), status);
+//        DftiError.checkStatus(status[0]);
+//        return value;
+        return 0;
     }
 
     public String getStringValue(final DftiConfigParam param) throws DftiException {
@@ -206,9 +173,10 @@ public final class DftiDescriptor {
             throw new IllegalArgumentException();
         }
         long[] status = new long[1];
-        String value = getStringValue(handle, param.intValue(), status);
-        DftiError.checkStatus(status[0]);
-        return value;
+//        String value = getStringValue(handle, param.intValue(), status);
+//        DftiError.checkStatus(status[0]);
+//        return value;
+        return null;
     }
 
     public DftiConfigValue getValue(final DftiConfigParam param) throws DftiException {
@@ -216,13 +184,13 @@ public final class DftiDescriptor {
             throw new IllegalArgumentException();
         }
         long[] status = new long[1];
-        int intValue = getIntValue(handle, param.intValue(), status);
-        DftiError.checkStatus(status[0]);
-        for (DftiConfigValue value : DftiConfigValue.values()) {
-            if (value.intValue() == intValue) {
-                return value;
-            }
-        }
+//        int intValue = getIntValue(handle, param.intValue(), status);
+//        DftiError.checkStatus(status[0]);
+//        for (DftiConfigValue value : DftiConfigValue.values()) {
+//            if (value.intValue() == intValue) {
+//                return value;
+//            }
+//        }
         // This should never happen. If it did, it means the MKL library
         // returned a value for a named constant that hasn't been mapped to a
         // value in the DftiConfigValue enum.
@@ -234,22 +202,22 @@ public final class DftiDescriptor {
     }
 
     public void setValue(final DftiConfigParam param, final float value) throws DftiException {
-        long status = setValue(handle, param.intValue(), value);
-        DftiError.checkStatus(status);
+//        long status = setValue(handle, param.intValue(), value);
+//        DftiError.checkStatus(status);
     }
 
     public void setValue(final DftiConfigParam param, final int value) throws DftiException {
-        long status = setValue(handle, param.intValue(), value);
-        DftiError.checkStatus(status);
+//        long status = setValue(handle, param.intValue(), value);
+//        DftiError.checkStatus(status);
     }
 
     public void setValue(final DftiConfigParam param, final int[] value) throws DftiException {
-        long status = setValue(handle, param.intValue(), value);
-        DftiError.checkStatus(status);
+//        long status = setValue(handle, param.intValue(), value);
+//        DftiError.checkStatus(status);
     }
 
     public void setValue(final DftiConfigParam param, final String value) throws DftiException {
-        long status = setValue(handle, param.intValue(), value);
-        DftiError.checkStatus(status);
+//        long status = setValue(handle, param.intValue(), value);
+//        DftiError.checkStatus(status);
     }
 }

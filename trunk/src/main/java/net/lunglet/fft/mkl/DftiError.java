@@ -1,4 +1,5 @@
-package net.lunglet.mkl.fft;
+package net.lunglet.fft.mkl;
+
 
 public enum DftiError {
     DFTI_1D_LENGTH_EXCEEDS_INT32(9L),

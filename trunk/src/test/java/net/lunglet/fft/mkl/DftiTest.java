@@ -1,4 +1,4 @@
-package net.lunglet.mkl.fft;
+package net.lunglet.fft.mkl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -6,6 +6,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.util.Arrays;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public final class DftiTest {
@@ -15,6 +16,7 @@ public final class DftiTest {
         return buffer.asFloatBuffer();
     }
 
+    @Ignore
     @Test
     public void testDescriptorConstructor() throws DftiException {
         final int[] lengths = new int[]{1};
@@ -44,6 +46,7 @@ public final class DftiTest {
         desc.free();
     }
 
+    @Ignore
     @Test
     public void testDescriptorConstructorStress() throws DftiException {
         for (int i = 0; i < 100000; i++) {
@@ -51,6 +54,7 @@ public final class DftiTest {
         }
     }
 
+    @Ignore
     @Test
     public void testDescriptorSetValue() throws DftiException {
         DftiDescriptor desc = new DftiDescriptor(DftiConfigValue.SINGLE, DftiConfigValue.REAL, new int[]{1});
@@ -60,6 +64,7 @@ public final class DftiTest {
         desc.free();
     }
 
+    @Ignore
     @Test
     public void testSingleComplexInPlace() throws DftiException {
         final int[] lengths = new int[]{3};
@@ -92,6 +97,7 @@ public final class DftiTest {
         desc.free();
     }
 
+    @Ignore
     @Test
     public void testSingleComplexOutOfPlace() throws DftiException {
         final int[] lengths = new int[]{3};

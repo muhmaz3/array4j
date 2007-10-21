@@ -1,4 +1,4 @@
-package net.lunglet.mkl.fft;
+package net.lunglet.fft.mkl;
 
 public enum DftiConfigValue {
     ALLOW(51),
