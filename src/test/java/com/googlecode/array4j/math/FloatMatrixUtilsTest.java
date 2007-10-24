@@ -1,8 +1,15 @@
-package com.googlecode.array4j;
+package com.googlecode.array4j.math;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import com.googlecode.array4j.Direction;
+import com.googlecode.array4j.FloatMatrix;
+import com.googlecode.array4j.FloatMatrixFactory;
+import com.googlecode.array4j.FloatVector;
+import com.googlecode.array4j.MatrixTestSupport;
+import com.googlecode.array4j.Order;
+import com.googlecode.array4j.Storage;
 import com.googlecode.array4j.dense.FloatDenseMatrixFactory;
 import com.googlecode.array4j.dense.FloatDenseVector;
 import java.util.ArrayList;

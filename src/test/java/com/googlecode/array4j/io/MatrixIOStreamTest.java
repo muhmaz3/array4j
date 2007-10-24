@@ -1,9 +1,9 @@
 package com.googlecode.array4j.io;
 
 import static org.junit.Assert.assertEquals;
-import com.googlecode.array4j.FloatMatrixUtils;
 import com.googlecode.array4j.dense.FloatDenseMatrix;
 import com.googlecode.array4j.dense.FloatDenseVector;
+import com.googlecode.array4j.math.FloatMatrixUtils;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
