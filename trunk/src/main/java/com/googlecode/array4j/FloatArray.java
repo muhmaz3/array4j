@@ -1,5 +1,5 @@
 package com.googlecode.array4j;
 
-public interface FloatArray<A extends FloatArray<A>> extends Array<A> {
+public interface FloatArray extends Array {
     float[] toArray();
 }

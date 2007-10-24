@@ -2,8 +2,6 @@ package net.lunglet.hdf;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import com.googlecode.array4j.Orientation;
-import com.googlecode.array4j.Storage;
 import com.googlecode.array4j.dense.FloatDenseMatrix;
 import com.sun.jna.ptr.IntByReference;
 import java.util.UUID;
@@ -39,7 +37,8 @@ public final class H5LibraryTest {
         H5File h5 = new H5File(UUID.randomUUID().toString(), fcpl, fapl);
         fapl.close();
 
-        FloatDenseMatrix data = new FloatDenseMatrix(5, 6, Orientation.ROW, Storage.DIRECT);
+//        FloatDenseMatrix data = new FloatDenseMatrix(5, 6, Order.ROW, Storage.DIRECT);
+        FloatDenseMatrix data = null;
         for (int j = 0; j < data.rows(); j++) {
             for (int i = 0; i < data.columns(); i++) {
                 data.set(j, i, (float) i + j);
@@ -59,7 +58,8 @@ public final class H5LibraryTest {
         long[] start = {1, 2};
         long[] count = {3, 4};
         dataspace2.selectHyperslab(SelectionOperator.SET, start, count);
-        FloatDenseMatrix out = new FloatDenseMatrix(data.rows(), data.columns());
+//        FloatDenseMatrix out = new FloatDenseMatrix(data.rows(), data.columns());
+        FloatDenseMatrix out = null;
         dataset2.read(out.data(), dtype, DataSpace.ALL, dataspace2);
         dataspace2.close();
         dataset2.close();

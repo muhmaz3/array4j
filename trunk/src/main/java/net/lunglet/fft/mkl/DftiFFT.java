@@ -27,7 +27,8 @@ public final class DftiFFT implements FFT {
                 xdata.put(x.get(i));
             }
         } else {
-            xdata = x.data();
+//            xdata = x.data();
+            xdata = null;
             xoffset = x.offset();
             xstride = x.stride();
         }
@@ -36,7 +37,8 @@ public final class DftiFFT implements FFT {
             DftiDescriptor desc = new DftiDescriptor(DftiConfigValue.SINGLE, DftiConfigValue.REAL, lengths);
             try {
                 // TODO call a zerosLike function here
-                CFloatDenseVector y = new CFloatDenseVector(n, x.orientation(), x.storage());
+//                CFloatDenseVector y = new CFloatDenseVector(n, x.order(), x.storage());
+                CFloatDenseVector y = null;
                 desc.setValue(DftiConfigParam.FORWARD_SCALE, 1.0f);
                 desc.setValue(DftiConfigParam.BACKWARD_SCALE, 1.0f / lengths[0]);
                 desc.setValue(DftiConfigParam.PLACEMENT, DftiConfigValue.NOT_INPLACE);

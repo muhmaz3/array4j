@@ -4,10 +4,9 @@ import com.googlecode.array4j.util.AssertUtils;
 import java.util.Arrays;
 import org.apache.commons.lang.builder.EqualsBuilder;
 
-// TODO if we go for FloatDenseMatrix and FloatDenseVector as
-// interfaces, we can move length method up to AbstractMatrix
+// TODO rename length
 
-public abstract class AbstractArray<A extends Array<A>> implements Array<A> {
+public abstract class AbstractArray implements Array {
     protected final int length;
 
     protected final int[] shape;
@@ -39,12 +38,11 @@ public abstract class AbstractArray<A extends Array<A>> implements Array<A> {
         if (this == obj) {
             return true;
         }
-        AbstractArray<?> other = (AbstractArray<?>) obj;
-        // length is calculated from shape, so only check shape
+        AbstractArray other = (AbstractArray) obj;
         return new EqualsBuilder().append(shape, other.shape).isEquals();
     }
 
-    public final int length() {
+    protected int length() {
         return length;
     }
 

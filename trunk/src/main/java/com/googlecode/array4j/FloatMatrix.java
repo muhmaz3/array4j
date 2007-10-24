@@ -1,35 +1,29 @@
 package com.googlecode.array4j;
 
-public interface FloatMatrix<M extends FloatMatrix<M, V>, V extends FloatVector<V>> extends Matrix<M, V>, FloatArray<M> {
-    /**
-     * In-place division by a scalar value.
-     */
-    void divideEquals(float value);
+import java.util.List;
+
+public interface FloatMatrix extends Matrix, FloatArray {
+    FloatVector column(int column);
+
+    Iterable<? extends FloatVector> columnsIterator();
+
+    List<? extends FloatVector> columnsList();
 
     float get(int row, int column);
 
-    /**
-     * In-place subtraction of a scalar value.
-     */
-    void minusEquals(float value);
+    FloatVector row(int row);
 
-    /**
-     * In-place addition of a scalar value.
-     */
-    void plusEquals(float value);
+    Iterable<? extends FloatVector> rowsIterator();
 
     void set(int row, int column, float value);
 
-    void setColumn(int column, FloatVector<?> columnVector);
+    void setColumn(int column, FloatVector columnVector);
 
-    void setRow(int row, FloatVector<?> rowVector);
-
-    /**
-     * In-place multiplication with a scalar value.
-     */
-    void timesEquals(float value);
+    void setRow(int row, FloatVector rowVector);
 
     float[][] toColumnArrays();
 
     float[][] toRowArrays();
+
+    FloatMatrix transpose();
 }

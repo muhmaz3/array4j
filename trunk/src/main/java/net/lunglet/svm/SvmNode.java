@@ -14,10 +14,10 @@ public final class SvmNode implements Serializable {
         this(index, (Handle) null);
     }
 
-    public SvmNode(final int index, final FloatVector<?> value) {
+    public SvmNode(final int index, final FloatVector value) {
         this(index, new Handle() {
             @Override
-            public FloatVector<?> getData() {
+            public FloatVector getData() {
                 return value;
             }
 
@@ -46,7 +46,7 @@ public final class SvmNode implements Serializable {
         return index;
     }
 
-    public FloatVector<?> getValue() {
+    public FloatVector getValue() {
         if (handle == null) {
             throw new IllegalStateException();
         }

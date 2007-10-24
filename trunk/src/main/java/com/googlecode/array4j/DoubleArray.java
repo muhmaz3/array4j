@@ -1,5 +1,5 @@
 package com.googlecode.array4j;
 
-public interface DoubleArray<A extends DoubleArray<A>> extends Array<A> {
+public interface DoubleArray extends Array {
     double[] toArray();
 }

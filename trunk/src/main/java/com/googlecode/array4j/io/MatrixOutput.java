@@ -9,5 +9,5 @@ import java.util.Collection;
 public interface MatrixOutput extends DataOutput {
     void writeColumnsAsMatrix(final Collection<? extends FloatDenseVector> columns) throws IOException;
 
-    void writeMatrix(FloatMatrix<?, ?> matrix) throws IOException;
+    void writeMatrix(FloatMatrix matrix) throws IOException;
 }

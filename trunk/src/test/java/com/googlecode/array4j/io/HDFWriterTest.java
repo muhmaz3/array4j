@@ -16,11 +16,13 @@ public final class HDFWriterTest extends AbstractHDFTest {
         int nmax = 5;
         for (int n = 1; n <= nmax; n++) {
             Storage storage = Storage.DIRECT;
-            FloatPackedMatrix x = FloatPackedMatrix.createSymmetric(n, storage);
+//            FloatPackedMatrix x = FloatPackedMatrix.createSymmetric(n, storage);
+            FloatPackedMatrix x = null;
             MatrixTestSupport.populateMatrix(x);
             String name = String.valueOf(n);
             writer.write(name, x);
-            FloatPackedMatrix y = FloatPackedMatrix.createSymmetric(n, storage);
+//            FloatPackedMatrix y = FloatPackedMatrix.createSymmetric(n, storage);
+            FloatPackedMatrix y = null;
             reader.read(name, y);
             assertEquals(x, y);
         }

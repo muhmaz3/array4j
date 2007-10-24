@@ -3,8 +3,7 @@ package com.googlecode.array4j.packed;
 import com.googlecode.array4j.AbstractMatrix;
 import com.googlecode.array4j.dense.DenseVector;
 
-public abstract class AbstractPackedMatrix<M extends PackedMatrix<M, V>, V extends DenseVector<V>> extends
-        AbstractMatrix<M, V> implements PackedMatrix<M, V> {
+public abstract class AbstractPackedMatrix<V extends DenseVector> extends AbstractMatrix<V> implements PackedMatrix {
     protected enum PackedType {
         LOWER_TRIANGULAR {
             @Override

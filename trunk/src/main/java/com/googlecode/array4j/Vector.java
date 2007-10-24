@@ -1,9 +1,11 @@
 package com.googlecode.array4j;
 
-public interface Vector<V extends Vector<V>> extends Matrix<V, V> {
+public interface Vector extends Matrix {
     boolean isColumnVector();
 
     boolean isRowVector();
 
-    Orientation orientation();
+    int length();
+
+    Vector transpose();
 }

@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 import com.googlecode.array4j.FloatMatrix;
 import com.googlecode.array4j.FloatVector;
 import com.googlecode.array4j.MatrixTestSupport;
-import com.googlecode.array4j.Orientation;
+import com.googlecode.array4j.Order;
 import com.googlecode.array4j.Storage;
 import com.googlecode.array4j.dense.FloatDenseMatrix;
 import com.googlecode.array4j.dense.FloatDenseVector;
@@ -26,7 +26,7 @@ public final class FloatDenseBLASTest extends AbstractBLASTest {
         }
     }
 
-    private static float dot(final FloatVector<?> x, final FloatVector<?> y) {
+    private static float dot(final FloatVector x, final FloatVector y) {
         assertEquals(x.length(), y.length());
         float ret = 0.0f;
         for (int i = 0; i < x.length(); i++) {
@@ -35,8 +35,8 @@ public final class FloatDenseBLASTest extends AbstractBLASTest {
         return ret;
     }
 
-    private static void gemm(final float alpha, final FloatMatrix<?, ?> a, final FloatMatrix<?, ?> b, final float beta,
-            final FloatMatrix<?, ?> c) {
+    private static void gemm(final float alpha, final FloatMatrix a, final FloatMatrix b, final float beta,
+            final FloatMatrix c) {
         assertEquals(a.columns(), b.rows());
         assertEquals(a.rows(), c.rows());
         assertEquals(b.columns(), c.columns());
@@ -61,8 +61,10 @@ public final class FloatDenseBLASTest extends AbstractBLASTest {
     public void testDot() {
         for (Storage[] s : new Permutations<Storage>(2, Storage.values())) {
             for (int i = 0; i < 10; i++) {
-                FloatDenseVector x = new FloatDenseVector(i, Orientation.ROW, s[0]);
-                FloatDenseVector y = new FloatDenseVector(i, Orientation.ROW, s[1]);
+//                FloatDenseVector x = new FloatDenseVector(i, Order.ROW, s[0]);
+                FloatDenseVector x = null;
+//                FloatDenseVector y = new FloatDenseVector(i, Order.ROW, s[1]);
+                FloatDenseVector y = null;
                 MatrixTestSupport.populateMatrix(x);
                 MatrixTestSupport.populateMatrix(y);
                 assertEquals(dot(x, y), FloatDenseBLAS.DEFAULT.dot(x, y), 0);
@@ -74,15 +76,19 @@ public final class FloatDenseBLASTest extends AbstractBLASTest {
     public void testGemm() {
         final float alpha = 1.0f;
         final float beta = 1.0f;
-        for (Orientation[] o : new Permutations<Orientation>(3, Orientation.values())) {
+        for (Order[] o : new Permutations<Order>(3, Order.values())) {
             for (Storage[] s : new Permutations<Storage>(3, Storage.values())) {
                 for (int m = 0; m < 20; m += m < 5 ? 1 : 5) {
                     for (int n = 0; n < 20; n += n < 5 ? 1 : 5) {
                         for (int k = 0; k < 20; k += k < 5 ? 1 : 5) {
-                            FloatDenseMatrix a = new FloatDenseMatrix(m, n, o[0], s[0]);
-                            FloatDenseMatrix b = new FloatDenseMatrix(n, k, o[1], s[1]);
-                            FloatDenseMatrix expectedc = new FloatDenseMatrix(m, k, o[2], s[2]);
-                            FloatDenseMatrix actualc = new FloatDenseMatrix(m, k, o[2], s[2]);
+//                            FloatDenseMatrix a = new FloatDenseMatrix(m, n, o[0], s[0]);
+                            FloatDenseMatrix a = null;
+//                            FloatDenseMatrix b = new FloatDenseMatrix(n, k, o[1], s[1]);
+                            FloatDenseMatrix b = null;
+//                            FloatDenseMatrix expectedc = new FloatDenseMatrix(m, k, o[2], s[2]);
+                            FloatDenseMatrix expectedc = null;
+//                            FloatDenseMatrix actualc = new FloatDenseMatrix(m, k, o[2], s[2]);
+                            FloatDenseMatrix actualc = null;
                             MatrixTestSupport.populateMatrix(a);
                             MatrixTestSupport.populateMatrix(b);
                             MatrixTestSupport.populateMatrix(expectedc);
@@ -102,15 +108,20 @@ public final class FloatDenseBLASTest extends AbstractBLASTest {
         final float alpha = 1.0f;
         final float beta = 0.0f;
         Storage storage = Storage.DIRECT;
-        FloatDenseMatrix a = new FloatDenseMatrix(2, 3, Orientation.COLUMN, storage);
+//        FloatDenseMatrix a = new FloatDenseMatrix(2, 3, Order.COLUMN, storage);
+        FloatDenseMatrix a = null;
         MatrixTestSupport.populateMatrix(a);
-        FloatDenseMatrix expectedc1 = new FloatDenseMatrix(2, 2, Orientation.COLUMN, storage);
+//        FloatDenseMatrix expectedc1 = new FloatDenseMatrix(2, 2, Order.COLUMN, storage);
+        FloatDenseMatrix expectedc1 = null;
         MatrixTestSupport.populateMatrix(expectedc1);
-        FloatDenseMatrix actualc1 = new FloatDenseMatrix(2, 2, Orientation.COLUMN, storage);
+//        FloatDenseMatrix actualc1 = new FloatDenseMatrix(2, 2, Order.COLUMN, storage);
+        FloatDenseMatrix actualc1 = null;
         MatrixTestSupport.populateMatrix(actualc1);
-        FloatDenseMatrix expectedc2 = new FloatDenseMatrix(3, 3, Orientation.COLUMN, storage);
+//        FloatDenseMatrix expectedc2 = new FloatDenseMatrix(3, 3, Order.COLUMN, storage);
+        FloatDenseMatrix expectedc2 = null;
         MatrixTestSupport.populateMatrix(expectedc2);
-        FloatDenseMatrix actualc2 = new FloatDenseMatrix(3, 3, Orientation.COLUMN, storage);
+//        FloatDenseMatrix actualc2 = new FloatDenseMatrix(3, 3, Order.COLUMN, storage);
+        FloatDenseMatrix actualc2 = null;
         MatrixTestSupport.populateMatrix(actualc2);
         gemm(alpha, a, a.transpose(), beta, expectedc1);
         gemm(alpha, a.transpose(), a, beta, expectedc2);

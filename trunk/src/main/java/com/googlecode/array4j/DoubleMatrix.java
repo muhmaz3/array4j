@@ -1,33 +1,21 @@
 package com.googlecode.array4j;
 
-public interface DoubleMatrix<M extends DoubleMatrix<M, V>, V extends DoubleVector<V>> extends Matrix<M, V>,
-        DoubleArray<M> {
-    void divideEquals(double value);
+public interface DoubleMatrix extends Matrix, DoubleArray {
+    DoubleVector column(int column);
 
     double get(int row, int column);
 
-    /**
-     * In-place subtraction of a scalar value.
-     */
-    void minusEquals(double value);
-
-    /**
-     * In-place addition of a scalar value.
-     */
-    void plusEquals(double value);
+    DoubleVector row(int row);
 
     void set(int row, int column, double value);
 
-    void setColumn(int column, DoubleVector<?> columnVector);
+    void setColumn(int column, DoubleVector columnVector);
 
-    void setRow(int row, DoubleVector<?> rowVector);
-
-    /**
-     * In-place multiplication with a scalar value.
-     */
-    void timesEquals(double value);
+    void setRow(int row, DoubleVector rowVector);
 
     double[][] toColumnArrays();
 
     double[][] toRowArrays();
+
+    DoubleMatrix transpose();
 }
