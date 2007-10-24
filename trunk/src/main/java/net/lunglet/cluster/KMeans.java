@@ -2,8 +2,10 @@ package net.lunglet.cluster;
 
 import com.googlecode.array4j.FloatMatrix;
 import com.googlecode.array4j.FloatVector;
+import com.googlecode.array4j.dense.DenseFactory;
 import com.googlecode.array4j.dense.FloatDenseMatrix;
 import com.googlecode.array4j.dense.FloatDenseUtils;
+import com.googlecode.array4j.math.FloatMatrixMath;
 import com.googlecode.array4j.math.FloatMatrixUtils;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletionService;
@@ -104,9 +106,9 @@ public final class KMeans<T> {
             }
             n[nearestIndex]++;
             FloatVector nearestNewCentroid = newCentroids.column(nearestIndex);
-//            FloatVector delta = x.minus(nearestNewCentroid);
-//            delta.timesEquals(1.0f / n[nearestIndex]);
-//            nearestNewCentroid.plusEquals(delta);
+            FloatVector delta = FloatMatrixMath.minus(x, nearestNewCentroid);
+            delta.timesEquals(1.0f / n[nearestIndex]);
+            nearestNewCentroid.plusEquals(delta);
             totalDistortion += nearestDistance;
         }
         return new KMeansTaskResult(newCentroids, n, totalDistortion);
@@ -178,8 +180,7 @@ public final class KMeans<T> {
                 throw new RuntimeException("no new centroid found");
             }
             if (centroids == null) {
-//                centroids = new FloatDenseMatrix(newCentroid.rows(), maxCentroids);
-                centroids = null;
+                centroids = DenseFactory.createFloatMatrix(newCentroid.rows(), maxCentroids);
             }
             centroids.setColumn(iter, newCentroid);
         }
@@ -187,8 +188,7 @@ public final class KMeans<T> {
     }
 
     private double train(final FloatMatrix centroids, final T... data) throws InterruptedException, ExecutionException {
-//        FloatDenseMatrix centroidsCopy = new FloatDenseMatrix(centroids);
-        FloatDenseMatrix centroidsCopy = null;
+        FloatDenseMatrix centroidsCopy = DenseFactory.copyOf(centroids);
         for (int i = 0; i < data.length; i++) {
             // TODO task should probably copy its arguments, not depend on who
             // creates it to do so
@@ -209,9 +209,9 @@ public final class KMeans<T> {
                     continue;
                 }
                 n[j] += result.n[j];
-//                FloatVector delta = result.centroids.column(j).minus(centroid);
-//                delta.timesEquals(result.n[j] / (float) n[j]);
-//                centroid.plusEquals(delta);
+                FloatVector delta = FloatMatrixMath.minus(result.centroids.column(j), centroid);
+                delta.timesEquals(result.n[j] / (float) n[j]);
+                centroid.plusEquals(delta);
             }
             totalDistortion += result.totalDistortion;
         }
@@ -228,13 +228,11 @@ public final class KMeans<T> {
 
     public FloatDenseMatrix train(final int iterations, final FloatMatrix initialCentroids, final T... data)
             throws InterruptedException, ExecutionException {
-//        FloatDenseMatrix centroids = new FloatDenseMatrix(initialCentroids);
-        FloatDenseMatrix centroids = null;
+        FloatDenseMatrix centroids = DenseFactory.copyOf(initialCentroids);
         FloatDenseMatrix bestCentroids = null;
         double bestDistortion = Double.POSITIVE_INFINITY;
         for (int iter = 0; iter < iterations; iter++) {
-//            FloatDenseMatrix oldCentroids = new FloatDenseMatrix(centroids);
-            FloatDenseMatrix oldCentroids = null;
+            FloatDenseMatrix oldCentroids = DenseFactory.copyOf(centroids);
             // this returns the distortion of the old centroids
             double distortion = train(centroids, data);
             if (distortion < bestDistortion) {

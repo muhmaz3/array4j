@@ -24,21 +24,12 @@ final class FloatDenseMatrixImpl extends AbstractFloatDense implements FloatDens
 
     /** Copy constructor. */
     public FloatDenseMatrixImpl(final FloatMatrix other) {
-        this(other.rows(), other.columns());
-        // TODO optimize this
-        for (int i = 0; i < other.rows(); i++) {
-            for (int j = 0; j < other.columns(); j++) {
-                set(i, j, other.get(i, j));
-            }
-        }
+        this(other.rows(), other.columns(), Order.DEFAULT, Storage.DEFAULT_FOR_DENSE);
+        copy(other, this);
     }
 
-    public FloatDenseMatrixImpl(final int rows, final int columns) {
-        this(rows, columns, Order.DEFAULT, Storage.DEFAULT_FOR_DENSE);
-    }
-
-    public FloatDenseMatrixImpl(final int rows, final int columns, final Order orientation, final Storage storage) {
-        super(rows, columns, orientation, storage);
+    public FloatDenseMatrixImpl(final int rows, final int columns, final Order order, final Storage storage) {
+        super(rows, columns, order, storage);
     }
 
     @Override

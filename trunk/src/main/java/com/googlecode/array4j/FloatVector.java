@@ -1,21 +1,11 @@
 package com.googlecode.array4j;
 
 public interface FloatVector extends Vector, FloatMatrix {
-    void divideEquals(float value);
-
+    /** Get value of element at index. */
     float get(int index);
 
-    FloatVector minus(FloatVector other);
-
-    void minusEquals(float value);
-
-    void plusEquals(float value);
-
-    void plusEquals(FloatVector other);
-
+    /** Set value of element at index. */
     void set(int index, float value);
-
-    void timesEquals(float value);
 
     /** {@inheritDoc} */
     FloatVector transpose();

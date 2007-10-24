@@ -196,11 +196,11 @@ public abstract class AbstractDenseMatrix<V extends DenseVector, T> extends Abst
     }
 
     public final boolean isColumnVector() {
-        return rows <= 1;
+        return columns <= 1;
     }
 
     public final boolean isRowVector() {
-        return columns <= 1;
+        return rows <= 1;
     }
 
     public final int length() {

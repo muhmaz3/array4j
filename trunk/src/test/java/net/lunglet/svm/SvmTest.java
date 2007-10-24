@@ -4,6 +4,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import com.googlecode.array4j.FloatMatrix;
 import com.googlecode.array4j.FloatVector;
+import com.googlecode.array4j.Order;
+import com.googlecode.array4j.Storage;
+import com.googlecode.array4j.dense.DenseFactory;
 import com.googlecode.array4j.dense.FloatDenseMatrix;
 import com.googlecode.array4j.math.FloatMatrixMath;
 import com.googlecode.array4j.math.FloatMatrixUtils;
@@ -109,8 +112,7 @@ public final class SvmTest {
 
         // train
         double[] decvalues = new double[classes * (classes - 1) / 2];
-//        FloatDenseMatrix scores = new FloatDenseMatrix(decvalues.length, prob.l);
-        FloatDenseMatrix scores = null;
+        FloatDenseMatrix scores = DenseFactory.createFloatMatrix(decvalues.length, prob.l);
         for (int i = 0; i < prob.l; i++) {
             svm.svm_predict_values(model, prob.x[i], decvalues);
             for (int j = 0; j < decvalues.length; j++) {
@@ -120,7 +122,7 @@ public final class SvmTest {
 
         // XXX fix sign... might need something more complex here when dealing
         // with arbitrary labels. this assumes labels start at 0.
-//        scores.timesEquals(labels[0] == 0 ? 1.0f : -1.0f);
+        scores.timesEquals(labels[0] == 0 ? 1.0f : -1.0f);
 
         return scores;
     }
@@ -154,8 +156,7 @@ public final class SvmTest {
 
         // predict
         double[] decvalues = new double[classes * (classes - 1) / 2];
-//        FloatDenseMatrix scores = new FloatDenseMatrix(decvalues.length, prob.l);
-        FloatDenseMatrix scores = null;
+        FloatDenseMatrix scores = DenseFactory.createFloatMatrix(decvalues.length, prob.l);
         for (int i = 0; i < prob.l; i++) {
             svm.svm_predict_values(model, dataprob.x[i], decvalues);
             for (int j = 0; j < decvalues.length; j++) {
@@ -165,7 +166,7 @@ public final class SvmTest {
 
         // XXX fix sign... might need something more complex heren when dealing
         // with arbitrary labels. this assumes labels start at 0.
-//        scores.timesEquals(labels[0] == 0 ? 1.0f : -1.0f);
+        scores.timesEquals(labels[0] == 0 ? 1.0f : -1.0f);
 
         return scores;
     }
@@ -195,8 +196,7 @@ public final class SvmTest {
         final Random rng = new Random(1234);
         for (int i = 2; i < 100; i += 10) {
             for (int j = 4; j < 100; j += 10) {
-//                FloatDenseMatrix data = new FloatDenseMatrix(i, j, Order.ROW, Storage.HEAP);
-                FloatDenseMatrix data = null;
+                FloatDenseMatrix data = DenseFactory.createFloatMatrix(i, j, Order.ROW, Storage.HEAP);
                 FloatMatrixUtils.fillRandom(data, rng);
                 FloatPackedMatrix kernel = FloatMatrixMath.timesTranspose(data.transpose());
                 int[] labels = new int[data.columns()];

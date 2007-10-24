@@ -2,8 +2,12 @@ package com.googlecode.array4j.io;
 
 import static org.junit.Assert.assertEquals;
 import com.googlecode.array4j.MatrixTestSupport;
+import com.googlecode.array4j.Order;
+import com.googlecode.array4j.Storage;
+import com.googlecode.array4j.dense.DenseFactory;
 import com.googlecode.array4j.dense.FloatDenseMatrix;
 import com.googlecode.array4j.packed.FloatPackedMatrix;
+import com.googlecode.array4j.packed.PackedFactory;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -37,8 +41,7 @@ public final class HDFReaderTest extends AbstractHDFTest {
         ds.write(new float[]{1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f});
         ds.close();
         HDFReader reader = new HDFReader(h5);
-//        FloatDenseMatrix x = new FloatDenseMatrix(2, 3, Order.ROW, Storage.DIRECT);
-        FloatDenseMatrix x = null;
+        FloatDenseMatrix x = DenseFactory.createFloatMatrix(2, 3, Order.ROW, Storage.DIRECT);
         reader.read("/foo/bar", x);
         reader.close();
         assertEquals(1.0f, x.get(0, 0), 0);
@@ -58,8 +61,7 @@ public final class HDFReaderTest extends AbstractHDFTest {
         ds.write(new float[]{1.0f, 2.0f, 3.0f});
         ds.close();
         HDFReader reader = new HDFReader(h5);
-//        FloatPackedMatrix x = FloatPackedMatrix.createSymmetric(2);
-        FloatPackedMatrix x = null;
+        FloatPackedMatrix x = PackedFactory.createSymmetric(2);
         reader.read("/foo/bar", x);
         reader.close();
         assertEquals(1.0f, x.get(0, 0), 0);
@@ -73,16 +75,13 @@ public final class HDFReaderTest extends AbstractHDFTest {
         H5File h5 = createMemoryH5File();
         for (int i = 1; i <= 5; i++) {
             for (int bufSize = 1; bufSize <= 15; bufSize++) {
-//                FloatPackedMatrix matrix = FloatPackedMatrix.createSymmetric(i);
-                FloatPackedMatrix matrix = null;
+                FloatPackedMatrix matrix = PackedFactory.createSymmetric(i);
                 MatrixTestSupport.populateMatrix(matrix);
                 HDFWriter writer = new HDFWriter(h5);
                 String name = "/foo_" + i + "_" + bufSize;
                 writer.write(name, matrix);
-//                FloatPackedMatrix matrix2 = FloatPackedMatrix.createSymmetric(matrix.rows(), Storage.DIRECT);
-                FloatPackedMatrix matrix2 = null;
-//                FloatPackedMatrix matrix3 = FloatPackedMatrix.createSymmetric(matrix.rows(), Storage.HEAP);
-                FloatPackedMatrix matrix3 = null;
+                FloatPackedMatrix matrix2 = PackedFactory.createFloatSymmetric(matrix.rows(), Storage.DIRECT);
+                FloatPackedMatrix matrix3 = PackedFactory.createFloatSymmetric(matrix.rows(), Storage.HEAP);
                 HDFReader reader = new HDFReader(h5);
                 reader.read(name, matrix2, bufSize);
                 reader.read(name, matrix3, bufSize);
@@ -123,8 +122,7 @@ public final class HDFReaderTest extends AbstractHDFTest {
         indexes = Arrays.copyOf(indexes, len);
 
         // XXX read code starts here
-//        FloatPackedMatrix x = FloatPackedMatrix.createSymmetric(indexes.length);
-        FloatPackedMatrix x = null;
+        FloatPackedMatrix x = PackedFactory.createSymmetric(indexes.length);
         int size = indexes.length * (indexes.length + 1) / 2;
         DataSpace memSpace = new DataSpace(size);
         memSpace.selectAll();
@@ -148,12 +146,10 @@ public final class HDFReaderTest extends AbstractHDFTest {
     @Ignore
     @Test
     public void testXXX() {
-//        FloatPackedMatrix x = FloatPackedMatrix.createSymmetric(4);
-        FloatPackedMatrix x = null;
+        FloatPackedMatrix x = PackedFactory.createSymmetric(4);
         MatrixTestSupport.populateMatrix(x);
         int[] indexes = {0, 2, 1};
-//        FloatPackedMatrix y = FloatPackedMatrix.createSymmetric(indexes.length);
-        FloatPackedMatrix y = null;
+        FloatPackedMatrix y = PackedFactory.createSymmetric(indexes.length);
         for (int i = 0; i < indexes.length; i++) {
             for (int j = i; j < indexes.length; j++) {
                 y.set(i, j, x.get(indexes[i], indexes[j]));

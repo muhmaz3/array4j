@@ -1,6 +1,7 @@
 package com.googlecode.array4j.io;
 
 import static org.junit.Assert.assertEquals;
+import com.googlecode.array4j.dense.DenseFactory;
 import com.googlecode.array4j.dense.FloatDenseMatrix;
 import com.googlecode.array4j.dense.FloatDenseVector;
 import com.googlecode.array4j.math.FloatMatrixUtils;
@@ -15,8 +16,7 @@ import org.junit.Test;
 public final class MatrixIOStreamTest {
     @Test
     public void testWriteColumnsAsMatrix() throws IOException {
-//        FloatDenseMatrix matrix = new FloatDenseMatrix(3, 4);
-        FloatDenseMatrix matrix = null;
+        FloatDenseMatrix matrix = DenseFactory.createFloatMatrix(3, 4);
         FloatMatrixUtils.fillRandom(matrix, new Random(0));
         List<FloatDenseVector> columns = new ArrayList<FloatDenseVector>(matrix.columns());
         for (FloatDenseVector column : matrix.columnsIterator()) {
@@ -37,8 +37,7 @@ public final class MatrixIOStreamTest {
 
     @Test
     public void testWriteMatrix() throws IOException {
-//        FloatDenseMatrix matrix = new FloatDenseMatrix(10, 20);
-        FloatDenseMatrix matrix = null;
+        FloatDenseMatrix matrix = DenseFactory.createFloatMatrix(10, 20);
         FloatMatrixUtils.fillRandom(matrix, new Random(0));
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         MatrixOutputStream out = new MatrixOutputStream(baos);

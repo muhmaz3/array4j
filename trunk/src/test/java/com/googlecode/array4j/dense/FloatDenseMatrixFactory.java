@@ -18,8 +18,7 @@ public final class FloatDenseMatrixFactory implements FloatMatrixFactory {
             final int stride, final Order orientation) {
         FloatBuffer data = BufferUtils.createFloatBuffer(values.length, storage);
         data.put(values);
-//        return new FloatDenseMatrix(data, rows, columns, offset, stride, orientation);
-        return null;
+        return new FloatDenseMatrixImpl(data, rows, columns, offset, stride, orientation);
     }
 
     public FloatDenseMatrix createMatrix(final float[] values, final int rows, final int columns,
@@ -28,13 +27,11 @@ public final class FloatDenseMatrixFactory implements FloatMatrixFactory {
     }
 
     public FloatDenseMatrix createMatrix(final int rows, final int columns) {
-//        return new FloatDenseMatrix(rows, columns, Order.DEFAULT, storage);
-        return null;
+        return new FloatDenseMatrixImpl(rows, columns, Order.DEFAULT, storage);
     }
 
     public FloatDenseMatrix createMatrix(final int rows, final int columns, final Order orientation) {
-//        return new FloatDenseMatrix(rows, columns, orientation, storage);
-        return null;
+        return new FloatDenseMatrixImpl(rows, columns, orientation, storage);
     }
 
     public FloatDenseVector createRowVector(final float... values) {

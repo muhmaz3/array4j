@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import com.googlecode.array4j.dense.FloatDenseMatrixFactory;
+import com.googlecode.array4j.math.FloatMatrixMath;
 import com.googlecode.array4j.math.FloatMatrixUtils;
 import java.util.Arrays;
 import java.util.Collection;
@@ -73,7 +74,7 @@ public final class FloatVectorTest {
                 x.set(j, j);
                 y.set(j, i - j);
             }
-            FloatVector z = x.minus(y);
+            FloatVector z = FloatMatrixMath.minus(x, y);
             for (int j = 0; j < i; j++) {
                 assertEquals(j, x.get(j), 0.0);
                 assertEquals(i - j, y.get(j), 0.0);
@@ -97,6 +98,22 @@ public final class FloatVectorTest {
                 assertEquals(i - j, y.get(j), 0.0);
             }
         }
+    }
+
+    @Test
+    public void testIsRowColumnVector() {
+        FloatVector v = factory.createVector(0, Direction.DEFAULT);
+        assertTrue(v.isRowVector());
+        assertTrue(v.isColumnVector());
+        v = factory.createVector(1, Direction.DEFAULT);
+        assertTrue(v.isRowVector());
+        assertTrue(v.isColumnVector());
+        v = factory.createVector(2, Direction.ROW);
+        assertTrue(v.isRowVector());
+        assertFalse(v.isColumnVector());
+        v = factory.createVector(2, Direction.COLUMN);
+        assertFalse(v.isRowVector());
+        assertTrue(v.isColumnVector());
     }
 
     @Test

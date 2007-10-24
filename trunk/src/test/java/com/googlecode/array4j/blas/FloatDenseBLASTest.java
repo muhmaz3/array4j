@@ -1,11 +1,13 @@
 package com.googlecode.array4j.blas;
 
 import static org.junit.Assert.assertEquals;
+import com.googlecode.array4j.Direction;
 import com.googlecode.array4j.FloatMatrix;
 import com.googlecode.array4j.FloatVector;
 import com.googlecode.array4j.MatrixTestSupport;
 import com.googlecode.array4j.Order;
 import com.googlecode.array4j.Storage;
+import com.googlecode.array4j.dense.DenseFactory;
 import com.googlecode.array4j.dense.FloatDenseMatrix;
 import com.googlecode.array4j.dense.FloatDenseVector;
 import java.util.HashMap;
@@ -61,10 +63,8 @@ public final class FloatDenseBLASTest extends AbstractBLASTest {
     public void testDot() {
         for (Storage[] s : new Permutations<Storage>(2, Storage.values())) {
             for (int i = 0; i < 10; i++) {
-//                FloatDenseVector x = new FloatDenseVector(i, Order.ROW, s[0]);
-                FloatDenseVector x = null;
-//                FloatDenseVector y = new FloatDenseVector(i, Order.ROW, s[1]);
-                FloatDenseVector y = null;
+                FloatDenseVector x = DenseFactory.createFloatVector(i, Direction.ROW, s[0]);
+                FloatDenseVector y = DenseFactory.createFloatVector(i, Direction.ROW, s[1]);
                 MatrixTestSupport.populateMatrix(x);
                 MatrixTestSupport.populateMatrix(y);
                 assertEquals(dot(x, y), FloatDenseBLAS.DEFAULT.dot(x, y), 0);
@@ -81,14 +81,10 @@ public final class FloatDenseBLASTest extends AbstractBLASTest {
                 for (int m = 0; m < 20; m += m < 5 ? 1 : 5) {
                     for (int n = 0; n < 20; n += n < 5 ? 1 : 5) {
                         for (int k = 0; k < 20; k += k < 5 ? 1 : 5) {
-//                            FloatDenseMatrix a = new FloatDenseMatrix(m, n, o[0], s[0]);
-                            FloatDenseMatrix a = null;
-//                            FloatDenseMatrix b = new FloatDenseMatrix(n, k, o[1], s[1]);
-                            FloatDenseMatrix b = null;
-//                            FloatDenseMatrix expectedc = new FloatDenseMatrix(m, k, o[2], s[2]);
-                            FloatDenseMatrix expectedc = null;
-//                            FloatDenseMatrix actualc = new FloatDenseMatrix(m, k, o[2], s[2]);
-                            FloatDenseMatrix actualc = null;
+                            FloatDenseMatrix a = DenseFactory.createFloatMatrix(m, n, o[0], s[0]);
+                            FloatDenseMatrix b = DenseFactory.createFloatMatrix(n, k, o[1], s[1]);
+                            FloatDenseMatrix expectedc = DenseFactory.createFloatMatrix(m, k, o[2], s[2]);
+                            FloatDenseMatrix actualc = DenseFactory.createFloatMatrix(m, k, o[2], s[2]);
                             MatrixTestSupport.populateMatrix(a);
                             MatrixTestSupport.populateMatrix(b);
                             MatrixTestSupport.populateMatrix(expectedc);
@@ -108,20 +104,15 @@ public final class FloatDenseBLASTest extends AbstractBLASTest {
         final float alpha = 1.0f;
         final float beta = 0.0f;
         Storage storage = Storage.DIRECT;
-//        FloatDenseMatrix a = new FloatDenseMatrix(2, 3, Order.COLUMN, storage);
-        FloatDenseMatrix a = null;
+        FloatDenseMatrix a = DenseFactory.createFloatMatrix(2, 3, Order.COLUMN, storage);
         MatrixTestSupport.populateMatrix(a);
-//        FloatDenseMatrix expectedc1 = new FloatDenseMatrix(2, 2, Order.COLUMN, storage);
-        FloatDenseMatrix expectedc1 = null;
+        FloatDenseMatrix expectedc1 = DenseFactory.createFloatMatrix(2, 2, Order.COLUMN, storage);
         MatrixTestSupport.populateMatrix(expectedc1);
-//        FloatDenseMatrix actualc1 = new FloatDenseMatrix(2, 2, Order.COLUMN, storage);
-        FloatDenseMatrix actualc1 = null;
+        FloatDenseMatrix actualc1 = DenseFactory.createFloatMatrix(2, 2, Order.COLUMN, storage);
         MatrixTestSupport.populateMatrix(actualc1);
-//        FloatDenseMatrix expectedc2 = new FloatDenseMatrix(3, 3, Order.COLUMN, storage);
-        FloatDenseMatrix expectedc2 = null;
+        FloatDenseMatrix expectedc2 = DenseFactory.createFloatMatrix(3, 3, Order.COLUMN, storage);
         MatrixTestSupport.populateMatrix(expectedc2);
-//        FloatDenseMatrix actualc2 = new FloatDenseMatrix(3, 3, Order.COLUMN, storage);
-        FloatDenseMatrix actualc2 = null;
+        FloatDenseMatrix actualc2 = DenseFactory.createFloatMatrix(3, 3, Order.COLUMN, storage);
         MatrixTestSupport.populateMatrix(actualc2);
         gemm(alpha, a, a.transpose(), beta, expectedc1);
         gemm(alpha, a.transpose(), a, beta, expectedc2);
