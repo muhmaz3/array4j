@@ -17,5 +17,6 @@ public interface DoubleMatrix extends Matrix, DoubleArray {
 
     double[][] toRowArrays();
 
+    /** {@inheritDoc} */
     DoubleMatrix transpose();
 }

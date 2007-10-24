@@ -1,6 +1,7 @@
 package com.googlecode.array4j.dense;
 
 import com.googlecode.array4j.AbstractMatrix;
+import com.googlecode.array4j.Direction;
 import com.googlecode.array4j.Order;
 import com.googlecode.array4j.util.BufferUtils;
 import java.nio.Buffer;
@@ -22,7 +23,7 @@ public abstract class AbstractDenseMatrix<V extends DenseVector, T> extends Abst
     /** Offset in storage where matrix data begins. */
     protected final int offset;
 
-    protected final Order orientation;
+    protected final Order order;
 
     /** Stride between elements in a row. */
     protected final int rowStride;
@@ -31,14 +32,14 @@ public abstract class AbstractDenseMatrix<V extends DenseVector, T> extends Abst
     protected final int stride;
 
     public AbstractDenseMatrix(final AbstractDenseMatrix<V, T> base, final int elementSize, final int elementSizeBytes,
-            final int rows, final int columns, final int offset, final int stride, final Order orientation) {
+            final int rows, final int columns, final int offset, final int stride, final Order order) {
         super(base, rows, columns);
         this.elementSize = elementSize;
         this.elementSizeBytes = elementSizeBytes;
         this.offset = offset;
         this.stride = stride;
-        this.orientation = orientation;
-        if (orientation.equals(Order.ROW)) {
+        this.order = order;
+        if (order.equals(Order.ROW)) {
             this.rowStride = stride * columns;
             this.columnStride = stride;
         } else {
@@ -100,7 +101,7 @@ public abstract class AbstractDenseMatrix<V extends DenseVector, T> extends Abst
         }
         AbstractDenseMatrix<?, ?> other = (AbstractDenseMatrix<?, ?>) obj;
         return new EqualsBuilder().appendSuper(super.equals(obj)).append(elementSize, other.elementSize).append(
-                orientation, other.orientation).isEquals();
+                order, other.order).isEquals();
     }
 
     // TODO give this method a better name
@@ -108,7 +109,7 @@ public abstract class AbstractDenseMatrix<V extends DenseVector, T> extends Abst
 
     @Override
     public final int leadingDimension() {
-        if (orientation.equals(Order.COLUMN)) {
+        if (order.equals(Order.COLUMN)) {
             return Math.max(1, base != null ? base.rows() : rows);
         } else {
             return Math.max(1, base != null ? base.columns() : columns);
@@ -120,7 +121,7 @@ public abstract class AbstractDenseMatrix<V extends DenseVector, T> extends Abst
     }
 
     public final Order order() {
-        return orientation;
+        return order;
     }
 
     /**
@@ -168,13 +169,13 @@ public abstract class AbstractDenseMatrix<V extends DenseVector, T> extends Abst
             for (int j = 0; j < n; j++) {
                 int position = offset;
                 if (rows) {
-                    if (orientation.equals(Order.ROW)) {
+                    if (order.equals(Order.ROW)) {
                         position += (i * n + j) * elementSize * stride;
                     } else {
                         position += (j * m + i) * elementSize * stride;
                     }
                 } else {
-                    if (orientation.equals(Order.COLUMN)) {
+                    if (order.equals(Order.COLUMN)) {
                         position += (i * n + j) * elementSize * stride;
                     } else {
                         position += (j * m + i) * elementSize * stride;
@@ -192,5 +193,27 @@ public abstract class AbstractDenseMatrix<V extends DenseVector, T> extends Abst
 
     public final T[] toRowArrays() {
         return toArrays(rows, columns, true);
+    }
+
+    public final boolean isColumnVector() {
+        return rows <= 1;
+    }
+
+    public final boolean isRowVector() {
+        return columns <= 1;
+    }
+
+    public final int length() {
+        return super.length();
+    }
+
+    public final Direction direction() {
+        if (isRowVector()) {
+            return Direction.ROW;
+        } else if (isColumnVector()) {
+            return Direction.COLUMN;
+        } else {
+            throw new AssertionError();
+        }
     }
 }

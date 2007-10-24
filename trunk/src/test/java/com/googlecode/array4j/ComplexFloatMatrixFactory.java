@@ -1,17 +1,17 @@
 package com.googlecode.array4j;
 
-public interface ComplexFloatMatrixFactory<M extends ComplexFloatMatrix, V extends ComplexFloatVector> {
-    M createMatrix(float[] values, int rows, int columns, int offset, int stride, Order orientation);
+public interface ComplexFloatMatrixFactory {
+    ComplexFloatMatrix createMatrix(float[] values, int rows, int columns, int offset, int stride, Order order);
 
-    M createMatrix(float[] values, int rows, int columns, Order row);
+    ComplexFloatMatrix createMatrix(float[] values, int rows, int columns, Order row);
 
-    M createMatrix(int rows, int columns);
+    ComplexFloatMatrix createMatrix(int rows, int columns);
 
-    M createMatrix(int rows, int columns, Order orientation);
+    ComplexFloatMatrix createMatrix(int rows, int columns, Order order);
 
-    V createRowVector(ComplexFloat... values);
+    ComplexFloatVector createRowVector(ComplexFloat... values);
 
-    V createVector(float[] data, int size, int offset, int stride, Order orientation);
+    ComplexFloatVector createVector(float[] data, int size, int offset, int stride, Order orientation);
 
-    V createVector(int size, Order orientation);
+    ComplexFloatVector createVector(int size, Order orientation);
 }

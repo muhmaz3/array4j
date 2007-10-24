@@ -1,5 +1,8 @@
 package com.googlecode.array4j;
 
+/**
+ * Complex single precision floating point matrix.
+ */
 public interface ComplexFloatMatrix extends ComplexMatrix, ComplexFloatArray {
     Iterable<? extends ComplexFloatVector> columnsIterator();
 

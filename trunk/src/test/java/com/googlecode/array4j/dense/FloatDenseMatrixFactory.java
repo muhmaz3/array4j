@@ -1,12 +1,13 @@
 package com.googlecode.array4j.dense;
 
+import com.googlecode.array4j.Direction;
 import com.googlecode.array4j.FloatMatrixFactory;
 import com.googlecode.array4j.Order;
 import com.googlecode.array4j.Storage;
 import com.googlecode.array4j.util.BufferUtils;
 import java.nio.FloatBuffer;
 
-public final class FloatDenseMatrixFactory implements FloatMatrixFactory<FloatDenseMatrix, FloatDenseVector> {
+public final class FloatDenseMatrixFactory implements FloatMatrixFactory {
     private final Storage storage;
 
     public FloatDenseMatrixFactory(final Storage storage) {
@@ -37,20 +38,17 @@ public final class FloatDenseMatrixFactory implements FloatMatrixFactory<FloatDe
     }
 
     public FloatDenseVector createRowVector(final float... values) {
-//        return new FloatDenseVector(Order.ROW, storage, values);
-        return null;
+        return new FloatDenseVectorImpl(Direction.ROW, storage, values);
     }
 
     public FloatDenseVector createVector(final float[] values, final int size, final int offset, final int stride,
-            final Order orientation) {
+            final Direction direction) {
         FloatBuffer data = BufferUtils.createFloatBuffer(values.length, storage);
         data.put(values);
-//        return new FloatDenseVector(data, size, offset, stride, orientation);
-        return null;
+        return new FloatDenseVectorImpl(data, size, offset, stride, direction);
     }
 
-    public FloatDenseVector createVector(final int size, final Order orientation) {
-//        return new FloatDenseVector(size, orientation, storage);
-        return null;
+    public FloatDenseVector createVector(final int size, final Direction direction) {
+        return new FloatDenseVectorImpl(size, direction, storage);
     }
 }

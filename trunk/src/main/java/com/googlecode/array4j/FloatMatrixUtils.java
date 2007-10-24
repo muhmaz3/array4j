@@ -1,7 +1,10 @@
 package com.googlecode.array4j;
 
+import com.googlecode.array4j.dense.DenseFactory;
+import com.googlecode.array4j.dense.DenseMatrix;
 import com.googlecode.array4j.dense.FloatDenseMatrix;
 import com.googlecode.array4j.dense.FloatDenseVector;
+import java.nio.FloatBuffer;
 import java.util.Random;
 
 // TODO implement unmodifiableMatrix
@@ -12,59 +15,61 @@ public final class FloatMatrixUtils {
         int n = 0;
         for (final FloatVector column : matrix.columnsIterator()) {
             n++;
-//            V delta = column.minus(mean);
-//            delta.timesEquals(1.0f / n);
-//            mean.plusEquals(delta);
+            FloatVector delta = column.minus(mean);
+            delta.timesEquals(1.0f / n);
+            mean.plusEquals(delta);
         }
         return mean;
     }
 
-//    public static <M extends FloatMatrix<V>, V extends FloatVector<V>> V columnSum(final M matrix) {
-//        final V sum = matrix.createColumnVector();
-//        for (final V column : matrix.columnsIterator()) {
-////            sum.plusEquals(column);
-//        }
-//        return sum;
-//    }
+    public static FloatDenseVector columnSum(final FloatMatrix matrix) {
+//        final FloatDenseVector sum = matrix.createColumnVector();
+        final FloatDenseVector sum = null;
+        for (final FloatVector column : matrix.columnsIterator()) {
+            sum.plusEquals(column);
+        }
+        return sum;
+    }
 
-//    public static FloatDenseVector columnsVector(final FloatMatrix matrix) {
-//        int length = matrix.rows() * matrix.columns();
-////        final FloatDenseVector v;
-//        if (matrix instanceof DenseMatrix) {
-//            if (((DenseMatrix) matrix).order().equals(Order.ROW)) {
-//                throw new UnsupportedOperationException();
-//            }
-//            FloatBuffer data = (FloatBuffer) ((DenseMatrix) matrix).data();
-////            v = new FloatDenseVector(data, length, 0, 1, Order.COLUMN);
-//        } else {
-////            v = new FloatDenseVector(length, Order.COLUMN, Storage.DEFAULT_FOR_DENSE);
-//            for (int i = 0, k = 0; i < matrix.columns(); i++) {
-//                for (int j = 0; j < matrix.rows(); j++, k++) {
-////                    v.set(k, matrix.get(j, i));
-//                }
-//            }
-//        }
-////        return v;
-//        return null;
-//    }
+    public static FloatDenseVector columnsVector(final FloatMatrix matrix) {
+        int length = matrix.rows() * matrix.columns();
+        final FloatDenseVector v;
+        if (matrix instanceof DenseMatrix) {
+            if (((DenseMatrix) matrix).order().equals(Order.ROW)) {
+                throw new UnsupportedOperationException();
+            }
+            FloatBuffer data = (FloatBuffer) ((DenseMatrix) matrix).data();
+//            v = new FloatDenseVector(data, length, 0, 1, Order.COLUMN);
+            v = null;
+        } else {
+//            v = new FloatDenseVector(length, Order.COLUMN, Storage.DEFAULT_FOR_DENSE);
+            v = null;
+            for (int i = 0, k = 0; i < matrix.columns(); i++) {
+                for (int j = 0; j < matrix.rows(); j++, k++) {
+                    v.set(k, matrix.get(j, i));
+                }
+            }
+        }
+        return v;
+    }
 
     public static FloatDenseVector concatenate(final FloatVector... vectors) {
-        if (!sameOrientation(vectors)) {
-            throw new IllegalArgumentException("all vectors must have the same orientation");
+        if (!sameDirection(vectors)) {
+            throw new IllegalArgumentException("all vectors must have the same direction");
         }
         int length = 0;
         for (FloatVector vector : vectors) {
             length += vector.length();
         }
 //        FloatDenseVector output = new FloatDenseVector(length);
-//        FloatBuffer data = output.data();
+        FloatDenseVector output = null;
+        FloatBuffer data = output.data();
         for (FloatVector vector : vectors) {
             for (int j = 0; j < vector.length(); j++) {
-//                data.put(vector.get(j));
+                data.put(vector.get(j));
             }
         }
-//        return output;
-        return null;
+        return output;
     }
 
     public static double euclideanDistance(final FloatVector x, final FloatVector y) {
@@ -118,25 +123,27 @@ public final class FloatMatrixUtils {
         return mean;
     }
 
-//    public static <M extends FloatMatrix, V extends FloatVector> V rowMean(final M matrix) {
-//        final V mean = matrix.createRowVector();
-//        int n = 0;
-//        for (final V row : matrix.rowsIterator()) {
-//            n++;
-//            V delta = row.minus(mean);
-//            delta.timesEquals(1.0f / n);
-//            mean.plusEquals(delta);
-//        }
-//        return mean;
-//    }
+    public static FloatDenseVector rowMean(final FloatMatrix matrix) {
+//        final FloatVector mean = matrix.createRowVector();
+        final FloatDenseVector mean = null;
+        int n = 0;
+        for (final FloatVector row : matrix.rowsIterator()) {
+            n++;
+            FloatVector delta = row.minus(mean);
+            delta.timesEquals(1.0f / n);
+            mean.plusEquals(delta);
+        }
+        return mean;
+    }
 
-//    public static <M extends FloatMatrix<V>, V extends FloatVector<V>> V rowSum(final M matrix) {
-//        final V sum = matrix.createRowVector();
-//        for (final V row : matrix.rowsIterator()) {
-////            sum.plusEquals(row);
-//        }
-//        return sum;
-//    }
+    public static FloatDenseVector rowSum(final FloatMatrix matrix) {
+//        final FloatVector sum = matrix.createRowVector();
+        final FloatDenseVector sum = null;
+        for (final FloatVector row : matrix.rowsIterator()) {
+            sum.plusEquals(row);
+        }
+        return sum;
+    }
 
     public static FloatDenseVector rowsVector(final FloatMatrix matrix) {
         int length = matrix.rows() * matrix.columns();
@@ -150,7 +157,7 @@ public final class FloatMatrixUtils {
         return vec;
     }
 
-    private static boolean sameOrientation(final FloatVector... vectors) {
+    private static boolean sameDirection(final FloatVector... vectors) {
         if (vectors.length == 0) {
             return true;
         }
@@ -177,7 +184,6 @@ public final class FloatMatrixUtils {
     public static String toString(final FloatMatrix x) {
         StringBuilder builder = new StringBuilder();
         builder.append(x.rows() + " x " + x.columns());
-//        builder.append(", " + orientation + ", " + x.storage());
         builder.append("\n");
         if (x.rows() == 0) {
             builder.append("[]");
@@ -207,8 +213,7 @@ public final class FloatMatrixUtils {
     }
 
     public static FloatDenseMatrix zerosLike(final Matrix matrix) {
-//        return new FloatDenseMatrix(matrix.rows(), matrix.columns());
-        return null;
+        return DenseFactory.createFloatMatrix(matrix.rows(), matrix.columns());
     }
 
     private FloatMatrixUtils() {

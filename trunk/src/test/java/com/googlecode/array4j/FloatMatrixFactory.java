@@ -1,17 +1,17 @@
 package com.googlecode.array4j;
 
-public interface FloatMatrixFactory<M extends FloatMatrix, V extends FloatVector> {
-    M createMatrix(float[] values, int rows, int columns, int offset, int stride, Order orientation);
+public interface FloatMatrixFactory {
+    FloatMatrix createMatrix(float[] values, int rows, int columns, int offset, int stride, Order order);
 
-    M createMatrix(float[] values, int rows, int columns, Order row);
+    FloatMatrix createMatrix(float[] values, int rows, int columns, Order order);
 
-    M createMatrix(int rows, int columns);
+    FloatMatrix createMatrix(int rows, int columns);
 
-    M createMatrix(int rows, int columns, Order orientation);
+    FloatMatrix createMatrix(int rows, int columns, Order order);
 
-    V createRowVector(float... values);
+    FloatVector createRowVector(float... values);
 
-    V createVector(float[] data, int size, int offset, int stride, Order orientation);
+    FloatVector createVector(float[] data, int size, int offset, int stride, Direction direction);
 
-    V createVector(int size, Order orientation);
+    FloatVector createVector(int size, Direction direction);
 }

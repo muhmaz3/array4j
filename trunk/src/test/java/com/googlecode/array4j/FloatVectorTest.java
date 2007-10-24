@@ -12,16 +12,16 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 @RunWith(value = Parameterized.class)
-public final class FloatVectorTest<M extends FloatMatrix, V extends FloatVector> {
+public final class FloatVectorTest {
     @Parameters
     public static Collection<?> data() {
         return Arrays.asList(new Object[][]{{new FloatDenseMatrixFactory(Storage.HEAP)},
                 {new FloatDenseMatrixFactory(Storage.DIRECT)}});
     }
 
-    private final FloatMatrixFactory<M, V> factory;
+    private final FloatMatrixFactory factory;
 
-    public FloatVectorTest(final FloatMatrixFactory<M, V> factory) {
+    public FloatVectorTest(final FloatMatrixFactory factory) {
         this.factory = factory;
     }
 
@@ -29,31 +29,30 @@ public final class FloatVectorTest<M extends FloatMatrix, V extends FloatVector>
     public void testConstructorDataTooSmall() {
         // XXX this test might start failing when we start allocating aligned
         // buffers... do something about it then
-        factory.createVector(new float[1], 2, 0, 1, Order.ROW);
+        factory.createVector(new float[1], 2, 0, 1, Direction.ROW);
     }
 
     @Test(expected=IllegalArgumentException.class)
     public void testConstructorNegativeSize() {
-//        factory.createVector(-1, Order.DEFAULT_FOR_VECTOR);
+        factory.createVector(-1, Direction.DEFAULT);
     }
 
     @Test
     public void testConstructors() {
-//        factory.createVector(0, Order.DEFAULT_FOR_VECTOR);
-//        factory.createVector(1, Order.DEFAULT_FOR_VECTOR);
-//        factory.createVector(10, Order.DEFAULT_FOR_VECTOR);
-        factory.createVector(new float[0], 0, 0, 1, Order.ROW);
-        factory.createVector(new float[1], 1, 0, 1, Order.ROW);
+        factory.createVector(0, Direction.DEFAULT);
+        factory.createVector(1, Direction.DEFAULT);
+        factory.createVector(10, Direction.DEFAULT);
+        factory.createVector(new float[0], 0, 0, 1, Direction.ROW);
+        factory.createVector(new float[1], 1, 0, 1, Direction.ROW);
         // a really long constant vector
-        factory.createVector(new float[1], Integer.MAX_VALUE, 0, 0, Order.ROW);
+        factory.createVector(new float[1], Integer.MAX_VALUE, 0, 0, Direction.ROW);
         // TODO test for overflows in checkArgument checks
     }
 
     @Test
     public void testFill() {
         for (int i = 0; i < 5; i++) {
-//            V x = factory.createVector(i, Order.DEFAULT_FOR_VECTOR);
-            V x = null;
+            FloatVector x = factory.createVector(i, Direction.DEFAULT);
             for (int j = 0; j < i; j++) {
                 assertEquals(0.0f, x.get(j), 0.0);
             }
@@ -67,16 +66,13 @@ public final class FloatVectorTest<M extends FloatMatrix, V extends FloatVector>
     @Test
     public void testMinus() {
         for (int i = 0; i < 5; i++) {
-//            V x = factory.createVector(i, Order.DEFAULT_FOR_VECTOR);
-            V x = null;
-//            V y = factory.createVector(i, Order.DEFAULT_FOR_VECTOR);
-            V y = null;
+            FloatVector x = factory.createVector(i, Direction.DEFAULT);
+            FloatVector y = factory.createVector(i, Direction.DEFAULT);
             for (int j = 0; j < i; j++) {
                 x.set(j, j);
                 y.set(j, i - j);
             }
-//            V z = x.minus(y);
-            V z = null;
+            FloatVector z = x.minus(y);
             for (int j = 0; j < i; j++) {
                 assertEquals(j, x.get(j), 0.0);
                 assertEquals(i - j, y.get(j), 0.0);
@@ -88,15 +84,13 @@ public final class FloatVectorTest<M extends FloatMatrix, V extends FloatVector>
     @Test
     public void testPlusEquals() {
         for (int i = 0; i < 5; i++) {
-//            V x = factory.createVector(i, Order.DEFAULT_FOR_VECTOR);
-            V x = null;
-//            V y = factory.createVector(i, Order.DEFAULT_FOR_VECTOR);
-            V y = null;
+            FloatVector x = factory.createVector(i, Direction.DEFAULT);
+            FloatVector y = factory.createVector(i, Direction.DEFAULT);
             for (int j = 0; j < i; j++) {
                 x.set(j, j);
                 y.set(j, i - j);
             }
-//            x.plusEquals(y);
+            x.plusEquals(y);
             for (int j = 0; j < i; j++) {
                 assertEquals(i, x.get(j), 0.0);
                 assertEquals(i - j, y.get(j), 0.0);
@@ -106,15 +100,12 @@ public final class FloatVectorTest<M extends FloatMatrix, V extends FloatVector>
 
     @Test
     public void testTranspose() {
-//        final V vector = factory.createVector(10, Order.DEFAULT_FOR_VECTOR);
-        final V vector = null;
+        final FloatVector vector = factory.createVector(10, Direction.DEFAULT);
         assertTrue("Vector must be a column vector by default", vector.isColumnVector());
-//        final V transposedVector = vector.transpose();
-        final V transposedVector = null;
+        final FloatVector transposedVector = vector.transpose();
         assertTrue(transposedVector.isRowVector());
         assertFalse(vector.equals(transposedVector));
-//        final V originalVector = transposedVector.transpose();
-        final V originalVector = null;
+        final FloatVector originalVector = transposedVector.transpose();
         assertTrue(originalVector.isColumnVector());
         assertEquals(vector, originalVector);
     }

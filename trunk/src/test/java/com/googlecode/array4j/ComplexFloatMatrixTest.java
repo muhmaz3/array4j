@@ -18,16 +18,16 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 @RunWith(value = Parameterized.class)
-public final class ComplexFloatMatrixTest<M extends ComplexFloatMatrix, V extends ComplexFloatVector> {
+public final class ComplexFloatMatrixTest {
     @Parameters
     public static Collection<?> data() {
         return Arrays.asList(new Object[][]{{new CFloatDenseMatrixFactory(Storage.HEAP)},
                 {new CFloatDenseMatrixFactory(Storage.DIRECT)}});
     }
 
-    private final ComplexFloatMatrixFactory<M, V> factory;
+    private final ComplexFloatMatrixFactory factory;
 
-    public ComplexFloatMatrixTest(final ComplexFloatMatrixFactory<M, V> factory) {
+    public ComplexFloatMatrixTest(final ComplexFloatMatrixFactory factory) {
         this.factory = factory;
     }
 
@@ -76,7 +76,7 @@ public final class ComplexFloatMatrixTest<M extends ComplexFloatMatrix, V extend
         }
     }
 
-    private M createColumnMatrixRange(final int rows, final int columns) {
+    private ComplexFloatMatrix createColumnMatrixRange(final int rows, final int columns) {
         final float[] data = new float[2 * rows * columns];
         for (int i = 0, k = 0; i < columns; i++) {
             for (int j = 0; j < rows; j++) {
@@ -96,20 +96,20 @@ public final class ComplexFloatMatrixTest<M extends ComplexFloatMatrix, V extend
                 }
                 for (final Order orientation : Order.values()) {
 //                    M matrix = factory.createMatrix(data, rows, columns, offset, stride, orientation);
-                    M matrix = null;
+                    ComplexFloatMatrix matrix = null;
                     assertNotNull(matrix);
                 }
             }
         }
     }
 
-    private M createRowMatrixRange(final int rows, final int columns) {
+    private ComplexFloatMatrix createRowMatrixRange(final int rows, final int columns) {
         final float[] data = new float[2 * rows * columns];
         for (int i = 0; i < data.length; i++) {
             data[i] = 1.0f + i;
         }
 //        M matrix = factory.createMatrix(data, rows, columns, Order.ROW);
-        M matrix = null;
+        ComplexFloatMatrix matrix = null;
         assertNotNull(matrix);
         return matrix;
     }
@@ -312,8 +312,8 @@ public final class ComplexFloatMatrixTest<M extends ComplexFloatMatrix, V extend
         }
         assertEquals(rows, values.length);
 
-        final M rowMatrix = createRowMatrixRange(rows, columns);
-        final M colMatrix = createColumnMatrixRange(rows, columns);
+        final ComplexFloatMatrix rowMatrix = createRowMatrixRange(rows, columns);
+        final ComplexFloatMatrix colMatrix = createColumnMatrixRange(rows, columns);
         for (int row = 0; row < rows; row++) {
 //            ComplexFloatVector newRow = rowMatrix.createRowVector();
             ComplexFloatVector newRow = null;
