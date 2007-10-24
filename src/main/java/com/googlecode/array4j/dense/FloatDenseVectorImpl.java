@@ -12,28 +12,34 @@ final class FloatDenseVectorImpl extends AbstractFloatDense implements FloatDens
     /**
      * Constructor for internal use.
      */
-    FloatDenseVectorImpl(final AbstractFloatDense base, final int size, final int offset, final int stride,
+    FloatDenseVectorImpl(final AbstractFloatDense base, final int length, final int offset, final int stride,
             final Direction direction) {
-        super(base, size, offset, stride, direction);
+        super(base, length, offset, stride, direction);
     }
 
-    FloatDenseVectorImpl(final FloatBuffer data, final int size, final int offset, final int stride,
+    FloatDenseVectorImpl(final FloatBuffer data, final int length, final int offset, final int stride,
             final Direction direction) {
-        super(data, size, offset, stride, direction);
+        super(data, length, offset, stride, direction);
+    }
+
+    /** Copy constructor. */
+    FloatDenseVectorImpl(final FloatVector other) {
+        this(other.length(), Direction.DEFAULT, Storage.DEFAULT_FOR_DENSE);
+        copy(other, this);
     }
 
     /**
      * Constructor.
      */
-    FloatDenseVectorImpl(final int size) {
-        this(size, Direction.DEFAULT, Storage.DEFAULT_FOR_DENSE);
+    FloatDenseVectorImpl(final int length) {
+        this(length, Direction.DEFAULT, Storage.DEFAULT_FOR_DENSE);
     }
 
     /**
      * Construct with specified direction and storage.
      */
-    FloatDenseVectorImpl(final int size, final Direction direction, final Storage storage) {
-        super(size, direction, storage);
+    FloatDenseVectorImpl(final int length, final Direction direction, final Storage storage) {
+        super(length, direction, storage);
     }
 
     FloatDenseVectorImpl(final Direction direction, final Storage storage, final float... values) {
@@ -46,41 +52,12 @@ final class FloatDenseVectorImpl extends AbstractFloatDense implements FloatDens
     }
 
     @Override
-    public FloatDenseVectorImpl minus(final FloatVector other) {
-//        // TODO use axpy here
-//        if (length != other.length()) {
-//            throw new IllegalArgumentException();
-//        }
-//        CopyOfFloatDenseVector newVector = new CopyOfFloatDenseVector(length, orientation, storage());
-//        for (int i = 0; i < length; i++) {
-//            newVector.set(i, get(i) - other.get(i));
-//        }
-//        return newVector;
-        return null;
-    }
-
-    @Override
-    public void plusEquals(final FloatVector other) {
-//        if (other instanceof CopyOfFloatDenseVector) {
-//            FloatDenseBLAS.DEFAULT.axpy(1.0f, (CopyOfFloatDenseVector) other, this);
-//        } else {
-//            if (length != other.length()) {
-//                throw new IllegalArgumentException();
-//            }
-//            for (int i = 0; i < length; i++) {
-//                set(i, get(i) + other.get(i));
-//            }
-//        }
-    }
-
-    @Override
     public String toString() {
         return FloatMatrixUtils.toString(this);
     }
 
     @Override
     public FloatDenseVector transpose() {
-        Direction direction = isRowVector() ? Direction.ROW : Direction.COLUMN;
-        return new FloatDenseVectorImpl(this, length, offset, stride, direction);
+        return new FloatDenseVectorImpl(this, length, offset, stride, direction().transpose());
     }
 }

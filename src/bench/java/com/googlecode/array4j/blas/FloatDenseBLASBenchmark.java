@@ -2,6 +2,7 @@ package com.googlecode.array4j.blas;
 
 import com.googlecode.array4j.Order;
 import com.googlecode.array4j.Storage;
+import com.googlecode.array4j.dense.DenseFactory;
 import com.googlecode.array4j.dense.FloatDenseMatrix;
 import com.googlecode.array4j.math.FloatMatrixUtils;
 import java.util.Random;
@@ -19,15 +20,12 @@ public final class FloatDenseBLASBenchmark {
                 r = 500;
             }
             float alpha = 1.0f;
-            Order orient = Order.COLUMN;
+            Order order = Order.COLUMN;
             Storage storage = Storage.DIRECT;
-//            FloatDenseMatrix a = new FloatDenseMatrix(n, n, orient, storage);
-            FloatDenseMatrix a = null;
-//            FloatDenseMatrix b = new FloatDenseMatrix(n, n, orient, storage);
-            FloatDenseMatrix b = null;
+            FloatDenseMatrix a = DenseFactory.createFloatMatrix(n, n, order, storage);
+            FloatDenseMatrix b = DenseFactory.createFloatMatrix(n, n, order, storage);
             float beta = 1.0f;
-//            FloatDenseMatrix c = new FloatDenseMatrix(n, n, orient, storage);
-            FloatDenseMatrix c = null;
+            FloatDenseMatrix c = DenseFactory.createFloatMatrix(n, n, order, storage);
             FloatMatrixUtils.fillRandom(a, rng);
             FloatMatrixUtils.fillRandom(b, rng);
             FloatMatrixUtils.fillRandom(c, rng);

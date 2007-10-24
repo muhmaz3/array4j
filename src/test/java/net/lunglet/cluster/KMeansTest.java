@@ -3,6 +3,7 @@ package net.lunglet.cluster;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
 import com.googlecode.array4j.FloatMatrix;
+import com.googlecode.array4j.dense.DenseFactory;
 import com.googlecode.array4j.dense.FloatDenseMatrix;
 import com.googlecode.array4j.math.FloatMatrixUtils;
 import java.util.Random;
@@ -17,8 +18,7 @@ public final class KMeansTest {
         int maxCentroids = 2;
         Random rng = new Random(1185202905218L);
         KMeans<FloatMatrix> kmeans = KMeans.create();
-//        FloatDenseMatrix data = new FloatDenseMatrix(dimension, ndata);
-        FloatDenseMatrix data = null;
+        FloatDenseMatrix data = DenseFactory.createFloatMatrix(dimension, ndata);
         FloatMatrixUtils.fillRandom(data, rng);
         FloatMatrix initialCentroids = kmeans.chooseCentroids(maxCentroids, data);
         double delta = 1.0e-6;
@@ -41,8 +41,7 @@ public final class KMeansTest {
             long seed = System.currentTimeMillis();
             rng = new Random(seed);
             System.out.println(String.format("%d %d %d %d", seed, ndata, dimension, maxCentroids));
-//            FloatDenseMatrix data = new FloatDenseMatrix(dimension, ndata);
-            FloatDenseMatrix data = null;
+            FloatDenseMatrix data = DenseFactory.createFloatMatrix(dimension, ndata);
             FloatMatrixUtils.fillRandom(data, rng);
             FloatMatrix centroids = kmeans.chooseCentroids(maxCentroids, data);
             int iterations = 100;

@@ -2,6 +2,7 @@ package com.googlecode.array4j.dense;
 
 import com.googlecode.array4j.Constants;
 import com.googlecode.array4j.Direction;
+import com.googlecode.array4j.FloatMatrix;
 import com.googlecode.array4j.FloatVector;
 import com.googlecode.array4j.Order;
 import com.googlecode.array4j.Storage;
@@ -152,5 +153,27 @@ abstract class AbstractFloatDense extends AbstractDenseMatrix<FloatDenseVector, 
 
     public final void timesEquals(final float value) {
         throw new UnsupportedOperationException();
+    }
+
+    protected static void copy(final FloatMatrix src, final FloatDenseMatrix dest) {
+        // TODO optimize this
+        for (int i = 0; i < src.rows(); i++) {
+            for (int j = 0; j < src.columns(); j++) {
+                dest.set(i, j, src.get(i, j));
+            }
+        }
+    }
+
+    public void plusEquals(final FloatMatrix other) {
+//        if (other instanceof CopyOfFloatDenseVector) {
+//            FloatDenseBLAS.DEFAULT.axpy(1.0f, (CopyOfFloatDenseVector) other, this);
+//        } else {
+//            if (length != other.length()) {
+//                throw new IllegalArgumentException();
+//            }
+//            for (int i = 0; i < length; i++) {
+//                set(i, get(i) + other.get(i));
+//            }
+//        }
     }
 }

@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import com.googlecode.array4j.MatrixTestSupport;
 import com.googlecode.array4j.Storage;
 import com.googlecode.array4j.packed.FloatPackedMatrix;
+import com.googlecode.array4j.packed.PackedFactory;
 import net.lunglet.hdf.H5File;
 import org.junit.Test;
 
@@ -16,13 +17,11 @@ public final class HDFWriterTest extends AbstractHDFTest {
         int nmax = 5;
         for (int n = 1; n <= nmax; n++) {
             Storage storage = Storage.DIRECT;
-//            FloatPackedMatrix x = FloatPackedMatrix.createSymmetric(n, storage);
-            FloatPackedMatrix x = null;
+            FloatPackedMatrix x = PackedFactory.createFloatSymmetric(n, storage);
             MatrixTestSupport.populateMatrix(x);
             String name = String.valueOf(n);
             writer.write(name, x);
-//            FloatPackedMatrix y = FloatPackedMatrix.createSymmetric(n, storage);
-            FloatPackedMatrix y = null;
+            FloatPackedMatrix y = PackedFactory.createFloatSymmetric(n, storage);
             reader.read(name, y);
             assertEquals(x, y);
         }

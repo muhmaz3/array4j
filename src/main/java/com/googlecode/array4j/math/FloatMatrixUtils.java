@@ -1,9 +1,11 @@
 package com.googlecode.array4j.math;
 
+import com.googlecode.array4j.Direction;
 import com.googlecode.array4j.FloatMatrix;
 import com.googlecode.array4j.FloatVector;
 import com.googlecode.array4j.Matrix;
 import com.googlecode.array4j.Order;
+import com.googlecode.array4j.Storage;
 import com.googlecode.array4j.dense.DenseFactory;
 import com.googlecode.array4j.dense.DenseMatrix;
 import com.googlecode.array4j.dense.FloatDenseMatrix;
@@ -15,11 +17,11 @@ import java.util.Random;
 
 public final class FloatMatrixUtils {
     public static FloatDenseVector columnMean(final FloatMatrix matrix) {
-        FloatDenseVector mean = null;
+        final FloatDenseVector mean = createColumnVector(matrix);
         int n = 0;
         for (final FloatVector column : matrix.columnsIterator()) {
             n++;
-            FloatVector delta = column.minus(mean);
+            FloatVector delta = FloatMatrixMath.minus(column, mean);
             delta.timesEquals(1.0f / n);
             mean.plusEquals(delta);
         }
@@ -27,8 +29,7 @@ public final class FloatMatrixUtils {
     }
 
     public static FloatDenseVector columnSum(final FloatMatrix matrix) {
-//        final FloatDenseVector sum = matrix.createColumnVector();
-        final FloatDenseVector sum = null;
+        final FloatDenseVector sum = createColumnVector(matrix);
         for (final FloatVector column : matrix.columnsIterator()) {
             sum.plusEquals(column);
         }
@@ -46,8 +47,7 @@ public final class FloatMatrixUtils {
 //            v = new FloatDenseVector(data, length, 0, 1, Order.COLUMN);
             v = null;
         } else {
-//            v = new FloatDenseVector(length, Order.COLUMN, Storage.DEFAULT_FOR_DENSE);
-            v = null;
+            v = DenseFactory.createFloatVector(length, Direction.COLUMN, Storage.DEFAULT_FOR_DENSE);
             for (int i = 0, k = 0; i < matrix.columns(); i++) {
                 for (int j = 0; j < matrix.rows(); j++, k++) {
                     v.set(k, matrix.get(j, i));
@@ -65,8 +65,7 @@ public final class FloatMatrixUtils {
         for (FloatVector vector : vectors) {
             length += vector.length();
         }
-//        FloatDenseVector output = new FloatDenseVector(length);
-        FloatDenseVector output = null;
+        FloatDenseVector output = DenseFactory.createFloatVector(length);
         FloatBuffer data = output.data();
         for (FloatVector vector : vectors) {
             for (int j = 0; j < vector.length(); j++) {
@@ -74,6 +73,26 @@ public final class FloatMatrixUtils {
             }
         }
         return output;
+    }
+
+    private static FloatDenseVector createColumnVector(final FloatMatrix matrix) {
+        final Storage storage;
+        if (matrix instanceof DenseMatrix) {
+            storage = ((DenseMatrix) matrix).storage();
+        } else {
+            storage = Storage.DEFAULT_FOR_DENSE;
+        }
+        return DenseFactory.createFloatVector(matrix.rows(), Direction.COLUMN, storage);
+    }
+
+    private static FloatDenseVector createRowVector(final FloatMatrix matrix) {
+        final Storage storage;
+        if (matrix instanceof DenseMatrix) {
+            storage = ((DenseMatrix) matrix).storage();
+        } else {
+            storage = Storage.DEFAULT_FOR_DENSE;
+        }
+        return DenseFactory.createFloatVector(matrix.columns(), Direction.ROW, storage);
     }
 
     public static double euclideanDistance(final FloatVector x, final FloatVector y) {
@@ -128,12 +147,11 @@ public final class FloatMatrixUtils {
     }
 
     public static FloatDenseVector rowMean(final FloatMatrix matrix) {
-//        final FloatVector mean = matrix.createRowVector();
-        final FloatDenseVector mean = null;
+        final FloatDenseVector mean = createRowVector(matrix);
         int n = 0;
         for (final FloatVector row : matrix.rowsIterator()) {
             n++;
-            FloatVector delta = row.minus(mean);
+            FloatVector delta = FloatMatrixMath.minus(row, mean);
             delta.timesEquals(1.0f / n);
             mean.plusEquals(delta);
         }
@@ -141,8 +159,7 @@ public final class FloatMatrixUtils {
     }
 
     public static FloatDenseVector rowSum(final FloatMatrix matrix) {
-//        final FloatVector sum = matrix.createRowVector();
-        final FloatDenseVector sum = null;
+        final FloatDenseVector sum = createRowVector(matrix);
         for (final FloatVector row : matrix.rowsIterator()) {
             sum.plusEquals(row);
         }
@@ -151,8 +168,7 @@ public final class FloatMatrixUtils {
 
     public static FloatDenseVector rowsVector(final FloatMatrix matrix) {
         int length = matrix.rows() * matrix.columns();
-//        FloatDenseVector vec = new FloatDenseVector(length, Order.ROW, Storage.DEFAULT_FOR_DENSE);
-        FloatDenseVector vec = null;
+        FloatDenseVector vec = DenseFactory.createFloatVector(length, Direction.ROW);
         for (int i = 0, k = 0; i < matrix.rows(); i++) {
             for (int j = 0; j < matrix.columns(); j++, k++) {
                 vec.set(k, matrix.get(i, j));

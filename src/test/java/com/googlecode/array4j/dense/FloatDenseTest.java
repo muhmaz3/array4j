@@ -3,6 +3,7 @@ package com.googlecode.array4j.dense;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import com.googlecode.array4j.FloatMatrix;
+import com.googlecode.array4j.FloatVector;
 import com.googlecode.array4j.MatrixTestSupport;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -40,38 +41,21 @@ public final class FloatDenseTest {
         }
     }
 
-    @Test
-    public void testAsMatrix() {
-//        FloatDenseMatrix x = new FloatDenseMatrix(2, 3);
-        FloatDenseMatrix x = null;
-        MatrixTestSupport.populateMatrix(x);
-        for (int i = 0; i < x.columns(); i++) {
-            FloatDenseMatrix y = x.column(i);
-            FloatDenseMatrix z = x.column(i).transpose();
-            for (int j = 0; j < x.rows(); j++) {
-//                assertEquals(y.get(j), x.get(j, i), 0);
-                assertEquals(y.get(j, 0), x.get(j, i), 0);
-//                assertEquals(z.get(j), x.get(j, i), 0);
-                assertEquals(z.get(0, j), x.get(j, i), 0);
-            }
-        }
-    }
-
     @Ignore
     @Test
     public void testSerialization() throws IOException, ClassNotFoundException {
         List<FloatMatrix> matrices = new ArrayList<FloatMatrix>();
-//        matrices.add(new FloatDenseMatrix(0, 0));
-//        matrices.add(new FloatDenseMatrix(1, 1));
-//        matrices.add(new FloatDenseMatrix(2, 3));
-//        matrices.add(new FloatDenseVector(0));
-//        matrices.add(new FloatDenseVector(1));
-//        for (FloatVector<?> v : new FloatDenseMatrix(3, 4).columnsIterator()) {
-//            matrices.add(v);
-//        }
-//        for (FloatVector<?> v : new FloatDenseMatrix(3, 4).rowsIterator()) {
-//            matrices.add(v);
-//        }
+        matrices.add(DenseFactory.createFloatMatrix(0, 0));
+        matrices.add(DenseFactory.createFloatMatrix(1, 1));
+        matrices.add(DenseFactory.createFloatMatrix(2, 3));
+        matrices.add(DenseFactory.createFloatVector(0));
+        matrices.add(DenseFactory.createFloatVector(1));
+        for (FloatVector v : DenseFactory.createFloatMatrix(3, 4).columnsIterator()) {
+            matrices.add(v);
+        }
+        for (FloatVector v : DenseFactory.createFloatMatrix(3, 4).rowsIterator()) {
+            matrices.add(v);
+        }
         for (FloatMatrix x : matrices) {
             MatrixTestSupport.populateMatrix(x);
             checkSerialization(x);

@@ -3,6 +3,7 @@ package com.googlecode.array4j;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import com.googlecode.array4j.dense.DenseFactory;
 import com.googlecode.array4j.dense.FloatDenseMatrixFactory;
 import com.googlecode.array4j.math.FloatMatrixUtils;
 import java.io.ByteArrayInputStream;
@@ -267,15 +268,14 @@ public final class FloatMatrixTest<M extends FloatMatrix, V extends FloatVector>
         final FloatMatrix colMatrix = createColumnMatrixRange(rows, columns);
 
         for (int column = 0; column < columns; column++) {
-//            FloatVector newColumn = rowMatrix.createColumnVector();
-            FloatVector newColumn = null;
+            FloatVector newColumn = DenseFactory.createFloatVector(rowMatrix.rows(), Direction.COLUMN);
             for (int index = 0; index < values[column].length; index++) {
                 newColumn.set(index, values[column][index]);
             }
             rowMatrix.setColumn(column, newColumn);
             assertTrue("Columns must be equal", Arrays.equals(values[column], rowMatrix.column(column).toArray()));
 
-//            newColumn = colMatrix.createColumnVector();
+            newColumn = DenseFactory.createFloatVector(colMatrix.rows(), Direction.COLUMN);
             for (int index = 0; index < values[column].length; index++) {
                 newColumn.set(index, values[column][index]);
             }
@@ -294,15 +294,14 @@ public final class FloatMatrixTest<M extends FloatMatrix, V extends FloatVector>
         final FloatMatrix rowMatrix = createRowMatrixRange(rows, columns);
         final FloatMatrix colMatrix = createColumnMatrixRange(rows, columns);
         for (int row = 0; row < rows; row++) {
-//            FloatVector newRow = rowMatrix.createRowVector();
-            FloatVector newRow = null;
+            FloatVector newRow = DenseFactory.createFloatVector(rowMatrix.columns(), Direction.ROW);
             for (int index = 0; index < values[row].length; index++) {
                 newRow.set(index, values[row][index]);
             }
             rowMatrix.setRow(row, newRow);
             assertTrue("Rows must be equal", Arrays.equals(values[row], rowMatrix.row(row).toArray()));
 
-//            newRow = colMatrix.createRowVector();
+            newRow = DenseFactory.createFloatVector(colMatrix.columns(), Direction.ROW);
             for (int index = 0; index < values[row].length; index++) {
                 newRow.set(index, values[row][index]);
             }
