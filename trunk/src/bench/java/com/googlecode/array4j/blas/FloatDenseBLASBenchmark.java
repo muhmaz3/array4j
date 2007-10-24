@@ -1,9 +1,9 @@
 package com.googlecode.array4j.blas;
 
-import com.googlecode.array4j.FloatMatrixUtils;
 import com.googlecode.array4j.Order;
 import com.googlecode.array4j.Storage;
 import com.googlecode.array4j.dense.FloatDenseMatrix;
+import com.googlecode.array4j.math.FloatMatrixUtils;
 import java.util.Random;
 import org.junit.Test;
 

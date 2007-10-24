@@ -1,5 +1,9 @@
-package com.googlecode.array4j;
+package com.googlecode.array4j.math;
 
+import com.googlecode.array4j.FloatMatrix;
+import com.googlecode.array4j.FloatVector;
+import com.googlecode.array4j.Matrix;
+import com.googlecode.array4j.Order;
 import com.googlecode.array4j.dense.DenseFactory;
 import com.googlecode.array4j.dense.DenseMatrix;
 import com.googlecode.array4j.dense.FloatDenseMatrix;

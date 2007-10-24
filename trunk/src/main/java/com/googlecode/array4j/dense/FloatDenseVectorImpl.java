@@ -1,9 +1,9 @@
 package com.googlecode.array4j.dense;
 
 import com.googlecode.array4j.Direction;
-import com.googlecode.array4j.FloatMatrixUtils;
 import com.googlecode.array4j.FloatVector;
 import com.googlecode.array4j.Storage;
+import com.googlecode.array4j.math.FloatMatrixUtils;
 import java.nio.FloatBuffer;
 
 final class FloatDenseVectorImpl extends AbstractFloatDense implements FloatDenseVector {

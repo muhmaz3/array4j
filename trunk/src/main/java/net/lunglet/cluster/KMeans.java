@@ -1,10 +1,10 @@
 package net.lunglet.cluster;
 
 import com.googlecode.array4j.FloatMatrix;
-import com.googlecode.array4j.FloatMatrixUtils;
 import com.googlecode.array4j.FloatVector;
 import com.googlecode.array4j.dense.FloatDenseMatrix;
 import com.googlecode.array4j.dense.FloatDenseUtils;
+import com.googlecode.array4j.math.FloatMatrixUtils;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutionException;
