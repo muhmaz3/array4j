@@ -1,23 +1,23 @@
 package com.googlecode.array4j.blas;
 
-import com.googlecode.array4j.Orientation;
+import com.googlecode.array4j.Order;
 import com.googlecode.array4j.dense.DenseMatrix;
 import com.googlecode.array4j.dense.DenseVector;
 
 public abstract class AbstractDenseBLAS {
-    protected static void checkAxpy(final DenseVector<?> x, final DenseVector<?> y) {
+    protected static void checkAxpy(final DenseVector x, final DenseVector y) {
         if (x.length() != y.length()) {
             throw new IllegalArgumentException();
         }
     }
 
-    protected static void checkDot(final DenseVector<?> x, final DenseVector<?> y) {
+    protected static void checkDot(final DenseVector x, final DenseVector y) {
         if (x.length() != y.length()) {
             throw new IllegalArgumentException();
         }
     }
 
-    protected static void checkGemm(final DenseMatrix<?, ?> a, final DenseMatrix<?, ?> b, final DenseMatrix<?, ?> c) {
+    protected static void checkGemm(final DenseMatrix a, final DenseMatrix b, final DenseMatrix c) {
         if (a.rows() != c.rows()) {
             throw new IllegalArgumentException(String.format("rows(a)=%d != rows(c)=%d", a.rows(), c.rows()));
         }
@@ -32,7 +32,7 @@ public abstract class AbstractDenseBLAS {
         }
     }
 
-    protected static void checkSyrk(final DenseMatrix<?, ?> a, final DenseMatrix<?, ?> c) {
+    protected static void checkSyrk(final DenseMatrix a, final DenseMatrix c) {
         if (a.rows() != c.rows()) {
             throw new IllegalArgumentException("rows(a) != rows(c)");
         }
@@ -47,27 +47,27 @@ public abstract class AbstractDenseBLAS {
     /**
      * Returns the order value for the CBLAS interface.
      */
-    protected static int corder(final DenseMatrix<?, ?> c) {
-        return c.orientation().equals(Orientation.ROW) ? 101 : 102;
+    protected static int corder(final DenseMatrix c) {
+        return c.order().equals(Order.ROW) ? 101 : 102;
     }
 
     /**
      * Returns the trans value for the CBLAS interface.
      */
-    protected static int ctrans(final DenseMatrix<?, ?> c, final DenseMatrix<?, ?> x) {
-        return c.orientation().equals(x.orientation()) ? 111 : 112;
+    protected static int ctrans(final DenseMatrix c, final DenseMatrix x) {
+        return c.order().equals(x.order()) ? 111 : 112;
     }
 
-    protected static int leadingDimension(final DenseMatrix<?, ?> x) {
-        if (x.orientation().equals(Orientation.COLUMN)) {
+    protected static int leadingDimension(final DenseMatrix x) {
+        if (x.order().equals(Order.COLUMN)) {
             return Math.max(1, x.rows());
         } else {
             return Math.max(1, x.columns());
         }
     }
 
-    protected static String trans(final DenseMatrix<?, ?> c, final DenseMatrix<?, ?> x) {
-        return c.orientation().equals(x.orientation()) ? "N" : "T";
+    protected static String trans(final DenseMatrix c, final DenseMatrix x) {
+        return c.order().equals(x.order()) ? "N" : "T";
     }
 
     protected final BLASPolicy policy;

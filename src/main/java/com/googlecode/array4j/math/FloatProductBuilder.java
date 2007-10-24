@@ -3,7 +3,7 @@ package com.googlecode.array4j.math;
 import com.googlecode.array4j.FloatMatrix;
 
 public final class FloatProductBuilder {
-    public FloatMatrix<?, ?> build() {
+    public FloatMatrix build() {
         return null;
     }
 
@@ -11,7 +11,7 @@ public final class FloatProductBuilder {
         return this;
     }
 
-    public FloatProductBuilder times(final FloatMatrix<?, ?> matrix) {
+    public FloatProductBuilder times(final FloatMatrix matrix) {
         return this;
     }
 }

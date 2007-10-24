@@ -2,8 +2,7 @@ package com.googlecode.array4j.dense;
 
 import static org.junit.Assert.assertEquals;
 import com.googlecode.array4j.MatrixTestSupport;
-import com.googlecode.array4j.Orientation;
-import com.googlecode.array4j.Storage;
+import com.googlecode.array4j.Order;
 import java.util.Arrays;
 import java.util.Collection;
 import org.junit.Test;
@@ -15,12 +14,12 @@ import org.junit.runners.Parameterized.Parameters;
 public final class FloatDenseUtilsTest {
     @Parameters
     public static Collection<?> data() {
-        return Arrays.asList(new Object[][]{{Orientation.ROW}, {Orientation.COLUMN}});
+        return Arrays.asList(new Object[][]{{Order.ROW}, {Order.COLUMN}});
     }
 
-    private final Orientation orientation;
+    private final Order orientation;
 
-    public FloatDenseUtilsTest(final Orientation orientation) {
+    public FloatDenseUtilsTest(final Order orientation) {
         this.orientation = orientation;
     }
 
@@ -28,7 +27,8 @@ public final class FloatDenseUtilsTest {
     public void testSubMatrixColumns() {
         for (int rows = 0; rows < 5; rows++) {
             for (int columns = 0; columns < 8; columns++) {
-                FloatDenseMatrix x = new FloatDenseMatrix(rows, columns, orientation, Storage.HEAP);
+//                FloatDenseMatrix x = new FloatDenseMatrix(rows, columns, orientation, Storage.HEAP);
+                FloatDenseMatrix x = null;
                 MatrixTestSupport.populateMatrix(x);
                 for (int i = 0; i < columns; i++) {
                     for (int j = i; j <= columns; j++) {

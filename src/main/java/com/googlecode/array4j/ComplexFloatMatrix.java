@@ -1,16 +1,21 @@
 package com.googlecode.array4j;
 
-public interface ComplexFloatMatrix<M extends ComplexFloatMatrix<M, V>, V extends ComplexFloatVector<V>> extends
-        ComplexMatrix<M, V>, ComplexFloatArray<M> {
+public interface ComplexFloatMatrix extends ComplexMatrix, ComplexFloatArray {
+    Iterable<? extends ComplexFloatVector> columnsIterator();
+
     ComplexFloat get(int row, int column);
+
+    Iterable<? extends ComplexFloatVector> rowsIterator();
 
     void set(int row, int column, ComplexFloat value);
 
-    void setColumn(int column, ComplexFloatVector<?> columnVector);
+    void setColumn(int column, ComplexFloatVector columnVector);
 
-    void setRow(int row, ComplexFloatVector<?> rowVector);
+    void setRow(int row, ComplexFloatVector rowVector);
 
     ComplexFloat[][] toColumnArrays();
 
     ComplexFloat[][] toRowArrays();
+
+    ComplexFloatMatrix transpose();
 }

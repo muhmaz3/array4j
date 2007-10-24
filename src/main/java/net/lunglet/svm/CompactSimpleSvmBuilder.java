@@ -1,8 +1,6 @@
 package net.lunglet.svm;
 
 import com.googlecode.array4j.FloatVector;
-import com.googlecode.array4j.Orientation;
-import com.googlecode.array4j.Storage;
 import com.googlecode.array4j.blas.FloatDenseBLAS;
 import com.googlecode.array4j.dense.FloatDenseVector;
 import com.googlecode.array4j.util.AssertUtils;
@@ -33,7 +31,8 @@ public final class CompactSimpleSvmBuilder {
                 weights.put(index, (float) model.sv_coef[0][k]);
             }
         }
-        this.sv = new FloatDenseVector(model.SV[0].getValue().length(), Orientation.COLUMN, Storage.DIRECT);
+//        this.sv = new FloatDenseVector(model.SV[0].getValue().length(), Order.COLUMN, Storage.DIRECT);
+        this.sv = null;
     }
 
     public SimpleSvm build() {
@@ -47,7 +46,7 @@ public final class CompactSimpleSvmBuilder {
         return new SimpleSvm(compactModel);
     }
 
-    public void present(final FloatVector<?> x, final int index) {
+    public void present(final FloatVector x, final int index) {
         if (weights.size() == 0 || !weights.containsKey(index)) {
             return;
         }

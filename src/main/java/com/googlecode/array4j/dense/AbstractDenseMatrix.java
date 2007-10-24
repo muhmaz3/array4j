@@ -1,7 +1,7 @@
 package com.googlecode.array4j.dense;
 
 import com.googlecode.array4j.AbstractMatrix;
-import com.googlecode.array4j.Orientation;
+import com.googlecode.array4j.Order;
 import com.googlecode.array4j.util.BufferUtils;
 import java.nio.Buffer;
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -9,8 +9,7 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 /**
  * Abstract base class for dense (full) matrices.
  */
-public abstract class AbstractDenseMatrix<M extends DenseMatrix<M, V>, V extends DenseVector<V>, T> extends
-        AbstractMatrix<M, V> implements DenseMatrix<M, V> {
+public abstract class AbstractDenseMatrix<V extends DenseVector, T> extends AbstractMatrix<V> implements DenseMatrix {
     /** Stride between elements in a column. */
     protected final int columnStride;
 
@@ -23,7 +22,7 @@ public abstract class AbstractDenseMatrix<M extends DenseMatrix<M, V>, V extends
     /** Offset in storage where matrix data begins. */
     protected final int offset;
 
-    protected final Orientation orientation;
+    protected final Order orientation;
 
     /** Stride between elements in a row. */
     protected final int rowStride;
@@ -31,16 +30,15 @@ public abstract class AbstractDenseMatrix<M extends DenseMatrix<M, V>, V extends
     /** Stride between elements. */
     protected final int stride;
 
-    public AbstractDenseMatrix(final AbstractDenseMatrix<?, ?, ?> base, final int elementSize,
-            final int elementSizeBytes, final int rows, final int columns, final int offset, final int stride,
-            final Orientation orientation) {
+    public AbstractDenseMatrix(final AbstractDenseMatrix<V, T> base, final int elementSize, final int elementSizeBytes,
+            final int rows, final int columns, final int offset, final int stride, final Order orientation) {
         super(base, rows, columns);
         this.elementSize = elementSize;
         this.elementSizeBytes = elementSizeBytes;
         this.offset = offset;
         this.stride = stride;
         this.orientation = orientation;
-        if (orientation.equals(Orientation.ROW)) {
+        if (orientation.equals(Order.ROW)) {
             this.rowStride = stride * columns;
             this.columnStride = stride;
         } else {
@@ -100,7 +98,7 @@ public abstract class AbstractDenseMatrix<M extends DenseMatrix<M, V>, V extends
         if (this == obj) {
             return true;
         }
-        AbstractDenseMatrix<?, ?, ?> other = (AbstractDenseMatrix<?, ?, ?>) obj;
+        AbstractDenseMatrix<?, ?> other = (AbstractDenseMatrix<?, ?>) obj;
         return new EqualsBuilder().appendSuper(super.equals(obj)).append(elementSize, other.elementSize).append(
                 orientation, other.orientation).isEquals();
     }
@@ -110,7 +108,7 @@ public abstract class AbstractDenseMatrix<M extends DenseMatrix<M, V>, V extends
 
     @Override
     public final int leadingDimension() {
-        if (orientation.equals(Orientation.COLUMN)) {
+        if (orientation.equals(Order.COLUMN)) {
             return Math.max(1, base != null ? base.rows() : rows);
         } else {
             return Math.max(1, base != null ? base.columns() : columns);
@@ -121,7 +119,7 @@ public abstract class AbstractDenseMatrix<M extends DenseMatrix<M, V>, V extends
         return offset;
     }
 
-    public final Orientation orientation() {
+    public final Order order() {
         return orientation;
     }
 
@@ -170,13 +168,13 @@ public abstract class AbstractDenseMatrix<M extends DenseMatrix<M, V>, V extends
             for (int j = 0; j < n; j++) {
                 int position = offset;
                 if (rows) {
-                    if (orientation.equals(Orientation.ROW)) {
+                    if (orientation.equals(Order.ROW)) {
                         position += (i * n + j) * elementSize * stride;
                     } else {
                         position += (j * m + i) * elementSize * stride;
                     }
                 } else {
-                    if (orientation.equals(Orientation.COLUMN)) {
+                    if (orientation.equals(Order.COLUMN)) {
                         position += (i * n + j) * elementSize * stride;
                     } else {
                         position += (j * m + i) * elementSize * stride;

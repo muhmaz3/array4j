@@ -2,8 +2,6 @@ package net.lunglet.svm;
 
 import com.googlecode.array4j.FloatMatrix;
 import com.googlecode.array4j.FloatVector;
-import com.googlecode.array4j.Orientation;
-import com.googlecode.array4j.Storage;
 import com.googlecode.array4j.dense.FloatDenseMatrix;
 import com.googlecode.array4j.dense.FloatDenseVector;
 import java.io.Serializable;
@@ -39,7 +37,7 @@ public final class SimpleSvm implements Serializable {
         return param;
     }
 
-    private static PrecomputedKernel createPrecomputedKernel(final List<Handle> data, final FloatMatrix<?, ?> kernel) {
+    private static PrecomputedKernel createPrecomputedKernel(final List<Handle> data, final FloatMatrix kernel) {
         if (kernel == null) {
             throw new NullPointerException();
         }
@@ -65,7 +63,7 @@ public final class SimpleSvm implements Serializable {
         this(data, (PrecomputedKernel) null);
     }
 
-    public SimpleSvm(final List<Handle> data, final FloatMatrix<?, ?> kernel) {
+    public SimpleSvm(final List<Handle> data, final FloatMatrix kernel) {
         this(data, createPrecomputedKernel(data, kernel));
     }
 
@@ -116,8 +114,9 @@ public final class SimpleSvm implements Serializable {
     }
 
     public FloatDenseVector getModel() {
-        FloatVector<?> sv = getSupportVector();
-        FloatDenseVector modelvec = new FloatDenseVector(sv.length() + 1, Orientation.COLUMN, Storage.DIRECT);
+        FloatVector sv = getSupportVector();
+//        FloatDenseVector modelvec = new FloatDenseVector(sv.length() + 1, Order.COLUMN, Storage.DIRECT);
+        FloatDenseVector modelvec = null;
         for (int i = 0; i < sv.length(); i++) {
             modelvec.set(i, sv.get(i));
         }
@@ -135,7 +134,7 @@ public final class SimpleSvm implements Serializable {
         return (float) model.rho[0];
     }
 
-    public FloatVector<?> getSupportVector() {
+    public FloatVector getSupportVector() {
         if (model == null) {
             throw new IllegalStateException();
         }
@@ -149,12 +148,12 @@ public final class SimpleSvm implements Serializable {
         return model.SV;
     }
 
-    public FloatDenseMatrix score(final FloatMatrix<?, ?> testData) {
+    public FloatDenseMatrix score(final FloatMatrix testData) {
         List<Handle> handles = new ArrayList<Handle>();
-        for (final FloatVector<?> x : testData.columnsIterator()) {
+        for (final FloatVector x : testData.columnsIterator()) {
             handles.add(new Handle() {
                 @Override
-                public FloatVector<?> getData() {
+                public FloatVector getData() {
                     return x;
                 }
 
@@ -177,12 +176,13 @@ public final class SimpleSvm implements Serializable {
             throw new IllegalStateException();
         }
         int n = model.nr_class * (model.nr_class - 1) / 2;
-        FloatDenseMatrix scores = new FloatDenseMatrix(n, testData.size());
+//        FloatDenseMatrix scores = new FloatDenseMatrix(n, testData.size());
+        FloatDenseMatrix scores = null;
         double[] decvalues = new double[n];
         for (int i = 0; i < testData.size(); i++) {
             Handle handle = testData.get(i);
             Svm.svm_predict_values(model, handle.getData(), decvalues);
-            scores.setColumn(i, FloatDenseVector.valueOf(decvalues));
+//            scores.setColumn(i, FloatDenseVector.valueOf(decvalues));
         }
         return scores;
     }

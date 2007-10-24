@@ -296,7 +296,7 @@ final class Svm {
         count_ret[0] = count;
     }
 
-    public static double svm_predict(final SvmModel model, FloatVector<?> x) {
+    public static double svm_predict(final SvmModel model, FloatVector x) {
         if (model.param.svm_type == SvmParameter.ONE_CLASS || model.param.svm_type == SvmParameter.EPSILON_SVR
                 || model.param.svm_type == SvmParameter.NU_SVR) {
             double[] res = new double[1];
@@ -338,7 +338,7 @@ final class Svm {
         }
     }
 
-    public static void svm_predict_values(SvmModel model, FloatVector<?> x, double[] dec_values) {
+    public static void svm_predict_values(SvmModel model, FloatVector x, double[] dec_values) {
         if (model.param.svm_type == SvmParameter.ONE_CLASS || model.param.svm_type == SvmParameter.EPSILON_SVR
                 || model.param.svm_type == SvmParameter.NU_SVR) {
             double[] sv_coef = model.sv_coef[0];
@@ -875,7 +875,7 @@ final class Svm {
         }
     }
 
-    public double svm_predict_probability(SvmModel model, FloatVector<?> x, double[] prob_estimates) {
+    public double svm_predict_probability(SvmModel model, FloatVector x, double[] prob_estimates) {
         if ((model.param.svm_type == SvmParameter.C_SVC || model.param.svm_type == SvmParameter.NU_SVC)
                 && model.probA != null && model.probB != null) {
             int i;

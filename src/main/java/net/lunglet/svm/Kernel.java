@@ -4,7 +4,7 @@ import com.googlecode.array4j.FloatVector;
 import com.googlecode.array4j.math.FloatMatrixMath;
 
 abstract class Kernel extends QMatrix {
-    static double dot(final FloatVector<?> x, final SvmNode y) {
+    static double dot(final FloatVector x, final SvmNode y) {
         return FloatMatrixMath.dot(x, y.getValue());
     }
 
@@ -12,7 +12,7 @@ abstract class Kernel extends QMatrix {
         return FloatMatrixMath.dot(x.getValue(), y.getValue());
     }
 
-    static double k_function(final FloatVector<?> x, final SvmNode y, final SvmParameter param) {
+    static double k_function(final FloatVector x, final SvmNode y, final SvmParameter param) {
         switch (param.kernel_type) {
         case SvmParameter.LINEAR:
             return dot(x, y);

@@ -33,7 +33,8 @@ public final class FFTTest {
     @Ignore
     @Test
     public void test() {
-        FloatDenseVector x = new FloatDenseVector(storage, 1.0f, 2.0f, 3.0f);
+//        FloatDenseVector x = new FloatDenseVector(storage, 1.0f, 2.0f, 3.0f);
+        FloatDenseVector x = null;
         CFloatDenseVector y = fft.fft(x, x.length());
         assertEquals(new ComplexFloat(6.0f, 0.0f), y.get(0));
         assertEquals(new ComplexFloat(-1.5f, 0.8660254f), y.get(1));

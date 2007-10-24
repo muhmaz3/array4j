@@ -1,6 +1,6 @@
 package com.googlecode.array4j.io;
 
-import com.googlecode.array4j.Orientation;
+import com.googlecode.array4j.Order;
 import com.googlecode.array4j.Storage;
 import com.googlecode.array4j.dense.FloatDenseMatrix;
 import com.googlecode.array4j.packed.FloatPackedMatrix;
@@ -31,7 +31,7 @@ public final class HDFReader {
     }
 
     public void read(final String name, final FloatDenseMatrix matrix) {
-        if (!matrix.orientation().equals(Orientation.ROW)) {
+        if (!matrix.order().equals(Order.ROW)) {
             throw new UnsupportedOperationException();
         }
         DataSet dataset = null;

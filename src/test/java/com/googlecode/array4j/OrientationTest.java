@@ -7,10 +7,10 @@ import org.junit.Test;
 public final class OrientationTest {
     @Test
     public void testSame() {
-        assertTrue(Orientation.ROW.same(Orientation.ROW));
-        assertTrue(Orientation.COLUMN.same(Orientation.COLUMN));
-        assertFalse(Orientation.ROW.same(Orientation.COLUMN));
-        assertFalse(Orientation.COLUMN.same(Orientation.ROW));
-        assertFalse(Orientation.ROW.same(new Orientation[]{null}));
+        assertTrue(Order.ROW.same(Order.ROW));
+        assertTrue(Order.COLUMN.same(Order.COLUMN));
+        assertFalse(Order.ROW.same(Order.COLUMN));
+        assertFalse(Order.COLUMN.same(Order.ROW));
+        assertFalse(Order.ROW.same(new Order[]{null}));
     }
 }

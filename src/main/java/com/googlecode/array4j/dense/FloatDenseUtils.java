@@ -1,7 +1,7 @@
 package com.googlecode.array4j.dense;
 
 import com.googlecode.array4j.Constants;
-import com.googlecode.array4j.Orientation;
+import com.googlecode.array4j.Order;
 import com.googlecode.array4j.Storage;
 import com.googlecode.array4j.util.AssertUtils;
 import java.io.File;
@@ -14,26 +14,28 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.FileChannel.MapMode;
 
 public final class FloatDenseUtils {
-    public static FloatDenseMatrix arange(final int rows, final int columns, final Orientation orientation,
+    public static FloatDenseMatrix arange(final int rows, final int columns, final Order orientation,
             final Storage storage) {
-        FloatDenseMatrix matrix = new FloatDenseMatrix(rows, columns, orientation, storage);
-        for (int i = 0; i < matrix.length(); i++) {
-            matrix.set(i, (float) i + 1);
-        }
-        return matrix;
+//        FloatDenseMatrix matrix = new FloatDenseMatrix(rows, columns, orientation, storage);
+//        for (int i = 0; i < matrix.length(); i++) {
+//            matrix.set(i, (float) i + 1);
+//        }
+//        return matrix;
+        return null;
     }
 
     public static FloatDenseMatrix createMatrix(final float[]... values) {
-        return createMatrix(Orientation.DEFAULT, Storage.DEFAULT_FOR_DENSE, values);
+        return createMatrix(Order.DEFAULT, Storage.DEFAULT_FOR_DENSE, values);
     }
 
     // TODO change createMatrix functions to valueOf methods of FloatDenseMatrix
 
-    public static FloatDenseMatrix createMatrix(final Orientation orientation, final Storage storage,
+    public static FloatDenseMatrix createMatrix(final Order orientation, final Storage storage,
             final float[]... values) {
         int rows = values.length;
         int columns = rows > 0 ? values[0].length : 0;
-        FloatDenseMatrix matrix = new FloatDenseMatrix(rows, columns, orientation, storage);
+//        FloatDenseMatrix matrix = new FloatDenseMatrix(rows, columns, orientation, storage);
+        FloatDenseMatrix matrix = null;
         for (int i = 0; i < rows; i++) {
             if (values[i].length != columns) {
                 throw new IllegalArgumentException();
@@ -59,7 +61,8 @@ public final class FloatDenseUtils {
             throw new IOException();
         }
         int columns = data.remaining() / nsamples;
-        return new FloatDenseMatrix(data, nsamples, columns, 0, 1, Orientation.ROW);
+//        return new FloatDenseMatrix(data, nsamples, columns, 0, 1, Order.ROW);
+        return null;
     }
 
     public static FloatDenseMatrix mapHTK(final String filename) throws IOException {
@@ -80,7 +83,8 @@ public final class FloatDenseUtils {
             throw new IOException();
         }
         int columns = data.remaining() / nsamples;
-        return new FloatDenseMatrix(data, nsamples, columns, 0, 1, Orientation.ROW);
+//        return new FloatDenseMatrix(data, nsamples, columns, 0, 1, Order.ROW);
+        return null;
     }
 
     /**
@@ -95,14 +99,16 @@ public final class FloatDenseUtils {
             return x;
         }
         int cols = column1 - column0;
-        if (x.orientation().equals(Orientation.COLUMN)) {
-            return new FloatDenseMatrix(x, x.rows(), cols, x.columnOffset(column0), x.stride, x.orientation());
+        if (x.order().equals(Order.COLUMN)) {
+//            return new FloatDenseMatrix(x, x.rows(), cols, x.columnOffset(column0), x.stride, x.order());
+            return null;
         } else {
-            FloatDenseMatrix newMatrix = new FloatDenseMatrix(x.rows(), cols, x.orientation(), x.storage());
-            for (int i = column0, j = 0; i < column1; i++, j++) {
-                newMatrix.setColumn(j, x.column(i));
-            }
-            return newMatrix;
+//            FloatDenseMatrix newMatrix = new FloatDenseMatrix(x.rows(), cols, x.order(), x.storage());
+//            for (int i = column0, j = 0; i < column1; i++, j++) {
+//                newMatrix.setColumn(j, x.column(i));
+//            }
+//            return newMatrix;
+            return null;
         }
     }
 

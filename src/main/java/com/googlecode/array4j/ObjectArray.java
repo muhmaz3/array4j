@@ -4,7 +4,7 @@ package com.googlecode.array4j;
 
 // TODO implement BigDecimalArray on top of ObjectArray
 
-public class ObjectArray<T> extends AbstractArray<ObjectArray<T>> {
+public class ObjectArray<T> extends AbstractArray {
     public ObjectArray(final int[] shape) {
         super(shape);
     }

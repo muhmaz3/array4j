@@ -15,7 +15,8 @@ import org.junit.Test;
 public final class MatrixIOStreamTest {
     @Test
     public void testWriteColumnsAsMatrix() throws IOException {
-        FloatDenseMatrix matrix = new FloatDenseMatrix(3, 4);
+//        FloatDenseMatrix matrix = new FloatDenseMatrix(3, 4);
+        FloatDenseMatrix matrix = null;
         FloatMatrixUtils.fillRandom(matrix, new Random(0));
         List<FloatDenseVector> columns = new ArrayList<FloatDenseVector>(matrix.columns());
         for (FloatDenseVector column : matrix.columnsIterator()) {
@@ -36,7 +37,8 @@ public final class MatrixIOStreamTest {
 
     @Test
     public void testWriteMatrix() throws IOException {
-        FloatDenseMatrix matrix = new FloatDenseMatrix(10, 20);
+//        FloatDenseMatrix matrix = new FloatDenseMatrix(10, 20);
+        FloatDenseMatrix matrix = null;
         FloatMatrixUtils.fillRandom(matrix, new Random(0));
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         MatrixOutputStream out = new MatrixOutputStream(baos);

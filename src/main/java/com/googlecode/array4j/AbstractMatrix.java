@@ -6,41 +6,40 @@ import java.util.Iterator;
 import java.util.List;
 import org.apache.commons.lang.builder.EqualsBuilder;
 
-public abstract class AbstractMatrix<M extends Matrix<M, V>, V extends Vector<V>> extends AbstractArray<M> implements
-        Matrix<M, V> {
-    protected static int vectorColumns(final int size, final Orientation orientation) {
-        AssertUtils.checkArgument(size >= 0);
-        if (orientation.equals(Orientation.ROW)) {
-            return size;
-        } else {
-            if (size == 0) {
-                return 0;
-            } else {
-                return 1;
-            }
-        }
-    }
+public abstract class AbstractMatrix<V extends Vector> extends AbstractArray implements Matrix {
+//    protected static int vectorColumns(final int size, final Order orientation) {
+//        AssertUtils.checkArgument(size >= 0);
+//        if (orientation.equals(Order.ROW)) {
+//            return size;
+//        } else {
+//            if (size == 0) {
+//                return 0;
+//            } else {
+//                return 1;
+//            }
+//        }
+//    }
+//
+//    protected static int vectorRows(final int size, final Order orientation) {
+//        AssertUtils.checkArgument(size >= 0);
+//        if (orientation.equals(Order.COLUMN)) {
+//            return size;
+//        } else {
+//            if (size == 0) {
+//                return 0;
+//            } else {
+//                return 1;
+//            }
+//        }
+//    }
 
-    protected static int vectorRows(final int size, final Orientation orientation) {
-        AssertUtils.checkArgument(size >= 0);
-        if (orientation.equals(Orientation.COLUMN)) {
-            return size;
-        } else {
-            if (size == 0) {
-                return 0;
-            } else {
-                return 1;
-            }
-        }
-    }
-
-    protected final AbstractMatrix<?, ?> base;
+    protected final AbstractMatrix<V> base;
 
     protected final int columns;
 
     protected final int rows;
 
-    public AbstractMatrix(final AbstractMatrix<?, ?> base, final int rows, final int columns) {
+    public AbstractMatrix(final AbstractMatrix<V> base, final int rows, final int columns) {
         super(new int[]{rows, columns});
         AssertUtils.checkArgument(rows >= 0);
         AssertUtils.checkArgument(columns >= 0);
@@ -55,7 +54,7 @@ public abstract class AbstractMatrix<M extends Matrix<M, V>, V extends Vector<V>
         }
     }
 
-    protected final void checkColumnVector(final Vector<?> vector) {
+    protected final void checkColumnVector(final Vector vector) {
         if (vector.length() != rows) {
             throw new IllegalArgumentException();
         }
@@ -67,12 +66,14 @@ public abstract class AbstractMatrix<M extends Matrix<M, V>, V extends Vector<V>
         }
     }
 
-    protected final void checkRowVector(final Vector<?> vector) {
+    protected final void checkRowVector(final Vector vector) {
         if (vector.length() != columns) {
             throw new IllegalArgumentException("vector with length " + columns + " required (length is "
                     + vector.length() + ")");
         }
     }
+
+    public abstract V column(int column);
 
     public final int columns() {
         return columns;
@@ -116,7 +117,7 @@ public abstract class AbstractMatrix<M extends Matrix<M, V>, V extends Vector<V>
         if (this == obj) {
             return true;
         }
-        AbstractMatrix<?, ?> other = (AbstractMatrix<?, ?>) obj;
+        AbstractMatrix<?> other = (AbstractMatrix<?>) obj;
         return new EqualsBuilder().appendSuper(super.equals(obj)).append(rows, other.rows).append(columns,
                 other.columns).isEquals();
     }
@@ -124,6 +125,8 @@ public abstract class AbstractMatrix<M extends Matrix<M, V>, V extends Vector<V>
     public final boolean isSquare() {
         return rows == columns;
     }
+
+    public abstract V row(int row);
 
     public final int rows() {
         return rows;

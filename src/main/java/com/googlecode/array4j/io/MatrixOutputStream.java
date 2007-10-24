@@ -41,10 +41,10 @@ public final class MatrixOutputStream extends DataOutputStream implements Matrix
     }
 
     @Override
-    public void writeMatrix(final FloatMatrix<?, ?> matrix) throws IOException {
+    public void writeMatrix(final FloatMatrix matrix) throws IOException {
         writeInt(matrix.rows());
         writeInt(matrix.columns());
-        for (FloatVector<?> column : matrix.columnsIterator()) {
+        for (FloatVector column : matrix.columnsIterator()) {
             for (int i = 0; i < column.length(); i++) {
                 writeFloat(column.get(i));
             }
