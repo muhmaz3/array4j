@@ -7,7 +7,7 @@ import com.googlecode.array4j.Storage;
 import com.googlecode.array4j.util.BufferUtils;
 import java.nio.FloatBuffer;
 
-public final class CFloatDenseMatrixFactory implements ComplexFloatMatrixFactory<CFloatDenseMatrix, CFloatDenseVector> {
+public final class CFloatDenseMatrixFactory implements ComplexFloatMatrixFactory {
     private final Storage storage;
 
     public CFloatDenseMatrixFactory(final Storage storage) {

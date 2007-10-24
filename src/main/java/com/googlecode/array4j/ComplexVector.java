@@ -1,5 +1,9 @@
 package com.googlecode.array4j;
 
-public interface ComplexVector extends ComplexMatrix, Vector {
+/**
+ * Complex vector.
+ */
+public interface ComplexVector extends Vector, ComplexMatrix {
+    /** {@inheritDoc} */
     ComplexVector transpose();
 }

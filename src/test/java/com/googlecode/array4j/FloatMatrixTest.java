@@ -25,9 +25,9 @@ public final class FloatMatrixTest<M extends FloatMatrix, V extends FloatVector>
                 {new FloatDenseMatrixFactory(Storage.DIRECT)}});
     }
 
-    private final FloatMatrixFactory<M, V> factory;
+    private final FloatMatrixFactory factory;
 
-    public FloatMatrixTest(final FloatMatrixFactory<M, V> factory) {
+    public FloatMatrixTest(final FloatMatrixFactory factory) {
         this.factory = factory;
     }
 
@@ -70,7 +70,7 @@ public final class FloatMatrixTest<M extends FloatMatrix, V extends FloatVector>
         }
     }
 
-    private M createColumnMatrixRange(final int rows, final int columns) {
+    private FloatMatrix createColumnMatrixRange(final int rows, final int columns) {
         final float[] data = new float[rows * columns];
         for (int i = 0, k = 0; i < columns; i++) {
             for (int j = 0; j < rows; j++) {
@@ -87,19 +87,19 @@ public final class FloatMatrixTest<M extends FloatMatrix, V extends FloatVector>
                     continue;
                 }
                 for (final Order orientation : Order.values()) {
-                    M matrix = factory.createMatrix(data, rows, columns, offset, stride, orientation);
+                    FloatMatrix matrix = factory.createMatrix(data, rows, columns, offset, stride, orientation);
                     assertNotNull(matrix);
                 }
             }
         }
     }
 
-    private M createRowMatrixRange(final int rows, final int columns) {
+    private FloatMatrix createRowMatrixRange(final int rows, final int columns) {
         final float[] data = new float[rows * columns];
         for (int i = 0; i < data.length; i++) {
             data[i] = 1.0f + i;
         }
-        M matrix = factory.createMatrix(data, rows, columns, Order.ROW);
+        FloatMatrix matrix = factory.createMatrix(data, rows, columns, Order.ROW);
         assertNotNull(matrix);
         return matrix;
     }
@@ -290,8 +290,8 @@ public final class FloatMatrixTest<M extends FloatMatrix, V extends FloatVector>
         final float[][] values = {{10.0f, 20.0f, 30.0f}, {40.0f, 50.0f, 60.0f}, {70.0f, 80.0f, 90.0f},
                 {100.0f, 110.0f, 120.0f}};
         assertEquals(rows, values.length);
-        final M rowMatrix = createRowMatrixRange(rows, columns);
-        final M colMatrix = createColumnMatrixRange(rows, columns);
+        final FloatMatrix rowMatrix = createRowMatrixRange(rows, columns);
+        final FloatMatrix colMatrix = createColumnMatrixRange(rows, columns);
         for (int row = 0; row < rows; row++) {
 //            FloatVector newRow = rowMatrix.createRowVector();
             FloatVector newRow = null;

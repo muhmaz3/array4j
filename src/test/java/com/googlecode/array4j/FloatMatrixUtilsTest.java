@@ -16,7 +16,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 @RunWith(value = Parameterized.class)
-public final class FloatMatrixUtilsTest<M extends FloatMatrix, V extends FloatVector> {
+public final class FloatMatrixUtilsTest {
     @Parameters
     public static Collection<?> data() {
         return Arrays.asList(new Object[][]{{new FloatDenseMatrixFactory(Storage.HEAP), Order.ROW},
@@ -25,25 +25,24 @@ public final class FloatMatrixUtilsTest<M extends FloatMatrix, V extends FloatVe
                 {new FloatDenseMatrixFactory(Storage.DIRECT), Order.COLUMN}});
     }
 
-    private final FloatMatrixFactory<M, V> matrixFactory;
+    private final FloatMatrixFactory matrixFactory;
 
-    private final Order orientation;
+    private final Order order;
 
-    public FloatMatrixUtilsTest(final FloatMatrixFactory<M, V> matrixFactory, final Order orientation) {
+    public FloatMatrixUtilsTest(final FloatMatrixFactory matrixFactory, final Order order) {
         this.matrixFactory = matrixFactory;
-        this.orientation = orientation;
+        this.order = order;
     }
 
     @Test
     public void testColumnMean() {
         float[] values = {1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f};
-        M matrix = matrixFactory.createMatrix(values, 3, 2, 0, 1, orientation);
-//        V mean = FloatMatrixUtils.columnMean(matrix);
-        V mean = null;
+        FloatMatrix matrix = matrixFactory.createMatrix(values, 3, 2, 0, 1, order);
+        FloatVector mean = FloatMatrixUtils.columnMean(matrix);
         assertTrue(mean.isColumnVector());
-//        assertEquals(Order.COLUMN, mean.order());
+        assertEquals(Direction.COLUMN, mean.direction());
         assertEquals(3, mean.length());
-        if (orientation.equals(Order.ROW)) {
+        if (order.equals(Order.ROW)) {
             assertEquals(1.5f, mean.get(0), 0.0);
             assertEquals(3.5f, mean.get(1), 0.0);
             assertEquals(5.5f, mean.get(2), 0.0);
@@ -57,12 +56,11 @@ public final class FloatMatrixUtilsTest<M extends FloatMatrix, V extends FloatVe
     @Test
     public void testColumnSum() {
         float[] values = {1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f};
-        M matrix = matrixFactory.createMatrix(values, 3, 2, 0, 1, orientation);
-//        V sum = FloatMatrixUtils.columnSum(matrix);
-        V sum = null;
+        FloatMatrix matrix = matrixFactory.createMatrix(values, 3, 2, 0, 1, order);
+        FloatVector sum = FloatMatrixUtils.columnSum(matrix);
         assertNotNull(sum);
         assertTrue(sum.isColumnVector());
-        if (orientation.equals(Order.ROW)) {
+        if (order.equals(Order.ROW)) {
             assertEquals(3.0f, sum.get(0), 0.0);
             assertEquals(7.0f, sum.get(1), 0.0);
             assertEquals(11.0f, sum.get(2), 0.0);
@@ -77,10 +75,9 @@ public final class FloatMatrixUtilsTest<M extends FloatMatrix, V extends FloatVe
     public void testColumnsVector() {
         for (int i = 0; i <= 5; i++) {
             for (int j = 0; j <= 5; j++) {
-                M x = matrixFactory.createMatrix(i, j, orientation);
+                FloatMatrix x = matrixFactory.createMatrix(i, j, order);
                 MatrixTestSupport.populateMatrix(x);
-//                FloatDenseVector v = FloatMatrixUtils.columnsVector(x);
-                FloatDenseVector v = null;
+                FloatDenseVector v = FloatMatrixUtils.columnsVector(x);
                 for (int n = 0, k = 0; n < x.columns(); n++) {
                     for (int m = 0; m < x.rows(); m++) {
                         assertEquals(v.get(k++), x.get(m, n), 0);
@@ -97,7 +94,7 @@ public final class FloatMatrixUtilsTest<M extends FloatMatrix, V extends FloatVe
             List<FloatVector> vectors = new ArrayList<FloatVector>();
             for (int j = 0; j < i; j++) {
                 int length = rng.nextInt(5);
-                vectors.add(matrixFactory.createVector(length, orientation));
+                vectors.add(matrixFactory.createVector(length, order.direction()));
             }
             FloatVector[] vecArr = vectors.toArray(new FloatVector[0]);
             FloatDenseVector x = FloatMatrixUtils.concatenate(vecArr);
@@ -112,20 +109,19 @@ public final class FloatMatrixUtilsTest<M extends FloatMatrix, V extends FloatVe
     @Test
     public void testMean() {
         float[] values = {1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f};
-        M matrix = matrixFactory.createMatrix(values, 3, 2, 0, 1, orientation);
+        FloatMatrix matrix = matrixFactory.createMatrix(values, 3, 2, 0, 1, order);
         assertEquals(3.5f, FloatMatrixUtils.mean(matrix), 0.0);
     }
 
     @Test
     public void testRowMean() {
         float[] values = {1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f};
-        M matrix = matrixFactory.createMatrix(values, 3, 2, 0, 1, orientation);
-//        V mean = FloatMatrixUtils.rowMean(matrix);
-        V mean = null;
+        FloatMatrix matrix = matrixFactory.createMatrix(values, 3, 2, 0, 1, order);
+        FloatVector mean = FloatMatrixUtils.rowMean(matrix);
         assertTrue(mean.isRowVector());
-//        assertEquals(Order.ROW, mean.order());
+        assertEquals(Direction.ROW, mean.direction());
         assertEquals(2, mean.length());
-        if (orientation.equals(Order.ROW)) {
+        if (order.equals(Order.ROW)) {
             assertEquals(3.0f, mean.get(0), 0.0);
             assertEquals(4.0f, mean.get(1), 0.0);
         } else {
@@ -137,12 +133,11 @@ public final class FloatMatrixUtilsTest<M extends FloatMatrix, V extends FloatVe
     @Test
     public void testRowSum() {
         float[] values = {1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f};
-        M matrix = matrixFactory.createMatrix(values, 3, 2, 0, 1, orientation);
-//        V sum = FloatMatrixUtils.rowSum(matrix);
-        V sum = null;
+        FloatMatrix matrix = matrixFactory.createMatrix(values, 3, 2, 0, 1, order);
+        FloatVector sum = FloatMatrixUtils.rowSum(matrix);
         assertNotNull(sum);
         assertTrue(sum.isRowVector());
-        if (orientation.equals(Order.ROW)) {
+        if (order.equals(Order.ROW)) {
             assertEquals(9.0f, sum.get(0), 0.0);
             assertEquals(12.0f, sum.get(1), 0.0);
         } else {
@@ -154,7 +149,7 @@ public final class FloatMatrixUtilsTest<M extends FloatMatrix, V extends FloatVe
     @Test
     public void testSum() {
         float[] values = {1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f};
-        M matrix = matrixFactory.createMatrix(values, 3, 2, 0, 1, orientation);
+        FloatMatrix matrix = matrixFactory.createMatrix(values, 3, 2, 0, 1, order);
         assertEquals(21.0f, FloatMatrixUtils.sum(matrix), 0.0);
     }
 }

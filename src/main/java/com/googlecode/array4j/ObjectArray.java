@@ -5,6 +5,8 @@ package com.googlecode.array4j;
 // TODO implement BigDecimalArray on top of ObjectArray
 
 public class ObjectArray<T> extends AbstractArray {
+    private static final long serialVersionUID = 1L;
+
     public ObjectArray(final int[] shape) {
         super(shape);
     }

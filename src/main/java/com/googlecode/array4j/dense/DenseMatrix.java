@@ -19,6 +19,7 @@ public interface DenseMatrix extends Matrix {
 
     int stride();
 
+    /** {@inheritDoc} */
     DenseMatrix transpose();
 
     Iterable<? extends DenseVector> columnsIterator();

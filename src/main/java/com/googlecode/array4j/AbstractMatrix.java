@@ -7,31 +7,31 @@ import java.util.List;
 import org.apache.commons.lang.builder.EqualsBuilder;
 
 public abstract class AbstractMatrix<V extends Vector> extends AbstractArray implements Matrix {
-//    protected static int vectorColumns(final int size, final Order orientation) {
-//        AssertUtils.checkArgument(size >= 0);
-//        if (orientation.equals(Order.ROW)) {
-//            return size;
-//        } else {
-//            if (size == 0) {
-//                return 0;
-//            } else {
-//                return 1;
-//            }
-//        }
-//    }
-//
-//    protected static int vectorRows(final int size, final Order orientation) {
-//        AssertUtils.checkArgument(size >= 0);
-//        if (orientation.equals(Order.COLUMN)) {
-//            return size;
-//        } else {
-//            if (size == 0) {
-//                return 0;
-//            } else {
-//                return 1;
-//            }
-//        }
-//    }
+    protected static int vectorColumns(final int size, final Direction direction) {
+        AssertUtils.checkArgument(size >= 0);
+        if (direction.equals(Direction.ROW)) {
+            return size;
+        } else {
+            if (size == 0) {
+                return 0;
+            } else {
+                return 1;
+            }
+        }
+    }
+
+    protected static int vectorRows(final int size, final Direction direction) {
+        AssertUtils.checkArgument(size >= 0);
+        if (direction.equals(Direction.COLUMN)) {
+            return size;
+        } else {
+            if (size == 0) {
+                return 0;
+            } else {
+                return 1;
+            }
+        }
+    }
 
     protected final AbstractMatrix<V> base;
 

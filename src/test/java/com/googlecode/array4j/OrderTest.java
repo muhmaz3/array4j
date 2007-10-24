@@ -4,7 +4,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
-public final class OrientationTest {
+public final class OrderTest {
     @Test
     public void testSame() {
         assertTrue(Order.ROW.same(Order.ROW));

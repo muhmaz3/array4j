@@ -1,12 +1,17 @@
 package com.googlecode.array4j;
 
-public final class ComplexFloat implements Complex<ComplexFloat> {
+/**
+ * Complex single precision floating point value.
+ */
+public final class ComplexFloat implements Complex {
     public static ComplexFloat valueOf(final double real, final double imag) {
         return new ComplexFloat((float) real, (float) imag);
     }
 
+    /** Imaginary component. */
     private final float imag;
 
+    /** Real component. */
     private final float real;
 
     public ComplexFloat() {
@@ -26,6 +31,9 @@ public final class ComplexFloat implements Complex<ComplexFloat> {
     public boolean equals(final Object obj) {
         if (obj == null || !(obj instanceof ComplexFloat)) {
             return false;
+        }
+        if (this == obj) {
+            return true;
         }
         final ComplexFloat other = (ComplexFloat) obj;
         return real == other.real && imag == other.imag;

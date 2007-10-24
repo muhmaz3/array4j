@@ -1,17 +1,15 @@
 package com.googlecode.array4j.dense;
 
 import com.googlecode.array4j.Constants;
+import com.googlecode.array4j.Direction;
 import com.googlecode.array4j.FloatVector;
+import com.googlecode.array4j.Order;
 import com.googlecode.array4j.Storage;
 import com.googlecode.array4j.util.BufferUtils;
 import java.nio.FloatBuffer;
 import java.util.Arrays;
 
 abstract class AbstractFloatDense extends AbstractDenseMatrix<FloatDenseVector, float[]> {
-    public AbstractFloatDense() {
-        super(null, 0, 0, 0, 0, 0, 0, null);
-    }
-
     private static final int DEFAULT_OFFSET = 0;
 
     private static final int DEFAULT_STRIDE = 1;
@@ -24,43 +22,43 @@ abstract class AbstractFloatDense extends AbstractDenseMatrix<FloatDenseVector, 
         return BufferUtils.createFloatBuffer(size, storage);
     }
 
-//    public CopyOfAbstractFloatDense(final CopyOfAbstractFloatDense<?> base, final int rows, final int columns, final int offset,
-//            final int stride, final Order orientation) {
-//        super(base, ELEMENT_SIZE, ELEMENT_SIZE_BYTES, rows, columns, offset, stride, orientation);
-//        checkData(base.data);
-//        this.data = base.data;
-//    }
-//
-//    public CopyOfAbstractFloatDense(final CopyOfAbstractFloatDense<?> base, final int size, final int offset, final int stride,
-//            final Order orientation) {
-//        this(base, vectorRows(size, orientation), vectorColumns(size, orientation), offset, stride, orientation);
-//    }
-//
-//    public CopyOfAbstractFloatDense(final FloatBuffer data, final int rows, final int columns, final int offset,
-//            final int stride, final Order orientation) {
-//        super(null, ELEMENT_SIZE, ELEMENT_SIZE_BYTES, rows, columns, offset, stride, orientation);
-//        checkData(data);
-//        this.data = data;
-//    }
-//
-//    public CopyOfAbstractFloatDense(final FloatBuffer data, final int size, final int offset, final int stride,
-//            final Order orientation) {
-//        this(data, vectorRows(size, orientation), vectorColumns(size, orientation), offset, stride, orientation);
-//    }
-//
-//    /**
-//     * Constructor for new matrix.
-//     */
-//    public CopyOfAbstractFloatDense(final int rows, final int columns, final Order orientation, final Storage storage) {
-//        this(createBuffer(rows * columns, storage), rows, columns, DEFAULT_OFFSET, DEFAULT_STRIDE, orientation);
-//    }
-//
-//    /**
-//     * Constructor for new vector.
-//     */
-//    public CopyOfAbstractFloatDense(final int size, final Order orientation, final Storage storage) {
-//        this(vectorRows(size, orientation), vectorColumns(size, orientation), orientation, storage);
-//    }
+    public AbstractFloatDense(final AbstractFloatDense base, final int rows, final int columns, final int offset,
+            final int stride, final Order order) {
+        super(base, ELEMENT_SIZE, ELEMENT_SIZE_BYTES, rows, columns, offset, stride, order);
+        checkData(base.data);
+        this.data = base.data;
+    }
+
+    public AbstractFloatDense(final AbstractFloatDense base, final int size, final int offset, final int stride,
+            final Direction direction) {
+        this(base, vectorRows(size, direction), vectorColumns(size, direction), offset, stride, direction.order());
+    }
+
+    public AbstractFloatDense(final FloatBuffer data, final int rows, final int columns, final int offset,
+            final int stride, final Order order) {
+        super(null, ELEMENT_SIZE, ELEMENT_SIZE_BYTES, rows, columns, offset, stride, order);
+        checkData(data);
+        this.data = data;
+    }
+
+    public AbstractFloatDense(final FloatBuffer data, final int size, final int offset, final int stride,
+            final Direction direction) {
+        this(data, vectorRows(size, direction), vectorColumns(size, direction), offset, stride, direction.order());
+    }
+
+    /**
+     * Constructor for new matrix.
+     */
+    public AbstractFloatDense(final int rows, final int columns, final Order orientation, final Storage storage) {
+        this(createBuffer(rows * columns, storage), rows, columns, DEFAULT_OFFSET, DEFAULT_STRIDE, orientation);
+    }
+
+    /**
+     * Constructor for new vector.
+     */
+    public AbstractFloatDense(final int size, final Direction direction, final Storage storage) {
+        this(vectorRows(size, direction), vectorColumns(size, direction), direction.order(), storage);
+    }
 
     protected transient FloatBuffer data;
 
@@ -71,8 +69,7 @@ abstract class AbstractFloatDense extends AbstractDenseMatrix<FloatDenseVector, 
 
     @Override
     public final FloatDenseVector column(final int column) {
-//        return new FloatDenseVectorImpl(this, rows, columnOffset(column), rowStride, Order.COLUMN);
-        return null;
+        return new FloatDenseVectorImpl(this, rows, columnOffset(column), rowStride, Direction.COLUMN);
     }
 
     @Override
@@ -138,19 +135,22 @@ abstract class AbstractFloatDense extends AbstractDenseMatrix<FloatDenseVector, 
 
     @Override
     public final FloatDenseVector row(final int row) {
-//        return new FloatDenseVectorImpl(this, columns, rowOffset(row), columnStride, Order.ROW);
-        return null;
+        return new FloatDenseVectorImpl(this, columns, rowOffset(row), columnStride, Direction.ROW);
     }
 
-    public boolean isColumnVector() {
-        return rows <= 1;
+    public final void divideEquals(final float value) {
+        timesEquals(1.0f / value);
     }
 
-    public boolean isRowVector() {
-        return columns <= 1;
+    public final void minusEquals(final float value) {
+        plusEquals(-value);
     }
 
-    public int length() {
-        return super.length();
+    public final void plusEquals(final float value) {
+        throw new UnsupportedOperationException();
+    }
+
+    public final void timesEquals(final float value) {
+        throw new UnsupportedOperationException();
     }
 }

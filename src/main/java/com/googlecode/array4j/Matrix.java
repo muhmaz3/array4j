@@ -19,5 +19,6 @@ public interface Matrix extends Array {
 
     Iterable<? extends Vector> rowsIterator();
 
+    /** Transpose matrix. */
     Matrix transpose();
 }
