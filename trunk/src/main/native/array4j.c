@@ -95,6 +95,18 @@ ARRAY4J_EXPORT float array4j_sdot
 #endif
 }
 
+ARRAY4J_EXPORT void array4j_sscal
+  (int n, float a, float* x, int incx)
+{
+#if defined(ARRAY4J_HAVE_MKL)
+    cblas_sscal(n, a, x, incx);
+#elif defined(ARRAY4J_HAVE_ACML)
+    sscal(n, a, x, incx);
+#else
+#error sscal function required
+#endif
+}
+
 ARRAY4J_EXPORT void array4j_saxpy
   (int n, float a, float* x, int incx, float* y, int incy)
 {

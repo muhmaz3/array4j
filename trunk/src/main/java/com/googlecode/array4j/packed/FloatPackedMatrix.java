@@ -1,17 +1,16 @@
 package com.googlecode.array4j.packed;
 
 import com.googlecode.array4j.FloatMatrix;
+import com.googlecode.array4j.dense.FloatDenseVector;
 import java.nio.FloatBuffer;
 
 public interface FloatPackedMatrix extends FloatMatrix, PackedMatrix {
+    /** {@inheritDoc} */
     FloatBuffer data();
 
-    /**
-     * Element-wise addition without broadcasting.
-     * <p>
-     * Implementations of this method may accept only a
-     * <CODE>FloatPackedMatrix</CODE> argument, throwing
-     * <CODE>IllegalArgumentException</CODE> otherwise.
-     */
+    /** {@inheritDoc} */
     void plusEquals(FloatMatrix other);
+
+    /** {@inheritDoc} */
+    FloatDenseVector asVector();
 }

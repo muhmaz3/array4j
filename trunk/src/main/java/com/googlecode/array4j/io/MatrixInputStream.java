@@ -1,5 +1,6 @@
 package com.googlecode.array4j.io;
 
+import com.googlecode.array4j.dense.DenseFactory;
 import com.googlecode.array4j.dense.FloatDenseMatrix;
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
@@ -22,8 +23,7 @@ public final class MatrixInputStream extends DataInputStream implements MatrixIn
         if (columns < 0) {
             throw new IOException();
         }
-//        FloatDenseMatrix matrix = new FloatDenseMatrix(rows, columns);
-        FloatDenseMatrix matrix = null;
+        FloatDenseMatrix matrix = DenseFactory.createFloatMatrix(rows, columns);
         // read matrix in column-major order
         for (int j = 0; j < columns; j++) {
             for (int i = 0; i < rows; i++) {

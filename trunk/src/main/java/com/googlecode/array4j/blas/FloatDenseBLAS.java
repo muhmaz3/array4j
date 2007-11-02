@@ -6,6 +6,7 @@ import java.nio.FloatBuffer;
 import org.netlib.blas.Saxpy;
 import org.netlib.blas.Sdot;
 import org.netlib.blas.Sgemm;
+import org.netlib.blas.Sscal;
 import org.netlib.blas.Ssyrk;
 
 // XXX all BLAS level 3 functions require dense matrices
@@ -15,6 +16,25 @@ public final class FloatDenseBLAS extends AbstractDenseBLAS {
 
     public FloatDenseBLAS(final BLASPolicy policy) {
         super(policy);
+    }
+
+    /**
+     * <CODE>x = a*x</CODE>
+     */
+    public void scal(final float a, final FloatDenseVector x) {
+        int n = x.length();
+        FloatBuffer xbuf = x.data();
+        int incx = x.stride();
+        switch (policy.chooseL1Method(x, null)) {
+        case F2J:
+            Sscal.sscal(n, a, xbuf.array(), xbuf.arrayOffset(), incx);
+            return;
+        case NATIVE:
+            BLASLibrary.INSTANCE.array4j_sscal(n, a, xbuf, incx);
+            return;
+        default:
+            throw new AssertionError();
+        }
     }
 
     /**

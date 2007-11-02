@@ -4,6 +4,8 @@ package com.googlecode.array4j;
 
 // TODO implement BigDecimalArray on top of ObjectArray
 
+// TODO possibly derive them from AbstractNumberArray<E extends Number>
+
 public class ObjectArray<T> extends AbstractArray {
     private static final long serialVersionUID = 1L;
 

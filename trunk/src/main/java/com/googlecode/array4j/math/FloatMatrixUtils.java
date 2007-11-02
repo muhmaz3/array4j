@@ -16,8 +16,9 @@ import java.util.Random;
 // TODO implement unmodifiableMatrix
 
 public final class FloatMatrixUtils {
+    /** Mean over columns. */
     public static FloatDenseVector columnMean(final FloatMatrix matrix) {
-        final FloatDenseVector mean = createColumnVector(matrix);
+        final FloatDenseVector mean = columnVectorFor(matrix);
         int n = 0;
         for (final FloatVector column : matrix.columnsIterator()) {
             n++;
@@ -28,8 +29,9 @@ public final class FloatMatrixUtils {
         return mean;
     }
 
+    /** Sum over columns. */
     public static FloatDenseVector columnSum(final FloatMatrix matrix) {
-        final FloatDenseVector sum = createColumnVector(matrix);
+        final FloatDenseVector sum = columnVectorFor(matrix);
         for (final FloatVector column : matrix.columnsIterator()) {
             sum.plusEquals(column);
         }
@@ -75,7 +77,7 @@ public final class FloatMatrixUtils {
         return output;
     }
 
-    private static FloatDenseVector createColumnVector(final FloatMatrix matrix) {
+    private static FloatDenseVector columnVectorFor(final FloatMatrix matrix) {
         final Storage storage;
         if (matrix instanceof DenseMatrix) {
             storage = ((DenseMatrix) matrix).storage();
@@ -85,7 +87,7 @@ public final class FloatMatrixUtils {
         return DenseFactory.createFloatVector(matrix.rows(), Direction.COLUMN, storage);
     }
 
-    private static FloatDenseVector createRowVector(final FloatMatrix matrix) {
+    private static FloatDenseVector rowVectorFor(final FloatMatrix matrix) {
         final Storage storage;
         if (matrix instanceof DenseMatrix) {
             storage = ((DenseMatrix) matrix).storage();
@@ -146,8 +148,9 @@ public final class FloatMatrixUtils {
         return mean;
     }
 
+    /** Mean over rows. */
     public static FloatDenseVector rowMean(final FloatMatrix matrix) {
-        final FloatDenseVector mean = createRowVector(matrix);
+        final FloatDenseVector mean = rowVectorFor(matrix);
         int n = 0;
         for (final FloatVector row : matrix.rowsIterator()) {
             n++;
@@ -158,8 +161,9 @@ public final class FloatMatrixUtils {
         return mean;
     }
 
+    /** Sum over rows. */
     public static FloatDenseVector rowSum(final FloatMatrix matrix) {
-        final FloatDenseVector sum = createRowVector(matrix);
+        final FloatDenseVector sum = rowVectorFor(matrix);
         for (final FloatVector row : matrix.rowsIterator()) {
             sum.plusEquals(row);
         }

@@ -2,7 +2,9 @@ package com.googlecode.array4j.dense;
 
 import com.googlecode.array4j.AbstractMatrix;
 import com.googlecode.array4j.Direction;
+import com.googlecode.array4j.Matrix;
 import com.googlecode.array4j.Order;
+import com.googlecode.array4j.Storage;
 import com.googlecode.array4j.util.BufferUtils;
 import java.nio.Buffer;
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -11,6 +13,22 @@ import org.apache.commons.lang.builder.EqualsBuilder;
  * Abstract base class for dense (full) matrices.
  */
 public abstract class AbstractDenseMatrix<V extends DenseVector, T> extends AbstractMatrix<V> implements DenseMatrix {
+    protected static Order defaultOrder(final Matrix matrix) {
+        if (matrix instanceof DenseMatrix) {
+            return ((DenseMatrix) matrix).order();
+        } else {
+            return Order.DEFAULT;
+        }
+    }
+
+    protected static Storage defaultStorage(final Matrix matrix) {
+        if (matrix instanceof DenseMatrix) {
+            return ((DenseMatrix) matrix).storage();
+        } else {
+            return Storage.DEFAULT_FOR_DENSE;
+        }
+    }
+
     /** Stride between elements in a column. */
     protected final int columnStride;
 
@@ -57,6 +75,12 @@ public abstract class AbstractDenseMatrix<V extends DenseVector, T> extends Abst
         }
     }
 
+    protected final void checkIndex(final int index) {
+        if (index < 0 || index >= length) {
+            throw new IndexOutOfBoundsException(String.format("Index out of bounds [0,%d): %d", length, index));
+        }
+    }
+
     /**
      * Calculate the offset of the beginning of the specified column.
      */
@@ -72,6 +96,16 @@ public abstract class AbstractDenseMatrix<V extends DenseVector, T> extends Abst
     protected abstract T createArray(int length);
 
     protected abstract T[] createArrayArray(int length);
+
+    public final Direction direction() {
+        if (isRowVector()) {
+            return Direction.ROW;
+        } else if (isColumnVector()) {
+            return Direction.COLUMN;
+        } else {
+            throw new AssertionError();
+        }
+    }
 
     protected final int elementOffset(final int index) {
         if (length > 0) {
@@ -106,6 +140,14 @@ public abstract class AbstractDenseMatrix<V extends DenseVector, T> extends Abst
 
     // TODO give this method a better name
     protected abstract void fillFrom(T dest, int srcPos);
+
+    public final boolean isColumnVector() {
+        return columns <= 1;
+    }
+
+    public final boolean isRowVector() {
+        return rows <= 1;
+    }
 
     @Override
     public final int leadingDimension() {
@@ -193,27 +235,5 @@ public abstract class AbstractDenseMatrix<V extends DenseVector, T> extends Abst
 
     public final T[] toRowArrays() {
         return toArrays(rows, columns, true);
-    }
-
-    public final boolean isColumnVector() {
-        return columns <= 1;
-    }
-
-    public final boolean isRowVector() {
-        return rows <= 1;
-    }
-
-    public final int length() {
-        return super.length();
-    }
-
-    public final Direction direction() {
-        if (isRowVector()) {
-            return Direction.ROW;
-        } else if (isColumnVector()) {
-            return Direction.COLUMN;
-        } else {
-            throw new AssertionError();
-        }
     }
 }

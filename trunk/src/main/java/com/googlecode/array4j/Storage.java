@@ -1,5 +1,8 @@
 package com.googlecode.array4j;
 
+/**
+ * Storage type.
+ */
 public enum Storage {
     DIRECT, HEAP;
 

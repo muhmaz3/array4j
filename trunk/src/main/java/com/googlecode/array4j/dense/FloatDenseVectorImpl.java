@@ -17,6 +17,11 @@ final class FloatDenseVectorImpl extends AbstractFloatDense implements FloatDens
         super(base, length, offset, stride, direction);
     }
 
+    FloatDenseVectorImpl(final Direction direction, final Storage storage, final float... values) {
+        this(values.length, direction, storage);
+        data.put(values);
+    }
+
     FloatDenseVectorImpl(final FloatBuffer data, final int length, final int offset, final int stride,
             final Direction direction) {
         super(data, length, offset, stride, direction);
@@ -24,15 +29,8 @@ final class FloatDenseVectorImpl extends AbstractFloatDense implements FloatDens
 
     /** Copy constructor. */
     FloatDenseVectorImpl(final FloatVector other) {
-        this(other.length(), Direction.DEFAULT, Storage.DEFAULT_FOR_DENSE);
+        this(other.length(), other.direction(), defaultStorage(other));
         copy(other, this);
-    }
-
-    /**
-     * Constructor.
-     */
-    FloatDenseVectorImpl(final int length) {
-        this(length, Direction.DEFAULT, Storage.DEFAULT_FOR_DENSE);
     }
 
     /**
@@ -40,15 +38,6 @@ final class FloatDenseVectorImpl extends AbstractFloatDense implements FloatDens
      */
     FloatDenseVectorImpl(final int length, final Direction direction, final Storage storage) {
         super(length, direction, storage);
-    }
-
-    FloatDenseVectorImpl(final Direction direction, final Storage storage, final float... values) {
-        this(values.length, direction, storage);
-        data.put(values);
-    }
-
-    FloatDenseVectorImpl(final Storage storage, final float... values) {
-        this(Direction.DEFAULT, storage, values);
     }
 
     @Override

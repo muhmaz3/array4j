@@ -5,17 +5,27 @@ import java.nio.FloatBuffer;
 import java.util.List;
 
 public interface FloatDenseMatrix extends FloatMatrix, DenseMatrix {
-    FloatBuffer data();
+    /** {@inheritDoc} */
+    FloatDenseVector asVector();
 
-    FloatDenseMatrix transpose();
-
-    Iterable<FloatDenseVector> columnsIterator();
-
-    List<FloatDenseVector> columnsList();
-
-    FloatDenseVector row(int row);
-
+    /** {@inheritDoc} */
     FloatDenseVector column(int column);
 
+    /** {@inheritDoc} */
+    Iterable<FloatDenseVector> columnsIterator();
+
+    /** {@inheritDoc} */
+    List<FloatDenseVector> columnsList();
+
+    /** {@inheritDoc} */
+    FloatBuffer data();
+
+    /** {@inheritDoc} */
+    FloatDenseVector row(int row);
+
+    /** {@inheritDoc} */
     Iterable<FloatDenseVector> rowsIterator();
+
+    /** {@inheritDoc} */
+    FloatDenseMatrix transpose();
 }
