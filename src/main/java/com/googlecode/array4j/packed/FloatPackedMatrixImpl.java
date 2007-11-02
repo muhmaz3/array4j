@@ -151,4 +151,9 @@ final class FloatPackedMatrixImpl extends AbstractPackedMatrix<FloatDenseVector>
         }
         throw new UnsupportedOperationException();
     }
+
+    @Override
+    public FloatDenseVector asVector() {
+        throw new UnsupportedOperationException();
+    }
 }

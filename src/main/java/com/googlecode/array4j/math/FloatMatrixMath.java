@@ -10,11 +10,18 @@ import com.googlecode.array4j.dense.DenseMatrix;
 import com.googlecode.array4j.dense.FloatDenseMatrix;
 import com.googlecode.array4j.dense.FloatDenseVector;
 import com.googlecode.array4j.packed.FloatPackedMatrix;
-import java.util.Arrays;
 
 public final class FloatMatrixMath {
     public static FloatVector minus(final FloatVector x, final FloatVector y) {
-        throw new UnsupportedOperationException();
+        if (!(x instanceof FloatDenseVector)) {
+            throw new UnsupportedOperationException();
+        }
+        if (!(y instanceof FloatDenseVector)) {
+            throw new UnsupportedOperationException();
+        }
+        FloatDenseVector z = DenseFactory.copyOf(x);
+        FloatDenseBLAS.DEFAULT.axpy(1.0f, (FloatDenseVector) y, z);
+        return z;
     }
 
     public static float dot(final FloatVector x, final FloatVector y) {
@@ -38,9 +45,9 @@ public final class FloatMatrixMath {
 
     public static void plusEquals(final FloatMatrix x, final FloatMatrix y) {
         // TODO optimize this function by using BLAS when possible
-        if (!Arrays.equals(x.shape(), y.shape())) {
-            throw new IllegalArgumentException();
-        }
+//        if (!Arrays.equals(x.shape(), y.shape())) {
+//            throw new IllegalArgumentException();
+//        }
         for (int i = 0; i < x.rows(); i++) {
             for (int j = 0; j < x.columns(); j++) {
                 x.set(i, j, x.get(i, j) + y.get(i, j));

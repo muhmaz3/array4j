@@ -1,7 +1,6 @@
 package com.googlecode.array4j.dense;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import com.googlecode.array4j.FloatMatrix;
 import com.googlecode.array4j.FloatVector;
 import com.googlecode.array4j.MatrixTestSupport;
@@ -11,7 +10,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -26,7 +24,8 @@ public final class FloatDenseTest {
         FloatMatrix y = (FloatMatrix) ois.readObject();
         ois.close();
         assertEquals(x.getClass(), y.getClass());
-        assertTrue(Arrays.equals(x.shape(), y.shape()));
+        assertEquals(x.rows(), y.rows());
+        assertEquals(x.columns(), y.columns());
         for (int i = 0; i < x.rows(); i++) {
             for (int j = 0; j < x.columns(); j++) {
                 assertEquals(x.get(i, j), y.get(i, j), 0);

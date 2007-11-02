@@ -6,7 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import org.apache.commons.lang.builder.EqualsBuilder;
 
-public abstract class AbstractMatrix<V extends Vector> extends AbstractArray implements Matrix {
+public abstract class AbstractMatrix<V extends Vector> implements Matrix {
     protected static int vectorColumns(final int size, final Direction direction) {
         AssertUtils.checkArgument(size >= 0);
         if (direction.equals(Direction.ROW)) {
@@ -39,13 +39,25 @@ public abstract class AbstractMatrix<V extends Vector> extends AbstractArray imp
 
     protected final int rows;
 
+    protected final int length;
+
     public AbstractMatrix(final AbstractMatrix<V> base, final int rows, final int columns) {
-        super(new int[]{rows, columns});
         AssertUtils.checkArgument(rows >= 0);
         AssertUtils.checkArgument(columns >= 0);
         this.rows = rows;
         this.columns = columns;
+        // TODO check for overflow in length calculation
+        this.length = rows * columns;
         this.base = base;
+    }
+
+    protected final void checkArithmeticOperand(final Matrix other) {
+        if (rows != other.rows()) {
+            throw new IllegalArgumentException();
+        }
+        if (columns != other.columns()) {
+            throw new IllegalArgumentException();
+        }
     }
 
     protected final void checkColumnIndex(final int column) {

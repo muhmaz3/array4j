@@ -106,7 +106,7 @@ public final class Engine {
         if (result != 0) {
             throw new RuntimeException("engGetVisible failed");
         }
-        return visible.getByte(0) == 1;
+        return visible.getValue() != 0;
     }
 
     public void putVariable(final String name, final MXArray value) {

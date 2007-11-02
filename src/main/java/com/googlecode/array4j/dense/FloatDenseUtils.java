@@ -16,12 +16,11 @@ import java.nio.channels.FileChannel.MapMode;
 public final class FloatDenseUtils {
     public static FloatDenseMatrix arange(final int rows, final int columns, final Order orientation,
             final Storage storage) {
-//        FloatDenseMatrix matrix = new FloatDenseMatrix(rows, columns, orientation, storage);
+        FloatDenseMatrix matrix = DenseFactory.createFloatMatrix(rows, columns, orientation, storage);
 //        for (int i = 0; i < matrix.length(); i++) {
 //            matrix.set(i, (float) i + 1);
 //        }
-//        return matrix;
-        return null;
+        return matrix;
     }
 
     public static FloatDenseMatrix createMatrix(final float[]... values) {
@@ -103,12 +102,11 @@ public final class FloatDenseUtils {
 //            return new FloatDenseMatrix(x, x.rows(), cols, x.columnOffset(column0), x.stride, x.order());
             return null;
         } else {
-//            FloatDenseMatrix newMatrix = new FloatDenseMatrix(x.rows(), cols, x.order(), x.storage());
-//            for (int i = column0, j = 0; i < column1; i++, j++) {
-//                newMatrix.setColumn(j, x.column(i));
-//            }
-//            return newMatrix;
-            return null;
+            FloatDenseMatrix newMatrix = DenseFactory.createFloatMatrix(x.rows(), cols, x.order(), x.storage());
+            for (int i = column0, j = 0; i < column1; i++, j++) {
+                newMatrix.setColumn(j, x.column(i));
+            }
+            return newMatrix;
         }
     }
 

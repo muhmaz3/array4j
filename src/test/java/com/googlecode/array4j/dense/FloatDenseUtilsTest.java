@@ -3,6 +3,7 @@ package com.googlecode.array4j.dense;
 import static org.junit.Assert.assertEquals;
 import com.googlecode.array4j.MatrixTestSupport;
 import com.googlecode.array4j.Order;
+import com.googlecode.array4j.Storage;
 import java.util.Arrays;
 import java.util.Collection;
 import org.junit.Test;
@@ -17,18 +18,17 @@ public final class FloatDenseUtilsTest {
         return Arrays.asList(new Object[][]{{Order.ROW}, {Order.COLUMN}});
     }
 
-    private final Order orientation;
+    private final Order order;
 
     public FloatDenseUtilsTest(final Order orientation) {
-        this.orientation = orientation;
+        this.order = orientation;
     }
 
     @Test
     public void testSubMatrixColumns() {
         for (int rows = 0; rows < 5; rows++) {
             for (int columns = 0; columns < 8; columns++) {
-//                FloatDenseMatrix x = new FloatDenseMatrix(rows, columns, orientation, Storage.HEAP);
-                FloatDenseMatrix x = null;
+                FloatDenseMatrix x = DenseFactory.createFloatMatrix(rows, columns, order, Storage.HEAP);
                 MatrixTestSupport.populateMatrix(x);
                 for (int i = 0; i < columns; i++) {
                     for (int j = i; j <= columns; j++) {

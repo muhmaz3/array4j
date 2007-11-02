@@ -2,7 +2,10 @@ package com.googlecode.array4j;
 
 import java.util.List;
 
-public interface FloatMatrix extends Matrix, FloatArray {
+public interface FloatMatrix extends Matrix {
+    /** {@inheritDoc} */
+    FloatVector asVector();
+
     /** {@inheritDoc} */
     FloatVector column(int column);
 
@@ -40,6 +43,9 @@ public interface FloatMatrix extends Matrix, FloatArray {
 
     /** Scalar multiplication. */
     void timesEquals(float value);
+
+    /** Pack matrix into an array. */
+    float[] toArray();
 
     /** Convert columns to an array of arrays. */
     float[][] toColumnArrays();

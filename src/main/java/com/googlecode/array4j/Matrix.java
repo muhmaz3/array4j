@@ -1,8 +1,11 @@
 package com.googlecode.array4j;
 
+import java.io.Serializable;
 import java.util.List;
 
-public interface Matrix extends Array {
+public interface Matrix extends Serializable {
+    Vector asVector();
+
     /** Get a column vector. */
     Vector column(int column);
 

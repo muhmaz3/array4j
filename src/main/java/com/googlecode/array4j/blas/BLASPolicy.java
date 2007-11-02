@@ -21,7 +21,7 @@ interface BLASPolicy {
     public static final class BestEffort implements BLASPolicy {
         @Override
         public Method chooseL1Method(final DenseVector x, final DenseVector y) {
-            if (x.storage().equals(Storage.DIRECT) || y.storage().equals(Storage.DIRECT)) {
+            if (x.storage().equals(Storage.DIRECT) || (y != null && y.storage().equals(Storage.DIRECT))) {
                 return Method.NATIVE;
             }
             return Method.F2J;

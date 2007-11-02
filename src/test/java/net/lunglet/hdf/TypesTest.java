@@ -14,7 +14,7 @@ public final class TypesTest {
     }
 
     @Test
-    public void testPrefinedClose() {
+    public void testPredefinedClose() {
         assertTrue(FloatType.IEEE_F32LE.getId() >= 0);
         FloatType.IEEE_F32LE.close();
         assertTrue(FloatType.IEEE_F32LE.getId() >= 0);

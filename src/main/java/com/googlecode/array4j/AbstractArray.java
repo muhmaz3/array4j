@@ -42,7 +42,7 @@ public abstract class AbstractArray implements Array {
         return new EqualsBuilder().append(shape, other.shape).isEquals();
     }
 
-    protected int length() {
+    protected final int length() {
         return length;
     }
 
