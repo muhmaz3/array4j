@@ -1,7 +1,6 @@
 package com.googlecode.array4j.dense;
 
 import com.googlecode.array4j.AbstractMatrix;
-import com.googlecode.array4j.Direction;
 import com.googlecode.array4j.Matrix;
 import com.googlecode.array4j.Order;
 import com.googlecode.array4j.Storage;
@@ -97,16 +96,6 @@ public abstract class AbstractDenseMatrix<V extends DenseVector, T> extends Abst
 
     protected abstract T[] createArrayArray(int length);
 
-    public final Direction direction() {
-        if (isRowVector()) {
-            return Direction.ROW;
-        } else if (isColumnVector()) {
-            return Direction.COLUMN;
-        } else {
-            throw new AssertionError();
-        }
-    }
-
     protected final int elementOffset(final int index) {
         if (length > 0) {
             checkIndex(index);
@@ -140,14 +129,6 @@ public abstract class AbstractDenseMatrix<V extends DenseVector, T> extends Abst
 
     // TODO give this method a better name
     protected abstract void fillFrom(T dest, int srcPos);
-
-    public final boolean isColumnVector() {
-        return columns <= 1;
-    }
-
-    public final boolean isRowVector() {
-        return rows <= 1;
-    }
 
     @Override
     public final int leadingDimension() {

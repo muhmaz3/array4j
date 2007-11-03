@@ -37,9 +37,9 @@ public abstract class AbstractMatrix<V extends Vector> implements Matrix {
 
     protected final int columns;
 
-    protected final int rows;
-
     protected final int length;
+
+    protected final int rows;
 
     public AbstractMatrix(final AbstractMatrix<V> base, final int rows, final int columns) {
         AssertUtils.checkArgument(rows >= 0);
@@ -121,6 +121,17 @@ public abstract class AbstractMatrix<V extends Vector> implements Matrix {
         return columnsList;
     }
 
+    public final Direction direction() {
+        if (rows <= 1 && rows == columns) {
+            return Direction.BOTH;
+        } else if (isRowVector()) {
+            return Direction.ROW;
+        } else if (isColumnVector()) {
+            return Direction.COLUMN;
+        }
+        throw new AssertionError();
+    }
+
     @Override
     public boolean equals(final Object obj) {
         if (obj == null || !(obj instanceof AbstractMatrix)) {
@@ -132,6 +143,14 @@ public abstract class AbstractMatrix<V extends Vector> implements Matrix {
         AbstractMatrix<?> other = (AbstractMatrix<?>) obj;
         return new EqualsBuilder().appendSuper(super.equals(obj)).append(rows, other.rows).append(columns,
                 other.columns).isEquals();
+    }
+
+    public final boolean isColumnVector() {
+        return columns <= 1;
+    }
+
+    public final boolean isRowVector() {
+        return rows <= 1;
     }
 
     public final boolean isSquare() {

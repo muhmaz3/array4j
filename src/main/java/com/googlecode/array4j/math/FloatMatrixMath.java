@@ -20,7 +20,7 @@ public final class FloatMatrixMath {
             throw new UnsupportedOperationException();
         }
         FloatDenseVector z = DenseFactory.copyOf(x);
-        FloatDenseBLAS.DEFAULT.axpy(1.0f, (FloatDenseVector) y, z);
+        FloatDenseBLAS.DEFAULT.axpy(-1.0f, (FloatDenseVector) y, z);
         return z;
     }
 
