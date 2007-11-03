@@ -23,7 +23,7 @@ public final class FloatMatrixUtils {
         for (final FloatVector column : matrix.columnsIterator()) {
             n++;
             FloatVector delta = FloatMatrixMath.minus(column, mean);
-            delta.timesEquals(1.0f / n);
+            delta.divideEquals(n);
             mean.plusEquals(delta);
         }
         return mean;
@@ -155,7 +155,7 @@ public final class FloatMatrixUtils {
         for (final FloatVector row : matrix.rowsIterator()) {
             n++;
             FloatVector delta = FloatMatrixMath.minus(row, mean);
-            delta.timesEquals(1.0f / n);
+            delta.divideEquals(n);
             mean.plusEquals(delta);
         }
         return mean;
@@ -185,13 +185,11 @@ public final class FloatMatrixUtils {
         if (vectors.length == 0) {
             return true;
         }
-        boolean isFirstRow = vectors[0].isRowVector();
-        for (FloatVector vector : vectors) {
-            if (isFirstRow != vector.isRowVector()) {
-                return false;
-            }
+        Direction[] directions = new Direction[vectors.length];
+        for (int i = 0; i < vectors.length; i++) {
+            directions[i] = vectors[i].direction();
         }
-        return true;
+        return directions[0].same(directions);
     }
 
     public static float sum(final FloatMatrix matrix) {

@@ -4,6 +4,17 @@ package com.googlecode.array4j;
  * Vector direction.
  */
 public enum Direction {
+    BOTH {
+        @Override
+        public Order order() {
+            return Order.COLUMN;
+        }
+
+        @Override
+        public Direction transpose() {
+            return this;
+        }
+    },
     COLUMN {
         @Override
         public Order order() {
@@ -34,7 +45,7 @@ public enum Direction {
     /** Check if all directions are the same. */
     public boolean same(final Direction... directions) {
         for (Direction other : directions) {
-            if (!equals(other)) {
+            if (!equals(other) && !equals(BOTH) && !other.equals(BOTH)) {
                 return false;
             }
         }
