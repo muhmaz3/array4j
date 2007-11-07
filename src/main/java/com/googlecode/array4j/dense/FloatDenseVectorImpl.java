@@ -3,9 +3,11 @@ package com.googlecode.array4j.dense;
 import com.googlecode.array4j.Direction;
 import com.googlecode.array4j.FloatVector;
 import com.googlecode.array4j.Storage;
-import com.googlecode.array4j.math.FloatMatrixUtils;
-import java.nio.FloatBuffer;
+import net.jcip.annotations.NotThreadSafe;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 
+@NotThreadSafe
 final class FloatDenseVectorImpl extends AbstractFloatDense implements FloatDenseVector {
     private static final long serialVersionUID = 1L;
 
@@ -17,34 +19,40 @@ final class FloatDenseVectorImpl extends AbstractFloatDense implements FloatDens
         super(base, length, offset, stride, direction);
     }
 
-    FloatDenseVectorImpl(final Direction direction, final Storage storage, final float... values) {
-        this(values.length, direction, storage);
-        data.put(values);
-    }
-
-    FloatDenseVectorImpl(final FloatBuffer data, final int length, final int offset, final int stride,
-            final Direction direction) {
-        super(data, length, offset, stride, direction);
-    }
-
-    /** Copy constructor. */
-    FloatDenseVectorImpl(final FloatVector other) {
-        this(other.length(), other.direction(), defaultStorage(other));
+    /**
+     * Copy constructor.
+     */
+    public FloatDenseVectorImpl(final FloatVector other) {
+        this(other.length(), other.direction(), storageLike(other));
         copy(other, this);
     }
 
     /**
      * Construct with specified direction and storage.
      */
-    FloatDenseVectorImpl(final int length, final Direction direction, final Storage storage) {
+    public FloatDenseVectorImpl(final int length, final Direction direction, final Storage storage) {
         super(length, direction, storage);
     }
 
+    /** {@inheritDoc} */
     @Override
-    public String toString() {
-        return FloatMatrixUtils.toString(this);
+    public boolean equals(final Object obj) {
+        if (obj == null || !(obj instanceof FloatDenseVectorImpl)) {
+            return false;
+        }
+        if (this == obj) {
+            return true;
+        }
+        return new EqualsBuilder().appendSuper(super.equals(obj)).isEquals();
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().appendSuper(super.hashCode()).toHashCode();
+    }
+
+    /** {@inheritDoc} */
     @Override
     public FloatDenseVector transpose() {
         return new FloatDenseVectorImpl(this, length, offset, stride, direction().transpose());

@@ -6,21 +6,11 @@ package com.googlecode.array4j;
 public enum Direction {
     BOTH {
         @Override
-        public Order order() {
-            return Order.COLUMN;
-        }
-
-        @Override
         public Direction transpose() {
             return this;
         }
     },
     COLUMN {
-        @Override
-        public Order order() {
-            return Order.COLUMN;
-        }
-
         @Override
         public Direction transpose() {
             return ROW;
@@ -28,19 +18,12 @@ public enum Direction {
     },
     ROW {
         @Override
-        public Order order() {
-            return Order.ROW;
-        }
-
-        @Override
         public Direction transpose() {
             return COLUMN;
         }
     };
 
     public static final Direction DEFAULT = COLUMN;
-
-    public abstract Order order();
 
     /** Check if all directions are the same. */
     public boolean same(final Direction... directions) {

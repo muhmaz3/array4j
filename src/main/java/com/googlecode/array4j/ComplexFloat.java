@@ -1,9 +1,15 @@
 package com.googlecode.array4j;
 
+import org.apache.commons.lang.builder.HashCodeBuilder;
+
 /**
  * Complex single precision floating point value.
  */
 public final class ComplexFloat implements Complex {
+    private static final long serialVersionUID = 1L;
+
+    public static final ComplexFloat ZERO = new ComplexFloat(0.0f, 0.0f);
+
     public static ComplexFloat valueOf(final double real, final double imag) {
         return new ComplexFloat((float) real, (float) imag);
     }
@@ -37,6 +43,11 @@ public final class ComplexFloat implements Complex {
         }
         final ComplexFloat other = (ComplexFloat) obj;
         return real == other.real && imag == other.imag;
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(real).append(imag).toHashCode();
     }
 
     public float imag() {

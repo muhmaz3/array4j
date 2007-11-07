@@ -5,8 +5,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 
+/**
+ * Abstract base class for matrices.
+ */
 public abstract class AbstractMatrix<V extends Vector> implements Matrix {
+    private static final long serialVersionUID = 1L;
+
     protected static int vectorColumns(final int size, final Direction direction) {
         AssertUtils.checkArgument(size >= 0);
         if (direction.equals(Direction.ROW)) {
@@ -46,7 +52,9 @@ public abstract class AbstractMatrix<V extends Vector> implements Matrix {
         AssertUtils.checkArgument(columns >= 0);
         this.rows = rows;
         this.columns = columns;
-        // TODO check for overflow in length calculation
+        if ((1L * rows * columns) > Integer.MAX_VALUE) {
+            throw new IllegalArgumentException("dimensions too large");
+        }
         this.length = rows * columns;
         this.base = base;
     }
@@ -62,7 +70,7 @@ public abstract class AbstractMatrix<V extends Vector> implements Matrix {
 
     protected final void checkColumnIndex(final int column) {
         if (column < 0 || column >= columns) {
-            throw new IndexOutOfBoundsException(String.format("Column index out of bounds [0,%d): %d", columns, column));
+            throw new IndexOutOfBoundsException(String.format("Column index %d out of bounds [0,%d)", column, columns));
         }
     }
 
@@ -74,7 +82,7 @@ public abstract class AbstractMatrix<V extends Vector> implements Matrix {
 
     protected final void checkRowIndex(final int row) {
         if (row < 0 || row >= rows) {
-            throw new IndexOutOfBoundsException(String.format("Row index out of bounds [0,%d): %d", rows, row));
+            throw new IndexOutOfBoundsException(String.format("Row index %d out of bounds [0,%d)", row, rows));
         }
     }
 
@@ -141,8 +149,15 @@ public abstract class AbstractMatrix<V extends Vector> implements Matrix {
             return true;
         }
         AbstractMatrix<?> other = (AbstractMatrix<?>) obj;
-        return new EqualsBuilder().appendSuper(super.equals(obj)).append(rows, other.rows).append(columns,
-                other.columns).isEquals();
+        EqualsBuilder equalsBuilder = new EqualsBuilder();
+        equalsBuilder.append(rows, other.rows);
+        equalsBuilder.append(columns, other.columns);
+        return equalsBuilder.isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(rows).append(columns).toHashCode();
     }
 
     public final boolean isColumnVector() {

@@ -7,9 +7,11 @@ import com.googlecode.array4j.FloatVector;
 import com.googlecode.array4j.Order;
 import com.googlecode.array4j.Storage;
 import com.googlecode.array4j.blas.FloatDenseBLAS;
+import com.googlecode.array4j.math.FloatMatrixUtils;
 import com.googlecode.array4j.util.BufferUtils;
 import java.nio.FloatBuffer;
 import java.util.Arrays;
+import org.apache.commons.lang.builder.EqualsBuilder;
 
 // TODO implement toString in this class
 
@@ -21,6 +23,8 @@ abstract class AbstractFloatDense extends AbstractDenseMatrix<FloatDenseVector, 
     private static final int ELEMENT_SIZE = 1;
 
     private static final int ELEMENT_SIZE_BYTES = Constants.FLOAT_BYTES;
+
+    private static final long serialVersionUID = 1L;
 
     protected static void copy(final FloatMatrix src, final FloatDenseMatrix dest) {
         if (src.rows() != dest.rows() || src.columns() != dest.columns()) {
@@ -38,13 +42,20 @@ abstract class AbstractFloatDense extends AbstractDenseMatrix<FloatDenseVector, 
         return BufferUtils.createFloatBuffer(size, storage);
     }
 
+    /** Data buffer. */
     protected transient FloatBuffer data;
 
+    /**
+     * Constructor for vector with a base member.
+     */
     public AbstractFloatDense(final AbstractFloatDense base, final int size, final int offset, final int stride,
             final Direction direction) {
-        this(base, vectorRows(size, direction), vectorColumns(size, direction), offset, stride, direction.order());
+        this(base, vectorRows(size, direction), vectorColumns(size, direction), offset, stride, Order.COLUMN);
     }
 
+    /**
+     * Constructor for matrix with a base member.
+     */
     public AbstractFloatDense(final AbstractFloatDense base, final int rows, final int columns, final int offset,
             final int stride, final Order order) {
         // TODO if stride is >= 0, slice buffer and make offset 0
@@ -54,42 +65,29 @@ abstract class AbstractFloatDense extends AbstractDenseMatrix<FloatDenseVector, 
     }
 
     /**
-     * Constructor for vector with existing data.
-     */
-    public AbstractFloatDense(final FloatBuffer data, final int size, final int offset, final int stride,
-            final Direction direction) {
-        this(data, vectorRows(size, direction), vectorColumns(size, direction), offset, stride, direction.order());
-    }
-
-    /**
-     * Constructor for matrix with existing data.
-     */
-    public AbstractFloatDense(final FloatBuffer data, final int rows, final int columns, final int offset,
-            final int stride, final Order order) {
-        // TODO if stride is >= 0, slice buffer and make offset 0
-        super(null, ELEMENT_SIZE, ELEMENT_SIZE_BYTES, rows, columns, offset, stride, order);
-        checkData(data);
-        this.data = data;
-    }
-
-    /**
      * Constructor for new vector.
      */
     public AbstractFloatDense(final int size, final Direction direction, final Storage storage) {
-        this(vectorRows(size, direction), vectorColumns(size, direction), direction.order(), storage);
+        this(vectorRows(size, direction), vectorColumns(size, direction), Order.COLUMN, storage);
     }
 
     /**
      * Constructor for new matrix.
      */
-    public AbstractFloatDense(final int rows, final int columns, final Order orientation, final Storage storage) {
-        this(createBuffer(rows * columns, storage), rows, columns, DEFAULT_OFFSET, DEFAULT_STRIDE, orientation);
+    public AbstractFloatDense(final int rows, final int columns, final Order order, final Storage storage) {
+        super(null, ELEMENT_SIZE, ELEMENT_SIZE_BYTES, rows, columns, DEFAULT_OFFSET, DEFAULT_STRIDE, order);
+        this.data = createBuffer(rows * columns, storage);
+        checkData(this.data);
     }
 
     public final FloatDenseVector asVector() {
+        if (this instanceof FloatDenseVector) {
+            return (FloatDenseVector) this;
+        }
         return new FloatDenseVectorImpl(this, length, offset, stride, Direction.DEFAULT);
     }
 
+    /** {@inheritDoc} */
     @Override
     public final FloatDenseVector column(final int column) {
         return new FloatDenseVectorImpl(this, rows, columnOffset(column), rowStride, Direction.COLUMN);
@@ -105,12 +103,24 @@ abstract class AbstractFloatDense extends AbstractDenseMatrix<FloatDenseVector, 
         return new float[length][];
     }
 
+    /** {@inheritDoc} */
     public final FloatBuffer data() {
         return ((FloatBuffer) data.position(offset)).slice();
     }
 
     public final void divideEquals(final float value) {
         timesEquals(1.0f / value);
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == null || !(obj instanceof AbstractFloatDense)) {
+            return false;
+        }
+        if (this == obj) {
+            return true;
+        }
+        return new EqualsBuilder().appendSuper(super.equals(obj)).isEquals();
     }
 
     @Override
@@ -184,12 +194,19 @@ abstract class AbstractFloatDense extends AbstractDenseMatrix<FloatDenseVector, 
         }
     }
 
+    /** {@inheritDoc} */
     public final Storage storage() {
         return data.isDirect() ? Storage.DIRECT : Storage.HEAP;
     }
 
     public final void timesEquals(final float value) {
         FloatDenseBLAS.DEFAULT.scal(value, asVector());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final String toString() {
+        return FloatMatrixUtils.toString((FloatMatrix) this);
     }
 
     public abstract FloatDenseMatrix transpose();

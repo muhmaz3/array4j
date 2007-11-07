@@ -2,6 +2,9 @@ package com.googlecode.array4j;
 
 import java.util.List;
 
+/**
+ * Single-precision floating point matrix.
+ */
 public interface FloatMatrix extends Matrix {
     /** {@inheritDoc} */
     FloatVector asVector();
@@ -37,8 +40,10 @@ public interface FloatMatrix extends Matrix {
 
     void set(int row, int column, float value);
 
+    /** Set the values in a column of the matrix. */
     void setColumn(int column, FloatVector columnVector);
 
+    /** Set the values in a row of the matrix. */
     void setRow(int row, FloatVector rowVector);
 
     /** Scalar multiplication. */

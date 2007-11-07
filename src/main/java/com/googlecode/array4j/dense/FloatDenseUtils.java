@@ -2,7 +2,6 @@ package com.googlecode.array4j.dense;
 
 import com.googlecode.array4j.Constants;
 import com.googlecode.array4j.Order;
-import com.googlecode.array4j.Storage;
 import com.googlecode.array4j.util.AssertUtils;
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,40 +13,12 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.FileChannel.MapMode;
 
 public final class FloatDenseUtils {
-    public static FloatDenseMatrix arange(final int rows, final int columns, final Order orientation,
-            final Storage storage) {
-        FloatDenseMatrix matrix = DenseFactory.createFloatMatrix(rows, columns, orientation, storage);
-//        for (int i = 0; i < matrix.length(); i++) {
-//            matrix.set(i, (float) i + 1);
-//        }
-        return matrix;
-    }
-
-    public static FloatDenseMatrix createMatrix(final float[]... values) {
-        return createMatrix(Order.DEFAULT, Storage.DEFAULT_FOR_DENSE, values);
-    }
-
-    // TODO change createMatrix functions to valueOf methods of FloatDenseMatrix
-
-    public static FloatDenseMatrix createMatrix(final Order orientation, final Storage storage,
-            final float[]... values) {
-        int rows = values.length;
-        int columns = rows > 0 ? values[0].length : 0;
-//        FloatDenseMatrix matrix = new FloatDenseMatrix(rows, columns, orientation, storage);
-        FloatDenseMatrix matrix = null;
-        for (int i = 0; i < rows; i++) {
-            if (values[i].length != columns) {
-                throw new IllegalArgumentException();
-            }
-            for (int j = 0; j < columns; j++) {
-                matrix.set(i, j, values[i][j]);
-            }
-        }
-        return matrix;
-    }
-
-    // note that mapped files can't reliably be deleted after having been
-    // mapped, so that is why readHTK is also provided
+    /**
+     * Memory map HTK file into matrix.
+     * <p>
+     * Mapped files can't reliably be deleted after having been mapped. If this
+     * presents a problem, use readHTK instead.
+     */
     public static FloatDenseMatrix mapHTK(final File file) throws IOException {
         FileChannel channel = new FileInputStream(file).getChannel();
         ByteBuffer buf = channel.map(MapMode.READ_ONLY, 0, channel.size()).order(ByteOrder.BIG_ENDIAN);

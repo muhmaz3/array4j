@@ -1,10 +1,12 @@
 package com.googlecode.array4j;
 
-public interface DoubleMatrix extends Matrix, DoubleArray {
+public interface DoubleMatrix extends Matrix {
+    /** {@inheritDoc} */
     DoubleVector column(int column);
 
     double get(int row, int column);
 
+    /** {@inheritDoc} */
     DoubleVector row(int row);
 
     void set(int row, int column, double value);

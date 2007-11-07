@@ -7,12 +7,15 @@ import com.googlecode.array4j.Storage;
 import com.googlecode.array4j.util.BufferUtils;
 import java.nio.Buffer;
 import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 
 /**
  * Abstract base class for dense (full) matrices.
  */
 public abstract class AbstractDenseMatrix<V extends DenseVector, T> extends AbstractMatrix<V> implements DenseMatrix {
-    protected static Order defaultOrder(final Matrix matrix) {
+    private static final long serialVersionUID = 1L;
+
+    protected static Order orderLike(final Matrix matrix) {
         if (matrix instanceof DenseMatrix) {
             return ((DenseMatrix) matrix).order();
         } else {
@@ -20,7 +23,7 @@ public abstract class AbstractDenseMatrix<V extends DenseVector, T> extends Abst
         }
     }
 
-    protected static Storage defaultStorage(final Matrix matrix) {
+    protected static Storage storageLike(final Matrix matrix) {
         if (matrix instanceof DenseMatrix) {
             return ((DenseMatrix) matrix).storage();
         } else {
@@ -123,12 +126,20 @@ public abstract class AbstractDenseMatrix<V extends DenseVector, T> extends Abst
             return true;
         }
         AbstractDenseMatrix<?, ?> other = (AbstractDenseMatrix<?, ?>) obj;
-        return new EqualsBuilder().appendSuper(super.equals(obj)).append(elementSize, other.elementSize).append(
-                order, other.order).isEquals();
+        EqualsBuilder equalsBuilder = new EqualsBuilder();
+        equalsBuilder.appendSuper(super.equals(obj));
+        equalsBuilder.append(elementSize, other.elementSize);
+        equalsBuilder.append(order, other.order);
+        return equalsBuilder.isEquals();
     }
 
     // TODO give this method a better name
     protected abstract void fillFrom(T dest, int srcPos);
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(elementSize).append(order).toHashCode();
+    }
 
     @Override
     public final int leadingDimension() {

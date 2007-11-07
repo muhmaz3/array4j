@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public final class MatrixInputStream extends DataInputStream implements MatrixInput {
-
     public MatrixInputStream(final InputStream in) {
         super(new BufferedInputStream(in));
     }

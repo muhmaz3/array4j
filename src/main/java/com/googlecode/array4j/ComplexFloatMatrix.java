@@ -1,13 +1,15 @@
 package com.googlecode.array4j;
 
 /**
- * Complex single precision floating point matrix.
+ * Complex single-precision floating point matrix.
  */
-public interface ComplexFloatMatrix extends ComplexMatrix, ComplexFloatArray {
+public interface ComplexFloatMatrix extends ComplexMatrix {
+    /** {@inheritDoc} */
     Iterable<? extends ComplexFloatVector> columnsIterator();
 
     ComplexFloat get(int row, int column);
 
+    /** {@inheritDoc} */
     Iterable<? extends ComplexFloatVector> rowsIterator();
 
     void set(int row, int column, ComplexFloat value);
@@ -20,5 +22,6 @@ public interface ComplexFloatMatrix extends ComplexMatrix, ComplexFloatArray {
 
     ComplexFloat[][] toRowArrays();
 
+    /** {@inheritDoc} */
     ComplexFloatMatrix transpose();
 }
