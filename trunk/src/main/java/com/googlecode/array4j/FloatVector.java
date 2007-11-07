@@ -1,5 +1,8 @@
 package com.googlecode.array4j;
 
+/**
+ * Single-precision floating point vector.
+ */
 public interface FloatVector extends Vector, FloatMatrix {
     /** Get value of element at index. */
     float get(int index);

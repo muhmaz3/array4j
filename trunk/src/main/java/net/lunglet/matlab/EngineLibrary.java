@@ -45,7 +45,6 @@ public interface EngineLibrary extends Library {
      *
      * @param startcmd
      *                exec command string used to start matlab
-     * @return
      */
     EnginePointer engOpen(String startcmd);
 
@@ -69,7 +68,7 @@ public interface EngineLibrary extends Library {
      * The buffer returned by engEvalString is not guaranteed to be NULL
      * terminated.
      *
-     * @param engine
+     * @param ep
      *                pointer
      * @param buffer
      *                character array to hold output

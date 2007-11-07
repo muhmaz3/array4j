@@ -1,7 +1,7 @@
 package com.googlecode.array4j;
 
 /**
- * Complex single precision floating point vector.
+ * Complex single-precision floating point vector.
  */
 public interface ComplexFloatVector extends ComplexVector, ComplexFloatMatrix {
     /** Get value of element at index. */

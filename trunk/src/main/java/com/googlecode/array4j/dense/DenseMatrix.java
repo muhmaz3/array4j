@@ -24,7 +24,7 @@ public interface DenseMatrix extends Matrix {
 
     int leadingDimension();
 
-    /** Get the offset of the first element. */
+    /** Get the offset into the data buffer of the first element. */
     int offset();
 
     /** Get the storage order (row-major or column-major). */

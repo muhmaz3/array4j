@@ -9,7 +9,9 @@ import com.googlecode.array4j.dense.FloatDenseVector;
 import com.googlecode.array4j.math.FloatMatrixUtils;
 import com.googlecode.array4j.util.BufferUtils;
 import java.nio.FloatBuffer;
+import net.jcip.annotations.NotThreadSafe;
 
+@NotThreadSafe
 final class FloatPackedMatrixImpl extends AbstractPackedMatrix<FloatDenseVector> implements FloatPackedMatrix {
     private static final long serialVersionUID = 1L;
 
@@ -34,10 +36,12 @@ final class FloatPackedMatrixImpl extends AbstractPackedMatrix<FloatDenseVector>
         return v;
     }
 
+    /** {@inheritDoc} */
     public FloatBuffer data() {
         return ((FloatBuffer) data.position(0)).slice();
     }
 
+    /** {@inheritDoc} */
     @Override
     public void divideEquals(final float value) {
         throw new UnsupportedOperationException();
@@ -52,16 +56,19 @@ final class FloatPackedMatrixImpl extends AbstractPackedMatrix<FloatDenseVector>
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public void minusEquals(final float value) {
         throw new UnsupportedOperationException();
     }
 
+    /** {@inheritDoc} */
     @Override
     public void plusEquals(final float value) {
         throw new UnsupportedOperationException();
     }
 
+    /** {@inheritDoc} */
     @Override
     public FloatDenseVector row(final int row) {
         FloatDenseVector v = DenseFactory.createFloatVector(columns(), Direction.ROW, storage());
@@ -77,6 +84,7 @@ final class FloatPackedMatrixImpl extends AbstractPackedMatrix<FloatDenseVector>
         data.put(elementOffset(row, column), value);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void setColumn(final int column, final FloatVector columnVector) {
         checkColumnIndex(column);
@@ -92,6 +100,7 @@ final class FloatPackedMatrixImpl extends AbstractPackedMatrix<FloatDenseVector>
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public void setRow(final int row, final FloatVector rowVector) {
         checkRowIndex(row);
@@ -107,17 +116,18 @@ final class FloatPackedMatrixImpl extends AbstractPackedMatrix<FloatDenseVector>
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public Storage storage() {
         return data.isDirect() ? Storage.DIRECT : Storage.HEAP;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void timesEquals(final float value) {
         throw new UnsupportedOperationException();
     }
 
-    @Override
     public float[] toArray() {
         // TODO figure out if this returns a dense array or a packed array
         // TODO a packed array will probably be more useful
@@ -134,16 +144,19 @@ final class FloatPackedMatrixImpl extends AbstractPackedMatrix<FloatDenseVector>
         throw new UnsupportedOperationException();
     }
 
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return FloatMatrixUtils.toString(this);
     }
 
+    /** {@inheritDoc} */
     @Override
     public FloatPackedMatrix transpose() {
         return new FloatPackedMatrixImpl(data, rows, columns, packedType.transpose());
     }
 
+    /** {@inheritDoc} */
     @Override
     public void plusEquals(final FloatMatrix other) {
         if (!(other instanceof FloatPackedMatrix)) {

@@ -7,16 +7,18 @@ import com.googlecode.array4j.packed.FloatPackedMatrix;
 import com.googlecode.array4j.util.BufferUtils;
 import java.io.IOException;
 import java.nio.FloatBuffer;
+import net.jcip.annotations.NotThreadSafe;
 import net.lunglet.hdf.DataSet;
 import net.lunglet.hdf.DataSpace;
 import net.lunglet.hdf.FloatType;
 import net.lunglet.hdf.H5File;
 import net.lunglet.hdf.SelectionOperator;
 
-// TODO handle any orientation, stride, offset, size, etc.
+// TODO handle any order, stride, offset, size, etc.
 
 // TODO write generic function to do direct buffered reads from any dataset into a heap buffer
 
+@NotThreadSafe
 public final class HDFReader {
     private static final int DEFAULT_BUFFER_SIZE = 4 * 1024 * 1024;
 

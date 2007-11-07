@@ -3,16 +3,18 @@ package com.googlecode.array4j.io;
 import com.googlecode.array4j.Order;
 import com.googlecode.array4j.dense.FloatDenseMatrix;
 import com.googlecode.array4j.packed.FloatPackedMatrix;
+import net.jcip.annotations.NotThreadSafe;
 import net.lunglet.hdf.DataSet;
 import net.lunglet.hdf.DataType;
 import net.lunglet.hdf.FloatType;
 import net.lunglet.hdf.H5File;
 
-// TODO handle any orientation, stride, offset, size, etc.
+// TODO handle any order, stride, offset, size, etc.
 
 // TODO write via an intermediate direct buffer if matrix is
 // stored on the heap and exceeds some maximum size
 
+@NotThreadSafe
 public final class HDFWriter {
     private final H5File h5file;
 

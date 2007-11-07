@@ -5,7 +5,7 @@ package com.googlecode.array4j;
  */
 public interface ComplexMatrix extends Matrix {
     /** Conjugate matrix in-place. */
-    void conj();
+    void conjEquals();
 
     /** {@inheritDoc} */
     ComplexMatrix transpose();

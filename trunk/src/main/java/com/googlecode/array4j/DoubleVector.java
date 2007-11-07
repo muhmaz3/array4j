@@ -5,6 +5,6 @@ public interface DoubleVector extends Vector, DoubleMatrix {
 
     void set(int index, double value);
 
-    /** @{inheritDoc} */
+    /** {@inheritDoc} */
     DoubleVector transpose();
 }

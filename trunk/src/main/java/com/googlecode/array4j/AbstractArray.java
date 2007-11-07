@@ -4,9 +4,12 @@ import com.googlecode.array4j.util.AssertUtils;
 import java.util.Arrays;
 import org.apache.commons.lang.builder.EqualsBuilder;
 
-// TODO rename length
-
+/**
+ * Abstract base class for multidimensional arrays.
+ */
 public abstract class AbstractArray implements Array {
+    private static final long serialVersionUID = 1L;
+
     protected final int length;
 
     protected final int[] shape;

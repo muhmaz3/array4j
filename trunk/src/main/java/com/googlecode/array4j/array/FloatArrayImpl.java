@@ -3,7 +3,9 @@ package com.googlecode.array4j.array;
 import com.googlecode.array4j.AbstractArray;
 import com.googlecode.array4j.FloatArray;
 import java.nio.FloatBuffer;
+import net.jcip.annotations.NotThreadSafe;
 
+@NotThreadSafe
 final class FloatArrayImpl extends AbstractArray implements FloatArray {
     private static final long serialVersionUID = 1L;
 
@@ -11,11 +13,5 @@ final class FloatArrayImpl extends AbstractArray implements FloatArray {
 
     public FloatArrayImpl(final int... shape) {
         super(shape);
-    }
-
-    @Override
-    public float[] toArray() {
-        // TODO Auto-generated method stub
-        return null;
     }
 }
