@@ -1,8 +1,5 @@
 package net.lunglet.svm;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 class Solver {
     // java: information about solution except alpha,
     // because we cannot return multiple values otherwise...
@@ -43,8 +40,6 @@ class Solver {
     double[] G_bar; // gradient, if we treat free variables as 0
 
     int l;
-
-    private Log log = LogFactory.getLog(Solver.class);
 
     double[] p;
 
@@ -544,7 +539,7 @@ class Solver {
         si.upper_bound_p = Cp;
         si.upper_bound_n = Cn;
 
-        log.info("optimization finished, #iter = " + iter);
+//        log.info("optimization finished, #iter = " + iter);
     }
 
     void swap_index(final int i, final int j) {

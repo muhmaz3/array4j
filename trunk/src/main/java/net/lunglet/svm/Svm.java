@@ -1,8 +1,6 @@
 package net.lunglet.svm;
 
 import com.googlecode.array4j.FloatVector;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 final class Svm {
     static class decision_function {
@@ -390,8 +388,6 @@ final class Svm {
         }
     }
 
-    private Log log = LogFactory.getLog(Svm.class);
-
     // Method 2 from the multiclass_prob paper by Wu, Lin, and Weng
     private void multiclass_probability(final int k, final double[][] r, final double[] p) {
         int t, j;
@@ -444,7 +440,7 @@ final class Svm {
             }
         }
         if (iter >= max_iter) {
-            log.error("Exceeds max_iter in multiclass_prob");
+//            log.error("Exceeds max_iter in multiclass_prob");
         }
     }
 
@@ -554,13 +550,13 @@ final class Svm {
             }
 
             if (stepsize < min_step) {
-                log.error("Line search fails in two-class probability estimates");
+//                log.error("Line search fails in two-class probability estimates");
                 break;
             }
         }
 
         if (iter >= max_iter) {
-            log.error("Reaching maximal iterations in two-class probability estimates");
+//            log.error("Reaching maximal iterations in two-class probability estimates");
         }
         probAB[0] = A;
         probAB[1] = B;
@@ -594,7 +590,7 @@ final class Svm {
         }
 
         if (Cp == Cn) {
-            log.info("nu = " + sumAlpha / (Cp * prob.l));
+//            log.info("nu = " + sumAlpha / (Cp * prob.l));
         }
 
         for (i = 0; i < l; i++) {
@@ -628,7 +624,7 @@ final class Svm {
             alpha[i] = alpha2[i] - alpha2[i + l];
             sumAlpha += Math.abs(alpha[i]);
         }
-        log.info("nu = " + sumAlpha / (param.C * l));
+//        log.info("nu = " + sumAlpha / (param.C * l));
     }
 
     private void solve_nu_svr(final SvmProblem prob, final SvmParameter param, final double[] alpha,
@@ -655,7 +651,7 @@ final class Svm {
         NuSolver s = new NuSolver();
         s.Solve(2 * l, new SVRKernel(prob, param), linear_term, y, alpha2, C, C, param.eps, si, param.shrinking);
 
-        log.info("epsilon = " + (-si.r));
+//        log.info("epsilon = " + (-si.r));
 
         for (i = 0; i < l; i++) {
             alpha[i] = alpha2[i] - alpha2[i + l];
@@ -870,7 +866,7 @@ final class Svm {
                 && model.probA != null) {
             return model.probA[0];
         } else {
-            log.error("Model doesn't contain information for SVR probability inference");
+//            log.error("Model doesn't contain information for SVR probability inference");
             return 0;
         }
     }
@@ -935,8 +931,8 @@ final class Svm {
             }
         }
         mae /= (prob.l - count);
-        log.error("Prob. model for test data: target value = predicted value + z");
-        log.error("z: Laplace distribution e^(-|z|/sigma)/(2sigma),sigma=" + mae);
+//        log.info("Prob. model for test data: target value = predicted value + z");
+//        log.info("z: Laplace distribution e^(-|z|/sigma)/(2sigma),sigma=" + mae);
         return mae;
     }
 
@@ -1020,7 +1016,7 @@ final class Svm {
                     }
                 }
                 if (j == nr_class) {
-                    log.error("warning: class label " + param.weight_label[i] + " specified in weight is not found");
+//                    log.error("warning: class label " + param.weight_label[i] + " specified in weight is not found");
                 } else {
                     weighted_C[j] *= param.weight[i];
                 }
@@ -1123,7 +1119,7 @@ final class Svm {
                 nzCount[i] = nSV;
             }
 
-            log.info("Total nSV = " + nnz);
+//            log.info("Total nSV = " + nnz);
 
             model.l = nnz;
             model.SV = new SvmNode[nnz];
@@ -1201,7 +1197,7 @@ final class Svm {
             throw new AssertionError();
         }
 
-        log.info("obj = " + si.obj + ", rho = " + si.rho);
+//        log.info("obj = " + si.obj + ", rho = " + si.rho);
 
         // output SVs
 
@@ -1222,7 +1218,7 @@ final class Svm {
             }
         }
 
-        log.info("nSV = " + nSV + ", nBSV = " + nBSV);
+//        log.info("nSV = " + nSV + ", nBSV = " + nBSV);
 
         decision_function f = new decision_function();
         f.alpha = alpha;
