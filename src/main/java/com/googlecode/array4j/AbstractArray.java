@@ -3,6 +3,7 @@ package com.googlecode.array4j;
 import com.googlecode.array4j.util.AssertUtils;
 import java.util.Arrays;
 import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 
 /**
  * Abstract base class for multidimensional arrays.
@@ -43,6 +44,11 @@ public abstract class AbstractArray implements Array {
         }
         AbstractArray other = (AbstractArray) obj;
         return new EqualsBuilder().append(shape, other.shape).isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(shape).toHashCode();
     }
 
     protected final int length() {
