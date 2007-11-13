@@ -32,7 +32,6 @@ public final class DataSetTest {
         attr.write(buf, dtype);
         attr.close();
         attr = dataset.openAttribute("attr");
-        // TODO fix this
         assertEquals("/dataset/attr", attr.getName());
         DataType dtype2 = attr.getType();
         assertSame(dtype, dtype2);

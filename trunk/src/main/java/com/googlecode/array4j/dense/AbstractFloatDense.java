@@ -13,8 +13,9 @@ import java.nio.FloatBuffer;
 import java.util.Arrays;
 import org.apache.commons.lang.builder.EqualsBuilder;
 
-// TODO implement toString in this class
-
+/**
+ * Abstract base class for dense floating point matrix and vector.
+ */
 abstract class AbstractFloatDense extends AbstractDenseMatrix<FloatDenseVector, float[]> {
     private static final int DEFAULT_OFFSET = 0;
 

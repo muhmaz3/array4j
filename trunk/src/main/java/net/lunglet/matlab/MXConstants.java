@@ -1,6 +1,6 @@
 package net.lunglet.matlab;
 
-//#define mxINDEX_CLASS ((sizeof(size_t)==4) ? mxUINT32_CLASS : mxUINT64_CLASS)
+import com.sun.jna.NativeLong;
 
 public interface MXConstants {
     int CELL_CLASS = 1;
@@ -44,4 +44,6 @@ public interface MXConstants {
     int UNKNOWN_CLASS = 0;
 
     int VOID_CLASS = 5;
+
+    int INDEX_CLASS = NativeLong.SIZE == 4 ? UINT32_CLASS : UINT64_CLASS;
 }

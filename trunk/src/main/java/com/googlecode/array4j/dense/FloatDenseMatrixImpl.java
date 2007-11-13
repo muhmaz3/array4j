@@ -27,6 +27,9 @@ final class FloatDenseMatrixImpl extends AbstractFloatDense implements FloatDens
         copy(other, this);
     }
 
+    /**
+     * Construct with specified dimensions, order and storage.
+     */
     public FloatDenseMatrixImpl(final int rows, final int columns, final Order order, final Storage storage) {
         super(rows, columns, order, storage);
     }

@@ -20,8 +20,8 @@ public final class FloatDenseUtilsTest {
 
     private final Order order;
 
-    public FloatDenseUtilsTest(final Order orientation) {
-        this.order = orientation;
+    public FloatDenseUtilsTest(final Order order) {
+        this.order = order;
     }
 
     @Test
