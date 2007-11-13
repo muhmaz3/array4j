@@ -1,5 +1,8 @@
 package com.googlecode.array4j;
 
+// TODO possibly get rid of Direction.BOTH, because it can
+// cause confusion in functions like AbstractMatrix#vectorRows
+
 /**
  * Vector direction.
  */

@@ -28,7 +28,7 @@ final class FloatDenseVectorImpl extends AbstractFloatDense implements FloatDens
     }
 
     /**
-     * Construct with specified direction and storage.
+     * Construct with specified length, direction and storage.
      */
     public FloatDenseVectorImpl(final int length, final Direction direction, final Storage storage) {
         super(length, direction, storage);
