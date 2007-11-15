@@ -8,13 +8,11 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-// TODO rename to SvmClassifier
-
 // TODO handle more than 2 classes everywhere (major benefit: kernel cache is probably reused)
 
 // TODO factor out compact-only methods into their own class, an instance of which is returned by compact
 
-public final class SimpleSvm implements Serializable {
+public final class SvmClassifier implements Serializable {
     private static final long serialVersionUID = 1L;
 
     // TODO make a SvmParameterBuilder so anything can be configured
@@ -59,15 +57,15 @@ public final class SimpleSvm implements Serializable {
 
     private final SvmProblem problem;
 
-    public SimpleSvm(final List<Handle> data) {
+    public SvmClassifier(final List<Handle> data) {
         this(data, (PrecomputedKernel) null);
     }
 
-    public SimpleSvm(final List<Handle> data, final FloatMatrix kernel) {
+    public SvmClassifier(final List<Handle> data, final FloatMatrix kernel) {
         this(data, createPrecomputedKernel(data, kernel));
     }
 
-    public SimpleSvm(final List<Handle> data, final PrecomputedKernel kernel) {
+    public SvmClassifier(final List<Handle> data, final PrecomputedKernel kernel) {
         this.data = new ArrayList<Handle>(data);
         this.kernel = kernel;
         problem = new SvmProblem();
@@ -86,7 +84,7 @@ public final class SimpleSvm implements Serializable {
         problem.kernel = kernel;
     }
 
-    SimpleSvm(final SvmModel model) {
+    SvmClassifier(final SvmModel model) {
         this.data = null;
         this.kernel = null;
         this.model = model;
@@ -96,7 +94,7 @@ public final class SimpleSvm implements Serializable {
     /**
      * Compact model so that it consists of a single support vector per class.
      */
-    public SimpleSvm compact() {
+    public SvmClassifier compact() {
         if (model == null) {
             throw new IllegalStateException();
         }

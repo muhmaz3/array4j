@@ -3,12 +3,6 @@ package com.googlecode.array4j;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
-// TODO implement BigIntegerArray on top of ObjectArray
-
-// TODO implement BigDecimalArray on top of ObjectArray
-
-// TODO possibly derive them from AbstractNumberArray<E extends Number>
-
 public class ObjectArray<T> extends AbstractArray {
     private static final long serialVersionUID = 1L;
 
