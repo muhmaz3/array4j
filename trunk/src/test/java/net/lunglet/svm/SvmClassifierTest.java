@@ -27,7 +27,7 @@ import org.junit.Test;
 
 // TODO test with heap and direct data oriented both ways
 
-public final class SvmTest {
+public final class SvmClassifierTest {
     @SuppressWarnings("unchecked")
     private static List<Handle> createHandles(final List<? extends FloatVector> data, final int[] labels) {
         List<Handle> handles = new ArrayList<Handle>();
@@ -218,17 +218,17 @@ public final class SvmTest {
                 FloatDenseMatrix precomputedScores = getPrecomputedScores(data, kernel, labels, cost);
 
                 // train SVM using linear kernel
-                SimpleSvm svm1 = new SimpleSvm(createHandles(data.columnsList(), labels));
+                SvmClassifier svm1 = new SvmClassifier(createHandles(data.columnsList(), labels));
                 svm1.train(cost);
                 FloatDenseMatrix scores1 = svm1.score(data);
-                SimpleSvm svm1compact = svm1.compact();
+                SvmClassifier svm1compact = svm1.compact();
                 FloatDenseMatrix scores2 = svm1compact.score(data);
 
                 // train SVM using precomputed kernel
-                SimpleSvm svm2 = new SimpleSvm(createHandles(data.columnsList(), labels), kernel);
+                SvmClassifier svm2 = new SvmClassifier(createHandles(data.columnsList(), labels), kernel);
                 svm2.train(cost);
                 FloatDenseMatrix scores3 = svm2.score(data);
-                SimpleSvm svm2compact = svm2.compact();
+                SvmClassifier svm2compact = svm2.compact();
                 FloatDenseMatrix scores4 = svm2compact.score(data);
 
                 for (FloatDenseMatrix scores : new FloatDenseMatrix[]{scores1, scores2, scores3, scores4}) {

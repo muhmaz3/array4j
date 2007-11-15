@@ -7,6 +7,8 @@ import com.googlecode.array4j.util.AssertUtils;
 import java.util.HashMap;
 import java.util.Map;
 
+// TODO rename this class
+
 public final class CompactSimpleSvmBuilder {
     private final SvmModel compactModel;
 
@@ -35,7 +37,7 @@ public final class CompactSimpleSvmBuilder {
         this.sv = null;
     }
 
-    public SimpleSvm build() {
+    public SvmClassifier build() {
         if (weights.size() != 0) {
             throw new IllegalStateException("required training data was not presented");
         }
@@ -43,7 +45,7 @@ public final class CompactSimpleSvmBuilder {
         compactModel.sv_coef = new double[][]{{1.0, 0.0}};
         compactModel.nSV = new int[]{1, 0};
         compactModel.l = 1;
-        return new SimpleSvm(compactModel);
+        return new SvmClassifier(compactModel);
     }
 
     public void present(final FloatVector x, final int index) {
