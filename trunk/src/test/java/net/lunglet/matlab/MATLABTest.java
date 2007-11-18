@@ -82,6 +82,7 @@ public final class MATLABTest {
         InputStream stream = getClass().getResourceAsStream("version.m");
         assertNotNull(stream);
         assertTrue(engine.eval(stream).contains("ans"));
+        assertEquals(null, engine.eval("version", false));
         engine.close();
     }
 
