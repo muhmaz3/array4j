@@ -29,6 +29,9 @@ public final class Engine {
         if (startcmd != null && Platform.isWindows()) {
             throw new IllegalArgumentException("startcmd must be null on Windows");
         }
+        if (outputBufferSize < 0) {
+            throw new IllegalArgumentException("output buffer size must be >= 0");
+        }
         if (singleUse) {
             IntByReference retstatus = new IntByReference();
             this.ep = EngineLibrary.INSTANCE.engOpenSingleUse(startcmd, null, retstatus);
@@ -53,29 +56,45 @@ public final class Engine {
     /**
      * @param command null-terminated command to evaluate
      */
-    private String eval(final byte[] command) {
+    private String eval(final byte[] command, final boolean keepOutput) {
         if (command[command.length - 1] != 0) {
             throw new IllegalArgumentException("command must be null-terminated");
         }
-        ByteBuffer buffer = ByteBuffer.allocateDirect(outputBufferSize);
-        EngineLibrary.INSTANCE.engOutputBuffer(ep, buffer, buffer.capacity());
+        final ByteBuffer buffer;
+        if (outputBufferSize > 0 && keepOutput) {
+            buffer = ByteBuffer.allocateDirect(outputBufferSize);
+            EngineLibrary.INSTANCE.engOutputBuffer(ep, buffer, buffer.capacity());
+        } else {
+            buffer = null;
+            EngineLibrary.INSTANCE.engOutputBuffer(ep, null, 0);
+        }
         // TODO might want engEvalString(ep, "evalin('base', expression)") here
         int result = EngineLibrary.INSTANCE.engEvalString(ep, command);
         if (result != 0) {
             throw new RuntimeException("MATLAB session no longer running");
         }
         EngineLibrary.INSTANCE.engOutputBuffer(ep, null, 0);
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        for (int i = 0; i < buffer.capacity(); i++) {
-            byte value = buffer.get(i);
-            if (value != 0) {
-                baos.write(value);
+        if (buffer != null) {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            for (int i = 0; i < buffer.capacity(); i++) {
+                byte value = buffer.get(i);
+                if (value != 0) {
+                    baos.write(value);
+                }
             }
+            return new String(baos.toByteArray()).trim();
         }
-        return new String(baos.toByteArray()).trim();
+        return null;
     }
 
+    /**
+     * Evaluate commands from stream and keep output.
+     */
     public String eval(final InputStream stream) throws IOException {
+        return eval(stream, true);
+    }
+
+    public String eval(final InputStream stream, final boolean keepOutput) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         byte[] b = new byte[16384];
         int len = 0;
@@ -86,14 +105,21 @@ public final class Engine {
             }
         }
         baos.write(0);
-        return eval(baos.toByteArray());
+        return eval(baos.toByteArray(), keepOutput);
     }
 
+    /**
+     * Evalulate command and keep output.
+     */
     public String eval(final String command) {
+        return eval(command, true);
+    }
+
+    public String eval(final String command, final boolean keepOutput) {
         byte[] bytes = command.getBytes();
         byte[] nullBytes = new byte[bytes.length + 1];
         System.arraycopy(bytes, 0, nullBytes, 0, bytes.length);
-        return eval(nullBytes);
+        return eval(nullBytes, keepOutput);
     }
 
     public MXArray getVariable(final String name) {
