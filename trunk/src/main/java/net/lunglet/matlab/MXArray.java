@@ -6,6 +6,18 @@ import com.sun.jna.PointerType;
 import java.nio.ByteBuffer;
 import java.nio.DoubleBuffer;
 
+/*
+ * TODO automatically cleanup MXArrays as outlined here:
+ * http://java.sun.com/developer/technicalArticles/javase/finalization/
+ *
+ * TODO check return error codes and throw exceptions instead of
+ * exposing the error code in the API
+ *
+ * TODO make sure that setPr and setPi keep references to their
+ * arguments. It would probably also make sense to ensure that they
+ * only accept direct buffers.
+ */
+
 public final class MXArray extends PointerType {
     public MXArray() {
     }
