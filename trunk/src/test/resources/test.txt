@@ -1,0 +1,3 @@
+array4j rocks!
+
+$Author$
