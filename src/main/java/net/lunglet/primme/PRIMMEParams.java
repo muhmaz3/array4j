@@ -1,13 +1,9 @@
 package net.lunglet.primme;
 
-import com.sun.jna.Callback;
 import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
-import java.nio.DoubleBuffer;
 import net.lunglet.primme.PRIMMELibrary.MatrixMatvecCallback;
-
-// TODO fix order of fields in this structure
 
 /**
  * PRIMME parameters.
@@ -63,6 +59,10 @@ import net.lunglet.primme.PRIMMELibrary.MatrixMatvecCallback;
  * </CODE>
  */
 public final class PRIMMEParams extends Structure {
+    public PRIMMEParams() {
+        this(0, Target.smallest, 0, null);
+    }
+
     /**
      * @param numEvals number of eigenvalues wanted
      * @param n dimension of the matrix
@@ -101,87 +101,82 @@ public final class PRIMMEParams extends Structure {
         correctionParams.convTest = ConvergenceTest.full_LTolerance.ordinal();
         correctionParams.projectors = new JDProjectors();
         allocateMemory();
-        PRIMMELibrary.INSTANCE.primme_initialize(this);
-        int ret = PRIMMELibrary.INSTANCE.primme_set_method(PresetMethod.DYNAMIC, this);
-        if (ret == 0 || ret != 0) {
-            throw new RuntimeException("primme_set_method failed");
-        }
     }
 
-    double aNorm;
+    public int n;
 
-    Pointer applyPreconditioner;
+    public MatrixMatvecCallback matrixMatvec;
 
-    Pointer commInfo;
+    public Pointer applyPreconditioner;
 
-    CorrectionParams correctionParams;
+    public Pointer massMatrixMatvec;
 
-    int dynamicMethodSwitch;
+    public int numProcs;
 
-    double eps;
+    public int procID;
 
-    Pointer globalSumDouble;
+    public int nLocal;
 
-    int initSize;
+    public Pointer commInfo;
 
-    int intWorkSize;
-
-    int locking;
-
-    Callback massMatrixMatvec;
-
-    Pointer matrix;
-
-    Callback matrixMatvec;
-
-    int maxBasisSize;
-
-    int maxBlockSize;
-
-    int maxMatvecs;
-
-    int maxOuterIterations;
-
-    int minRestartSize;
-
-    int n;
-
-    int nLocal;
+    public Pointer globalSumDouble;
 
     /** Number of eigenvalues wanted. */
-    int numEvals;
+    public int numEvals;
 
-    int numOrthoConst;
+    public int target;
 
-    int numProcs;
+    public int numTargetShifts;
 
-    NativeLong realWorkSize;
+    public Pointer targetShifts;
 
-    int[] iseed;
+    public int dynamicMethodSwitch;
 
-    Pointer intWork;
+    public int locking;
 
-    int numTargetShifts;
+    public int initSize;
 
-    Pointer outputFile;
+    public int numOrthoConst;
 
-    Pointer preconditioner;
+    public int maxBasisSize;
 
-    int printLevel;
+    public int minRestartSize;
 
-    int procID;
+    public int maxBlockSize;
 
-    Pointer realWork;
+    public int maxMatvecs;
 
-    RestartingParams restartingParams;
+    public int maxOuterIterations;
 
-    DoubleBuffer shiftsForPreconditioner;
+    public int intWorkSize;
 
-    Pointer stackTrace;
+    public NativeLong realWorkSize;
 
-    Stats stats;
+    public int[] iseed;
 
-    int target;
+    public Pointer intWork;
 
-    DoubleBuffer targetShifts;
+    public Pointer realWork;
+
+    public double aNorm;
+
+    public double eps;
+
+    public int printLevel;
+
+    public Pointer outputFile;
+
+    public Pointer matrix;
+
+    public Pointer preconditioner;
+
+    public Pointer shiftsForPreconditioner;
+
+    public RestartingParams restartingParams;
+
+    public CorrectionParams correctionParams;
+
+    public Stats stats;
+
+    public Pointer stackTrace;
 }

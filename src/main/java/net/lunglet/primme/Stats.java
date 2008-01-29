@@ -14,13 +14,13 @@ import com.sun.jna.Structure;
  * </CODE>
  */
 public final class Stats extends Structure {
-    int numOuterIterations;
+    public int numOuterIterations;
 
-    int numRestarts;
+    public int numRestarts;
 
-    int numMatvecs;
+    public int numMatvecs;
 
-    int numPreconds;
+    public int numPreconds;
 
-    double elapsedTime;
+    public double elapsedTime;
 }
