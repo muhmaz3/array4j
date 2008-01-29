@@ -18,16 +18,16 @@ import com.sun.jna.Structure;
  */
 public final class CorrectionParams extends Structure {
     /** Flag to set if preconditioning is to be performed. */
-    int precondition;
+    public int precondition;
 
-    int robustShifts;
+    public int robustShifts;
 
-    int maxInnerIterations;
+    public int maxInnerIterations;
 
-    JDProjectors projectors;
+    public JDProjectors projectors;
 
     /** How to stop the inner QMR method. */
-    int convTest;
+    public int convTest;
 
-    double relTolBase;
+    public double relTolBase;
 }

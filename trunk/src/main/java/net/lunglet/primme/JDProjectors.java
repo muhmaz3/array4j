@@ -16,20 +16,20 @@ import com.sun.jna.Structure;
  */
 public final class JDProjectors extends Structure {
     /** Set if a projector with Q must be applied on the left. */
-    int leftQ;
+    public int leftQ;
 
     /** Set if a projector with X must be applied on the left. */
-    int leftX;
+    public int leftX;
 
     /** Set if a projector with Q must be applied on the right. */
-    int rightQ;
+    public int rightQ;
 
     /** Set if a projector with X must be applied on the right. */
-    int rightX;
+    public int rightX;
 
     /** Set if the Q right projector must be skew. */
-    int skewQ;
+    public int skewQ;
 
     /** Set if the X right projector must be skew. */
-    int skewX;
+    public int skewX;
 }

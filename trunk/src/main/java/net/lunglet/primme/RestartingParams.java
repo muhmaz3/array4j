@@ -14,7 +14,7 @@ import com.sun.jna.Structure;
  */
 public final class RestartingParams extends Structure {
     /** Restart scheme. */
-    int scheme;
+    public int scheme;
 
     /**
      * Number of approximations from previous iteration to be retained after
@@ -24,5 +24,5 @@ public final class RestartingParams extends Structure {
      * <CODE>maxPrevRetain > 0</CODE>, then the restart size will be
      * <CODE>minRestartSize + maxPrevRetain</CODE>.
      */
-    int maxPrevRetain;
+    public int maxPrevRetain;
 }
