@@ -13,10 +13,11 @@ public final class BufferUtils {
         if (alignment < 1) {
             throw new IllegalArgumentException();
         }
-//        ByteBuffer buffer = ByteBuffer.allocateDirect(size + alignment - 1);
         ByteBuffer buffer = ByteBuffer.allocateDirect(size);
         // TODO get buffer address to calculate position for slice
-        // TODO use array4j_addressof here
+        // TODO maybe use array4j_addressof here
+//        ByteBuffer buffer = ByteBuffer.allocateDirect(size + alignment - 1);
+        // TODO new Memory(size).align(alignment).getByteBuffer(0, size);
         return ((ByteBuffer) buffer.order(ByteOrder.nativeOrder()).position(0)).slice();
     }
 
@@ -28,9 +29,20 @@ public final class BufferUtils {
             final ByteBuffer buffer = createAlignedBuffer(2 * size * Constants.FLOAT_BYTES, 16);
             buffer.order(ByteOrder.nativeOrder());
             return buffer.asFloatBuffer();
-        } else {
-            return FloatBuffer.allocate(2 * size);
         }
+        return FloatBuffer.allocate(2 * size);
+    }
+
+    public static DoubleBuffer createDoubleBuffer(final int size, final Storage storage) {
+        if (size < 0) {
+            throw new IllegalArgumentException();
+        }
+        if (storage.equals(Storage.DIRECT)) {
+            final ByteBuffer buffer = createAlignedBuffer(size * Constants.DOUBLE_BYTES, 16);
+            buffer.order(ByteOrder.nativeOrder());
+            return buffer.asDoubleBuffer();
+        }
+        return DoubleBuffer.allocate(size);
     }
 
     public static FloatBuffer createFloatBuffer(final int size, final Storage storage) {
@@ -41,9 +53,8 @@ public final class BufferUtils {
             final ByteBuffer buffer = createAlignedBuffer(size * Constants.FLOAT_BYTES, 16);
             buffer.order(ByteOrder.nativeOrder());
             return buffer.asFloatBuffer();
-        } else {
-            return FloatBuffer.allocate(size);
         }
+        return FloatBuffer.allocate(size);
     }
 
     public static int getBytesCapacity(final Buffer buf) {
