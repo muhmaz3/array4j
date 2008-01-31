@@ -37,11 +37,17 @@ public final class FloatDenseBLASTest extends AbstractBLASTest {
         return ret;
     }
 
+    private static void gemv(final float alpha, final FloatMatrix a, final FloatVector x, final float beta,
+            final FloatVector y) {
+        gemm(alpha, a, x, beta, y);
+    }
+
     private static void gemm(final float alpha, final FloatMatrix a, final FloatMatrix b, final float beta,
             final FloatMatrix c) {
         assertEquals(a.columns(), b.rows());
         assertEquals(a.rows(), c.rows());
-        assertEquals(b.columns(), c.columns());
+        // TODO figure out how to generalize this assert to work for gemv
+//        assertEquals(b.columns(), c.columns());
         Map<int[], Float> values = new HashMap<int[], Float>();
         for (int i = 0; i < a.rows(); i++) {
             for (int j = 0; j < b.columns(); j++) {
@@ -68,6 +74,31 @@ public final class FloatDenseBLASTest extends AbstractBLASTest {
                 MatrixTestSupport.populateMatrix(x);
                 MatrixTestSupport.populateMatrix(y);
                 assertEquals(dot(x, y), FloatDenseBLAS.DEFAULT.dot(x, y), 0);
+            }
+        }
+    }
+
+    @Test
+    public void testGemv() {
+        final float alpha = 1.0f;
+        final float beta = 1.0f;
+        for (Order o : Order.values()) {
+            for (Storage[] s : new Permutations<Storage>(3, Storage.values())) {
+                for (int m = 0; m < 20; m += m < 5 ? 1 : 5) {
+                    for (int n = 1; n < 20; n += n < 5 ? 1 : 5) {
+                        FloatDenseMatrix a = DenseFactory.createFloatMatrix(m, n, o, s[0]);
+                        FloatDenseVector x = DenseFactory.createFloatVector(n, Direction.COLUMN, s[1]);
+                        FloatDenseVector expectedy = DenseFactory.createFloatVector(m, Direction.COLUMN, s[2]);
+                        FloatDenseVector actualy = DenseFactory.createFloatVector(m, Direction.COLUMN, s[2]);
+                        MatrixTestSupport.populateMatrix(a);
+                        MatrixTestSupport.populateMatrix(x);
+                        MatrixTestSupport.populateMatrix(expectedy);
+                        gemv(alpha, a, x, beta, expectedy);
+                        MatrixTestSupport.populateMatrix(actualy);
+                        FloatDenseBLAS.DEFAULT.gemv(alpha, a, x, beta, actualy);
+                        checkMatrix(expectedy, actualy);
+                    }
+                }
             }
         }
     }
