@@ -32,15 +32,14 @@ abstract class AbstractDs extends H5Object {
             // TODO add other buffers above
             throw new AssertionError();
         }
-        checkBuffer(size, memType, memSpace, fileSpace);
+        checkSize(size, memType, memSpace, fileSpace);
     }
 
-    protected void checkBuffer(final int size, final DataType memType) {
-        checkBuffer(size, memType, DataSpace.ALL, DataSpace.ALL);
+    protected void checkSize(final int size, final DataType memType) {
+        checkSize(size, memType, DataSpace.ALL, DataSpace.ALL);
     }
 
-    protected void checkBuffer(final int size, final DataType memType, final DataSpace memSpace,
-            final DataSpace fileSpace) {
+    protected void checkSize(final int size, final DataType memType, final DataSpace memSpace, final DataSpace fileSpace) {
         final DataSpace space;
         boolean closeSpace = false;
         if (memSpace.equals(DataSpace.ALL)) {

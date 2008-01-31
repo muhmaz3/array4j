@@ -96,8 +96,14 @@ public interface H5Library extends Library {
         }
     }
 
+    /**
+     * The number of bytes used to represent a <tt>double</tt> value.
+     */
     int DOUBLE_BYTES = Double.SIZE >>> 3;
 
+    /**
+     * The number of bytes used to represent a <tt>float</tt> value.
+     */
     int FLOAT_BYTES = Float.SIZE >>> 3;
 
     int H5G_DATASET = 2;
