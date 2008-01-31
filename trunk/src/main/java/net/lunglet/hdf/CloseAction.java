@@ -1,5 +1,5 @@
 package net.lunglet.hdf;
 
-public interface CloseAction {
+interface CloseAction {
     void close(final int id);
 }

@@ -52,11 +52,7 @@ final class NativeIdComponent extends WeakReference<IdComponent> {
         // components that cannot be closed, e.g. predefined types.
         if (open && closeAction != null) {
             REF_LIST.remove(this);
-            try {
-                closeAction.close(getId());
-            } catch (RuntimeException e) {
-                throw e;
-            }
+            closeAction.close(getId());
             open = false;
         }
     }
