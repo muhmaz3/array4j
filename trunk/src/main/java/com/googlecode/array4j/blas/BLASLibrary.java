@@ -34,6 +34,9 @@ public interface BLASLibrary extends Library {
 
     float array4j_sdot(int n, FloatBuffer x, int incx, FloatBuffer y, int incy);
 
+    void array4j_sgemv(int order, int trans, int m, int n, float alpha, FloatBuffer a, int lda, FloatBuffer x,
+            int incx, float beta, FloatBuffer y, int incy);
+
     void array4j_sgemm(int order, int transa, int transb, int m, int n, int k, float alpha, FloatBuffer a, int lda,
             FloatBuffer b, int ldb, float beta, FloatBuffer c, int ldc);
 

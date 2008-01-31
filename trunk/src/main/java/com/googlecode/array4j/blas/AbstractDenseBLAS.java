@@ -5,6 +5,21 @@ import com.googlecode.array4j.dense.DenseMatrix;
 import com.googlecode.array4j.dense.DenseVector;
 
 public abstract class AbstractDenseBLAS {
+    public static final int NOTRANS_INT = 111;
+
+    public static final String NOTRANS_STR = "N";
+
+    public static final int TRANS_INT = 112;
+
+    public static final String TRANS_STR = "T";
+
+    /**
+     * Returns the trans value for the CBLAS interface.
+     */
+    protected static int cblasL3Trans(final DenseMatrix c, final DenseMatrix x) {
+        return c.order().equals(x.order()) ? NOTRANS_INT : TRANS_INT;
+    }
+
     protected static void checkAxpy(final DenseVector x, final DenseVector y) {
         if (x.length() != y.length()) {
             throw new IllegalArgumentException();
@@ -32,6 +47,18 @@ public abstract class AbstractDenseBLAS {
         }
     }
 
+    protected static void checkGemv(final DenseMatrix a, final DenseVector x, final DenseVector y) {
+        if (a.columns() != x.length()) {
+            throw new IllegalArgumentException(String.format("columns(a)=%d != length(x)=%d", a.columns(), x.length()));
+        }
+        if (a.rows() != y.length()) {
+            throw new IllegalArgumentException(String.format("columns(a)=%d != length(y)=%d", a.columns(), y.length()));
+        }
+        if (a.stride() != 1) {
+            throw new IllegalArgumentException("all matrices must have unit stride");
+        }
+    }
+
     protected static void checkSyrk(final DenseMatrix a, final DenseMatrix c) {
         if (a.rows() != c.rows()) {
             throw new IllegalArgumentException("rows(a) != rows(c)");
@@ -52,10 +79,14 @@ public abstract class AbstractDenseBLAS {
     }
 
     /**
-     * Returns the trans value for the CBLAS interface.
+     * Returns the trans value for F2J BLAS level 2 functions.
      */
-    protected static int ctrans(final DenseMatrix c, final DenseMatrix x) {
-        return c.order().equals(x.order()) ? 111 : 112;
+    protected static String f2jL2Order(final DenseMatrix a) {
+        return a.order().equals(Order.COLUMN) ? NOTRANS_STR : TRANS_STR;
+    }
+
+    protected static String f2jL3Trans(final DenseMatrix c, final DenseMatrix x) {
+        return c.order().equals(x.order()) ? NOTRANS_STR : TRANS_STR;
     }
 
     protected static int leadingDimension(final DenseMatrix x) {
@@ -64,10 +95,6 @@ public abstract class AbstractDenseBLAS {
         } else {
             return Math.max(1, x.columns());
         }
-    }
-
-    protected static String trans(final DenseMatrix c, final DenseMatrix x) {
-        return c.order().equals(x.order()) ? "N" : "T";
     }
 
     protected final BLASPolicy policy;

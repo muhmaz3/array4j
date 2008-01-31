@@ -6,6 +6,9 @@ import com.googlecode.array4j.dense.DenseMatrix;
 import com.googlecode.array4j.dense.DenseVector;
 
 interface BLASPolicy {
+    /**
+     * Policy to always use native BLAS, copying if necessary.
+     */
     public static final class AlwaysNative implements BLASPolicy {
         @Override
         public Method chooseL1Method(final DenseVector x, final DenseVector y) {
@@ -16,6 +19,11 @@ interface BLASPolicy {
         public Method chooseL3Method(final DenseMatrix a, final DenseMatrix b, final DenseMatrix c) {
             return Method.NATIVE;
         }
+
+        @Override
+        public Method chooseL2Method(final DenseMatrix a, final DenseVector x, final DenseVector y) {
+            return Method.NATIVE;
+        }
     }
 
     public static final class BestEffort implements BLASPolicy {
@@ -24,6 +32,20 @@ interface BLASPolicy {
             if (x.storage().equals(Storage.DIRECT) || (y != null && y.storage().equals(Storage.DIRECT))) {
                 return Method.NATIVE;
             }
+            return Method.F2J;
+        }
+
+        @Override
+        public Method chooseL2Method(final DenseMatrix a, final DenseVector x, final DenseVector y) {
+            for (DenseMatrix arg : new DenseMatrix[]{a, x, y}) {
+                if (arg != null && arg.storage().equals(Storage.DIRECT)) {
+                    return Method.NATIVE;
+                }
+            }
+            if (a.order().equals(Order.ROW)) {
+                return Method.NATIVE;
+            }
+            // If all the buffers are heap buffers, use F2J'ed BLAS.
             return Method.F2J;
         }
 
@@ -66,6 +88,12 @@ interface BLASPolicy {
         }
 
         @Override
+        public Method chooseL2Method(final DenseMatrix a, final DenseVector x, final DenseVector y) {
+            checkHasArray(a, x, y);
+            return Method.F2J;
+        }
+
+        @Override
         public Method chooseL3Method(final DenseMatrix a, final DenseMatrix b, final DenseMatrix c) {
             checkHasArray(a, b, c);
             if (c.order().equals(Order.ROW)) {
@@ -91,6 +119,12 @@ interface BLASPolicy {
         }
 
         @Override
+        public Method chooseL2Method(final DenseMatrix a, final DenseVector x, final DenseVector y) {
+            checkDirect(a, x, y);
+            return Method.NATIVE;
+        }
+
+        @Override
         public Method chooseL3Method(final DenseMatrix a, final DenseMatrix b, final DenseMatrix c) {
             checkDirect(a, b, c);
             return Method.NATIVE;
@@ -98,6 +132,8 @@ interface BLASPolicy {
     }
 
     Method chooseL1Method(DenseVector x, DenseVector y);
+
+    Method chooseL2Method(DenseMatrix a, DenseVector x, DenseVector y);
 
     Method chooseL3Method(DenseMatrix a, DenseMatrix b, DenseMatrix c);
 }
