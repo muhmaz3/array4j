@@ -4,6 +4,7 @@
 #include <mkl.h>
 #elif defined(ARRAY4J_HAVE_ACML)
 #include <acml.h>
+typedef void* DFTI_DESCRIPTOR_HANDLE;
 #else
 #error BLAS/LAPACK includes required
 #endif
@@ -56,6 +57,18 @@ ARRAY4J_EXPORT long array4j_DftiErrorClass(long i, long j)
     return DftiErrorClass(i, j);
 #else
     return 0;
+#endif
+}
+
+ARRAY4J_EXPORT void array4j_sgemv
+  (int order, int trans, int m, int n, float alpha, float* a, int lda, float* x, int incx, float beta, float *y, int incy)
+{
+#if defined(ARRAY4J_HAVE_MKL)
+    cblas_sgemv(order, trans, m, n, alpha, a, lda, x, incx, beta, y, incy);
+#elif defined(ARRAY4J_HAVE_ACML)
+    sgemv(trans, m, n, alpha, a, lda, x, incx, beta, y, incy);
+#else
+#error sgemv function required
 #endif
 }
 
