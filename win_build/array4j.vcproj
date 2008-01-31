@@ -17,7 +17,7 @@
 	<Configurations>
 		<Configuration
 			Name="DebugIntelMKL|Win32"
-			OutputDirectory="..\build\native"
+			OutputDirectory="..\lib\win32-x86"
 			IntermediateDirectory="$(ConfigurationName)\$(ProjectName)"
 			ConfigurationType="2"
 			CharacterSet="2"
@@ -99,7 +99,7 @@
 		</Configuration>
 		<Configuration
 			Name="ReleaseIntelMKL|Win32"
-			OutputDirectory="..\build\native"
+			OutputDirectory="..\lib\win32-x86"
 			IntermediateDirectory="$(ConfigurationName)\$(ProjectName)"
 			ConfigurationType="2"
 			CharacterSet="2"
@@ -181,7 +181,7 @@
 		</Configuration>
 		<Configuration
 			Name="DebugACML|Win32"
-			OutputDirectory="..\build\native"
+			OutputDirectory="..\lib\win32-x86"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="2"
 			CharacterSet="2"
@@ -263,7 +263,7 @@
 		</Configuration>
 		<Configuration
 			Name="ReleaseACML|Win32"
-			OutputDirectory="..\build\native"
+			OutputDirectory="..\lib\win32-x86"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="2"
 			CharacterSet="2"
