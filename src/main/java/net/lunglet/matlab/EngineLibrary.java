@@ -7,6 +7,11 @@ import com.sun.jna.ptr.ByteByReference;
 import com.sun.jna.ptr.IntByReference;
 import java.nio.ByteBuffer;
 
+/**
+ * MATLAB Engine Library.
+ * <p>
+ * Calls to the engine library should always be made from the same thread.
+ */
 public interface EngineLibrary extends Library {
     EngineLibrary INSTANCE = (EngineLibrary) Native.loadLibrary("libeng", EngineLibrary.class);
 
