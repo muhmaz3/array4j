@@ -27,8 +27,12 @@
 #ifndef COMMON_NUMERICAL_H
 #define COMMON_NUMERICAL_H
 
+#if 0
 #define max(a, b) (a > b ? a : b)
 #define min(a, b) (a < b ? a : b)
+#else
+#include <stdlib.h>
+#endif
 
 void Num_dcopy_primme(int n, double *x, int incx, double *y, int incy);
 double Num_dlamch_primme(char *cmach);

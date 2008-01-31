@@ -18,18 +18,20 @@
  *   License along with this library; if not, write to the Free Software
  *   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
+#if 0
 #include <sys/time.h>
 #include "sys/resource.h"
+#endif
 #ifdef RUSAGE_SELF
 #else
 #define   RUSAGE_SELF     0      //needed in osx
 #endif
 
 double primme_wTimer(int zeroTimer) {
+#if 0
    static struct timeval tv;
    static struct timezone tz;
    static double StartingTime;
-   
    if (zeroTimer) {
       gettimeofday(&tv, &tz); 
       StartingTime = ((double) tv.tv_sec) + ((double) tv.tv_usec )/(double) 1E6;
@@ -40,6 +42,9 @@ double primme_wTimer(int zeroTimer) {
       return ((double) tv.tv_sec) + ((double) tv.tv_usec ) / (double) 1E6
 	   - StartingTime;
    }
+#else
+   return 0;
+#endif
 }
 
 /* In the unlikely event that gettimeofday() is not available, but POSIX is, 
@@ -70,6 +75,7 @@ double primme_wTimer(int zeroTimer) {
  */
 
 /* Simply return the microseconds time of day */
+#if 0
 double primme_get_wtime() {
    static struct timeval tv;
    static struct timezone tz;
@@ -77,8 +83,10 @@ double primme_get_wtime() {
    gettimeofday(&tv, &tz); 
    return ((double) tv.tv_sec) + ((double) tv.tv_usec ) / (double) 1E6;
 }
+#endif
 
 /* Return user/system times */
+#if 0
 double primme_get_time(double *utime, double *stime) {
    struct rusage usage;
    static struct timeval utv,stv;
@@ -92,3 +100,4 @@ double primme_get_time(double *utime, double *stime) {
 
    return *utime + *stime;
 }
+#endif

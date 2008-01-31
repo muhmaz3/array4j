@@ -27,7 +27,9 @@
  * Date             : %G%
  ******************************************************************************/
 
+#if 0
 #include <strings.h>
+#endif
 #include <stdlib.h>
 #include "primme.h"
 #include "const.h"

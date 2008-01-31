@@ -32,6 +32,16 @@
 #include <limits.h>
 #include "Complex.h"
 
+#if 1
+#ifdef PRIMME_EXPORTS
+#define PRIMME_API __declspec(dllexport)
+#else
+#define PRIMME_API __declspec(dllimport)
+#endif
+#else
+#define PRIMME_API
+#endif
+
 #define PRIMME_MAX_NAME_LENGTH 128
 
 typedef enum {
@@ -213,15 +223,20 @@ typedef enum {
 
 
 
+PRIMME_API
 int dprimme(double *evals, double *evecs, double *resNorms, 
             primme_params *primme);
 int zprimme(double *evals, Complex_Z *evecs, double *resNorms, 
             primme_params *primme);
+PRIMME_API
 void primme_initialize(primme_params *primme);
+PRIMME_API
 int  primme_set_method(primme_preset_method method, primme_params *params);
+PRIMME_API
 void primme_display_params(primme_params primme);
 void *primme_valloc(size_t byteSize, const char *target);
 void *primme_calloc(size_t nelem, size_t elsize, const char *target);
+PRIMME_API
 void primme_Free(primme_params *primme);
 void primme_seq_globalSumDouble(void *sendBuf, void *recvBuf, int *count,
 					           primme_params *params);

@@ -66,7 +66,7 @@
 
 #elif defined(NUM_IBM)
 
-#define ZDOTCSUB  zdotcsub
+#define ZDOTCSUB  zdotc
 #define ZCOPY  zcopy
 #define ZSWAP  zswap
 #define ZGEMM  zgemm
