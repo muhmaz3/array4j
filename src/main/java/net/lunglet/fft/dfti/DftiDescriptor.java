@@ -1,4 +1,4 @@
-package net.lunglet.fft.mkl;
+package net.lunglet.fft.dfti;
 
 import java.nio.Buffer;
 

@@ -1,4 +1,4 @@
-package net.lunglet.fft.mkl;
+package net.lunglet.fft.dfti;
 
 public class DftiException extends RuntimeException {
     private static final long serialVersionUID = 1L;
