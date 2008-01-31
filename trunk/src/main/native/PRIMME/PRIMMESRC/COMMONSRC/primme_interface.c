@@ -30,7 +30,9 @@
  **********************************************************************/
 
 #include <stdlib.h>   // mallocs, free
+#if 0
 #include <unistd.h>   // gethostname
+#endif
 #include <stdio.h>    
 #include "primme.h"
 #include "common_numerical.h"
@@ -126,18 +128,24 @@ void primme_initialize(primme_params *primme) {
 void *primme_valloc(size_t byteSize, const char *target) {
 
    void *ptr;
+#if 0
    char machineName[256];
+#endif
 
-   if ( (ptr = valloc(byteSize)) == NULL) {
+   if ( (ptr = malloc(byteSize)) == NULL) {
+#if 0
       if (gethostname(machineName, 256) < 0) {
          fprintf(stderr, "ERROR(primme_calloc): Could not get host name\n");
       }
+#endif
 
       perror("primme_alloc");
+#if 0
       fprintf(stderr,
          "ERROR(primme_alloc): %s Could not allocate %d elements for: %s\n",
          machineName, byteSize, target);
       fflush(stderr);
+#endif
       exit(EXIT_FAILURE);
    }
 
@@ -149,18 +157,24 @@ void *primme_valloc(size_t byteSize, const char *target) {
 void *primme_calloc(size_t nelem, size_t elsize, const char *target) {
 
    void *ptr;
+#if 0
    char machineName[256];
+#endif
 
    if ((ptr = calloc(nelem, elsize)) == NULL) {
+#if 0
       if (gethostname(machineName, 256) < 0) {
          fprintf(stderr, "ERROR(primme_calloc): Could not get host name\n");
       }
+#endif
 
       perror("primme_calloc");
+#if 0
       fprintf(stderr, 
 	 "ERROR(primme_calloc): %s Could not allocate %d elements for: %s\n",
          machineName, nelem, target);
       fflush(stderr);
+#endif
       exit(EXIT_FAILURE);
    }
 
