@@ -60,19 +60,10 @@ import net.lunglet.primme.PRIMMELibrary.MatrixMatvecCallback;
  */
 public final class PRIMMEParams extends Structure {
     public PRIMMEParams() {
-        this(0, Target.smallest, 0, null);
-    }
-
-    /**
-     * @param numEvals number of eigenvalues wanted
-     * @param n dimension of the matrix
-     */
-    public PRIMMEParams(final int numEvals, final Target target, final int n, final MatrixMatvecCallback matrixMatvec) {
-        this.numEvals = numEvals;
-        this.target = target.ordinal();
-        this.n = n;
-        this.matrixMatvec = matrixMatvec;
-        // set default values for other fields
+        this.numEvals = 0;
+        this.target = Target.smallest.ordinal();
+        this.n = 0;
+        this.matrixMatvec = null;
         this.numProcs = 1;
         this.procID = 0;
         this.applyPreconditioner = null;
@@ -87,7 +78,7 @@ public final class PRIMMEParams extends Structure {
         this.globalSumDouble = null;
         this.intWorkSize = 0;
         this.intWork = null;
-        this.iseed = new int[]{1, 2, 3, 5};
+        this.iseed = new int[]{-1, 0, 0, 0};
         this.matrix = null;
         this.applyPreconditioner = null;
         this.shiftsForPreconditioner = null;
