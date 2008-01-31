@@ -16,9 +16,15 @@ import java.nio.DoubleBuffer;
  * TODO make sure that setPr and setPi keep references to their
  * arguments. It would probably also make sense to ensure that they
  * only accept direct buffers.
+ *
+ * TODO provide a getPi and getPr that doesn't copy.
  */
 
 public final class MXArray extends PointerType {
+    public static MXArray createDoubleMatrix(final int m, final int n) {
+        return MXLibrary.INSTANCE.mxCreateDoubleMatrix(new NativeLong(m), new NativeLong(n), 0);
+    }
+
     public MXArray() {
     }
 
@@ -27,11 +33,16 @@ public final class MXArray extends PointerType {
     }
 
     /**
-     * Add a field to a structure array. Returns field number on success or -1
-     * if inputs are invalid or an out of memory condition occurs.
+     * Add a field to a structure array.
+     * <p>
+     * Returns field number on success or -1 if inputs are invalid or an out of
+     * memory condition occurs.
      */
-    public int addField(final String fieldname) {
-        return MXLibrary.INSTANCE.mxAddField(this, fieldname);
+    public void addField(final String fieldname) {
+        int err = MXLibrary.INSTANCE.mxAddField(this, fieldname);
+        if (err < 0) {
+            throw new RuntimeException("mxAddField failed");
+        }
     }
 
     /**
@@ -227,15 +238,19 @@ public final class MXArray extends PointerType {
     /**
      * Get imaginary data pointer for numeric array
      */
-    public DoubleBuffer getPi() {
-        return MXLibrary.INSTANCE.mxGetPi(this);
+    public double[] getPi() {
+        int m = getM().intValue();
+        int n = getN().intValue();
+        return MXLibrary.INSTANCE.mxGetPi(this).getDoubleArray(0, m * n);
     }
 
     /**
      * Get real data pointer for numeric array
      */
-    public DoubleBuffer getPr() {
-        return MXLibrary.INSTANCE.mxGetPr(this);
+    public double[] getPr() {
+        int m = getM().intValue();
+        int n = getN().intValue();
+        return MXLibrary.INSTANCE.mxGetPr(this).getDoubleArray(0, m * n);
     }
 
     /**
@@ -473,8 +488,11 @@ public final class MXArray extends PointerType {
      * function on a previously validated object array. Return 0 for success, 1
      * for failure.
      */
-    public int setClassName(final String classname) {
-        return MXLibrary.INSTANCE.mxSetClassName(this, classname);
+    public void setClassName(final String classname) {
+        int err = MXLibrary.INSTANCE.mxSetClassName(this, classname);
+        if (err != 0) {
+            throw new RuntimeException("mxSetClassName failed");
+        }
     }
 
     /**
@@ -485,12 +503,16 @@ public final class MXArray extends PointerType {
     }
 
     /**
-     * Set dimension array and number of dimensions. Returns 0 on success and 1
-     * if there was not enough memory available to reallocate the dimensions
-     * array.
+     * Set dimension array and number of dimensions.
+     * <p>
+     * Returns 0 on success and 1 if there was not enough memory available to
+     * reallocate the dimensions array.
      */
-    public int setDimensions(final NativeLong[] size, final NativeLong ndims) {
-        return MXLibrary.INSTANCE.mxSetDimensions(this, size, ndims);
+    public void setDimensions(final NativeLong[] size, final NativeLong ndims) {
+        int err = MXLibrary.INSTANCE.mxSetDimensions(this, size, ndims);
+        if (err != 0) {
+            throw new RuntimeException("mxSetDimensions failed");
+        }
     }
 
     /**
@@ -515,7 +537,7 @@ public final class MXArray extends PointerType {
     }
 
     /**
-     * Set imaginary data pointer for numeric array
+     * Set imaginary data pointer for numeric array.
      */
     public void setImagData(final Pointer newdata) {
         MXLibrary.INSTANCE.mxSetImagData(this, newdata);
@@ -543,7 +565,7 @@ public final class MXArray extends PointerType {
     }
 
     /**
-     * Set column dimension
+     * Set column dimension.
      */
     public void setN(final NativeLong n) {
         MXLibrary.INSTANCE.mxSetN(this, n);

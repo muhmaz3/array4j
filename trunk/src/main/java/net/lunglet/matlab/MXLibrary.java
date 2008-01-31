@@ -53,8 +53,10 @@ public interface MXLibrary extends MXConstants, Library {
     MXLibrary INSTANCE = Loader.loadLibrary();
 
     /**
-     * Add a field to a structure array. Returns field number on success or -1
-     * if inputs are invalid or an out of memory condition occurs.
+     * Add a field to a structure array.
+     * <p>
+     * Returns field number on success or -1 if inputs are invalid or an out of
+     * memory condition occurs.
      */
     int mxAddField(MXArray pa, String fieldname);
 
@@ -328,12 +330,12 @@ public interface MXLibrary extends MXConstants, Library {
     /**
      * Get imaginary data pointer for numeric array
      */
-    DoubleBuffer mxGetPi(MXArray pa);
+    Pointer mxGetPi(MXArray pa);
 
     /**
      * Get real data pointer for numeric array
      */
-    DoubleBuffer mxGetPr(MXArray pa);
+    Pointer mxGetPr(MXArray pa);
 
     /**
      * Get the real component of the specified array's first data element.
@@ -546,9 +548,10 @@ public interface MXLibrary extends MXConstants, Library {
     void mxSetData(MXArray pa, Pointer newdata);
 
     /**
-     * Set dimension array and number of dimensions. Returns 0 on success and 1
-     * if there was not enough memory available to reallocate the dimensions
-     * array.
+     * Set dimension array and number of dimensions.
+     * <p>
+     * Returns 0 on success and 1 if there was not enough memory available to
+     * reallocate the dimensions array.
      */
     int mxSetDimensions(MXArray pa, NativeLong[] size, NativeLong ndims);
 
