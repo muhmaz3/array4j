@@ -1,10 +1,10 @@
-package net.lunglet.fft.mkl;
+package net.lunglet.fft.dfti;
 
-import static net.lunglet.fft.mkl.DftiConfigParamType.FLOAT_SCALAR;
-import static net.lunglet.fft.mkl.DftiConfigParamType.INT_ARRAY;
-import static net.lunglet.fft.mkl.DftiConfigParamType.INT_SCALAR;
-import static net.lunglet.fft.mkl.DftiConfigParamType.NAMED_CONSTANT;
-import static net.lunglet.fft.mkl.DftiConfigParamType.STRING;
+import static net.lunglet.fft.dfti.DftiConfigParamType.FLOAT_SCALAR;
+import static net.lunglet.fft.dfti.DftiConfigParamType.INT_ARRAY;
+import static net.lunglet.fft.dfti.DftiConfigParamType.INT_SCALAR;
+import static net.lunglet.fft.dfti.DftiConfigParamType.NAMED_CONSTANT;
+import static net.lunglet.fft.dfti.DftiConfigParamType.STRING;
 
 public enum DftiConfigParam {
     BACKWARD_SCALE(5, FLOAT_SCALAR),
