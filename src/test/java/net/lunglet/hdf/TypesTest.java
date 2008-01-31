@@ -1,6 +1,7 @@
 package net.lunglet.hdf;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
@@ -25,5 +26,13 @@ public final class TypesTest {
         StringType stype = StringType.C_S1.copy();
         stype.setSize(123);
         assertEquals(123, stype.getSize());
+    }
+
+    @Test
+    public void testCommitted() {
+        assertFalse(FloatType.IEEE_F32LE.committed());
+        assertFalse(IntType.STD_I32LE.committed());
+        assertFalse(FloatType.IEEE_F64LE.committed());
+        assertFalse(IntType.STD_I8BE.committed());
     }
 }
