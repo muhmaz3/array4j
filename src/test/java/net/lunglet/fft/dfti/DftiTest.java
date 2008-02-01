@@ -1,4 +1,4 @@
-package net.lunglet.fft.mkl;
+package net.lunglet.fft.dfti;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -6,6 +6,10 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.util.Arrays;
+import net.lunglet.fft.dfti.DftiConfigParam;
+import net.lunglet.fft.dfti.DftiConfigValue;
+import net.lunglet.fft.dfti.DftiDescriptor;
+import net.lunglet.fft.dfti.DftiException;
 import org.junit.Ignore;
 import org.junit.Test;
 

@@ -7,7 +7,7 @@ import com.googlecode.array4j.dense.CFloatDenseVector;
 import com.googlecode.array4j.dense.FloatDenseVector;
 import java.util.Arrays;
 import java.util.Collection;
-import net.lunglet.fft.mkl.DftiFFT;
+import net.lunglet.fft.dfti.DftiFFT;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
