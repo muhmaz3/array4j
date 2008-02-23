@@ -2,7 +2,10 @@ package net.lunglet.sound.util;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
@@ -11,12 +14,19 @@ import net.lunglet.sound.sampled.RawAudioFileWriter;
 
 public final class SoundUtils {
     /**
-     * Read channel from audio file and return it as signed 16-bit PCM data.
+     * Read audio channel from file and return it as signed 16-bit PCM data.
      */
-    public static byte[] readChannel(final File file, final int channel) {
+    public static byte[] readChannel(final File file, final int channel) throws FileNotFoundException {
+        return readChannel(new FileInputStream(file), channel);
+    }
+
+    /**
+     * Read audio channel from stream it as signed 16-bit PCM data.
+     */
+    public static byte[] readChannel(final InputStream stream, final int channel) {
         try {
-            AudioInputStream stream = AudioSystem.getAudioInputStream(file);
-            AudioInputStream sourceStream = AudioSystem.getAudioInputStream(Encoding.PCM_SIGNED, stream);
+            AudioInputStream audioStream = AudioSystem.getAudioInputStream(stream);
+            AudioInputStream sourceStream = AudioSystem.getAudioInputStream(Encoding.PCM_SIGNED, audioStream);
             int channels = sourceStream.getFormat().getChannels();
             int sampleSizeInBits = sourceStream.getFormat().getSampleSizeInBits();
             if (sampleSizeInBits % 8 != 0) {
@@ -36,6 +46,7 @@ public final class SoundUtils {
                     for (int k = 0; k < sampleSizeInBytes; k++, sampleOffset++) {
                         if (j == channel) {
                             int channelOffset = i * sampleSizeInBytes + k;
+                            // TODO handle possible ArrayIndexOutOfBoundsException more gracefully
                             channelData[channelOffset] = samples[sampleOffset];
                         }
                     }
