@@ -1,6 +1,10 @@
 package net.lunglet.io;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -48,7 +52,6 @@ public final class FileUtils {
             if (filter == null || filter.accept(directory, entry.getName())) {
                 files.add(entry);
             }
-
             if (recurse && entry.isDirectory()) {
                 files.addAll(Arrays.asList(listFiles(entry, filter, recurse)));
             }
@@ -62,6 +65,16 @@ public final class FileUtils {
 
     public static File[] listFiles(final String name, final FilenameFilter filter, final boolean recurse) {
         return listFiles(new File(name), filter, recurse);
+    }
+
+    public static void copyTo(final File src, final File dest) throws IOException {
+        byte[] buf = new byte[(int) src.length()];
+        DataInputStream input = new DataInputStream(new FileInputStream(src));
+        input.readFully(buf);
+        input.close();
+        DataOutputStream output = new DataOutputStream(new FileOutputStream(dest));
+        output.write(buf);
+        output.close();
     }
 
     private FileUtils() {
