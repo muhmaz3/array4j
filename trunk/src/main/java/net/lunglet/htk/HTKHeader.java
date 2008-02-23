@@ -4,84 +4,78 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-public final class HTKHeader {
-    /** Include delta coefficients. */
-    private static final int INCLUDE_DELTA = 0x100;
-
-    /** Includes energy terms. */
-    private static final int INCLUDE_ENERGY = 0x40;
-
+public final class HTKHeader implements HTKFlags {
     /** Size of the HTK header in bytes. */
     public static final int SIZE = 12;
 
-    /** Suppress absolute energy. */
-    private static final int SUPPRESS_ENERGY = 0x80;
+    private static final int CHECKSUM = 0x1000;
 
-    /** Zero mean static coefficients. */
-    private static final int ZERO_MEAN = 0x800;
+    private static final int COMPRESSED = 0x400;
+
+    private final int framePeriod;
+
+    private final int frames;
+
+    private final short frameSize;
 
     private final short parmKind;
 
-    private final int samplePeriod;
-
-    private final int samples;
-
-    private final short sampleSize;
-
     public HTKHeader(final InputStream in) throws IOException {
         DataInputStream stream = new DataInputStream(in);
-        this.samples = stream.readInt();
-        this.samplePeriod = stream.readInt();
-        this.sampleSize = stream.readShort();
+        this.frames = stream.readInt();
+        this.framePeriod = stream.readInt();
+        this.frameSize = stream.readShort();
         this.parmKind = stream.readShort();
-
-        if ((parmKind & INCLUDE_ENERGY) != 0) {
-            System.out.println("ENEGRY!");
-        }
-        if ((parmKind & SUPPRESS_ENERGY) != 0) {
-            System.out.println("supress abs energy");
-        }
-        if ((parmKind & INCLUDE_DELTA) != 0) {
-            System.out.println("has deltas");
-        }
     }
 
     public HTKDataType getDataType() {
         return HTKDataType.values()[parmKind & 0x3f];
     }
 
-    /** Returns the sample period in seconds. */
-    public float getSamplePeriod() {
-        return samplePeriod / 1.0e7f;
+    /** Returns the frame period in seconds. */
+    public float getFramePeriod() {
+        return framePeriod / 1.0e7f;
     }
 
-    /** Returns the samp[le period in HTK units (100ns). */
-    public int getSamplePeriodHTK() {
-        return samplePeriod;
+    /** Returns the frame period in HTK units (100ns). */
+    public int getFramePeriodHTK() {
+        return framePeriod;
     }
 
-    /** Returns the number of samples. */
-    public int getSamples() {
-        return samples;
+    /** Returns the number of frames. */
+    public int getFrames() {
+        return frames;
     }
 
-    public short getSampleSize() {
-        return sampleSize;
+    public short getFrameSize() {
+        return frameSize;
     }
 
-    public boolean hasDeltaIncluded() {
-        return (parmKind & INCLUDE_DELTA) != 0;
+    public boolean hasAccelerationCoefficients() {
+        return (parmKind & HAS_ACCELERATION) != 0;
     }
 
-    public boolean hasEnergyIncluded() {
-        return (parmKind & INCLUDE_ENERGY) != 0;
+    public boolean hasCRCChecksum() {
+        return (parmKind & CHECKSUM) != 0;
     }
 
-    public boolean hasEnergySuppressed() {
-        return (parmKind & SUPPRESS_ENERGY) != 0;
+    public boolean hasDeltaCoefficients() {
+        return (parmKind & HAS_DELTA) != 0;
+    }
+
+    public boolean hasEnergy() {
+        return (parmKind & HAS_ENERGY) != 0;
     }
 
     public boolean hasZeroMean() {
         return (parmKind & ZERO_MEAN) != 0;
+    }
+
+    public boolean isAbsoluteEnergySuppressed() {
+        return (parmKind & SUPPRESS_ABSOLUTE_ENERGY) != 0;
+    }
+
+    public boolean isCompressed() {
+        return (parmKind & COMPRESSED) != 0;
     }
 }

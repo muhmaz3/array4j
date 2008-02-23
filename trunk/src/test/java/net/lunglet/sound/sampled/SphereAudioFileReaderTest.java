@@ -122,7 +122,7 @@ public final class SphereAudioFileReaderTest {
     public void testEx201() throws UnsupportedAudioFileException, IOException {
         AudioInputStream ais = getAudioInputStream("ex2_01.wav", 33024, "473003484dd492ce0b2adcaf98ec920a");
         AudioFormat format = ais.getFormat();
-        assertTrue(!format.isBigEndian());
+        assertFalse(format.isBigEndian());
     }
 
     @Test
@@ -146,7 +146,7 @@ public final class SphereAudioFileReaderTest {
         AudioInputStream ais = getAudioInputStream("ex4_01.wav");
         AudioFormat format = ais.getFormat();
         assertEquals(Encoding.PCM_SIGNED, format.getEncoding());
-        assertTrue(!format.isBigEndian());
+        assertFalse(format.isBigEndian());
     }
 
     @Test
@@ -212,7 +212,7 @@ public final class SphereAudioFileReaderTest {
         AudioInputStream ais = getAudioInputStream("ex5_p01.wav", 65024, "6a59a8a072d735feda583787e8203a6a");
         AudioFormat format = ais.getFormat();
         assertEquals(2, format.getChannels());
-        assertTrue(!format.isBigEndian());
+        assertFalse(format.isBigEndian());
     }
 
     @Test
