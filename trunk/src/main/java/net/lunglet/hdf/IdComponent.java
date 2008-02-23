@@ -1,9 +1,10 @@
 package net.lunglet.hdf;
 
+import java.io.Closeable;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
-abstract class IdComponent {
+abstract class IdComponent implements Closeable {
     private final NativeIdComponent nativeId;
 
     public IdComponent(final int id, final CloseAction closeAction) {
