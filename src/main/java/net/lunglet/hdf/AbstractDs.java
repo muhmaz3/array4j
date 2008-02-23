@@ -41,6 +41,7 @@ abstract class AbstractDs extends H5Object {
 
     protected void checkSize(final int size, final DataType memType, final DataSpace memSpace, final DataSpace fileSpace) {
         final DataSpace space;
+        // TODO what is this flag for?
         boolean closeSpace = false;
         if (memSpace.equals(DataSpace.ALL)) {
             if (fileSpace.equals(DataSpace.ALL)) {
@@ -56,11 +57,14 @@ abstract class AbstractDs extends H5Object {
         // account, because this check won't catch all buffers that are too
         // small
         long requiredSize = memType.getSize() * space.getSelectNPoints();
-        if (size < requiredSize) {
-            throw new IllegalArgumentException();
-        }
-        if (closeSpace) {
-            space.close();
+        try {
+            if (size < requiredSize) {
+                throw new IllegalArgumentException();
+            }
+        } finally {
+            if (closeSpace) {
+                space.close();
+            }
         }
     }
 
