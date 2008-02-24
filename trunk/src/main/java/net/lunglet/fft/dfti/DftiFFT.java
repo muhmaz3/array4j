@@ -2,10 +2,10 @@ package net.lunglet.fft.dfti;
 
 import com.googlecode.array4j.matrix.dense.CFloatDenseVector;
 import com.googlecode.array4j.matrix.dense.FloatDenseVector;
-import com.googlecode.array4j.util.AssertUtils;
-import com.googlecode.array4j.util.BufferUtils;
 import java.nio.FloatBuffer;
 import net.lunglet.fft.FFT;
+import net.lunglet.util.AssertUtils;
+import net.lunglet.util.BufferUtils;
 
 public final class DftiFFT implements FFT {
     @Override

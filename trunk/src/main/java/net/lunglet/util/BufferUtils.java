@@ -1,4 +1,4 @@
-package com.googlecode.array4j.util;
+package net.lunglet.util;
 
 import com.googlecode.array4j.Constants;
 import com.googlecode.array4j.Storage;

@@ -1,8 +1,9 @@
-package com.googlecode.array4j.util;
+package net.lunglet.util;
 
 import static org.junit.Assert.assertEquals;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
+import net.lunglet.util.BufferUtils;
 import org.junit.Test;
 
 public final class BufferUtilsTest {

@@ -1,4 +1,4 @@
-package com.googlecode.array4j.io;
+package net.lunglet.io;
 
 import com.googlecode.array4j.matrix.FloatMatrix;
 import com.googlecode.array4j.matrix.dense.FloatDenseVector;

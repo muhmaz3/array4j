@@ -8,9 +8,9 @@ import com.googlecode.array4j.blas.FloatDenseBLAS;
 import com.googlecode.array4j.math.FloatMatrixUtils;
 import com.googlecode.array4j.matrix.FloatMatrix;
 import com.googlecode.array4j.matrix.FloatVector;
-import com.googlecode.array4j.util.BufferUtils;
 import java.nio.FloatBuffer;
 import java.util.Arrays;
+import net.lunglet.util.BufferUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 
 /**

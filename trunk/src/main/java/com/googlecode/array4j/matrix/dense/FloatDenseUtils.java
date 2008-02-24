@@ -2,7 +2,6 @@ package com.googlecode.array4j.matrix.dense;
 
 import com.googlecode.array4j.Constants;
 import com.googlecode.array4j.Order;
-import com.googlecode.array4j.util.AssertUtils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -11,6 +10,7 @@ import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileChannel.MapMode;
+import net.lunglet.util.AssertUtils;
 
 public final class FloatDenseUtils {
     /**

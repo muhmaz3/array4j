@@ -1,4 +1,4 @@
-package com.googlecode.array4j.util;
+package net.lunglet.util;
 
 public final class AssertUtils {
     public static void assertEquals(final int expected, final int actual) {

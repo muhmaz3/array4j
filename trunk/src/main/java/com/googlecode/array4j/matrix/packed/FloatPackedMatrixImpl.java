@@ -7,9 +7,9 @@ import com.googlecode.array4j.matrix.FloatMatrix;
 import com.googlecode.array4j.matrix.FloatVector;
 import com.googlecode.array4j.matrix.dense.DenseFactory;
 import com.googlecode.array4j.matrix.dense.FloatDenseVector;
-import com.googlecode.array4j.util.BufferUtils;
 import java.nio.FloatBuffer;
 import net.jcip.annotations.NotThreadSafe;
+import net.lunglet.util.BufferUtils;
 
 @NotThreadSafe
 final class FloatPackedMatrixImpl extends AbstractPackedMatrix<FloatDenseVector> implements FloatPackedMatrix {
