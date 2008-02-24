@@ -1,12 +1,12 @@
 package net.lunglet.util;
 
-import com.googlecode.array4j.Constants;
-import com.googlecode.array4j.Storage;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.DoubleBuffer;
 import java.nio.FloatBuffer;
+import net.lunglet.array4j.Constants;
+import net.lunglet.array4j.Storage;
 
 public final class BufferUtils {
     public static ByteBuffer createAlignedBuffer(final int size, final int alignment) {

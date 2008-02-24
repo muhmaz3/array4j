@@ -1,18 +1,16 @@
 package net.lunglet.io;
 
 import static org.junit.Assert.assertEquals;
-import com.googlecode.array4j.math.FloatMatrixUtils;
-import com.googlecode.array4j.matrix.dense.DenseFactory;
-import com.googlecode.array4j.matrix.dense.FloatDenseMatrix;
-import com.googlecode.array4j.matrix.dense.FloatDenseVector;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import net.lunglet.io.MatrixInputStream;
-import net.lunglet.io.MatrixOutputStream;
+import net.lunglet.array4j.math.FloatMatrixUtils;
+import net.lunglet.array4j.matrix.dense.DenseFactory;
+import net.lunglet.array4j.matrix.dense.FloatDenseMatrix;
+import net.lunglet.array4j.matrix.dense.FloatDenseVector;
 import org.junit.Test;
 
 public final class MatrixIOStreamTest {

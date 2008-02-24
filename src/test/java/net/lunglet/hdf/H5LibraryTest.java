@@ -2,10 +2,6 @@ package net.lunglet.hdf;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import com.googlecode.array4j.Order;
-import com.googlecode.array4j.Storage;
-import com.googlecode.array4j.matrix.dense.DenseFactory;
-import com.googlecode.array4j.matrix.dense.FloatDenseMatrix;
 import com.sun.jna.ptr.IntByReference;
 import java.util.UUID;
 import java.util.concurrent.Callable;
@@ -16,6 +12,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import net.lunglet.array4j.Order;
+import net.lunglet.array4j.Storage;
+import net.lunglet.array4j.matrix.dense.DenseFactory;
+import net.lunglet.array4j.matrix.dense.FloatDenseMatrix;
 import org.junit.Test;
 
 // TODO move testHyperslabReadWrite and refactor to not use array4j classes

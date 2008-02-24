@@ -1,7 +1,7 @@
 package net.lunglet.svm;
 
-import com.googlecode.array4j.matrix.FloatVector;
 import java.io.Serializable;
+import net.lunglet.array4j.matrix.FloatVector;
 
 public final class SvmNode implements Serializable {
     private static final long serialVersionUID = 1L;

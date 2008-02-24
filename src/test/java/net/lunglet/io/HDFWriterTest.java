@@ -1,13 +1,11 @@
 package net.lunglet.io;
 
 import static org.junit.Assert.assertEquals;
-import com.googlecode.array4j.MatrixTestSupport;
-import com.googlecode.array4j.Storage;
-import com.googlecode.array4j.matrix.packed.FloatPackedMatrix;
-import com.googlecode.array4j.matrix.packed.PackedFactory;
+import net.lunglet.array4j.Storage;
+import net.lunglet.array4j.matrix.MatrixTestSupport;
+import net.lunglet.array4j.matrix.packed.FloatPackedMatrix;
+import net.lunglet.array4j.matrix.packed.PackedFactory;
 import net.lunglet.hdf.H5File;
-import net.lunglet.io.HDFReader;
-import net.lunglet.io.HDFWriter;
 import org.junit.Test;
 
 public final class HDFWriterTest extends AbstractHDFTest {

@@ -1,9 +1,9 @@
 package net.lunglet.io;
 
-import com.googlecode.array4j.Order;
-import com.googlecode.array4j.matrix.dense.FloatDenseMatrix;
-import com.googlecode.array4j.matrix.packed.FloatPackedMatrix;
 import net.jcip.annotations.NotThreadSafe;
+import net.lunglet.array4j.Order;
+import net.lunglet.array4j.matrix.dense.FloatDenseMatrix;
+import net.lunglet.array4j.matrix.packed.FloatPackedMatrix;
 import net.lunglet.hdf.DataSet;
 import net.lunglet.hdf.DataType;
 import net.lunglet.hdf.FloatType;
