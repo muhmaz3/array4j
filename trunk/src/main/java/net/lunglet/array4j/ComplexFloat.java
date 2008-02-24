@@ -54,6 +54,18 @@ public final class ComplexFloat implements Complex {
         return imag;
     }
 
+    public ComplexFloat minus(final ComplexFloat c) {
+        return valueOf(real - c.real, imag - c.imag);
+    }
+
+    public ComplexFloat plus(final ComplexFloat c) {
+        return valueOf(real + c.real, imag + c.imag);
+    }
+
+    public ComplexFloat times(final ComplexFloat c) {
+        return valueOf(real * c.real - imag * c.imag, real * c.imag + imag * c.real);
+    }
+
     public float real() {
         return real;
     }

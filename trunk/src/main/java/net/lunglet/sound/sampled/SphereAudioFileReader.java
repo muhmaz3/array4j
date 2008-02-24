@@ -23,19 +23,19 @@ import javax.sound.sampled.AudioFormat.Encoding;
 import javax.sound.sampled.spi.AudioFileReader;
 
 public final class SphereAudioFileReader extends AudioFileReader {
-    private static final String CHANNELS_PROPERTY = "channel_count";
+    public static final String CHANNELS_PROPERTY = "channel_count";
 
-    private static final String ENCODING_PROPERTY = "sample_coding";
+    public static final String ENCODING_PROPERTY = "sample_coding";
 
-    private static final String ENDIAN_PROPERTY = "sample_byte_format";
+    public static final String ENDIAN_PROPERTY = "sample_byte_format";
 
-    private static final String FRAME_LENGTH_PROPERTY = "sample_count";
+    public static final String FRAME_LENGTH_PROPERTY = "sample_count";
 
-    private static final String HEADER_SIZE_PROPERTY = "nist_header_size";
+    public static final String HEADER_SIZE_PROPERTY = "nist_header_size";
 
-    private static final String SAMPLE_RATE_PROPERTY = "sample_rate";
+    public static final String SAMPLE_RATE_PROPERTY = "sample_rate";
 
-    private static final String SAMPLE_SIZE_PROPERTY = "sample_n_bytes";
+    public static final String SAMPLE_SIZE_PROPERTY = "sample_n_bytes";
 
     public static final AudioFileFormat.Type SPHERE = new AudioFileFormat.Type("SPHERE", "sph");
 

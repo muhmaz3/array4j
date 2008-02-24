@@ -46,8 +46,7 @@ public final class HDFReader {
                 throw new RuntimeException(new IOException());
             }
             if (dims.length == 1) {
-                // TODO allow matrices with a single row or column when the
-                // dimension is 1
+                // TODO allow matrices with a single row or column when the dimension is 1
                 dims = new long[]{dims[0], 1};
             }
             if (matrix.rows() != dims[0] || matrix.columns() != dims[1]) {
