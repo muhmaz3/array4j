@@ -1,4 +1,4 @@
-package com.googlecode.array4j.io;
+package net.lunglet.io;
 
 import static org.junit.Assert.assertEquals;
 import com.googlecode.array4j.math.FloatMatrixUtils;
@@ -11,6 +11,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import net.lunglet.io.MatrixInputStream;
+import net.lunglet.io.MatrixOutputStream;
 import org.junit.Test;
 
 public final class MatrixIOStreamTest {

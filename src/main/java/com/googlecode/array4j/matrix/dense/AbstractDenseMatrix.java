@@ -4,8 +4,8 @@ import com.googlecode.array4j.Order;
 import com.googlecode.array4j.Storage;
 import com.googlecode.array4j.matrix.AbstractMatrix;
 import com.googlecode.array4j.matrix.Matrix;
-import com.googlecode.array4j.util.BufferUtils;
 import java.nio.Buffer;
+import net.lunglet.util.BufferUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 

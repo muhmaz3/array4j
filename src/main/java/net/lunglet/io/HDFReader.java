@@ -1,10 +1,9 @@
-package com.googlecode.array4j.io;
+package net.lunglet.io;
 
 import com.googlecode.array4j.Order;
 import com.googlecode.array4j.Storage;
 import com.googlecode.array4j.matrix.dense.FloatDenseMatrix;
 import com.googlecode.array4j.matrix.packed.FloatPackedMatrix;
-import com.googlecode.array4j.util.BufferUtils;
 import java.io.IOException;
 import java.nio.FloatBuffer;
 import net.jcip.annotations.NotThreadSafe;
@@ -13,6 +12,7 @@ import net.lunglet.hdf.DataSpace;
 import net.lunglet.hdf.FloatType;
 import net.lunglet.hdf.H5File;
 import net.lunglet.hdf.SelectionOperator;
+import net.lunglet.util.BufferUtils;
 
 // TODO handle any order, stride, offset, size, etc.
 

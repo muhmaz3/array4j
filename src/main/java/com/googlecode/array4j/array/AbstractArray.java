@@ -1,7 +1,7 @@
 package com.googlecode.array4j.array;
 
-import com.googlecode.array4j.util.AssertUtils;
 import java.util.Arrays;
+import net.lunglet.util.AssertUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 

@@ -1,10 +1,10 @@
 package com.googlecode.array4j.matrix;
 
 import com.googlecode.array4j.Direction;
-import com.googlecode.array4j.util.AssertUtils;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import net.lunglet.util.AssertUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 

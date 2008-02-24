@@ -1,4 +1,4 @@
-package com.googlecode.array4j.io;
+package net.lunglet.io;
 
 import static org.junit.Assert.assertEquals;
 import com.googlecode.array4j.MatrixTestSupport;
@@ -20,6 +20,8 @@ import net.lunglet.hdf.Group;
 import net.lunglet.hdf.H5File;
 import net.lunglet.hdf.Point;
 import net.lunglet.hdf.SelectionOperator;
+import net.lunglet.io.HDFReader;
+import net.lunglet.io.HDFWriter;
 import org.junit.Ignore;
 import org.junit.Test;
 

@@ -8,7 +8,6 @@ import com.googlecode.array4j.blas.FloatDenseBLAS;
 import com.googlecode.array4j.matrix.dense.DenseFactory;
 import com.googlecode.array4j.matrix.dense.FloatDenseMatrix;
 import com.googlecode.array4j.matrix.dense.FloatDenseVector;
-import com.googlecode.array4j.util.BufferUtils;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
 import java.io.BufferedReader;
@@ -18,6 +17,7 @@ import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.nio.DoubleBuffer;
 import net.lunglet.primme.PRIMMELibrary.MatrixMatvecCallback;
+import net.lunglet.util.BufferUtils;
 import org.junit.Test;
 
 // XXX anorm scales the convergence tolerance

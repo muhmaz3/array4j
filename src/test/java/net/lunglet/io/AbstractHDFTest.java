@@ -1,4 +1,4 @@
-package com.googlecode.array4j.io;
+package net.lunglet.io;
 
 import java.util.UUID;
 import net.lunglet.hdf.FileAccessPropList;
