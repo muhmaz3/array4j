@@ -6,5 +6,5 @@ import java.io.Serializable;
  * Complex value.
  */
 public interface Complex extends Serializable {
-
+    Complex conj();
 }

@@ -2,12 +2,13 @@ package net.lunglet.htk;
 
 import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-//TODO allow byte order to be specified (big endian is currently assumed)
+// TODO allow byte order to be specified (big endian is currently assumed)
 
 public final class HTKOutputStream extends DataOutputStream {
     private static void checkFlags(final int flags) {
@@ -20,6 +21,10 @@ public final class HTKOutputStream extends DataOutputStream {
         if (framePeriod <= 0) {
             throw new IllegalArgumentException("Frame period must be positive");
         }
+    }
+
+    public HTKOutputStream(final File file) throws FileNotFoundException {
+        this(new FileOutputStream(file));
     }
 
     public HTKOutputStream(final OutputStream out) {

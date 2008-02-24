@@ -1,4 +1,4 @@
-package com.googlecode.array4j.blas;
+package net.lunglet.array4j.blas;
 
 import java.util.Random;
 import net.lunglet.array4j.Order;

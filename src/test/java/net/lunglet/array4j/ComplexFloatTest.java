@@ -11,4 +11,11 @@ public final class ComplexFloatTest {
         assertFalse(x.equals(x.conj()));
         assertEquals(x, x.conj().conj());
     }
+
+    @Test
+    public void testTimes() {
+        ComplexFloat x = ComplexFloat.valueOf(0, 1);
+        ComplexFloat y = ComplexFloat.valueOf(-1, 0);
+        assertEquals(y, x.times(x));
+    }
 }
