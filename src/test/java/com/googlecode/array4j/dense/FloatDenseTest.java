@@ -1,9 +1,11 @@
 package com.googlecode.array4j.dense;
 
 import static org.junit.Assert.assertEquals;
-import com.googlecode.array4j.FloatMatrix;
-import com.googlecode.array4j.FloatVector;
 import com.googlecode.array4j.MatrixTestSupport;
+import com.googlecode.array4j.matrix.FloatMatrix;
+import com.googlecode.array4j.matrix.FloatVector;
+import com.googlecode.array4j.matrix.dense.DenseFactory;
+import com.googlecode.array4j.matrix.dense.DenseMatrix;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

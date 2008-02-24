@@ -1,7 +1,7 @@
 package com.googlecode.array4j.io;
 
-import com.googlecode.array4j.dense.DenseFactory;
-import com.googlecode.array4j.dense.FloatDenseMatrix;
+import com.googlecode.array4j.matrix.dense.DenseFactory;
+import com.googlecode.array4j.matrix.dense.FloatDenseMatrix;
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;

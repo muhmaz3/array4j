@@ -53,7 +53,7 @@ public final class HTKInputStreamTest {
         in.mark(HTKHeader.SIZE);
         HTKHeader header = in.readHeader();
         assertEquals(HTKDataType.MFCC, header.getDataType());
-        assertFalse(header.hasCRCChecksum());
+        assertFalse(header.hasChecksum());
         assertFalse(header.isCompressed());
         assertFalse(header.isAbsoluteEnergySuppressed());
         assertFalse(header.hasEnergy());
@@ -76,6 +76,13 @@ public final class HTKInputStreamTest {
         in.close();
     }
 
+    /**
+     * <CODE>
+     * SOURCERATE = 1250<br/>
+     * TARGETKIND = MFCC_0_E_Z<br/>
+     * </CODE>
+     * @throws IOException
+     */
     @Test
     public void testReadMFCC0EZ() throws IOException {
         InputStream stream = getClass().getResourceAsStream("ex1_01.mfcc_0_E_Z");
@@ -84,7 +91,7 @@ public final class HTKInputStreamTest {
         in.mark(HTKHeader.SIZE);
         HTKHeader header = in.readHeader();
         assertEquals(HTKDataType.MFCC, header.getDataType());
-        assertFalse(header.hasCRCChecksum());
+        assertFalse(header.hasChecksum());
         assertFalse(header.isCompressed());
         assertFalse(header.isAbsoluteEnergySuppressed());
         assertTrue(header.hasEnergy());

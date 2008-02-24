@@ -1,8 +1,8 @@
 package com.googlecode.array4j.io;
 
-import com.googlecode.array4j.FloatMatrix;
-import com.googlecode.array4j.FloatVector;
-import com.googlecode.array4j.dense.FloatDenseVector;
+import com.googlecode.array4j.matrix.FloatMatrix;
+import com.googlecode.array4j.matrix.FloatVector;
+import com.googlecode.array4j.matrix.dense.FloatDenseVector;
 import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;

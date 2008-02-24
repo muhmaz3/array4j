@@ -1,7 +1,7 @@
 package net.lunglet.fft;
 
-import com.googlecode.array4j.dense.CFloatDenseVector;
-import com.googlecode.array4j.dense.FloatDenseVector;
+import com.googlecode.array4j.matrix.dense.CFloatDenseVector;
+import com.googlecode.array4j.matrix.dense.FloatDenseVector;
 
 // TODO do a GSL implementation
 

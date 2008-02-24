@@ -3,8 +3,8 @@ package com.googlecode.array4j.io;
 import static org.junit.Assert.assertEquals;
 import com.googlecode.array4j.MatrixTestSupport;
 import com.googlecode.array4j.Storage;
-import com.googlecode.array4j.packed.FloatPackedMatrix;
-import com.googlecode.array4j.packed.PackedFactory;
+import com.googlecode.array4j.matrix.packed.FloatPackedMatrix;
+import com.googlecode.array4j.matrix.packed.PackedFactory;
 import net.lunglet.hdf.H5File;
 import org.junit.Test;
 

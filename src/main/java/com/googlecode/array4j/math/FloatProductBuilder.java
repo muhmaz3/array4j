@@ -1,6 +1,6 @@
 package com.googlecode.array4j.math;
 
-import com.googlecode.array4j.FloatMatrix;
+import com.googlecode.array4j.matrix.FloatMatrix;
 
 public final class FloatProductBuilder {
     public FloatMatrix build() {

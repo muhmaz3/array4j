@@ -1,15 +1,15 @@
 package com.googlecode.array4j.math;
 
-import com.googlecode.array4j.FloatMatrix;
-import com.googlecode.array4j.FloatVector;
 import com.googlecode.array4j.Order;
 import com.googlecode.array4j.Storage;
 import com.googlecode.array4j.blas.FloatDenseBLAS;
-import com.googlecode.array4j.dense.DenseFactory;
-import com.googlecode.array4j.dense.DenseMatrix;
-import com.googlecode.array4j.dense.FloatDenseMatrix;
-import com.googlecode.array4j.dense.FloatDenseVector;
-import com.googlecode.array4j.packed.FloatPackedMatrix;
+import com.googlecode.array4j.matrix.FloatMatrix;
+import com.googlecode.array4j.matrix.FloatVector;
+import com.googlecode.array4j.matrix.dense.DenseFactory;
+import com.googlecode.array4j.matrix.dense.DenseMatrix;
+import com.googlecode.array4j.matrix.dense.FloatDenseMatrix;
+import com.googlecode.array4j.matrix.dense.FloatDenseVector;
+import com.googlecode.array4j.matrix.packed.FloatPackedMatrix;
 
 public final class FloatMatrixMath {
     public static FloatVector minus(final FloatVector x, final FloatVector y) {

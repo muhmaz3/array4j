@@ -1,8 +1,8 @@
 package net.lunglet.svm;
 
-import com.googlecode.array4j.FloatVector;
 import com.googlecode.array4j.blas.FloatDenseBLAS;
-import com.googlecode.array4j.dense.FloatDenseVector;
+import com.googlecode.array4j.matrix.FloatVector;
+import com.googlecode.array4j.matrix.dense.FloatDenseVector;
 import com.googlecode.array4j.util.AssertUtils;
 import java.util.HashMap;
 import java.util.Map;

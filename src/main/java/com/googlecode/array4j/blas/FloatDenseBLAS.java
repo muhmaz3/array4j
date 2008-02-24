@@ -1,7 +1,7 @@
 package com.googlecode.array4j.blas;
 
-import com.googlecode.array4j.dense.FloatDenseMatrix;
-import com.googlecode.array4j.dense.FloatDenseVector;
+import com.googlecode.array4j.matrix.dense.FloatDenseMatrix;
+import com.googlecode.array4j.matrix.dense.FloatDenseVector;
 import java.nio.FloatBuffer;
 import org.netlib.blas.Saxpy;
 import org.netlib.blas.Sdot;

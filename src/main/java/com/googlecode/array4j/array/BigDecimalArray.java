@@ -1,6 +1,5 @@
 package com.googlecode.array4j.array;
 
-import com.googlecode.array4j.ObjectArray;
 import java.math.BigDecimal;
 
 public final class BigDecimalArray extends ObjectArray<BigDecimal> {

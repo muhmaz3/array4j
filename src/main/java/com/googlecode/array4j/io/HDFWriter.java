@@ -1,8 +1,8 @@
 package com.googlecode.array4j.io;
 
 import com.googlecode.array4j.Order;
-import com.googlecode.array4j.dense.FloatDenseMatrix;
-import com.googlecode.array4j.packed.FloatPackedMatrix;
+import com.googlecode.array4j.matrix.dense.FloatDenseMatrix;
+import com.googlecode.array4j.matrix.packed.FloatPackedMatrix;
 import net.jcip.annotations.NotThreadSafe;
 import net.lunglet.hdf.DataSet;
 import net.lunglet.hdf.DataType;
