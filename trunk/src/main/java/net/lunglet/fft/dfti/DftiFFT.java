@@ -1,8 +1,8 @@
 package net.lunglet.fft.dfti;
 
-import com.googlecode.array4j.matrix.dense.CFloatDenseVector;
-import com.googlecode.array4j.matrix.dense.FloatDenseVector;
 import java.nio.FloatBuffer;
+import net.lunglet.array4j.matrix.dense.CFloatDenseVector;
+import net.lunglet.array4j.matrix.dense.FloatDenseVector;
 import net.lunglet.fft.FFT;
 import net.lunglet.util.AssertUtils;
 import net.lunglet.util.BufferUtils;

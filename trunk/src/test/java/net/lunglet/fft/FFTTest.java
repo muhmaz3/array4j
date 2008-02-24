@@ -1,12 +1,12 @@
 package net.lunglet.fft;
 
 import static org.junit.Assert.assertEquals;
-import com.googlecode.array4j.ComplexFloat;
-import com.googlecode.array4j.Storage;
-import com.googlecode.array4j.matrix.dense.CFloatDenseVector;
-import com.googlecode.array4j.matrix.dense.FloatDenseVector;
 import java.util.Arrays;
 import java.util.Collection;
+import net.lunglet.array4j.ComplexFloat;
+import net.lunglet.array4j.Storage;
+import net.lunglet.array4j.matrix.dense.CFloatDenseVector;
+import net.lunglet.array4j.matrix.dense.FloatDenseVector;
 import net.lunglet.fft.dfti.DftiFFT;
 import org.junit.Ignore;
 import org.junit.Test;

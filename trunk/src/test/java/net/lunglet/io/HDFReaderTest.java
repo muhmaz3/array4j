@@ -1,17 +1,17 @@
 package net.lunglet.io;
 
 import static org.junit.Assert.assertEquals;
-import com.googlecode.array4j.MatrixTestSupport;
-import com.googlecode.array4j.Order;
-import com.googlecode.array4j.Storage;
-import com.googlecode.array4j.matrix.dense.DenseFactory;
-import com.googlecode.array4j.matrix.dense.FloatDenseMatrix;
-import com.googlecode.array4j.matrix.packed.FloatPackedMatrix;
-import com.googlecode.array4j.matrix.packed.PackedFactory;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import net.lunglet.array4j.Order;
+import net.lunglet.array4j.Storage;
+import net.lunglet.array4j.matrix.MatrixTestSupport;
+import net.lunglet.array4j.matrix.dense.DenseFactory;
+import net.lunglet.array4j.matrix.dense.FloatDenseMatrix;
+import net.lunglet.array4j.matrix.packed.FloatPackedMatrix;
+import net.lunglet.array4j.matrix.packed.PackedFactory;
 import net.lunglet.hdf.DataSet;
 import net.lunglet.hdf.DataSpace;
 import net.lunglet.hdf.DataType;
@@ -20,8 +20,6 @@ import net.lunglet.hdf.Group;
 import net.lunglet.hdf.H5File;
 import net.lunglet.hdf.Point;
 import net.lunglet.hdf.SelectionOperator;
-import net.lunglet.io.HDFReader;
-import net.lunglet.io.HDFWriter;
 import org.junit.Ignore;
 import org.junit.Test;
 

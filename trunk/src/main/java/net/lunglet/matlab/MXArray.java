@@ -602,6 +602,7 @@ public final class MXArray extends PointerType {
         MXLibrary.INSTANCE.mxSetUserBits(this, value);
     }
 
+    @Override
     public String toString() {
         return "MXArray: " + getM() + "x" + getN() + ", isNumeric?=" + isNumeric();
     }

@@ -2,12 +2,6 @@ package net.lunglet.primme;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import com.googlecode.array4j.Constants;
-import com.googlecode.array4j.Storage;
-import com.googlecode.array4j.blas.FloatDenseBLAS;
-import com.googlecode.array4j.matrix.dense.DenseFactory;
-import com.googlecode.array4j.matrix.dense.FloatDenseMatrix;
-import com.googlecode.array4j.matrix.dense.FloatDenseVector;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
 import java.io.BufferedReader;
@@ -16,6 +10,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.nio.DoubleBuffer;
+import net.lunglet.array4j.Constants;
+import net.lunglet.array4j.Storage;
+import net.lunglet.array4j.blas.FloatDenseBLAS;
+import net.lunglet.array4j.matrix.dense.DenseFactory;
+import net.lunglet.array4j.matrix.dense.FloatDenseMatrix;
+import net.lunglet.array4j.matrix.dense.FloatDenseVector;
 import net.lunglet.primme.PRIMMELibrary.MatrixMatvecCallback;
 import net.lunglet.util.BufferUtils;
 import org.junit.Test;
@@ -84,7 +84,7 @@ public final class PRIMMETest {
                 FloatDenseVector yy = DenseFactory.createFloatVector(params.n);
                 FloatDenseBLAS.DEFAULT.gemv(1.0f, matrix, xx, 0.0f, yy);
                 for (int i = 0; i < yy.length(); i++) {
-                    ybuf.put(i, (double) yy.get(i));
+                    ybuf.put(i, yy.get(i));
                 }
             }
         };

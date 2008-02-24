@@ -1,10 +1,10 @@
 package net.lunglet.svm;
 
-import com.googlecode.array4j.blas.FloatDenseBLAS;
-import com.googlecode.array4j.matrix.FloatVector;
-import com.googlecode.array4j.matrix.dense.FloatDenseVector;
 import java.util.HashMap;
 import java.util.Map;
+import net.lunglet.array4j.blas.FloatDenseBLAS;
+import net.lunglet.array4j.matrix.FloatVector;
+import net.lunglet.array4j.matrix.dense.FloatDenseVector;
 import net.lunglet.util.AssertUtils;
 
 // TODO rename this class

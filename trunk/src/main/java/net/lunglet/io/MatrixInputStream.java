@@ -1,11 +1,11 @@
 package net.lunglet.io;
 
-import com.googlecode.array4j.matrix.dense.DenseFactory;
-import com.googlecode.array4j.matrix.dense.FloatDenseMatrix;
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import net.lunglet.array4j.matrix.dense.DenseFactory;
+import net.lunglet.array4j.matrix.dense.FloatDenseMatrix;
 
 public final class MatrixInputStream extends DataInputStream implements MatrixInput {
     public MatrixInputStream(final InputStream in) {

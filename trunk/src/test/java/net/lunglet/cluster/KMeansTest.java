@@ -2,12 +2,12 @@ package net.lunglet.cluster;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
-import com.googlecode.array4j.math.FloatMatrixUtils;
-import com.googlecode.array4j.matrix.FloatMatrix;
-import com.googlecode.array4j.matrix.dense.DenseFactory;
-import com.googlecode.array4j.matrix.dense.FloatDenseMatrix;
 import java.util.Random;
 import java.util.concurrent.ExecutionException;
+import net.lunglet.array4j.math.FloatMatrixUtils;
+import net.lunglet.array4j.matrix.FloatMatrix;
+import net.lunglet.array4j.matrix.dense.DenseFactory;
+import net.lunglet.array4j.matrix.dense.FloatDenseMatrix;
 import org.junit.Test;
 
 public final class KMeansTest {

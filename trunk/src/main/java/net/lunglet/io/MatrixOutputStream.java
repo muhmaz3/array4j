@@ -1,13 +1,13 @@
 package net.lunglet.io;
 
-import com.googlecode.array4j.matrix.FloatMatrix;
-import com.googlecode.array4j.matrix.FloatVector;
-import com.googlecode.array4j.matrix.dense.FloatDenseVector;
 import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Collection;
+import net.lunglet.array4j.matrix.FloatMatrix;
+import net.lunglet.array4j.matrix.FloatVector;
+import net.lunglet.array4j.matrix.dense.FloatDenseVector;
 
 // TODO support little-endian output as well as big-endian
 

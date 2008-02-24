@@ -2,15 +2,6 @@ package net.lunglet.svm;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import com.googlecode.array4j.Order;
-import com.googlecode.array4j.Storage;
-import com.googlecode.array4j.math.FloatMatrixMath;
-import com.googlecode.array4j.math.FloatMatrixUtils;
-import com.googlecode.array4j.matrix.FloatMatrix;
-import com.googlecode.array4j.matrix.FloatVector;
-import com.googlecode.array4j.matrix.dense.DenseFactory;
-import com.googlecode.array4j.matrix.dense.FloatDenseMatrix;
-import com.googlecode.array4j.matrix.packed.FloatPackedMatrix;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -21,6 +12,15 @@ import libsvm.svm_model;
 import libsvm.svm_node;
 import libsvm.svm_parameter;
 import libsvm.svm_problem;
+import net.lunglet.array4j.Order;
+import net.lunglet.array4j.Storage;
+import net.lunglet.array4j.math.FloatMatrixMath;
+import net.lunglet.array4j.math.FloatMatrixUtils;
+import net.lunglet.array4j.matrix.FloatMatrix;
+import net.lunglet.array4j.matrix.FloatVector;
+import net.lunglet.array4j.matrix.dense.DenseFactory;
+import net.lunglet.array4j.matrix.dense.FloatDenseMatrix;
+import net.lunglet.array4j.matrix.packed.FloatPackedMatrix;
 import org.junit.Test;
 
 // TODO rename to SvmClassifierTest

@@ -1,12 +1,12 @@
 package net.lunglet.svm;
 
-import com.googlecode.array4j.matrix.FloatMatrix;
-import com.googlecode.array4j.matrix.FloatVector;
-import com.googlecode.array4j.matrix.dense.FloatDenseMatrix;
-import com.googlecode.array4j.matrix.dense.FloatDenseVector;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import net.lunglet.array4j.matrix.FloatMatrix;
+import net.lunglet.array4j.matrix.FloatVector;
+import net.lunglet.array4j.matrix.dense.FloatDenseMatrix;
+import net.lunglet.array4j.matrix.dense.FloatDenseVector;
 
 // TODO handle more than 2 classes everywhere (major benefit: kernel cache is probably reused)
 

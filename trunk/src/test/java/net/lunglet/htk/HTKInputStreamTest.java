@@ -4,9 +4,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import com.googlecode.array4j.math.ArraysMath;
 import java.io.IOException;
 import java.io.InputStream;
+import net.lunglet.array4j.math.ArraysMath;
 import org.junit.Test;
 
 public final class HTKInputStreamTest {
