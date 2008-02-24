@@ -55,7 +55,7 @@ public final class HTKHeader implements HTKFlags {
         return (parmKind & HAS_ACCELERATION) != 0;
     }
 
-    public boolean hasCRCChecksum() {
+    public boolean hasChecksum() {
         return (parmKind & CHECKSUM) != 0;
     }
 

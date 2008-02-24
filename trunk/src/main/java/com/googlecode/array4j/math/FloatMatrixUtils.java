@@ -1,15 +1,15 @@
 package com.googlecode.array4j.math;
 
 import com.googlecode.array4j.Direction;
-import com.googlecode.array4j.FloatMatrix;
-import com.googlecode.array4j.FloatVector;
-import com.googlecode.array4j.Matrix;
 import com.googlecode.array4j.Order;
 import com.googlecode.array4j.Storage;
-import com.googlecode.array4j.dense.DenseFactory;
-import com.googlecode.array4j.dense.DenseMatrix;
-import com.googlecode.array4j.dense.FloatDenseMatrix;
-import com.googlecode.array4j.dense.FloatDenseVector;
+import com.googlecode.array4j.matrix.FloatMatrix;
+import com.googlecode.array4j.matrix.FloatVector;
+import com.googlecode.array4j.matrix.Matrix;
+import com.googlecode.array4j.matrix.dense.DenseFactory;
+import com.googlecode.array4j.matrix.dense.DenseMatrix;
+import com.googlecode.array4j.matrix.dense.FloatDenseMatrix;
+import com.googlecode.array4j.matrix.dense.FloatDenseVector;
 import java.nio.FloatBuffer;
 import java.util.Random;
 

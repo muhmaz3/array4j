@@ -1,9 +1,9 @@
 package net.lunglet.svm;
 
-import com.googlecode.array4j.FloatMatrix;
-import com.googlecode.array4j.FloatVector;
-import com.googlecode.array4j.dense.FloatDenseMatrix;
-import com.googlecode.array4j.dense.FloatDenseVector;
+import com.googlecode.array4j.matrix.FloatMatrix;
+import com.googlecode.array4j.matrix.FloatVector;
+import com.googlecode.array4j.matrix.dense.FloatDenseMatrix;
+import com.googlecode.array4j.matrix.dense.FloatDenseVector;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;

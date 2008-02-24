@@ -1,6 +1,6 @@
 package net.lunglet.svm;
 
-import com.googlecode.array4j.FloatVector;
+import com.googlecode.array4j.matrix.FloatVector;
 
 final class Svm {
     static class decision_function {

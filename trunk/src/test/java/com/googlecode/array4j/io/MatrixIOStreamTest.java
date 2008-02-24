@@ -1,10 +1,10 @@
 package com.googlecode.array4j.io;
 
 import static org.junit.Assert.assertEquals;
-import com.googlecode.array4j.dense.DenseFactory;
-import com.googlecode.array4j.dense.FloatDenseMatrix;
-import com.googlecode.array4j.dense.FloatDenseVector;
 import com.googlecode.array4j.math.FloatMatrixUtils;
+import com.googlecode.array4j.matrix.dense.DenseFactory;
+import com.googlecode.array4j.matrix.dense.FloatDenseMatrix;
+import com.googlecode.array4j.matrix.dense.FloatDenseVector;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

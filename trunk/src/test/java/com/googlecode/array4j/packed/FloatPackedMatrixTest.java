@@ -2,6 +2,8 @@ package com.googlecode.array4j.packed;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import com.googlecode.array4j.matrix.packed.FloatPackedMatrix;
+import com.googlecode.array4j.matrix.packed.PackedFactory;
 import org.junit.Test;
 
 public final class FloatPackedMatrixTest {

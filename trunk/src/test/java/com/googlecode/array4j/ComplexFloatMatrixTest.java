@@ -3,6 +3,8 @@ package com.googlecode.array4j;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import com.googlecode.array4j.matrix.ComplexFloatMatrix;
+import com.googlecode.array4j.matrix.ComplexFloatVector;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -18,6 +20,9 @@ import org.junit.runners.Parameterized.Parameters;
 
 @RunWith(value = Parameterized.class)
 public final class ComplexFloatMatrixTest {
+    private interface ComplexFloatMatrixFactory {
+    }
+
     @Parameters
     public static Collection<?> data() {
         return Arrays.asList(new Object[][]{{Storage.HEAP}, {Storage.DIRECT}});

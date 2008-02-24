@@ -1,6 +1,6 @@
 package net.lunglet.svm;
 
-import com.googlecode.array4j.FloatVector;
+import com.googlecode.array4j.matrix.FloatVector;
 import java.io.Serializable;
 
 public final class SvmNode implements Serializable {

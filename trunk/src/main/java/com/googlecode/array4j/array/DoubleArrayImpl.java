@@ -1,7 +1,5 @@
 package com.googlecode.array4j.array;
 
-import com.googlecode.array4j.AbstractArray;
-import com.googlecode.array4j.DoubleArray;
 import java.nio.DoubleBuffer;
 import net.jcip.annotations.NotThreadSafe;
 import org.apache.commons.lang.builder.EqualsBuilder;

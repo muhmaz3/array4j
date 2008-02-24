@@ -1,5 +1,7 @@
 package com.googlecode.array4j;
 
+import com.googlecode.array4j.matrix.FloatMatrix;
+
 public final class MatrixTestSupport {
     public static void populateMatrix(final FloatMatrix x) {
         for (int i = 0, k = 1; i < x.rows(); i++) {

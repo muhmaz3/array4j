@@ -2,8 +2,8 @@ package com.googlecode.array4j.io;
 
 import com.googlecode.array4j.Order;
 import com.googlecode.array4j.Storage;
-import com.googlecode.array4j.dense.FloatDenseMatrix;
-import com.googlecode.array4j.packed.FloatPackedMatrix;
+import com.googlecode.array4j.matrix.dense.FloatDenseMatrix;
+import com.googlecode.array4j.matrix.packed.FloatPackedMatrix;
 import com.googlecode.array4j.util.BufferUtils;
 import java.io.IOException;
 import java.nio.FloatBuffer;

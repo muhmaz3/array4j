@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import com.googlecode.array4j.math.FloatMatrixMath;
 import com.googlecode.array4j.math.FloatMatrixUtils;
+import com.googlecode.array4j.matrix.FloatVector;
 import java.util.Arrays;
 import java.util.Collection;
 import org.junit.Test;
@@ -14,6 +15,9 @@ import org.junit.runners.Parameterized.Parameters;
 
 @RunWith(value = Parameterized.class)
 public final class FloatVectorTest {
+    private interface FloatVectorFactory {
+    }
+
     @Parameters
     public static Collection<?> data() {
         return Arrays.asList(new Object[][]{{Storage.HEAP}, {Storage.DIRECT}});

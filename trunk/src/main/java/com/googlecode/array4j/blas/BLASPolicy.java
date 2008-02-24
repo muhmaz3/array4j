@@ -2,8 +2,8 @@ package com.googlecode.array4j.blas;
 
 import com.googlecode.array4j.Order;
 import com.googlecode.array4j.Storage;
-import com.googlecode.array4j.dense.DenseMatrix;
-import com.googlecode.array4j.dense.DenseVector;
+import com.googlecode.array4j.matrix.dense.DenseMatrix;
+import com.googlecode.array4j.matrix.dense.DenseVector;
 
 interface BLASPolicy {
     /**

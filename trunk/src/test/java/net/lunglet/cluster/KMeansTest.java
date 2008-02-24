@@ -2,10 +2,10 @@ package net.lunglet.cluster;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
-import com.googlecode.array4j.FloatMatrix;
-import com.googlecode.array4j.dense.DenseFactory;
-import com.googlecode.array4j.dense.FloatDenseMatrix;
 import com.googlecode.array4j.math.FloatMatrixUtils;
+import com.googlecode.array4j.matrix.FloatMatrix;
+import com.googlecode.array4j.matrix.dense.DenseFactory;
+import com.googlecode.array4j.matrix.dense.FloatDenseMatrix;
 import java.util.Random;
 import java.util.concurrent.ExecutionException;
 import org.junit.Test;

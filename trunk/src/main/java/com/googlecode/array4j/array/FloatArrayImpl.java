@@ -1,7 +1,5 @@
 package com.googlecode.array4j.array;
 
-import com.googlecode.array4j.AbstractArray;
-import com.googlecode.array4j.FloatArray;
 import java.nio.FloatBuffer;
 import net.jcip.annotations.NotThreadSafe;
 import org.apache.commons.lang.builder.EqualsBuilder;
