@@ -4,12 +4,12 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutionException;
 import net.lunglet.array4j.math.FloatMatrixMath;
-import net.lunglet.array4j.math.FloatMatrixUtils;
 import net.lunglet.array4j.matrix.FloatMatrix;
 import net.lunglet.array4j.matrix.FloatVector;
 import net.lunglet.array4j.matrix.dense.DenseFactory;
 import net.lunglet.array4j.matrix.dense.FloatDenseMatrix;
-import net.lunglet.array4j.matrix.dense.FloatDenseUtils;
+import net.lunglet.array4j.matrix.util.FloatDenseUtils;
+import net.lunglet.array4j.matrix.util.FloatMatrixUtils;
 
 public final class KMeans<T> {
     public interface KMeansTask extends Callable<KMeansTaskResult> {

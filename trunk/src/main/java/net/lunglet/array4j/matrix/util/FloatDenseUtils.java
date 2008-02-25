@@ -1,4 +1,4 @@
-package net.lunglet.array4j.matrix.dense;
+package net.lunglet.array4j.matrix.util;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -10,6 +10,8 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.FileChannel.MapMode;
 import net.lunglet.array4j.Constants;
 import net.lunglet.array4j.Order;
+import net.lunglet.array4j.matrix.dense.DenseFactory;
+import net.lunglet.array4j.matrix.dense.FloatDenseMatrix;
 import net.lunglet.util.AssertUtils;
 
 public final class FloatDenseUtils {
@@ -71,7 +73,7 @@ public final class FloatDenseUtils {
         int cols = column1 - column0;
         if (x.order().equals(Order.COLUMN)) {
 //            return new FloatDenseMatrix(x, x.rows(), cols, x.columnOffset(column0), x.stride, x.order());
-            return null;
+            throw new UnsupportedOperationException();
         } else {
             FloatDenseMatrix newMatrix = DenseFactory.createFloatMatrix(x.rows(), cols, x.order(), x.storage());
             for (int i = column0, j = 0; i < column1; i++, j++) {

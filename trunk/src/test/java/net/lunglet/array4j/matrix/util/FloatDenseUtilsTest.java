@@ -1,4 +1,4 @@
-package net.lunglet.array4j.matrix.dense;
+package net.lunglet.array4j.matrix.util;
 
 import static org.junit.Assert.assertEquals;
 import java.util.Arrays;
@@ -6,6 +6,8 @@ import java.util.Collection;
 import net.lunglet.array4j.Order;
 import net.lunglet.array4j.Storage;
 import net.lunglet.array4j.matrix.MatrixTestSupport;
+import net.lunglet.array4j.matrix.dense.DenseFactory;
+import net.lunglet.array4j.matrix.dense.FloatDenseMatrix;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;

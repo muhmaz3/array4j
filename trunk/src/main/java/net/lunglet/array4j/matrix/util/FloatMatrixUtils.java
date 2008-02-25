@@ -1,10 +1,11 @@
-package net.lunglet.array4j.math;
+package net.lunglet.array4j.matrix.util;
 
 import java.nio.FloatBuffer;
 import java.util.Random;
 import net.lunglet.array4j.Direction;
 import net.lunglet.array4j.Order;
 import net.lunglet.array4j.Storage;
+import net.lunglet.array4j.math.FloatMatrixMath;
 import net.lunglet.array4j.matrix.FloatMatrix;
 import net.lunglet.array4j.matrix.FloatVector;
 import net.lunglet.array4j.matrix.Matrix;
