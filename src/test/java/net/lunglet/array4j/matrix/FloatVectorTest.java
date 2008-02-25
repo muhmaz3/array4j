@@ -7,7 +7,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import net.lunglet.array4j.Storage;
 import net.lunglet.array4j.math.FloatMatrixMath;
-import net.lunglet.array4j.math.FloatMatrixUtils;
+import net.lunglet.array4j.matrix.util.FloatMatrixUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;

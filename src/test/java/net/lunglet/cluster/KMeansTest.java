@@ -4,10 +4,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
 import java.util.Random;
 import java.util.concurrent.ExecutionException;
-import net.lunglet.array4j.math.FloatMatrixUtils;
 import net.lunglet.array4j.matrix.FloatMatrix;
 import net.lunglet.array4j.matrix.dense.DenseFactory;
 import net.lunglet.array4j.matrix.dense.FloatDenseMatrix;
+import net.lunglet.array4j.matrix.util.FloatMatrixUtils;
 import org.junit.Test;
 
 public final class KMeansTest {

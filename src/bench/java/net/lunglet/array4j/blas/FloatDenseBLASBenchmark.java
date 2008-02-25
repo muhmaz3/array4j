@@ -3,10 +3,9 @@ package net.lunglet.array4j.blas;
 import java.util.Random;
 import net.lunglet.array4j.Order;
 import net.lunglet.array4j.Storage;
-import net.lunglet.array4j.blas.FloatDenseBLAS;
-import net.lunglet.array4j.math.FloatMatrixUtils;
 import net.lunglet.array4j.matrix.dense.DenseFactory;
 import net.lunglet.array4j.matrix.dense.FloatDenseMatrix;
+import net.lunglet.array4j.matrix.util.FloatMatrixUtils;
 import org.junit.Test;
 
 public final class FloatDenseBLASBenchmark {

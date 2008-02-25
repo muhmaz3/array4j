@@ -7,9 +7,9 @@ import net.lunglet.array4j.Direction;
 import net.lunglet.array4j.Order;
 import net.lunglet.array4j.Storage;
 import net.lunglet.array4j.blas.FloatDenseBLAS;
-import net.lunglet.array4j.math.FloatMatrixUtils;
 import net.lunglet.array4j.matrix.FloatMatrix;
 import net.lunglet.array4j.matrix.FloatVector;
+import net.lunglet.array4j.matrix.util.FloatMatrixUtils;
 import net.lunglet.util.BufferUtils;
 import org.apache.commons.lang.builder.EqualsBuilder;
 
