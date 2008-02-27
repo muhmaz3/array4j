@@ -16,6 +16,7 @@ public final class DenseFactory {
     }
 
     public static FloatDenseMatrix valueOf(final float[][] values) {
+        // TODO use System#arraycopy or FloatBuffer#put(float[]) here if possible
         int rows = values.length;
         int columns = values.length > 0 ? values[0].length : 0;
         FloatDenseMatrix matrix = createFloatMatrix(rows, columns);

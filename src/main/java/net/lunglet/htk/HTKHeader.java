@@ -5,12 +5,12 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public final class HTKHeader implements HTKFlags {
-    /** Size of the HTK header in bytes. */
-    public static final int SIZE = 12;
-
     private static final int CHECKSUM = 0x1000;
 
     private static final int COMPRESSED = 0x400;
+
+    /** Size of the HTK header in bytes. */
+    public static final int SIZE = 12;
 
     private final int framePeriod;
 
@@ -53,6 +53,10 @@ public final class HTKHeader implements HTKFlags {
 
     public boolean hasAccelerationCoefficients() {
         return (parmKind & HAS_ACCELERATION) != 0;
+    }
+
+    public boolean hasC0() {
+        return (parmKind & HAS_C0) != 0;
     }
 
     public boolean hasChecksum() {

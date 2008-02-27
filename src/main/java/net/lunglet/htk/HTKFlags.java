@@ -1,11 +1,11 @@
 package net.lunglet.htk;
 
 public interface HTKFlags {
-    /** Has 0th cepstral coefficient. */
-    int C0 = 0x2000;
-
     /** Has acceleration coefficients. */
     int HAS_ACCELERATION = 0x200;
+
+    /** Has 0th cepstral coefficient. */
+    int HAS_C0 = 0x2000;
 
     /** Has delta coefficients. */
     int HAS_DELTA = 0x100;

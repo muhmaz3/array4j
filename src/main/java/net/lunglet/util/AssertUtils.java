@@ -39,7 +39,7 @@ public final class AssertUtils {
     }
 
     /**
-     * Checks that value is in the range [start, stop).
+     * Checks that argument is in the range [start, stop).
      */
     public static void checkArgumentRange(final int value, final int start, final int stop) {
         if (value < start || value >= stop) {
