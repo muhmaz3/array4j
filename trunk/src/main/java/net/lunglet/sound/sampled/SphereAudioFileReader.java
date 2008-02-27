@@ -110,13 +110,13 @@ public final class SphereAudioFileReader extends AudioFileReader {
     @Override
     public AudioFileFormat getAudioFileFormat(final InputStream stream) throws UnsupportedAudioFileException,
             IOException {
-        DataInputStream dataStream = new DataInputStream(stream);
         Charset charset = Charset.forName("US-ASCII");
+        DataInputStream dataStream = new DataInputStream(stream);
+        dataStream.mark(16);
         try {
             byte[] buf = new byte[8];
             // mark to allow 16 bytes to be read to get everything needed
             // to check whether this is a SPHERE file
-            dataStream.mark(16);
             dataStream.readFully(buf);
             String nistHeader = new String(buf, charset);
             nistHeader = nistHeader.replaceAll("\\s+", "");
@@ -127,10 +127,14 @@ public final class SphereAudioFileReader extends AudioFileReader {
             // IOExceptions at this point indicate that we're probably not
             // dealing with the SPHERE format
             throw new UnsupportedAudioFileException();
+        } finally {
+            dataStream.reset();
         }
 
-        // read header size
         byte[] buf = new byte[8];
+        // discard first 8 bytes, because stream was reset
+        dataStream.readFully(buf);
+        // read header size
         dataStream.readFully(buf);
         String sizeHeader = new String(buf, charset);
         final int headerSize;
@@ -142,6 +146,7 @@ public final class SphereAudioFileReader extends AudioFileReader {
         } catch (NumberFormatException e) {
             throw new IOException(e);
         }
+        // reset again before reading entire header
         dataStream.reset();
 
         // parse properties from the header

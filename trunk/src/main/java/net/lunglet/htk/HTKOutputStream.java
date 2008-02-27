@@ -24,7 +24,7 @@ public final class HTKOutputStream extends DataOutputStream {
     }
 
     public HTKOutputStream(final File file) throws FileNotFoundException {
-        this(new FileOutputStream(file));
+        this(new BufferedOutputStream(new FileOutputStream(file)));
     }
 
     public HTKOutputStream(final OutputStream out) {

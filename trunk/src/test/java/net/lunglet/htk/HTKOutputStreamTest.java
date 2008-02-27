@@ -15,7 +15,7 @@ public final class HTKOutputStreamTest {
         float[][] mfcc = new float[99][14];
         // set frame period to 10ms
         int framePeriod = 10000000;
-        int flags = HTKFlags.C0 | HTKFlags.HAS_ENERGY | HTKFlags.ZERO_MEAN;
+        int flags = HTKFlags.HAS_C0 | HTKFlags.HAS_ENERGY | HTKFlags.ZERO_MEAN;
         out.writeMFCC(mfcc, framePeriod, flags);
         out.close();
         HTKInputStream in = new HTKInputStream(new ByteArrayInputStream(baos.toByteArray()));

@@ -46,9 +46,12 @@ public final class SphereAudioFileReaderTest {
         TEST_SEGMENTS.put("ex4.wav", new SegmentInfo(17024, "73e22ce2e73ac6f110b7ebe140fcc69b"));
         TEST_SEGMENTS.put("ex4_01.wav", new SegmentInfo(33024, "b4deddb6704665087f0ada78211d44c5"));
         TEST_SEGMENTS.put("ex4_10.wav", new SegmentInfo(33024, "eda37911758e16afbf4de61db3a76e39"));
+        // ex5.wav contains some cross channel effects
+        TEST_SEGMENTS.put("ex5.wav", new SegmentInfo(33024, "4e0c04f165bf30eed0bf0aea75d3cccc"));
     }
 
-    static AudioInputStream getAudioInputStream(final String name) throws IOException, UnsupportedAudioFileException {
+    public static AudioInputStream getAudioInputStream(final String name) throws IOException,
+            UnsupportedAudioFileException {
         SegmentInfo info = TEST_SEGMENTS.get(name);
         assertNotNull(info);
         return getAudioInputStream(name, info.size, info.md5sum);
@@ -159,7 +162,7 @@ public final class SphereAudioFileReaderTest {
 
     @Test
     public void testEx5() throws UnsupportedAudioFileException, IOException {
-        AudioInputStream ais = getAudioInputStream("ex5.wav", 33024, "4e0c04f165bf30eed0bf0aea75d3cccc");
+        AudioInputStream ais = getAudioInputStream("ex5.wav");
         AudioFormat format = ais.getFormat();
         assertEquals(2, format.getChannels());
     }
