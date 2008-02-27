@@ -13,6 +13,12 @@ public final class AssertUtils {
         }
     }
 
+    public static void assertNotNull(final Object obj) {
+        if (obj == null) {
+            throw new AssertionError();
+        }
+    }
+
     public static void assertTrue(final boolean condition) {
         if (!condition) {
             throw new AssertionError();
