@@ -29,6 +29,7 @@
     <mkdir dir="${html.test.results.dir}" />
     <mkdir dir="${docs.dir}" />
     <mkdir dir="${api.docs.dir}" />
+    <mkdir dir="${dist.dir}" />
   </target>
 
   <target name="compile-array4j" depends="prepare">
@@ -40,6 +41,22 @@
   </target>
 
   <target name="compile" depends="compile-array4j" description="Compile the source files for the project.">
+  </target>
+
+  <target name="jar-complete" depends="compile" description="Create the complete array4j jar.">
+    <property name="filename" value="array4j-complete.jar" />
+    <taskdef name="jarjar"
+             classname="com.tonicsystems.jarjar.JarJarTask"
+             classpath="${build.lib.dir}/jarjar-1.0rc6.jar" />
+    <jarjar destfile="${dist.dir}/${filename}">
+      <fileset dir="${classes.dir}" />
+      <zipfileset src="${lib.dir}/blas.jar" />
+      <zipfileset src="${lib.dir}/f2jutil.jar" />
+      <zipfileset src="${lib.dir}/lapack.jar" />
+      <zipfileset src="${lib.dir}/jna.jar" />
+      <zipfileset src="${lib.dir}/commons-lang-2.3.jar" />
+      <zipfileset src="${lib.dir}/jcip-annotations.jar" />
+    </jarjar>
   </target>
 
   <target name="create-apidocs" depends="prepare" description="Creates the Java API docs">
@@ -58,7 +75,7 @@
 
   <target name="clean" depends="init" description="clean almost everything">
     <delete dir="${build.dir}" />
-    <delete dir="${dist.dir}" />
     <delete dir="${api.docs.dir}" />
+    <delete dir="${dist.dir}" />
   </target>
 </project>
