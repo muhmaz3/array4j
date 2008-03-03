@@ -1,11 +1,10 @@
 package net.lunglet.io;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FilenameFilter;
 
-// TODO maybe this should imeplement FileFilter too, or only that
-
-public final class FilenameSuffixFilter implements FilenameFilter {
+public final class FilenameSuffixFilter implements FilenameFilter, FileFilter {
     private final boolean ignoreCase;
 
     private final String suffix;
@@ -20,7 +19,11 @@ public final class FilenameSuffixFilter implements FilenameFilter {
     }
 
     public boolean accept(final File dir, final String name) {
-        File file = new File(dir, name);
+        return accept(new File(dir, name));
+    }
+
+    @Override
+    public boolean accept(final File file) {
         if (!file.isFile()) {
             return false;
         }
