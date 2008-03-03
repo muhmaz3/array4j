@@ -4,6 +4,8 @@ import net.lunglet.array4j.matrix.AbstractMatrix;
 import net.lunglet.array4j.matrix.dense.DenseVector;
 
 public abstract class AbstractPackedMatrix<V extends DenseVector> extends AbstractMatrix<V> implements PackedMatrix {
+    private static final long serialVersionUID = 1L;
+
     protected enum PackedType {
         LOWER_TRIANGULAR {
             @Override
