@@ -144,7 +144,6 @@ int inner_solve_dprimme(double *x, double *r, double *rnorm,
 
    double *g, *d, *delta, *w;
    double alpha_prev, beta, rho_prev, rho;
-   double ztmp;
    double Theta_prev, Theta, c, sigma_prev, tau_init, tau_prev, tau; 
 
    /* Parameters used to dynamically update eigenpair */
