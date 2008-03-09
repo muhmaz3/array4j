@@ -181,7 +181,7 @@ abstract class AbstractFloatDense extends AbstractDenseMatrix<FloatDenseVector, 
     }
 
     @Override
-    protected final void setFrom(final float[] dest, final int destPos, final int srcPos) {
+    protected final void elementCopy(final int srcPos, final float[] dest, final int destPos) {
         dest[destPos] = data.get(srcPos);
     }
 

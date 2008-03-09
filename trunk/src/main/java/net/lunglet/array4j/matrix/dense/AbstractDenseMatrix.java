@@ -170,8 +170,11 @@ public abstract class AbstractDenseMatrix<V extends DenseVector, T> extends Abst
         }
     }
 
-    // TODO give this method a better name
-    protected abstract void setFrom(T dest, int destPos, int srcPos);
+    /**
+     * Copies an element from the specified source position to the specified
+     * position of the destination array.
+     */
+    protected abstract void elementCopy(int srcPos, T dest, int destPos);
 
     @Override
     public final int stride() {
@@ -188,7 +191,7 @@ public abstract class AbstractDenseMatrix<V extends DenseVector, T> extends Abst
             return arr;
         }
         for (int i = offset, j = 0; j < length; i += elementSize * stride, j++) {
-            setFrom(arr, j, i);
+            elementCopy(i, arr, j);
         }
         return arr;
     }
@@ -215,7 +218,7 @@ public abstract class AbstractDenseMatrix<V extends DenseVector, T> extends Abst
                         position += (j * m + i) * elementSize * stride;
                     }
                 }
-                setFrom(arr, j, position);
+                elementCopy(position, arr, j);
             }
         }
         return arrs;
