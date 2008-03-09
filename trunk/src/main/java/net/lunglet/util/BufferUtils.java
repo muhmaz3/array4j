@@ -1,5 +1,8 @@
 package net.lunglet.util;
 
+import com.sun.jna.Library;
+import com.sun.jna.Native;
+import com.sun.jna.NativeLong;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -9,16 +12,24 @@ import net.lunglet.array4j.Constants;
 import net.lunglet.array4j.Storage;
 
 public final class BufferUtils {
+    static interface BufferUtilsLibrary extends Library {
+        BufferUtilsLibrary INSTANCE = (BufferUtilsLibrary) Native.loadLibrary("array4j", BufferUtilsLibrary.class);
+
+        NativeLong array4j_addressof(Buffer buffer);
+    }
+
     public static ByteBuffer createAlignedBuffer(final int size, final int alignment) {
         if (alignment < 1) {
             throw new IllegalArgumentException();
         }
-        ByteBuffer buffer = ByteBuffer.allocateDirect(size);
-        // TODO get buffer address to calculate position for slice
-        // TODO maybe use array4j_addressof here
-//        ByteBuffer buffer = ByteBuffer.allocateDirect(size + alignment - 1);
-        // TODO new Memory(size).align(alignment).getByteBuffer(0, size);
-        return ((ByteBuffer) buffer.order(ByteOrder.nativeOrder()).position(0)).slice();
+        ByteBuffer buffer = ByteBuffer.allocateDirect(size + alignment - 1);
+        long addr = BufferUtilsLibrary.INSTANCE.array4j_addressof(buffer).longValue();
+        int mod = (int) (addr % alignment);
+        int offset = mod > 0 ? alignment - mod : 0;
+        ByteBuffer nativeBuffer = buffer.order(ByteOrder.nativeOrder());
+        ByteBuffer slicedBuffer = ((ByteBuffer) nativeBuffer.position(offset)).slice();
+        Buffer limitedBuffer = slicedBuffer.limit(size);
+        return (ByteBuffer) limitedBuffer;
     }
 
     public static FloatBuffer createComplexFloatBuffer(final int size, final Storage storage) {
