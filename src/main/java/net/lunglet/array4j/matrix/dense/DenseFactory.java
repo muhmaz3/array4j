@@ -1,5 +1,6 @@
 package net.lunglet.array4j.matrix.dense;
 
+import java.nio.FloatBuffer;
 import net.lunglet.array4j.Direction;
 import net.lunglet.array4j.Order;
 import net.lunglet.array4j.Storage;
@@ -13,22 +14,6 @@ public final class DenseFactory {
 
     public static FloatDenseVector copyOf(final FloatVector original) {
         return new FloatDenseVectorImpl(original);
-    }
-
-    public static FloatDenseMatrix valueOf(final float[][] values) {
-        // TODO use System#arraycopy or FloatBuffer#put(float[]) here if possible
-        int rows = values.length;
-        int columns = values.length > 0 ? values[0].length : 0;
-        FloatDenseMatrix matrix = createFloatMatrix(rows, columns);
-        for (int i = 0; i < rows; i++) {
-            if (values[i].length != columns) {
-                throw new IllegalArgumentException();
-            }
-            for (int j = 0; j < columns; j++) {
-                matrix.set(i, j, values[i][j]);
-            }
-        }
-        return matrix;
     }
 
     public static FloatDenseMatrix createFloatMatrix(final int rows, final int columns) {
@@ -50,6 +35,33 @@ public final class DenseFactory {
 
     public static FloatDenseVector createFloatVector(final int length, final Direction dir, final Storage storage) {
         return new FloatDenseVectorImpl(length, dir, storage);
+    }
+
+    public static FloatDenseMatrix valueOf(final float[][] values) {
+        return valueOf(values, Order.DEFAULT, Storage.DEFAULT_FOR_DENSE);
+    }
+
+    public static FloatDenseMatrix valueOf(final float[][] values, final Order order, final Storage storage) {
+        int m = values.length;
+        int n = values.length > 0 ? values[0].length : 0;
+        final int rows;
+        final int columns;
+        if (order.equals(Order.ROW)) {
+            rows = m;
+            columns = n;
+        } else {
+            columns = m;
+            rows = n;
+        }
+        FloatDenseMatrix matrix = createFloatMatrix(rows, columns, order, storage);
+        FloatBuffer data = matrix.data();
+        for (int i = 0; i < m; i++) {
+            if (values[i].length != n) {
+                throw new IllegalArgumentException();
+            }
+            data.put(values[i]);
+        }
+        return matrix;
     }
 
     private DenseFactory() {

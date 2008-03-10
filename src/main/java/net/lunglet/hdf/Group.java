@@ -9,6 +9,8 @@ import net.lunglet.hdf.H5Library.H5G_iterate_t;
 
 // TODO implement existsGroup
 
+// TODO implement groupsIterator and dataSetsIterator
+
 public final class Group extends H5Object {
     private static final CloseAction CLOSE_ACTION = new CloseAction() {
         @Override
@@ -30,20 +32,13 @@ public final class Group extends H5Object {
 
     public DataSet createDataSet(final String name, final DataType dataType, final DataSpace dataSpace,
             final DataSetCreatePropList createPlist) {
-        // Obtain identifiers for C API
         int typeId = dataType.getId();
         int spaceId = dataSpace.getId();
         int createPlistId = createPlist.getId();
-
-        // Call C routine H5Dcreate to create the named dataset
         int datasetId = H5Library.INSTANCE.H5Dcreate(getId(), name, typeId, spaceId, createPlistId);
-
-        // If the creation of the dataset failed, throw an exception
         if (datasetId < 0) {
             throw new H5GroupException("H5Dcreate failed");
         }
-
-        // No failure, create and return the DataSet object
         return new DataSet(datasetId);
     }
 

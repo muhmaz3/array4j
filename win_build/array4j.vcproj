@@ -41,7 +41,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="..\src\generated\native;&quot;C:\Program Files\Intel\MKL\10.0.1.015\include&quot;"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;ARRAY4J_EXPORTS;ARRAY4J_HAVE_MKL"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;ARRAY4J_EXPORTS;ARRAY4J_HAVE_MKL;_USE_MATH_DEFINES;NOMINMAX"
 				MinimalRebuild="false"
 				ExceptionHandling="0"
 				BasicRuntimeChecks="3"
@@ -64,9 +64,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="mkl_c_dll.lib libguide40.lib"
+				AdditionalDependencies="mkl_array4j.lib"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;C:\Program Files\Intel\MKL\10.0.1.015\ia32\lib&quot;"
+				AdditionalLibraryDirectories="..\lib\win32-x86"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				LargeAddressAware="2"
@@ -123,7 +123,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="..\src\generated\native;&quot;C:\Program Files\Intel\MKL\10.0.1.015\include&quot;"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;ARRAY4J_EXPORTS;ARRAY4J_HAVE_MKL"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;ARRAY4J_EXPORTS;ARRAY4J_HAVE_MKL;_USE_MATH_DEFINES;NOMINMAX"
 				ExceptionHandling="0"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="false"
@@ -144,9 +144,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="mkl_c_dll.lib libguide40.lib"
+				AdditionalDependencies="mkl_array4j.lib"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;C:\Program Files\Intel\MKL\10.0.1.015\ia32\lib&quot;"
+				AdditionalLibraryDirectories="..\lib\win32-x86"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				LargeAddressAware="2"
@@ -205,7 +205,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="..\src\generated\native;&quot;C:\Program Files\AMD\acml4.0.0\ifort32\include&quot;"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;ARRAY4J_EXPORTS;ARRAY4J_HAVE_ACML"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;ARRAY4J_EXPORTS;ARRAY4J_HAVE_ACML;_USE_MATH_DEFINES;NOMINMAX"
 				MinimalRebuild="false"
 				ExceptionHandling="0"
 				BasicRuntimeChecks="3"
@@ -287,7 +287,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="..\src\generated\native;&quot;C:\Program Files\AMD\acml4.0.0\ifort32\include&quot;"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;ARRAY4J_EXPORTS;ARRAY4J_HAVE_ACML"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;ARRAY4J_EXPORTS;ARRAY4J_HAVE_ACML;_USE_MATH_DEFINES;NOMINMAX"
 				ExceptionHandling="0"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="false"
