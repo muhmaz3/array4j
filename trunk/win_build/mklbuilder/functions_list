@@ -1,0 +1,13 @@
+cblas_sgemm
+cblas_saxpy
+cblas_ssyrk
+cblas_sgemv
+cblas_sscal
+cblas_sdot
+vsLn
+vsPackI
+vsUnpackI
+DftiErrorClass
+DftiErrorMessage
+DftiCommitDescriptor
+DftiFreeDescriptor

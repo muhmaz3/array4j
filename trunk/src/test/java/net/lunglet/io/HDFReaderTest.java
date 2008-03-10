@@ -50,6 +50,8 @@ public final class HDFReaderTest extends AbstractHDFTest {
         assertEquals(4.0f, x.get(1, 0), 0);
         assertEquals(5.0f, x.get(1, 1), 0);
         assertEquals(6.0f, x.get(1, 2), 0);
+        assertEquals(1.0f, x.row(0).toArray()[0], 0);
+        assertEquals(2.0f, x.row(0).toArray()[1], 0);
     }
 
     @Test

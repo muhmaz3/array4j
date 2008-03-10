@@ -62,8 +62,7 @@ public final class H5File extends IdComponent {
     private final Group rootGroup;
 
     public H5File(final File file) {
-        // TODO change default to open read-only, so files don't get nuked by default
-        this(file, H5F_ACC_TRUNC);
+        this(file, H5F_ACC_RDONLY);
     }
 
     public H5File(final File file, final int flags) {
