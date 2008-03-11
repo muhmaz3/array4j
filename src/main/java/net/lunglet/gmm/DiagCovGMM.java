@@ -7,7 +7,13 @@ import net.lunglet.array4j.matrix.FloatVector;
 
 // TODO allow weights to be floored
 
-public final class DiagCovGMM implements GMM {
+// TODO benchmark storing of means and precisions in 1-d arrays
+
+public final class DiagCovGMM extends AbstractGMM {
+    private static final long serialVersionUID = 1L;
+
+    private static final float THRESHOLD = 0.0f;
+
     private static void checkArguments(final float[] w, final FloatVector[] u, final FloatVector[] v) {
         if (w.length == 0) {
             throw new IllegalArgumentException();
@@ -63,13 +69,7 @@ public final class DiagCovGMM implements GMM {
         this.lconst = (float) (-getDimension() * 0.5 * Math.log(2 * Math.PI));
     }
 
-    private void checkDimension(final FloatVector x) {
-        if (x.length() != getDimension()) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    float conditionalLogLh(final int index, final float[] x) {
+    public float conditionalLogLh(final int index, final float[] x) {
         float ll = 0.0f;
         float[] mean = means[index];
         float[] precision = precisions[index];
@@ -82,17 +82,30 @@ public final class DiagCovGMM implements GMM {
         return ll;
     }
 
-    public float conditionalLogLh(final int index, final FloatVector x) {
-        checkDimension(x);
-        return conditionalLogLh(index, x.toArray());
-    }
-
+    /** {@inheritDoc} */
     public int getDimension() {
         return means[0].length;
     }
 
+    /** {@inheritDoc} */
     public int getMixtureCount() {
         return means.length;
+    }
+
+    @Override
+    public BayesStats getStats(final float[] x) {
+        return getStats(x, Double.MIN_VALUE);
+    }
+
+    @Override
+    public BayesStats getStats(final float[] x, final double fraction) {
+        BayesStats stats = new BayesStats(getDimension(), Math.log(fraction));
+        int mixtures = getMixtureCount();
+        for (int i = 0; i < mixtures; i++) {
+            stats.add(i, logWeights[i], conditionalLogLh(i, x));
+        }
+        stats.done();
+        return stats;
     }
 
     @Override
@@ -100,12 +113,7 @@ public final class DiagCovGMM implements GMM {
         throw new UnsupportedOperationException();
     }
 
-    float jointLogLh(final int index, final float[] x) {
+    public float jointLogLh(final int index, final float[] x) {
         return logWeights[index] + conditionalLogLh(index, x);
-    }
-
-    public float jointLogLh(final int index, final FloatVector x) {
-        checkDimension(x);
-        return jointLogLh(index, x.toArray());
     }
 }

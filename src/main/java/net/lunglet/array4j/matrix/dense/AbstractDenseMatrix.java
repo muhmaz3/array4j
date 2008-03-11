@@ -27,7 +27,7 @@ public abstract class AbstractDenseMatrix<V extends DenseVector, T> extends Abst
         if (matrix instanceof DenseMatrix) {
             return ((DenseMatrix) matrix).storage();
         } else {
-            return Storage.DEFAULT_FOR_DENSE;
+            return Storage.DEFAULT;
         }
     }
 

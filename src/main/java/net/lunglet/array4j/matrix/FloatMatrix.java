@@ -2,6 +2,8 @@ package net.lunglet.array4j.matrix;
 
 import java.util.List;
 
+// TODO remove math stuff from this interface
+
 /**
  * Single-precision floating point matrix.
  */
