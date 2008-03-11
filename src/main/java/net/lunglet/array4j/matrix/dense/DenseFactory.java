@@ -37,6 +37,16 @@ public final class DenseFactory {
         return new FloatDenseVectorImpl(length, dir, storage);
     }
 
+    public static FloatDenseVector valueOf(final float... values) {
+        return valueOf(values, Direction.DEFAULT, Storage.DEFAULT);
+    }
+
+    public static FloatDenseVector valueOf(final float[] values, final Direction dir, final Storage storage) {
+        FloatDenseVector v = createFloatVector(values.length, dir, storage);
+        v.data().put(values);
+        return v;
+    }
+
     public static FloatDenseMatrix valueOf(final float[][] values) {
         return valueOf(values, Order.DEFAULT, Storage.DEFAULT);
     }
