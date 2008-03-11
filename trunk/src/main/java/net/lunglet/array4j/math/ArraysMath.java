@@ -40,6 +40,24 @@ public final class ArraysMath {
         return min;
     }
 
+    public static double[] square(final double[] x) {
+        double[] xx = new double[x.length];
+        for (int i = 0; i < x.length; i++) {
+            double v = x[i];
+            xx[i] = v * v;
+        }
+        return xx;
+    }
+
+    public static float[] square(final float[] x) {
+        float[] xx = new float[x.length];
+        for (int i = 0; i < x.length; i++) {
+            float v = x[i];
+            xx[i] = v * v;
+        }
+        return xx;
+    }
+
     private ArraysMath() {
     }
 }

@@ -17,7 +17,7 @@ public final class DenseFactory {
     }
 
     public static FloatDenseMatrix createFloatMatrix(final int rows, final int columns) {
-        return createFloatMatrix(rows, columns, Order.DEFAULT, Storage.DEFAULT_FOR_DENSE);
+        return createFloatMatrix(rows, columns, Order.DEFAULT, Storage.DEFAULT);
     }
 
     public static FloatDenseMatrix createFloatMatrix(final int rows, final int columns, final Order order,
@@ -26,11 +26,11 @@ public final class DenseFactory {
     }
 
     public static FloatDenseVector createFloatVector(final int length) {
-        return createFloatVector(length, Direction.DEFAULT, Storage.DEFAULT_FOR_DENSE);
+        return createFloatVector(length, Direction.DEFAULT, Storage.DEFAULT);
     }
 
     public static FloatDenseVector createFloatVector(final int length, final Direction dir) {
-        return createFloatVector(length, dir, Storage.DEFAULT_FOR_DENSE);
+        return createFloatVector(length, dir, Storage.DEFAULT);
     }
 
     public static FloatDenseVector createFloatVector(final int length, final Direction dir, final Storage storage) {
@@ -38,7 +38,7 @@ public final class DenseFactory {
     }
 
     public static FloatDenseMatrix valueOf(final float[][] values) {
-        return valueOf(values, Order.DEFAULT, Storage.DEFAULT_FOR_DENSE);
+        return valueOf(values, Order.DEFAULT, Storage.DEFAULT);
     }
 
     public static FloatDenseMatrix valueOf(final float[][] values, final Order order, final Storage storage) {

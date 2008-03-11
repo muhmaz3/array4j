@@ -1,5 +1,6 @@
 package net.lunglet.io;
 
+import java.io.Closeable;
 import net.jcip.annotations.NotThreadSafe;
 import net.lunglet.array4j.Order;
 import net.lunglet.array4j.matrix.dense.FloatDenseMatrix;
@@ -15,7 +16,7 @@ import net.lunglet.hdf.H5File;
 // stored on the heap and exceeds some maximum size
 
 @NotThreadSafe
-public final class HDFWriter {
+public final class HDFWriter implements Closeable {
     private final H5File h5file;
 
     public HDFWriter(final H5File h5file) {

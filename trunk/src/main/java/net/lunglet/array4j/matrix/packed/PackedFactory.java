@@ -14,7 +14,7 @@ public final class PackedFactory {
     }
 
     public static FloatPackedMatrix createSymmetric(final int dim) {
-        return createFloatSymmetric(dim, Storage.DEFAULT_FOR_DENSE);
+        return createFloatSymmetric(dim, Storage.DEFAULT);
     }
 
     public static FloatPackedMatrix createFloatSymmetric(final int dim, final Storage storage) {
@@ -22,10 +22,10 @@ public final class PackedFactory {
     }
 
     public static FloatPackedMatrix createFloatLowerTriangular(final int rows, final int columns) {
-        return new FloatPackedMatrixImpl(rows, columns, PackedType.LOWER_TRIANGULAR, Storage.DEFAULT_FOR_DENSE);
+        return new FloatPackedMatrixImpl(rows, columns, PackedType.LOWER_TRIANGULAR, Storage.DEFAULT);
     }
 
     public static FloatPackedMatrix createFloatUpperTriangular(final int rows, final int columns) {
-        return new FloatPackedMatrixImpl(rows, columns, PackedType.UPPER_TRIANGULAR, Storage.DEFAULT_FOR_DENSE);
+        return new FloatPackedMatrixImpl(rows, columns, PackedType.UPPER_TRIANGULAR, Storage.DEFAULT);
     }
 }

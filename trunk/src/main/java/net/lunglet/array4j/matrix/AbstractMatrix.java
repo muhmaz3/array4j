@@ -131,9 +131,7 @@ public abstract class AbstractMatrix<V extends Vector> implements Matrix {
     }
 
     public final Direction direction() {
-        if (rows <= 1 && rows == columns) {
-            return Direction.BOTH;
-        } else if (isRowVector()) {
+        if (isRowVector()) {
             return Direction.ROW;
         } else if (isColumnVector()) {
             return Direction.COLUMN;

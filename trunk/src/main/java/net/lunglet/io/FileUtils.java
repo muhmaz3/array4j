@@ -44,8 +44,8 @@ public final class FileUtils {
     public static File[] listFiles(final File directory, final FilenameFilter filter, final boolean recurse) {
         List<File> files = new ArrayList<File>();
         File[] entries = directory.listFiles();
-        // handle the case where directory doesn't exist
         if (entries == null) {
+            // directory doesn't exist
             return new File[0];
         }
         for (File entry : entries) {

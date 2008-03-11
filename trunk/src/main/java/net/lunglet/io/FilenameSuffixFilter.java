@@ -18,6 +18,7 @@ public final class FilenameSuffixFilter implements FilenameFilter, FileFilter {
         this.ignoreCase = ignoreCase;
     }
 
+    @Override
     public boolean accept(final File dir, final String name) {
         return accept(new File(dir, name));
     }

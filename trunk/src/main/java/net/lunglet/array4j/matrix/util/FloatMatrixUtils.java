@@ -50,7 +50,7 @@ public final class FloatMatrixUtils {
 //            v = new FloatDenseVector(data, length, 0, 1, Order.COLUMN);
             v = null;
         } else {
-            v = DenseFactory.createFloatVector(length, Direction.COLUMN, Storage.DEFAULT_FOR_DENSE);
+            v = DenseFactory.createFloatVector(length, Direction.COLUMN, Storage.DEFAULT);
             for (int i = 0, k = 0; i < matrix.columns(); i++) {
                 for (int j = 0; j < matrix.rows(); j++, k++) {
                     v.set(k, matrix.get(j, i));
@@ -83,7 +83,7 @@ public final class FloatMatrixUtils {
         if (matrix instanceof DenseMatrix) {
             storage = ((DenseMatrix) matrix).storage();
         } else {
-            storage = Storage.DEFAULT_FOR_DENSE;
+            storage = Storage.DEFAULT;
         }
         return DenseFactory.createFloatVector(matrix.rows(), Direction.COLUMN, storage);
     }
@@ -93,7 +93,7 @@ public final class FloatMatrixUtils {
         if (matrix instanceof DenseMatrix) {
             storage = ((DenseMatrix) matrix).storage();
         } else {
-            storage = Storage.DEFAULT_FOR_DENSE;
+            storage = Storage.DEFAULT;
         }
         return DenseFactory.createFloatVector(matrix.columns(), Direction.ROW, storage);
     }

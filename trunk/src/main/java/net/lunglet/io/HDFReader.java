@@ -1,5 +1,6 @@
 package net.lunglet.io;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.nio.FloatBuffer;
 import net.jcip.annotations.NotThreadSafe;
@@ -19,7 +20,7 @@ import net.lunglet.util.BufferUtils;
 // TODO write generic function to do direct buffered reads from any dataset into a heap buffer
 
 @NotThreadSafe
-public final class HDFReader {
+public final class HDFReader implements Closeable {
     private static final int DEFAULT_BUFFER_SIZE = 4 * 1024 * 1024;
 
     private final H5File h5file;
