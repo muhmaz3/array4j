@@ -21,8 +21,30 @@ public final class GMMTest {
         GMM gmm = new DiagCovGMM(weights, means, vars);
         FloatVector x = DenseFactory.createFloatVector(1);
         x.set(0, 0.0f);
-        System.out.println(gmm.conditionalLogLh(0, x));
-        System.out.println(gmm.jointLogLh(0, x));
+        if (false) {
+            System.out.println(gmm.conditionalLogLh(0, x));
+            System.out.println(gmm.jointLogLh(0, x));
+        }
+        gmm.getStats(x);
+    }
+
+    @Test
+    public void testDiagCovEM() {
+        float[] weights = {1.0f};
+        FloatVector[] means = new FloatVector[]{DenseFactory.createFloatVector(1)};
+        means[0].set(0, 2.0f);
+        FloatVector[] vars = new FloatVector[]{DenseFactory.createFloatVector(1)};
+        vars[0].set(0, 1.0f);
+        GMM gmm = new DiagCovGMM(weights, means, vars);
+
+        System.out.println(gmm.getMean(0));
+
+        GMMMAPStats stats = new GMMMAPStats(gmm);
+        stats.add(DenseFactory.valueOf(1.0f));
+//        gmm.doEM(stats);
+
+        System.out.println(gmm.getMean(0));
+//        System.out.println(gmm.getVariance(0));
     }
 
     @Test
