@@ -5,8 +5,6 @@ import java.util.Arrays;
 // TODO maybe make reset public so that stats objects can be reused
 
 public abstract class AbstractBayesStats implements BayesStats {
-    private static final double DEFAULT_EXP_THRESH = Math.log(GMM.DEFAULT_FRACTION);
-
     protected final double[] apriori;
 
     protected final double[] conditional;
@@ -61,7 +59,7 @@ public abstract class AbstractBayesStats implements BayesStats {
         if (done) {
             throw new IllegalStateException();
         }
-        double sum = 1.0;
+        double sum = 0.0;
         for (int i = 0; i < joint.length; i++) {
             sum += exp(joint[i] - max);
         }

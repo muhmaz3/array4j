@@ -138,6 +138,15 @@ public final class FloatMatrixUtils {
         }
     }
 
+    public static void fillRandom(final FloatMatrix matrix, final float min, final float max, final Random rng) {
+        float delta = max - min;
+        for (int i = 0; i < matrix.rows(); i++) {
+            for (int j = 0; j < matrix.columns(); j++) {
+                matrix.set(i, j, delta * rng.nextFloat() + min);
+            }
+        }
+    }
+
     public static float mean(final FloatMatrix matrix) {
         float mean = 0.0f;
         int n = 0;
@@ -227,9 +236,9 @@ public final class FloatMatrixUtils {
             }
             builder.append("]");
             if (i < x.rows() - 1) {
-                builder.append("\n");
+                builder.append(";\n");
             } else {
-                builder.append("]");
+                builder.append("];");
             }
         }
         return builder.toString();
