@@ -6,9 +6,9 @@ import net.lunglet.array4j.matrix.dense.FloatDenseVector;
 public interface GMM extends Iterable<Gaussian> {
     double DEFAULT_FRACTION = Double.MIN_VALUE;
 
-    float conditionalLogLh(int index, float[] x);
+    double conditionalLogLh(int index, float[] x);
 
-    float conditionalLogLh(int index, FloatVector x);
+    double conditionalLogLh(int index, FloatVector x);
 
     GMM copy();
 
@@ -46,7 +46,9 @@ public interface GMM extends Iterable<Gaussian> {
 
     FloatVector getWeights();
 
-    float jointLogLh(int index, float[] x);
+    double jointLogLh(int index, float[] x);
 
-    float jointLogLh(int index, FloatVector x);
+    double jointLogLh(int index, FloatVector x);
+
+    double marginalLogLh(FloatVector x);
 }

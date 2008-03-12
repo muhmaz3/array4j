@@ -1,6 +1,5 @@
 package net.lunglet.gmm;
 
-import java.util.Arrays;
 import java.util.Iterator;
 import net.lunglet.array4j.math.ArraysMath;
 import net.lunglet.array4j.matrix.FloatVector;
@@ -62,13 +61,7 @@ public final class GMMMAPStats {
         }
         final BayesStats stats = gmm.getStats(x, indices, fraction);
         totLogLh += stats.getMarginalLogLh();
-
-        System.out.println("totLogLh = " + totLogLh);
-
         double[] posteriors = stats.getPosteriorProbs();
-
-        System.out.println(Arrays.toString(posteriors));
-
         final float[] xx;
         if (exx != null) {
             xx = ArraysMath.square(x);
