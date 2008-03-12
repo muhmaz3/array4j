@@ -23,6 +23,14 @@ public abstract class AbstractGMM implements GMM, Serializable {
         return conditionalLogLh(index, x.toArray());
     }
 
+    public final void doEM(final GMMMAPStats stats) {
+        doEM(stats, true, true, true);
+    }
+
+    public final void doMAPonMeans(final GMMMAPStats stats, final double r) {
+        doMAP(stats, r, false, true, false);
+    }
+
     public final BayesStats getStats(final FloatVector x) {
         return getStats(x, DEFAULT_FRACTION);
     }

@@ -12,12 +12,26 @@ public interface GMM extends Iterable<Gaussian> {
 
     GMM copy();
 
+    void doEM(GMMMAPStats stats);
+
+    void doEM(GMMMAPStats stats, boolean doWeights, boolean doMeans, boolean doVars);
+
+    /**
+     * @param r relevance factor
+     */
+    void doMAP(GMMMAPStats stats, final double r, boolean doWeights, boolean doMeans, boolean doVars);
+
+    /**
+     * @param r relevance factor
+     */
+    void doMAPonMeans(GMMMAPStats stats, final double r);
+
     /** Returns the feature dimension. */
     int getDimension();
 
-    FloatDenseVector getMean(int index);
+    FloatVector getLogWeights();
 
-    FloatDenseVector getVariance(int index);
+    FloatDenseVector getMean(int index);
 
     /** Returns the number of mixtures. */
     int getMixtureCount();
@@ -27,6 +41,10 @@ public interface GMM extends Iterable<Gaussian> {
     BayesStats getStats(FloatVector x);
 
     BayesStats getStats(FloatVector x, double fraction);
+
+    FloatDenseVector getVariance(int index);
+
+    FloatVector getWeights();
 
     float jointLogLh(int index, float[] x);
 
