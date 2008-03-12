@@ -33,9 +33,9 @@ public final class DiagCovGMM extends AbstractGMM {
         }
     }
 
-    private final float lconst;
+    private final double lconst;
 
-    private transient float[] logDets;
+    private transient double[] logDets;
 
     private transient float[] logWeights;
 
@@ -73,12 +73,12 @@ public final class DiagCovGMM extends AbstractGMM {
         this.means = new float[means.length][];
         this.variances = new float[variances.length][];
         this.precisions = new float[variances.length][];
-        this.logDets = new float[variances.length];
+        this.logDets = new double[variances.length];
         for (int i = 0; i < means.length; i++) {
             this.means[i] = means[i].toArray();
             this.variances[i] = variances[i].toArray();
         }
-        this.lconst = (float) (-getDimension() * 0.5 * Math.log(2 * Math.PI));
+        this.lconst = -getDimension() * 0.5 * Math.log(2 * Math.PI);
         fixWeights();
         fixPrecisionsAndLogDets();
     }
@@ -89,14 +89,15 @@ public final class DiagCovGMM extends AbstractGMM {
         }
     }
 
-    public float conditionalLogLh(final int index, final float[] x) {
-        float ll = 0.0f;
+    public double conditionalLogLh(final int index, final float[] x) {
+        double ll = 0.0f;
         float[] mean = means[index];
         float[] precision = precisions[index];
         for (int i = 0; i < mean.length; i++) {
-            ll += (x[i] - mean[i]) * precision[i];
+            float d = x[i] - mean[i];
+            ll += d * d * precision[i];
         }
-        ll *= -0.5f;
+        ll *= -0.5;
         ll += lconst;
         ll += logDets[index];
         return ll;
@@ -121,10 +122,14 @@ public final class DiagCovGMM extends AbstractGMM {
                 float ni = n[i];
                 ex[i] = ex[i].clone();
                 float[] exi = ex[i];
-                for (int j = 0; j < ex[i].length; j++) {
+                for (int j = 0; j < exi.length; j++) {
                     exi[j] /= ni;
                 }
             }
+        }
+        if (doWeights) {
+            System.arraycopy(n, 0, weights, 0, weights.length);
+            fixWeights();
         }
         if (doMeans) {
             System.arraycopy(ex, 0, means, 0, means.length);
@@ -141,10 +146,6 @@ public final class DiagCovGMM extends AbstractGMM {
                 }
             }
             fixPrecisionsAndLogDets();
-        }
-        if (doWeights) {
-            System.arraycopy(n, 0, weights, 0, weights.length);
-            fixWeights();
         }
     }
 
@@ -276,7 +277,7 @@ public final class DiagCovGMM extends AbstractGMM {
         throw new UnsupportedOperationException();
     }
 
-    public float jointLogLh(final int index, final float[] x) {
+    public double jointLogLh(final int index, final float[] x) {
         return logWeights[index] + conditionalLogLh(index, x);
     }
 
@@ -284,7 +285,7 @@ public final class DiagCovGMM extends AbstractGMM {
         in.defaultReadObject();
         this.logWeights = new float[weights.length];
         this.precisions = new float[variances.length][];
-        this.logDets = new float[variances.length];
+        this.logDets = new double[variances.length];
         fixWeights();
         fixPrecisionsAndLogDets();
     }

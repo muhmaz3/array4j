@@ -18,7 +18,7 @@ public abstract class AbstractGMM implements GMM, Serializable {
         }
     }
 
-    public final float conditionalLogLh(final int index, final FloatVector x) {
+    public final double conditionalLogLh(final int index, final FloatVector x) {
         checkDimension(x);
         return conditionalLogLh(index, x.toArray());
     }
@@ -40,8 +40,13 @@ public abstract class AbstractGMM implements GMM, Serializable {
         return getStats(x.toArray(), null, fraction);
     }
 
-    public final float jointLogLh(final int index, final FloatVector x) {
+    public final double jointLogLh(final int index, final FloatVector x) {
         checkDimension(x);
         return jointLogLh(index, x.toArray());
+    }
+
+    @Override
+    public final double marginalLogLh(final FloatVector x) {
+        return getStats(x).getMarginalLogLh();
     }
 }

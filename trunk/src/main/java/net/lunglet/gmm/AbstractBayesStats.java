@@ -88,13 +88,4 @@ public abstract class AbstractBayesStats implements BayesStats {
         checkState();
         return posterior;
     }
-
-    private void reset() {
-        marginal = Double.NEGATIVE_INFINITY;
-        max = Double.NEGATIVE_INFINITY;
-        Arrays.fill(conditional, Double.NEGATIVE_INFINITY);
-        Arrays.fill(apriori, Double.NEGATIVE_INFINITY);
-        Arrays.fill(joint, Double.NEGATIVE_INFINITY);
-        Arrays.fill(posterior, 0.0);
-    }
 }
