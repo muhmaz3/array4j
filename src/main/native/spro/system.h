@@ -102,4 +102,11 @@
 #  include <sys/types.h>
 # endif
 
+#ifndef HAVE_STRCASECMP
+#ifdef WIN32
+#define strcasecmp _stricmp
+#define HAVE_STRCASECMP
+#endif
+#endif
+
 #endif /* _system_h_ */

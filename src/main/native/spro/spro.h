@@ -197,7 +197,7 @@ typedef struct {
 typedef struct {
   unsigned long m;              /* maximum buffer size (num. samples)         */
   unsigned long n;              /* actual buffer size (num. samples)          */
-  void *s;
+  short *s;
 } sigbuf_t;                     /* signal I/O buffer                          */
 
 typedef struct {
