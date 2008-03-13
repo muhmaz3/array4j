@@ -440,7 +440,8 @@ int sig_wave_stream_init(sigstream_t *f, const char *fn)
  */
 unsigned long sig_wave_stream_read(sigstream_t *f)
 {
-  void *p = f->buf->s;
+  /* pointer arithmetic on p assumes it advances one byte at a time */
+  char *p = (char*) f->buf->s;
   unsigned long nread, n, i;
 
   /* in wave format, the number of samples to read must be computed
