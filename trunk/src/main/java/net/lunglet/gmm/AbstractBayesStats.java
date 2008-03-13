@@ -23,7 +23,7 @@ public abstract class AbstractBayesStats implements BayesStats {
     private final double[] posterior;
 
     public AbstractBayesStats(final int n) {
-        this(n, DEFAULT_EXP_THRESH);
+        this(n, MIN_EXP_THRESHOLD);
     }
 
     public AbstractBayesStats(final int n, final double expThresh) {

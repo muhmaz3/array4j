@@ -4,7 +4,7 @@ import net.lunglet.array4j.matrix.FloatVector;
 import net.lunglet.array4j.matrix.dense.FloatDenseVector;
 
 public interface GMM extends Iterable<Gaussian> {
-    double DEFAULT_FRACTION = Double.MIN_VALUE;
+    double MIN_FRACTION = Double.MIN_VALUE;
 
     double conditionalLogLh(int index, float[] x);
 

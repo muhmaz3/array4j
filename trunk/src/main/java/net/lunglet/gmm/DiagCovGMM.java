@@ -2,7 +2,9 @@ package net.lunglet.gmm;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Iterator;
 import net.lunglet.array4j.matrix.FloatVector;
 import net.lunglet.array4j.matrix.dense.DenseFactory;
@@ -64,6 +66,12 @@ public final class DiagCovGMM extends AbstractGMM {
             variances[i] = variances[i].clone();
             precisions[i] = precisions[i].clone();
         }
+    }
+
+    public DiagCovGMM(final FloatVector weights, final Collection<? extends FloatVector> means,
+            final Collection<? extends FloatVector> variances) {
+        this(weights, new ArrayList<FloatVector>(means).toArray(new FloatVector[0]), new ArrayList<FloatVector>(
+                variances).toArray(new FloatVector[0]));
     }
 
     public DiagCovGMM(final FloatVector weights, final FloatVector[] means, final FloatVector[] variances) {
@@ -200,10 +208,10 @@ public final class DiagCovGMM extends AbstractGMM {
     public void floorVariances(final FloatVector floor) {
         for (int i = 0; i < variances.length; i++) {
             float[] vari = variances[i];
-            float floori = floor.get(i);
             for (int j = 0; j < vari.length; j++) {
-                if (vari[j] < floori) {
-                    vari[j] = floori;
+                float floorj = floor.get(j);
+                if (vari[j] < floorj) {
+                    vari[j] = floorj;
                 }
             }
         }

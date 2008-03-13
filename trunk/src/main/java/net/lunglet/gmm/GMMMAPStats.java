@@ -22,11 +22,11 @@ public final class GMMMAPStats {
     private double totN = 0.0;
 
     public GMMMAPStats(final GMM gmm) {
-        this(gmm, GMM.DEFAULT_FRACTION);
+        this(gmm, GMM.MIN_FRACTION);
     }
 
     public GMMMAPStats(final GMM gmm, final boolean doMeans, final boolean doVars) {
-        this(gmm, GMM.DEFAULT_FRACTION, doMeans, doVars);
+        this(gmm, GMM.MIN_FRACTION, doMeans, doVars);
     }
 
     public GMMMAPStats(final GMM gmm, final double fraction) {
@@ -34,9 +34,12 @@ public final class GMMMAPStats {
     }
 
     public GMMMAPStats(final GMM gmm, final double fraction, final boolean doMeans, final boolean doVars) {
+        if (fraction < 0) {
+            throw new IllegalArgumentException();
+        }
         this.gmm = gmm;
         this.n = new float[gmm.getMixtureCount()];
-        this.fraction = fraction;
+        this.fraction = fraction < GMM.MIN_FRACTION ? GMM.MIN_FRACTION : fraction;
         if (doMeans || doVars) {
             this.ex = new float[gmm.getMixtureCount()][];
             for (int i = 0; i < ex.length; i++) {
@@ -104,7 +107,19 @@ public final class GMMMAPStats {
     }
 
     public void add(final GMMMAPStats other) {
-        throw new UnsupportedOperationException();
+        for (int i = 0; i < n.length; i++) {
+            n[i] += other.n[i];
+            float[] exi = ex[i];
+            float[] otherexi = other.ex[i];
+            float[] exxi = exx[i];
+            float[] otherexxi = other.exx[i];
+            for (int j = 0; j < exi.length; j++) {
+                exi[j] += otherexi[j];
+                exxi[j] += otherexxi[j];
+            }
+        }
+        totLogLh += other.totLogLh;
+        totN += other.totN;
     }
 
     public void add(final Iterable<? extends FloatVector> data) {
