@@ -5,6 +5,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.LongBuffer;
 import java.util.Arrays;
+import net.lunglet.util.ArrayUtils;
 
 public final class DataSpace extends IdComponent {
     public static final DataSpace ALL = new DataSpace(H5Library.H5S_ALL, true);
@@ -105,6 +106,10 @@ public final class DataSpace extends IdComponent {
             slabs[i] = new Hyperslab(start, end);
         }
         return slabs;
+    }
+
+    public int[] getIntDims() {
+        return ArrayUtils.castOf(getDims());
     }
 
     public long[] getMaxDims() {

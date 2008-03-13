@@ -14,7 +14,7 @@ public final class GMMBenchmark {
     @Test
     public void benchDiagCovEM() {
         int dimension = 39;
-        int mixtures = 16;
+        int mixtures = 20;
         int ndata = 200000;
         Random rng = new Random(0);
         FloatVector weights = DenseFactory.createFloatVector(mixtures);
@@ -60,7 +60,7 @@ public final class GMMBenchmark {
         GMM gmm = new DiagCovGMM(weights, means, variances);
         final double fraction;
         if (false) {
-            fraction = GMM.DEFAULT_FRACTION;
+            fraction = GMM.MIN_FRACTION;
         } else {
             fraction = 0.01;
         }

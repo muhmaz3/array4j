@@ -12,18 +12,6 @@ import org.junit.Test;
 
 public final class GMMTest {
     @Test
-    public void testDiagonalCovariance() {
-        FloatVector weights = DenseFactory.valueOf(1.0f);
-        FloatVector[] means = new FloatVector[]{DenseFactory.createFloatVector(1)};
-        means[0].set(0, 1.0f);
-        FloatVector[] vars = new FloatVector[]{DenseFactory.createFloatVector(1)};
-        vars[0].set(0, 1.0f);
-        GMM gmm = new DiagCovGMM(weights, means, vars);
-        FloatVector x = DenseFactory.valueOf(0.0f);
-        assertEquals(-1.41893853320467, gmm.marginalLogLh(x), 1.0e-6f);
-    }
-
-    @Test
     public void testDiagCovEMBasic() {
         FloatVector weights = DenseFactory.valueOf(1.0f);
         FloatVector[] means = new FloatVector[]{DenseFactory.createFloatVector(1)};
@@ -40,6 +28,29 @@ public final class GMMTest {
         assertEquals(1.0f, gmm.getWeights().get(0), 0);
         gmm.floorVariances(3.0f);
         assertEquals(3.0f, gmm.getVariance(0).get(0), 0);
+    }
+
+    @Test
+    public void testDiagCovVarianceFlooring() {
+        FloatVector weights = DenseFactory.valueOf(1.0f);
+        FloatVector[] means = new FloatVector[]{DenseFactory.createFloatVector(4)};
+        FloatVector[] vars = new FloatVector[]{DenseFactory.createFloatVector(4)};
+        DiagCovGMM gmm = new DiagCovGMM(weights, means, vars);
+        FloatVector varFloor = DenseFactory.valueOf(0.01f, 0.01f, 0.01f, 0.01f);
+        gmm.floorVariances(0.001f);
+        gmm.floorVariances(varFloor);
+    }
+
+    @Test
+    public void testDiagonalCovariance() {
+        FloatVector weights = DenseFactory.valueOf(1.0f);
+        FloatVector[] means = new FloatVector[]{DenseFactory.createFloatVector(1)};
+        means[0].set(0, 1.0f);
+        FloatVector[] vars = new FloatVector[]{DenseFactory.createFloatVector(1)};
+        vars[0].set(0, 1.0f);
+        GMM gmm = new DiagCovGMM(weights, means, vars);
+        FloatVector x = DenseFactory.valueOf(0.0f);
+        assertEquals(-1.41893853320467, gmm.marginalLogLh(x), 1.0e-6f);
     }
 
     @Test

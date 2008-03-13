@@ -1,6 +1,7 @@
 package net.lunglet.array4j.matrix.dense;
 
 import java.nio.FloatBuffer;
+import java.util.Collection;
 import net.lunglet.array4j.Direction;
 import net.lunglet.array4j.Order;
 import net.lunglet.array4j.Storage;
@@ -25,6 +26,13 @@ public final class DenseFactory {
         return new FloatDenseMatrixImpl(rows, columns, order, storage);
     }
 
+    public static FloatDenseMatrix createFloatMatrix(final int[] dims, final Order order, final Storage storage) {
+        if (dims.length != 2) {
+            throw new IllegalArgumentException();
+        }
+        return new FloatDenseMatrixImpl(dims[0], dims[1], order, storage);
+    }
+
     public static FloatDenseVector createFloatVector(final int length) {
         return createFloatVector(length, Direction.DEFAULT, Storage.DEFAULT);
     }
@@ -35,6 +43,33 @@ public final class DenseFactory {
 
     public static FloatDenseVector createFloatVector(final int length, final Direction dir, final Storage storage) {
         return new FloatDenseVectorImpl(length, dir, storage);
+    }
+
+    /**
+     * Returns a copy of the vector with direct storage.
+     */
+    public static FloatDenseVector directCopy(final FloatVector other) {
+        FloatDenseVector v = new FloatDenseVectorImpl(other.length(), other.direction(), Storage.DIRECT);
+        v.data().put(other.toArray());
+        return v;
+    }
+
+    public static FloatDenseVector floatVector(final Collection<? extends Number> values) {
+        FloatDenseVector v = createFloatVector(values.size());
+        int i = 0;
+        for (Number x : values) {
+            v.set(i++, x.floatValue());
+        }
+        return v;
+    }
+
+    /**
+     * Returns a copy of the vector with heap storage.
+     */
+    public static FloatDenseVector heapCopy(final FloatVector other) {
+        FloatDenseVector v = new FloatDenseVectorImpl(other.length(), other.direction(), Storage.HEAP);
+        v.data().put(other.toArray());
+        return v;
     }
 
     public static FloatDenseVector valueOf(final float... values) {

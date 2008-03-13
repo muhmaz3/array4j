@@ -32,7 +32,7 @@ public abstract class AbstractGMM implements GMM, Serializable {
     }
 
     public final BayesStats getStats(final FloatVector x) {
-        return getStats(x, DEFAULT_FRACTION);
+        return getStats(x, MIN_FRACTION);
     }
 
     public final BayesStats getStats(final FloatVector x, final double fraction) {
