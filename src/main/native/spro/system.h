@@ -109,4 +109,14 @@
 #endif
 #endif
 
+#if 1
+#ifdef SPRO_EXPORTS
+#define SPRO_API __declspec(dllexport)
+#else
+#define SPRO_API __declspec(dllimport)
+#endif
+#else
+#define SPRO_API
+#endif
+
 #endif /* _system_h_ */

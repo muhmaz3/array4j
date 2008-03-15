@@ -221,28 +221,28 @@ typedef struct {
   */
 
 /* create signal structure  */
-spsig_t *sig_alloc(
+SPRO_API spsig_t *sig_alloc(
   unsigned long                 /* number of samples                          */
 );
 
 /* free a signal  */
-void sig_free(
+SPRO_API void sig_free(
   spsig_t *                     /* pointer to signal                          */
 );
 
 /* create signal I/O buffer  */
-sigbuf_t *sig_buf_alloc(
+SPRO_API sigbuf_t *sig_buf_alloc(
   size_t,                       /* maximum buffer size (in bytes)             */
   unsigned short                /* number of bytes per sample                 */
 );
 
 /* free signal I/O buffer  */
-void sig_buf_free(
+SPRO_API void sig_buf_free(
   sigbuf_t *                    /* pointer to the buffer                      */
 );
 
 /* initialize signal input stream  */
-sigstream_t *sig_stream_open(
+SPRO_API sigstream_t *sig_stream_open(
   const char *,                 /* input stream name                          */
   int,                          /* format                                     */
   float,                        /* sample rate (needed for some formats)      */
@@ -251,17 +251,17 @@ sigstream_t *sig_stream_open(
 );
 
 /* close signal input stream  */
-void sig_stream_close(
+SPRO_API void sig_stream_close(
   sigstream_t *                 /* signal stream                              */
 );
 
 /* fill in buffer with new samples  */
-unsigned long sig_stream_read(
+SPRO_API unsigned long sig_stream_read(
   sigstream_t *                 /* signal stream                              */
 );
 
 /* get next frame from input stream  */
-int get_next_sig_frame(
+SPRO_API int get_next_sig_frame(
   sigstream_t *,                /* signal input stream                        */
   int,                          /* channel number (starts with 1)             */
   int,                          /* frame length (in samples)                  */
@@ -292,35 +292,35 @@ double getsample(void *, unsigned long, unsigned short);
   */
 
 /* initalize feature header  */
-spfheader_t *spf_header_init(
+SPRO_API spfheader_t *spf_header_init(
   const spfield_t *             /* field name/value array (NULL terminated)   */
 );
 
 /* free feature header  */
-void spf_header_free(
+SPRO_API void spf_header_free(
   spfheader_t *                 /* stream header                              */
 );
 
 /* add field(s) to variable length header (do not check duplicate field
    names)  */
-int spf_header_add(
+SPRO_API int spf_header_add(
   spfheader_t *,                /* stream header                              */
   const spfield_t *             /* field name/value array (NULL terminated)   */
 );
 
 /* get a variable header field from its name  */
-char *spf_header_get(
+SPRO_API char *spf_header_get(
   spfheader_t *,                /* stream header                              */
   const char *                  /* field name                                 */
 );
 
 /* read header from stream  */
-spfheader_t *spf_header_read(
+SPRO_API spfheader_t *spf_header_read(
   FILE *                        /* Unix stream                                */
 );
 
 /* write header to stream  */
-int spf_header_write(
+SPRO_API int spf_header_write(
   spfheader_t *,                /* stream header                              */
   FILE *                        /* Unix stream                                */
 );
@@ -334,18 +334,18 @@ int spf_header_write(
   */
 
 /* allocate feature buffer  */
-spfbuf_t *spf_buf_alloc(
+SPRO_API spfbuf_t *spf_buf_alloc(
   unsigned short,               /* feature vector dimension                   */
   size_t                        /* maximum buffer size (in bytes)             */
 );
 
 /* free feature buffer  */
-void spf_buf_free(
+SPRO_API void spf_buf_free(
   spfbuf_t *                    /* feature buffer                             */
 );
 
 /* resize feature buffer  */
-spf_t *spf_buf_resize(
+SPRO_API spf_t *spf_buf_resize(
   spfbuf_t *,                   /* feature buffer                             */
   unsigned long                 /* new number of vectors                      */
 );
@@ -354,7 +354,7 @@ spf_t *spf_buf_resize(
    size is not null, increment buffer size by block size, otherwise 
    return an error. Return a pointer to the appended vector in the 
    buffer or NULL in case of error.  */
-spf_t *spf_buf_append(
+SPRO_API spf_t *spf_buf_append(
   spfbuf_t *,                   /* feature buffer                             */
   spf_t *,                      /* feature vector                             */
   unsigned short,               /* feature vector dimension                   */
@@ -362,19 +362,19 @@ spf_t *spf_buf_append(
 );
 
 /* return a pointer to the specified vector  */
-spf_t *get_spf_buf_vec(
+SPRO_API spf_t *get_spf_buf_vec(
   spfbuf_t *,                   /* feature buffer                             */
   unsigned long                 /* relative vector index                      */
 );
 
 /* read data from stream into buffer  */
-unsigned long spf_buf_read(
+SPRO_API unsigned long spf_buf_read(
   spfbuf_t *,                   /* feature buffer                             */
   FILE *                        /* input stream                               */
 );
 
 /* write buffer data to stream  */
-unsigned long spf_buf_write(
+SPRO_API unsigned long spf_buf_write(
   spfbuf_t *,                   /* feature buffer                             */
   FILE *                        /* input stream                               */
 );
@@ -395,14 +395,14 @@ extern void sp_swap(void *, size_t);
   */
 
 /* open feature stream in read mode  */
-spfstream_t *spf_input_stream_open(
+SPRO_API spfstream_t *spf_input_stream_open(
   const char *,                 /* stream name                                */
   long,                         /* feature descriptors to add                 */
   size_t                        /* I/O buffer maximum size (in bytes)         */
 );
 
 /* open feature stream in write mode  */
-spfstream_t *spf_output_stream_open(
+SPRO_API spfstream_t *spf_output_stream_open(
   const char *,                 /* stream name                                */
   unsigned short,               /* feature dimension                          */
   long,                         /* input feature description flag             */
@@ -413,17 +413,17 @@ spfstream_t *spf_output_stream_open(
 );
 
 /* close feature stream  */
-void spf_stream_close(
+SPRO_API void spf_stream_close(
   spfstream_t *                 /* stream to close                            */
 );
 
 /* read new data into buffer and return the number of frames read  */
-unsigned long spf_stream_read(
+SPRO_API unsigned long spf_stream_read(
   spfstream_t *                 /* stream to read                             */
 );
 
 /* write data to the buffer and return the number of frames written  */
-unsigned long spf_stream_write(
+SPRO_API unsigned long spf_stream_write(
   spfstream_t *,                /* output stream                              */
   spf_t *,                      /* pointer to the data                        */
   unsigned long                 /* number of vectors to write                 */
@@ -431,7 +431,7 @@ unsigned long spf_stream_write(
 
 /* flush content of (output) buffer and return the number of frames 
    written  */
-unsigned long spf_stream_flush(
+SPRO_API unsigned long spf_stream_flush(
   spfstream_t *                 /* stream to flush                            */
 );
 
@@ -441,7 +441,7 @@ unsigned long spf_stream_flush(
    SEEK_CUR=1) or absolute from the start of file (mode
    SEEK_START=0). Note that the mode SEEK_END of fseek() is not
    supported by feature streams. Return 0 if ok.  */
-int spf_stream_seek(
+SPRO_API int spf_stream_seek(
   spfstream_t *,                /* feature stream                             */
   long,                         /* seek offset (in number of frames)          */
   int                           /* seek mode as in fseek                      */
@@ -451,17 +451,17 @@ int spf_stream_seek(
 # define spf_stream_rewind(s) spf_stream_seek(s, 0, SEEK_SET)
 
 /* get next frame  */
-spf_t *get_next_spf_frame(
+SPRO_API spf_t *get_next_spf_frame(
   spfstream_t *                 /* input stream                               */
 );
 
 /* convert a feature stream description string to binary flag  */
-long sp_str_to_flag(
+SPRO_API long sp_str_to_flag(
   const char *                  /* data description string                    */
 );
 
 /* convert a feature stream description flag to string  */
-char *sp_flag_to_str(
+SPRO_API char *sp_flag_to_str(
   long,                         /* feature stream description                 */
   char [7]                      /* output string                              */
 );
@@ -488,20 +488,20 @@ char *sp_flag_to_str(
   */
 
 /* get total dimension of a vector given the base dimension  */
-unsigned short spf_tot_dim(
+SPRO_API unsigned short spf_tot_dim(
   unsigned short,               /* base dimension (static without energy)     */
   long                          /* feature stream description                 */
 );
 
 /* return start/end bins in the feature vector of every component  */
-void spf_indexes(
+SPRO_API void spf_indexes(
   unsigned short [9],           /* output indexes                             */
   unsigned short,               /* feature vector dimension                   */ 
   long                          /* feature stream description                 */
 );
 
 /* remove mean of static coefficients  */
-int spf_buf_normalize(
+SPRO_API int spf_buf_normalize(
   spfbuf_t *,                   /* feature buffer                             */
   unsigned short,               /* starting at coefficient from               */
   unsigned short,               /* up to coefficient to                       */
@@ -510,7 +510,7 @@ int spf_buf_normalize(
 );
 
 /* normalize energy  */
-int scale_energy(
+SPRO_API int scale_energy(
   spfbuf_t *,                   /* feature buffer                             */
   unsigned short,               /* energy index                               */
   float,                        /* scaling factor                             */
@@ -518,7 +518,7 @@ int scale_energy(
 );
 
 /* allocate a vector containing the lifter coefficients  */
-float *set_lifter(
+SPRO_API float *set_lifter(
   int,                          /* lifter value                               */
   unsigned short                /* feature vector dimension                   */
 );
@@ -532,19 +532,19 @@ float *set_lifter(
 
 
 /* normalize a signal (return energy)  */
-double sig_normalize(
+SPRO_API double sig_normalize(
   spsig_t *,                    /* input (and output) signal                  */
   int                           /* action flag                                */
 );
 
 /* set window  */
-float *set_sig_win(
+SPRO_API float *set_sig_win(
   unsigned long,                /* number of samples                          */
   int                           /* window type                                */
 );
 
 /* weight signal  */
-spsig_t *sig_weight(
+SPRO_API spsig_t *sig_weight(
   spsig_t *,                    /* output signal                              */
   sample_t *,                   /* input samples                              */
   float *                       /* weighting window                           */
@@ -558,7 +558,7 @@ spsig_t *sig_weight(
   */
 
 /* add deltas  */
-int spf_add_delta(
+SPRO_API int spf_add_delta(
   spfbuf_t *,                   /* feature buffer                             */
   unsigned short,               /* starting at coefficient index ...          */
   unsigned short,               /* up to coefficient index (included)         */
@@ -566,7 +566,7 @@ int spf_add_delta(
 );
 
 /* add/remove qualifiers  */
-spfbuf_t *spf_buf_convert(
+SPRO_API spfbuf_t *spf_buf_convert(
   spfbuf_t *,                   /* feature buffer                             */
   long,                         /* input feature stream description           */
   long,                         /* target feature stream description          */
@@ -586,7 +586,7 @@ void spf_delta_set(spfbuf_t *, unsigned short, unsigned short, spfbuf_t *, unsig
   */
 
 /* generalized correlation (variable spectral analysis)  */
-int sig_correl(
+SPRO_API int sig_correl(
   spsig_t *,                    /* pointer to the input signal                */
   float,                        /* spectral deformation parameter (alpha)     */
   float *,                      /* correlation                                */
@@ -594,7 +594,7 @@ int sig_correl(
 );
 
 /* solve linear prediction equation  */
-void lpc(
+SPRO_API void lpc(
   float *,                      /* correlation                                */
   unsigned short,               /* analysis order                             */
   spf_t *,                      /* output prediction coefficients             */
@@ -603,7 +603,7 @@ void lpc(
 );
 
 /* linear prediction coefficients to cepstrum  */
-void lpc_to_cep(
+SPRO_API void lpc_to_cep(
   spf_t *,                      /* pointer to input features                  */
   unsigned short,               /* LPC analysis order                         */
   unsigned short,               /* number of cepstral coefficients            */
@@ -611,14 +611,14 @@ void lpc_to_cep(
 );
 
 /* reflexion coefficients to log area ratios  */
-void refc_to_lar(
+SPRO_API void refc_to_lar(
   spf_t *,                      /* pointer to input features                  */
   unsigned short,               /* analysis order                             */
   spf_t *                       /* pointer to output features                 */
 );
 
 /* linear prediction coefficients to line spectrum frequencies  */
-int lpc_to_lsf(
+SPRO_API int lpc_to_lsf(
   spf_t *,                      /* pointer to input features                  */
   unsigned short,               /* analysis order                             */
   spf_t *                       /* pointer to output features                 */
@@ -632,12 +632,12 @@ int lpc_to_lsf(
   */
 
 /* initialize FFT kernel, return 0 if ok.  */
-int fft_init(
+SPRO_API int fft_init(
   unsigned long                 /* number of FFT points                       */
 );
 
 /* perform FFT on a signal  */
-int fft(
+SPRO_API int fft(
   spsig_t *,                    /* pointer to the input signal                */
   float *,                      /* pointer to the output module (or NULL)     */
   float *                       /* pointer to the output phase (or NULL)      */
@@ -646,7 +646,7 @@ int fft(
 # define fft_reset() fft_init(0)
 
 /* set filter-bank indexes on a bilinear transformed frequency scale  */
-unsigned short *set_alpha_idx(
+SPRO_API unsigned short *set_alpha_idx(
   unsigned short,               /* number of filters                          */
   float,                        /* spectral resolution parameter (alpha)      */
   float,                        /* min normalized frequency (in [0,1/2])      */
@@ -654,7 +654,7 @@ unsigned short *set_alpha_idx(
 );
 
 /* set filter-bank indexes on a MEL frequency scale  */
-unsigned short *set_mel_idx(
+SPRO_API unsigned short *set_mel_idx(
   unsigned short,               /* number of filters                          */
   float,                        /* min normalized frequency (in [0,1/2])      */
   float,                        /* max normalized frequency (in [0,1/2])      */
@@ -662,7 +662,7 @@ unsigned short *set_mel_idx(
 );
 
 /* log filter bank output on variable frequency scales  */
-int log_filter_bank(
+SPRO_API int log_filter_bank(
   spsig_t *,                    /* pointer to the input signal                */
   unsigned short,               /* number of filters                          */
   unsigned short *,             /* filter-bank indexes                        */
@@ -670,13 +670,13 @@ int log_filter_bank(
 );
 
 /* initialize DCT kernel  */
-int dct_init(
+SPRO_API int dct_init(
   unsigned short,               /* number of input coefficients               */
   unsigned short                /* number of output coefficients              */
 );
 
 /* discrete cosine transform  */
-int dct(
+SPRO_API int dct(
   spf_t *,                      /* pointer to input features                  */
   spf_t *                       /* pointer to output features                 */
 );
