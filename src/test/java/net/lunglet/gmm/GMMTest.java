@@ -60,13 +60,13 @@ public final class GMMTest {
         means[0].set(0, 0.0f);
         FloatVector[] vars = new FloatVector[]{DenseFactory.createFloatVector(1)};
         vars[0].set(0, 1.0f);
-        GMM expectedGMM = new DiagCovGMM(weights, means, vars);
+        DiagCovGMM expectedGMM = new DiagCovGMM(weights, means, vars);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ObjectOutputStream oos = new ObjectOutputStream(baos);
         oos.writeObject(expectedGMM);
         oos.close();
         ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(baos.toByteArray()));
-        GMM actualGMM = (GMM) ois.readObject();
+        DiagCovGMM actualGMM = (DiagCovGMM) ois.readObject();
         assertEquals(expectedGMM.getDimension(), actualGMM.getDimension());
         assertEquals(expectedGMM.getMixtureCount(), actualGMM.getMixtureCount());
         GMMMAPStats stats = new GMMMAPStats(actualGMM);

@@ -42,8 +42,6 @@ public interface GMM extends Iterable<Gaussian> {
 
     BayesStats getStats(FloatVector x, double fraction);
 
-    FloatDenseVector getVariance(int index);
-
     FloatVector getWeights();
 
     double jointLogLh(int index, float[] x);

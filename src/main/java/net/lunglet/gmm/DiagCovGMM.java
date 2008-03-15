@@ -269,7 +269,6 @@ public final class DiagCovGMM extends AbstractGMM {
         return stats;
     }
 
-    @Override
     public FloatDenseVector getVariance(final int index) {
         checkMixtureIndex(index);
         return DenseFactory.valueOf(variances[index]);
