@@ -64,9 +64,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="mkl_c_dll.lib libguide40.lib"
+				AdditionalDependencies="mkl_array4j.lib"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;C:\Program Files\Intel\MKL\10.0.1.015\ia32\lib&quot;"
+				AdditionalLibraryDirectories="..\lib\win32-x86"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				TargetMachine="1"
@@ -143,9 +143,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="mkl_c_dll.lib libguide40.lib"
+				AdditionalDependencies="mkl_array4j.lib"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;C:\Program Files\Intel\MKL\10.0.1.015\ia32\lib&quot;"
+				AdditionalLibraryDirectories="..\lib\win32-x86"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeReferences="2"

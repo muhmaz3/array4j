@@ -52,10 +52,6 @@ public final class PRIMMETest {
     @Test
     public void testEverything() throws IOException {
         final FloatDenseMatrix matrix = readLUNDA();
-//        final FloatDenseMatrix matrix = DenseFactory.createFloatMatrix(7, 7);
-//        for (int i = 0; i < matrix.rows(); i++) {
-//            matrix.set(i, i, 1.0f + i);
-//        }
 
         PRIMMEParams params = new PRIMMEParams();
         PRIMMELibrary.INSTANCE.primme_initialize(params);
@@ -69,8 +65,6 @@ public final class PRIMMETest {
 
         int ret = PRIMMELibrary.INSTANCE.dprimme(null, null, null, params);
         assertEquals(1, ret);
-//        assertEquals(2192, params.realWorkSize.intValue());
-//        assertEquals(104, params.intWorkSize);
         params.matrixMatvec = new MatrixMatvecCallback() {
             @Override
             public void callback(final Pointer x, final Pointer y, final IntByReference blockSize,
@@ -90,10 +84,6 @@ public final class PRIMMETest {
         };
         ret = PRIMMELibrary.INSTANCE.primme_set_method(PresetMethod.DYNAMIC, params);
         assertEquals(0, ret);
-//        PRIMMELibrary.INSTANCE.primme_display_params(params);
-//        assertEquals(7, params.maxBasisSize);
-//        assertEquals(3, params.minRestartSize);
-//        assertEquals(1, params.maxBlockSize);
         assertEquals(Integer.MAX_VALUE, params.maxOuterIterations);
         assertEquals(Integer.MAX_VALUE, params.maxMatvecs);
         assertEquals(RestartScheme.thick.ordinal(), params.restartingParams.scheme);
@@ -107,9 +97,11 @@ public final class PRIMMETest {
         ret = PRIMMELibrary.INSTANCE.dprimme(evals, evecs, resNorms, params);
         assertEquals(0, ret);
         PRIMMELibrary.INSTANCE.primme_Free(params);
-//        for (int i = 0; i < evals.capacity(); i++) {
-//            System.out.println("eigenvalue = " + evals.get(i));
-//        }
+        if (true) {
+            for (int i = 0; i < evals.capacity(); i++) {
+                System.out.println("eigenvalue = " + evals.get(i));
+            }
+        }
     }
 
     @Test
