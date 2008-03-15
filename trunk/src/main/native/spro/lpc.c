@@ -190,7 +190,7 @@ void lpc(float *r, unsigned short p, spf_t *a, spf_t *k, float *e)
       a[i/2-1] += v * a[i/2-1];
     a[i-1] = v;
     
-    *e *= (1.0 - v * v);
+    *e *= (1.0f - v * v);
   }
 
   *e = (float)sqrt(*e);
