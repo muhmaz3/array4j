@@ -534,7 +534,7 @@ float theta_inv(float oop,float a)
   a2 = a * a;
   b = 2.0 * a;
   do {
-    o = oinf + (osup - oinf) / 2.0;
+    o = oinf + (osup - oinf) / 2.0f;
     v = atan(((1.0 - a2) * sin(o)) / ((1.0 + a2) * cos(o) - b));
     op = (v < 0) ? (float)v + M_PI : (float)v;
     if(op > oop)
@@ -659,7 +659,7 @@ void _fft(float *x, int m)
   int i, i0, i1, i2, i3, i4, i5, i6, i7, ib, istep, ia0, ia1, ia2, ia3;
   int n, ib0, ib1, ib2, ib3, j, jstep, n2, n4 ,n8, nd4, nb, lnb, llnb, k, sgn;
   float c2, c3, d2, d3, r1, r2, r3, r4, t0, t1, t2;
-  const float rac2s2 = 0.707106781186547;
+  const float rac2s2 = 0.707106781186547f;
   
   n = 1 << m;
   nd4 = n / 4;

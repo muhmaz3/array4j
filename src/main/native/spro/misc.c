@@ -316,7 +316,7 @@ int scale_energy(spfbuf_t *buf, unsigned short j, float s, unsigned long ws)
     
     p = buf->s + j;
     for (i = 0; i < buf->n; i++) {
-      *p = (*p - m) * s + 1.0;
+      *p = (*p - m) * s + 1.0f;
       p += buf->adim;
     }
   }
@@ -373,7 +373,7 @@ int scale_energy(spfbuf_t *buf, unsigned short j, float s, unsigned long ws)
 	  m = *(p + ii*buf->adim);
 
       /* scale energy */
-      *p = (*p - m) * s + 1.0;
+      *p = (*p - m) * s + 1.0f;
 
       p += buf->adim;
     }

@@ -211,7 +211,7 @@ void spf_delta_set(spfbuf_t *ibuf, unsigned short ik, unsigned short dim, spfbuf
       next2 = next1 + ibuf->adim;
     
     for (j = 0; j < dim; j++)
-      *(op+j) = (*(next1+j) - *(prev1+j) + 2.0 * (*(next2+j) - *(prev2+j))) * 0.1;
+      *(op+j) = (*(next1+j) - *(prev1+j) + 2.0f * (*(next2+j) - *(prev2+j))) * 0.1f;
 
     /* fprintf(stderr, "i=%ld prev2=%f prev1=%f next1=%f next2=%f  delta=%f\n", i, *prev2, *prev1, *next1, *next2, *op); */
 
