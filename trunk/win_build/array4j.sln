@@ -4,6 +4,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "array4j", "array4j.vcproj",
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PRIMME", "PRIMME.vcproj", "{DBE85C08-BEC3-4F99-8202-105657458F87}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SPro", "SPro.vcproj", "{02D90985-4EC0-4448-841D-8F38729C1E29}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		DebugACML|Win32 = DebugACML|Win32
@@ -26,6 +28,14 @@ Global
 		{DBE85C08-BEC3-4F99-8202-105657458F87}.ReleaseACML|Win32.ActiveCfg = ReleaseIntelMKL|Win32
 		{DBE85C08-BEC3-4F99-8202-105657458F87}.ReleaseIntelMKL|Win32.ActiveCfg = ReleaseIntelMKL|Win32
 		{DBE85C08-BEC3-4F99-8202-105657458F87}.ReleaseIntelMKL|Win32.Build.0 = ReleaseIntelMKL|Win32
+		{02D90985-4EC0-4448-841D-8F38729C1E29}.DebugACML|Win32.ActiveCfg = Debug|Win32
+		{02D90985-4EC0-4448-841D-8F38729C1E29}.DebugACML|Win32.Build.0 = Debug|Win32
+		{02D90985-4EC0-4448-841D-8F38729C1E29}.DebugIntelMKL|Win32.ActiveCfg = Debug|Win32
+		{02D90985-4EC0-4448-841D-8F38729C1E29}.DebugIntelMKL|Win32.Build.0 = Debug|Win32
+		{02D90985-4EC0-4448-841D-8F38729C1E29}.ReleaseACML|Win32.ActiveCfg = Release|Win32
+		{02D90985-4EC0-4448-841D-8F38729C1E29}.ReleaseACML|Win32.Build.0 = Release|Win32
+		{02D90985-4EC0-4448-841D-8F38729C1E29}.ReleaseIntelMKL|Win32.ActiveCfg = Release|Win32
+		{02D90985-4EC0-4448-841D-8F38729C1E29}.ReleaseIntelMKL|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
