@@ -13,6 +13,7 @@ import net.lunglet.array4j.matrix.dense.DenseFactory;
 import net.lunglet.array4j.matrix.dense.DenseMatrix;
 import net.lunglet.array4j.matrix.dense.FloatDenseMatrix;
 import net.lunglet.array4j.matrix.dense.FloatDenseVector;
+import org.apache.commons.lang.NotImplementedException;
 
 // TODO implement unmodifiableMatrix
 
@@ -44,7 +45,7 @@ public final class FloatMatrixUtils {
         final FloatDenseVector v;
         if (matrix instanceof DenseMatrix) {
             if (((DenseMatrix) matrix).order().equals(Order.ROW)) {
-                throw new UnsupportedOperationException();
+                throw new NotImplementedException();
             }
             FloatBuffer data = (FloatBuffer) ((DenseMatrix) matrix).data();
 //            v = new FloatDenseVector(data, length, 0, 1, Order.COLUMN);

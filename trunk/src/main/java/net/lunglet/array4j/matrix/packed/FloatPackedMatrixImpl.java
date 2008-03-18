@@ -10,6 +10,7 @@ import net.lunglet.array4j.matrix.dense.DenseFactory;
 import net.lunglet.array4j.matrix.dense.FloatDenseVector;
 import net.lunglet.array4j.matrix.util.FloatMatrixUtils;
 import net.lunglet.util.BufferUtils;
+import org.apache.commons.lang.NotImplementedException;
 
 @NotThreadSafe
 final class FloatPackedMatrixImpl extends AbstractPackedMatrix<FloatDenseVector> implements FloatPackedMatrix {
@@ -59,13 +60,13 @@ final class FloatPackedMatrixImpl extends AbstractPackedMatrix<FloatDenseVector>
     /** {@inheritDoc} */
     @Override
     public void minusEquals(final float value) {
-        throw new UnsupportedOperationException();
+        throw new NotImplementedException();
     }
 
     /** {@inheritDoc} */
     @Override
     public void plusEquals(final float value) {
-        throw new UnsupportedOperationException();
+        throw new NotImplementedException();
     }
 
     /** {@inheritDoc} */
@@ -162,11 +163,11 @@ final class FloatPackedMatrixImpl extends AbstractPackedMatrix<FloatDenseVector>
         if (!(other instanceof FloatPackedMatrix)) {
             throw new IllegalArgumentException();
         }
-        throw new UnsupportedOperationException();
+        throw new NotImplementedException();
     }
 
     @Override
     public FloatDenseVector asVector() {
-        throw new UnsupportedOperationException();
+        throw new NotImplementedException();
     }
 }

@@ -11,6 +11,7 @@ import net.lunglet.array4j.matrix.FloatMatrix;
 import net.lunglet.array4j.matrix.FloatVector;
 import net.lunglet.array4j.matrix.util.FloatMatrixUtils;
 import net.lunglet.util.BufferUtils;
+import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.builder.EqualsBuilder;
 
 /**
@@ -149,13 +150,13 @@ abstract class AbstractFloatDense extends AbstractDenseMatrix<FloatDenseVector, 
     }
 
     public final void plusEquals(final float value) {
-        throw new UnsupportedOperationException();
+        throw new NotImplementedException();
     }
 
     public void plusEquals(final FloatMatrix other) {
         checkArithmeticOperand(other);
         if (!(other instanceof FloatDenseMatrix)) {
-            throw new UnsupportedOperationException();
+            throw new NotImplementedException();
         }
         FloatDenseBLAS.DEFAULT.axpy(1.0f, ((FloatDenseMatrix) other).asVector(), asVector());
     }
