@@ -10,14 +10,15 @@ import net.lunglet.array4j.matrix.dense.DenseMatrix;
 import net.lunglet.array4j.matrix.dense.FloatDenseMatrix;
 import net.lunglet.array4j.matrix.dense.FloatDenseVector;
 import net.lunglet.array4j.matrix.packed.FloatPackedMatrix;
+import org.apache.commons.lang.NotImplementedException;
 
 public final class FloatMatrixMath {
     public static FloatVector minus(final FloatVector x, final FloatVector y) {
         if (!(x instanceof FloatDenseVector)) {
-            throw new UnsupportedOperationException();
+            throw new NotImplementedException();
         }
         if (!(y instanceof FloatDenseVector)) {
-            throw new UnsupportedOperationException();
+            throw new NotImplementedException();
         }
         FloatDenseVector z = DenseFactory.copyOf(x);
         FloatDenseBLAS.DEFAULT.axpy(-1.0f, (FloatDenseVector) y, z);

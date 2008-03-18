@@ -1,5 +1,6 @@
 package net.lunglet.array4j.array;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
@@ -29,6 +30,6 @@ public class ObjectArray<T> extends AbstractArray {
     }
 
     public final T[] toArray() {
-        throw new UnsupportedOperationException();
+        throw new NotImplementedException();
     }
 }
