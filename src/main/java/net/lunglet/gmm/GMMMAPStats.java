@@ -1,6 +1,8 @@
 package net.lunglet.gmm;
 
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 import net.lunglet.array4j.math.ArraysMath;
 import net.lunglet.array4j.matrix.FloatVector;
 
@@ -58,13 +60,7 @@ public final class GMMMAPStats {
         }
     }
 
-    private void add(final float[] x, final int[] indices) {
-        if (x.length != gmm.getDimension()) {
-            throw new IllegalArgumentException();
-        }
-        final BayesStats stats = gmm.getStats(x, indices, fraction);
-        totLogLh += stats.getMarginalLogLh();
-        double[] posteriors = stats.getPosteriorProbs();
+    private void add(final float[] x, final BayesStats stats, final double[] posteriors, final int[] indices) {
         final float[] xx;
         if (exx != null) {
             xx = ArraysMath.square(x);
@@ -97,6 +93,35 @@ public final class GMMMAPStats {
         totN += sum;
     }
 
+    private int[] add(final float[] x, final int c) {
+        if (x.length != gmm.getDimension()) {
+            throw new IllegalArgumentException();
+        }
+        final BayesStats stats = gmm.getStats(x, null, fraction);
+        double[] posteriors = stats.getPosteriorProbs();
+        int[] indices = new int[c];
+        
+        
+        
+        // TODO get indices of top 5 posteriors
+        Arrays.fill(indices, Integer.MIN_VALUE);
+        
+        
+        
+        add(x, stats, posteriors, indices);
+        totLogLh += stats.getMarginalLogLh(indices);
+        return indices;
+    }
+
+    private void add(final float[] x, final int[] indices) {
+        if (x.length != gmm.getDimension()) {
+            throw new IllegalArgumentException();
+        }
+        final BayesStats stats = gmm.getStats(x, indices, fraction);
+        add(x, stats, stats.getPosteriorProbs(), indices);
+        totLogLh += stats.getMarginalLogLh();
+    }
+
     public void add(final FloatVector x) {
         add(x, null);
     }
@@ -123,11 +148,21 @@ public final class GMMMAPStats {
     }
 
     public void add(final Iterable<? extends FloatVector> data) {
-        // perform check once before iterating
         checkGMM();
         for (FloatVector x : data) {
             add(x.toArray(), null);
         }
+    }
+
+    public List<int[]> add(final Iterable<? extends FloatVector> data, final int c) {
+        checkGMM();
+        if (c <= 0 || c > gmm.getMixtureCount()) {
+            throw new IllegalArgumentException();
+        }
+        for (FloatVector x : data) {
+            add(x.toArray(), c);
+        }
+        return null;
     }
 
     public void add(final Iterable<? extends FloatVector> data, final Iterable<int[]> indices) {
@@ -135,13 +170,17 @@ public final class GMMMAPStats {
         checkGMM();
         Iterator<int[]> indicesIter = indices.iterator();
         for (FloatVector x : data) {
-            add(x.toArray(), indicesIter.next());
+            int[] xindices = indicesIter.next();
+            if (xindices == null) {
+                throw new IllegalArgumentException();
+            }
+            add(x.toArray(), xindices);
         }
     }
 
     private void checkGMM() {
         if (gmm == null) {
-            throw new IllegalStateException("Cannot add or adapt deserialized instance");
+            throw new IllegalStateException("Cannot add to or adapt instance without GMM");
         }
     }
 
