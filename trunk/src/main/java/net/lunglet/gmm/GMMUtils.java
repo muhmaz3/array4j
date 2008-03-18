@@ -5,6 +5,7 @@ import java.util.List;
 import net.lunglet.array4j.matrix.FloatVector;
 import net.lunglet.array4j.matrix.dense.DenseFactory;
 import net.lunglet.array4j.matrix.util.FloatMatrixUtils;
+import org.apache.commons.lang.NotImplementedException;
 
 public final class GMMUtils {
     public static DiagCovGMM createDiagCovGMM(final int mixtures, final int dimension) {
@@ -21,6 +22,9 @@ public final class GMMUtils {
         return new DiagCovGMM(weights, means.toArray(new FloatVector[0]), vars.toArray(new FloatVector[0]));
     }
 
+    /**
+     * Split all the components in the GMM.
+     */
     public static DiagCovGMM splitAll(final DiagCovGMM gmm) {
         List<FloatVector> newMeans = new ArrayList<FloatVector>();
         List<FloatVector> newVars = new ArrayList<FloatVector>();
@@ -51,6 +55,9 @@ public final class GMMUtils {
         return new DiagCovGMM(newWeights, newMeans, newVars);
     }
 
+    /**
+     * Split the heaviest component in the GMM into two components.
+     */
     public static DiagCovGMM splitHeaviest(final DiagCovGMM gmm) {
         // TODO move this code into an argmax function
         FloatVector oldWeights = gmm.getWeights();
@@ -94,6 +101,14 @@ public final class GMMUtils {
         }
         FloatVector newWeights = DenseFactory.floatVector(newWeightsList);
         return new DiagCovGMM(newWeights, newMeans, newVars);
+    }
+
+    /**
+     * Replace weak components (components not supported by enough data) by
+     * splitting the strongest (heaviest) components.
+     */
+    public static DiagCovGMM replaceWeak(final DiagCovGMM gmm, final GMMMAPStats stats, final float thresh) {
+        throw new NotImplementedException();
     }
 
     private GMMUtils() {

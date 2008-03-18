@@ -57,7 +57,7 @@ public final class GMMBenchmark {
             variances[i] = variance;
         }
         float[] x = new float[dimension];
-        GMM gmm = new DiagCovGMM(weights, means, variances);
+        DiagCovGMM gmm = new DiagCovGMM(weights, means, variances);
         final double fraction;
         if (false) {
             fraction = GMM.MIN_FRACTION;

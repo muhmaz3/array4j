@@ -9,6 +9,8 @@ public interface BayesStats {
 
     double getMarginalLogLh();
 
+    double getMarginalLogLh(int[] indices);
+
     /**
      * @return <CODE>P(k|x)</CODE>
      */

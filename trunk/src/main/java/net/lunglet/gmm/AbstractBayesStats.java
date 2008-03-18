@@ -1,8 +1,7 @@
 package net.lunglet.gmm;
 
 import java.util.Arrays;
-
-// TODO maybe make reset public so that stats objects can be reused
+import org.apache.commons.lang.NotImplementedException;
 
 public abstract class AbstractBayesStats implements BayesStats {
     protected final double[] apriori;
@@ -82,6 +81,13 @@ public abstract class AbstractBayesStats implements BayesStats {
     public final double getMarginalLogLh() {
         checkState();
         return marginal;
+    }
+
+    public final double getMarginalLogLh(final int[] indices) {
+        if (indices == null) {
+            return marginal;
+        }
+        throw new NotImplementedException();
     }
 
     public final double[] getPosteriorProbs() {

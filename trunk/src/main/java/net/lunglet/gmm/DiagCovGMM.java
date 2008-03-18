@@ -9,6 +9,7 @@ import java.util.Iterator;
 import net.lunglet.array4j.matrix.FloatVector;
 import net.lunglet.array4j.matrix.dense.DenseFactory;
 import net.lunglet.array4j.matrix.dense.FloatDenseVector;
+import org.apache.commons.lang.NotImplementedException;
 
 public final class DiagCovGMM extends AbstractGMM {
     private static final long serialVersionUID = 1L;
@@ -97,7 +98,8 @@ public final class DiagCovGMM extends AbstractGMM {
         }
     }
 
-    public double conditionalLogLh(final int index, final float[] x) {
+    @Override
+    protected double conditionalLogLh(final int index, final float[] x) {
         double ll = 0.0f;
         float[] mean = means[index];
         float[] precision = precisions[index];
@@ -117,13 +119,10 @@ public final class DiagCovGMM extends AbstractGMM {
 
     @Override
     public void doEM(final GMMMAPStats stats, final boolean doWeights, final boolean doMeans, final boolean doVars) {
-        checkStats(stats);
+        checkStats(stats, doMeans, doVars);
         float[] n = stats.getN();
         float[][] ex = stats.getEx();
         float[][] exx = stats.getExx();
-        if ((doMeans && ex == null) || (doVars && (ex == null || exx == null))) {
-            throw new IllegalArgumentException("Required stats not available");
-        }
         if (doMeans || doVars) {
             ex = ex.clone();
             for (int i = 0; i < ex.length; i++) {
@@ -158,12 +157,30 @@ public final class DiagCovGMM extends AbstractGMM {
     }
 
     @Override
-    public void doMAP(final GMMMAPStats stats, final double r, final boolean doWeights, final boolean doMeans,
+    public void doMAP(final GMMMAPStats stats, final float r, final boolean doWeights, final boolean doMeans,
             final boolean doVars) {
-        if (doWeights || doVars) {
-            throw new IllegalArgumentException();
+        checkStats(stats, doMeans, doVars);
+        float[] n = stats.getN();
+        if (doWeights) {
+            throw new NotImplementedException();
         }
-        checkStats(stats);
+        if (doMeans) {
+            float[][] ex = stats.getEx();
+            for (int i = 0; i < means.length; i++) {
+                float[] meani = means[i];
+                float[] exi = ex[i];
+                float ni = n[i];
+                float alpha = ni / (ni + r);
+                float a1 = alpha / ni;
+                float a2 = 1.0f - alpha;
+                for (int j = 0; j < meani.length; j++) {
+                    meani[j] = a1 * exi[j] +  a2 * meani[j];
+                }
+            }
+        }
+        if (doVars) {
+            throw new NotImplementedException();
+        }
     }
 
     private void fixPrecisionsAndLogDets() {
@@ -284,7 +301,8 @@ public final class DiagCovGMM extends AbstractGMM {
         throw new UnsupportedOperationException();
     }
 
-    public double jointLogLh(final int index, final float[] x) {
+    @Override
+    protected double jointLogLh(final int index, final float[] x) {
         return logWeights[index] + conditionalLogLh(index, x);
     }
 

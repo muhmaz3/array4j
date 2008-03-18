@@ -3,10 +3,10 @@ package net.lunglet.gmm;
 import net.lunglet.array4j.matrix.FloatVector;
 import net.lunglet.array4j.matrix.dense.FloatDenseVector;
 
+// TODO remove getStats(float[], int[], double) from the interface
+
 public interface GMM extends Iterable<Gaussian> {
     double MIN_FRACTION = Double.MIN_VALUE;
-
-    double conditionalLogLh(int index, float[] x);
 
     double conditionalLogLh(int index, FloatVector x);
 
@@ -19,12 +19,12 @@ public interface GMM extends Iterable<Gaussian> {
     /**
      * @param r relevance factor
      */
-    void doMAP(GMMMAPStats stats, final double r, boolean doWeights, boolean doMeans, boolean doVars);
+    void doMAP(GMMMAPStats stats, final float r, boolean doWeights, boolean doMeans, boolean doVars);
 
     /**
      * @param r relevance factor
      */
-    void doMAPonMeans(GMMMAPStats stats, final double r);
+    void doMAPonMeans(GMMMAPStats stats, final float r);
 
     /** Returns the feature dimension. */
     int getDimension();
@@ -43,8 +43,6 @@ public interface GMM extends Iterable<Gaussian> {
     BayesStats getStats(FloatVector x, double fraction);
 
     FloatVector getWeights();
-
-    double jointLogLh(int index, float[] x);
 
     double jointLogLh(int index, FloatVector x);
 
