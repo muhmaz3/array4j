@@ -5,6 +5,7 @@ import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.Arrays;
+import org.apache.commons.lang.NotImplementedException;
 
 // TODO Attribute#getName should return full name or make a new getFullName
 
@@ -68,7 +69,7 @@ public final class Attribute extends AbstractDs {
 
     @Override
     public long getStorageSize() {
-        throw new UnsupportedOperationException();
+        throw new NotImplementedException();
     }
 
     @Override

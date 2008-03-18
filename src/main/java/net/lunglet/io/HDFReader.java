@@ -14,6 +14,7 @@ import net.lunglet.hdf.FloatType;
 import net.lunglet.hdf.H5File;
 import net.lunglet.hdf.SelectionOperator;
 import net.lunglet.util.BufferUtils;
+import org.apache.commons.lang.NotImplementedException;
 
 // TODO handle any order, stride, offset, size, etc.
 
@@ -35,7 +36,7 @@ public final class HDFReader implements Closeable {
 
     public void read(final String name, final FloatDenseMatrix matrix) {
         if (!matrix.order().equals(Order.ROW)) {
-            throw new UnsupportedOperationException();
+            throw new NotImplementedException();
         }
         DataSet dataset = null;
         DataSpace space = null;
