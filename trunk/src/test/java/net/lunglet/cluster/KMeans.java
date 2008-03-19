@@ -9,7 +9,6 @@ import net.lunglet.array4j.matrix.dense.DenseFactory;
 import net.lunglet.array4j.matrix.dense.FloatDenseMatrix;
 import net.lunglet.array4j.matrix.math.FloatMatrixMath;
 import net.lunglet.array4j.matrix.math.MatrixMath;
-import net.lunglet.array4j.matrix.util.FloatDenseUtils;
 import net.lunglet.array4j.matrix.util.FloatMatrixUtils;
 
 public final class KMeans<T> {
@@ -164,7 +163,7 @@ public final class KMeans<T> {
             for (int i = 0; i < data.length; i++) {
                 FloatDenseMatrix currentCentroids = null;
                 if (centroids != null) {
-                    currentCentroids = FloatDenseUtils.subMatrixColumns(centroids, 0, iter);
+                    currentCentroids = FloatMatrixUtils.subMatrixColumns(centroids, 0, iter);
                 }
                 KMeansTask task = taskFactory.createTask2(data[i], currentCentroids);
                 cs.submit(task);
