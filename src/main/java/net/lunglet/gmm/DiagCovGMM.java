@@ -252,12 +252,12 @@ public final class DiagCovGMM extends AbstractGMM {
 
     @Override
     public FloatVector getLogWeights() {
-        return DenseFactory.valueOf(logWeights);
+        return DenseFactory.floatVector(logWeights);
     }
 
     public FloatDenseVector getMean(final int index) {
         checkMixtureIndex(index);
-        return DenseFactory.valueOf(means[index]);
+        return DenseFactory.floatVector(means[index]);
     }
 
     /** {@inheritDoc} */
@@ -288,12 +288,12 @@ public final class DiagCovGMM extends AbstractGMM {
 
     public FloatDenseVector getVariance(final int index) {
         checkMixtureIndex(index);
-        return DenseFactory.valueOf(variances[index]);
+        return DenseFactory.floatVector(variances[index]);
     }
 
     @Override
     public FloatVector getWeights() {
-        return DenseFactory.valueOf(weights);
+        return DenseFactory.floatVector(weights);
     }
 
     @Override

@@ -22,10 +22,10 @@ public final class FloatDenseBLASBenchmark {
             float alpha = 1.0f;
             Order order = Order.COLUMN;
             Storage storage = Storage.DIRECT;
-            FloatDenseMatrix a = DenseFactory.createFloatMatrix(n, n, order, storage);
-            FloatDenseMatrix b = DenseFactory.createFloatMatrix(n, n, order, storage);
+            FloatDenseMatrix a = DenseFactory.floatMatrix(n, n, order, storage);
+            FloatDenseMatrix b = DenseFactory.floatMatrix(n, n, order, storage);
             float beta = 1.0f;
-            FloatDenseMatrix c = DenseFactory.createFloatMatrix(n, n, order, storage);
+            FloatDenseMatrix c = DenseFactory.floatMatrix(n, n, order, storage);
             FloatMatrixUtils.fillRandom(a, rng);
             FloatMatrixUtils.fillRandom(b, rng);
             FloatMatrixUtils.fillRandom(c, rng);

@@ -22,7 +22,7 @@ public final class MatrixInputStream extends DataInputStream implements MatrixIn
         if (columns < 0) {
             throw new IOException();
         }
-        FloatDenseMatrix matrix = DenseFactory.createFloatMatrix(rows, columns);
+        FloatDenseMatrix matrix = DenseFactory.floatMatrix(rows, columns);
         // read matrix in column-major order
         for (int j = 0; j < columns; j++) {
             for (int i = 0; i < rows; i++) {

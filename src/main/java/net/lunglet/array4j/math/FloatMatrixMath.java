@@ -10,6 +10,7 @@ import net.lunglet.array4j.matrix.dense.DenseMatrix;
 import net.lunglet.array4j.matrix.dense.FloatDenseMatrix;
 import net.lunglet.array4j.matrix.dense.FloatDenseVector;
 import net.lunglet.array4j.matrix.packed.FloatPackedMatrix;
+import net.lunglet.array4j.matrix.packed.PackedFactory;
 import org.apache.commons.lang.NotImplementedException;
 
 public final class FloatMatrixMath {
@@ -60,7 +61,7 @@ public final class FloatMatrixMath {
         if (x instanceof DenseMatrix && y instanceof DenseMatrix) {
             FloatDenseMatrix a = (FloatDenseMatrix) x;
             FloatDenseMatrix b = (FloatDenseMatrix) y;
-            FloatDenseMatrix c = DenseFactory.createFloatMatrix(a.rows(), b.columns(), Order.COLUMN, Storage.DIRECT);
+            FloatDenseMatrix c = DenseFactory.floatMatrix(a.rows(), b.columns(), Order.COLUMN, Storage.DIRECT);
             // TODO can handle non-unit strides here by using gemv or dot
             FloatDenseBLAS.DEFAULT.gemm(1.0f, a, b, 0.0f, c);
             return c;
@@ -70,10 +71,9 @@ public final class FloatMatrixMath {
     }
 
     public static FloatPackedMatrix timesTranspose(final FloatDenseMatrix a) {
-        FloatDenseMatrix c = DenseFactory.createFloatMatrix(a.rows(), a.rows(), a.order(), a.storage());
+        FloatDenseMatrix c = DenseFactory.floatMatrix(a.rows(), a.rows(), a.order(), a.storage());
         FloatDenseBLAS.DEFAULT.syrk(1.0f, a, 0.0f, c);
-//        return FloatPackedMatrix.valueOf(c);
-        return null;
+        return PackedFactory.symmetric(c);
     }
 
     private FloatMatrixMath() {

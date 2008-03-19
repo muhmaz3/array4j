@@ -22,7 +22,7 @@ public final class DenseFactoryTest {
                 values[i][j] = k++;
             }
         }
-        FloatDenseMatrix matrix = DenseFactory.valueOf(values, order, storage);
+        FloatDenseMatrix matrix = DenseFactory.floatMatrix(values, order, storage);
         assertEquals(order, matrix.order());
         assertEquals(storage, matrix.storage());
         if (order.equals(ROW)) {

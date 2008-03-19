@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import net.lunglet.array4j.matrix.FloatMatrix;
 import net.lunglet.array4j.matrix.FloatVector;
+import net.lunglet.array4j.matrix.dense.DenseFactory;
 import net.lunglet.array4j.matrix.dense.FloatDenseMatrix;
 import net.lunglet.array4j.matrix.dense.FloatDenseVector;
 
@@ -113,8 +114,7 @@ public final class SvmClassifier implements Serializable {
 
     public FloatDenseVector getModel() {
         FloatVector sv = getSupportVector();
-//        FloatDenseVector modelvec = new FloatDenseVector(sv.length() + 1, Order.COLUMN, Storage.DIRECT);
-        FloatDenseVector modelvec = null;
+        FloatDenseVector modelvec = DenseFactory.floatColumnDirect(sv.length() + 1);
         for (int i = 0; i < sv.length(); i++) {
             modelvec.set(i, sv.get(i));
         }
@@ -174,13 +174,12 @@ public final class SvmClassifier implements Serializable {
             throw new IllegalStateException();
         }
         int n = model.nr_class * (model.nr_class - 1) / 2;
-//        FloatDenseMatrix scores = new FloatDenseMatrix(n, testData.size());
-        FloatDenseMatrix scores = null;
+        FloatDenseMatrix scores = DenseFactory.floatMatrix(n, testData.size());
         double[] decvalues = new double[n];
         for (int i = 0; i < testData.size(); i++) {
             Handle handle = testData.get(i);
             Svm.svm_predict_values(model, handle.getData(), decvalues);
-//            scores.setColumn(i, FloatDenseVector.valueOf(decvalues));
+            scores.setColumn(i, DenseFactory.floatVector(decvalues));
         }
         return scores;
     }

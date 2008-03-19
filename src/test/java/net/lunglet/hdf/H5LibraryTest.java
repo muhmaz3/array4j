@@ -30,7 +30,7 @@ public final class H5LibraryTest {
         assertEquals(0, err);
         assertEquals(1, pmajnum.getValue());
         assertEquals(6, pminnum.getValue());
-        assertEquals(6, prelnum.getValue());
+        assertEquals(7, prelnum.getValue());
     }
 
     @Test
@@ -40,7 +40,7 @@ public final class H5LibraryTest {
         H5File h5 = new H5File(UUID.randomUUID().toString(), fcpl, fapl);
         fapl.close();
 
-        FloatDenseMatrix data = DenseFactory.createFloatMatrix(5, 6, Order.ROW, Storage.DIRECT);
+        FloatDenseMatrix data = DenseFactory.floatMatrix(5, 6, Order.ROW, Storage.DIRECT);
         for (int j = 0; j < data.rows(); j++) {
             for (int i = 0; i < data.columns(); i++) {
                 data.set(j, i, (float) i + j);
@@ -60,7 +60,7 @@ public final class H5LibraryTest {
         long[] start = {1, 2};
         long[] count = {3, 4};
         dataspace2.selectHyperslab(SelectionOperator.SET, start, count);
-        FloatDenseMatrix out = DenseFactory.createFloatMatrix(data.rows(), data.columns());
+        FloatDenseMatrix out = DenseFactory.floatMatrix(data.rows(), data.columns());
         dataset2.read(out.data(), dtype, DataSpace.ALL, dataspace2);
         dataspace2.close();
         dataset2.close();

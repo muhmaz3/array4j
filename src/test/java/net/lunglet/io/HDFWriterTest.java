@@ -1,7 +1,6 @@
 package net.lunglet.io;
 
 import static org.junit.Assert.assertEquals;
-import net.lunglet.array4j.Storage;
 import net.lunglet.array4j.matrix.MatrixTestSupport;
 import net.lunglet.array4j.matrix.packed.FloatPackedMatrix;
 import net.lunglet.array4j.matrix.packed.PackedFactory;
@@ -16,12 +15,11 @@ public final class HDFWriterTest extends AbstractHDFTest {
         HDFReader reader = new HDFReader(h5);
         int nmax = 5;
         for (int n = 1; n <= nmax; n++) {
-            Storage storage = Storage.DIRECT;
-            FloatPackedMatrix x = PackedFactory.createFloatSymmetric(n, storage);
+            FloatPackedMatrix x = PackedFactory.floatSymmetricDirect(n);
             MatrixTestSupport.populateMatrix(x);
             String name = String.valueOf(n);
             writer.write(name, x);
-            FloatPackedMatrix y = PackedFactory.createFloatSymmetric(n, storage);
+            FloatPackedMatrix y = PackedFactory.floatSymmetricDirect(n);
             reader.read(name, y);
             assertEquals(x, y);
         }

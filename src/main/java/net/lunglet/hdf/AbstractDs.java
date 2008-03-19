@@ -65,6 +65,13 @@ abstract class AbstractDs extends H5Object {
         }
     }
 
+    public int[] getIntDims() {
+        DataSpace space = getSpace();
+        int[] dims = space.getIntDims();
+        space.close();
+        return dims;
+    }
+
     public abstract DataSpace getSpace();
 
     public abstract long getStorageSize();

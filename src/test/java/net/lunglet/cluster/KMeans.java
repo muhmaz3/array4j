@@ -180,7 +180,7 @@ public final class KMeans<T> {
                 throw new RuntimeException("no new centroid found");
             }
             if (centroids == null) {
-                centroids = DenseFactory.createFloatMatrix(newCentroid.rows(), maxCentroids);
+                centroids = DenseFactory.floatMatrix(newCentroid.rows(), maxCentroids);
             }
             centroids.setColumn(iter, newCentroid);
         }
