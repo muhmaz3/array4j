@@ -8,6 +8,9 @@ import net.lunglet.array4j.Storage;
 import net.lunglet.array4j.matrix.FloatMatrix;
 import net.lunglet.array4j.matrix.FloatVector;
 
+/**
+ * Factory for creating dense matrices and vectors.
+ */
 public final class DenseFactory {
     public static FloatDenseMatrix copyOf(final FloatMatrix original) {
         return new FloatDenseMatrixImpl(original);

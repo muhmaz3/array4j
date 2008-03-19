@@ -1,7 +1,7 @@
 package net.lunglet.svm;
 
-import net.lunglet.array4j.math.FloatMatrixMath;
 import net.lunglet.array4j.matrix.FloatVector;
+import net.lunglet.array4j.matrix.math.FloatMatrixMath;
 
 abstract class Kernel extends QMatrix {
     static double dot(final FloatVector x, final SvmNode y) {

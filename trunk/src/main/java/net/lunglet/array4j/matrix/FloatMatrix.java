@@ -2,8 +2,6 @@ package net.lunglet.array4j.matrix;
 
 import java.util.List;
 
-// TODO remove math stuff from this interface
-
 /**
  * Single-precision floating point matrix.
  */
@@ -20,19 +18,8 @@ public interface FloatMatrix extends Matrix {
     /** {@inheritDoc} */
     List<? extends FloatVector> columnsList();
 
-    /** Scalar division. */
-    void divideEquals(float value);
-
+    /** Get matrix element. */
     float get(int row, int column);
-
-    /** Scalar subtraction. */
-    void minusEquals(float value);
-
-    /** Scalar addition. */
-    void plusEquals(float value);
-
-    /** Element-wise addition without broadcasting. */
-    void plusEquals(FloatMatrix other);
 
     /** {@inheritDoc} */
     FloatVector row(int row);
@@ -40,6 +27,7 @@ public interface FloatMatrix extends Matrix {
     /** {@inheritDoc} */
     Iterable<? extends FloatVector> rowsIterator();
 
+    /** Set matrix element. */
     void set(int row, int column, float value);
 
     /** Set the values in a column of the matrix. */
@@ -47,9 +35,6 @@ public interface FloatMatrix extends Matrix {
 
     /** Set the values in a row of the matrix. */
     void setRow(int row, FloatVector rowVector);
-
-    /** Scalar multiplication. */
-    void timesEquals(float value);
 
     /** Pack matrix into an array. */
     float[] toArray();

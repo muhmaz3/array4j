@@ -31,6 +31,9 @@ public final class ArrayUtils {
         return y;
     }
 
+    /**
+     * Assigns a random value to each element of the specified array of doubles.
+     */
     public static void fillRandom(final double[] x, final Random rng) {
         for (int i = 0; i < x.length; i++) {
             x[i] = rng.nextDouble();

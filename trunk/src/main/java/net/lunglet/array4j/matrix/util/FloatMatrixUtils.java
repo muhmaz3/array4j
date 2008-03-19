@@ -5,7 +5,6 @@ import java.util.Random;
 import net.lunglet.array4j.Direction;
 import net.lunglet.array4j.Order;
 import net.lunglet.array4j.Storage;
-import net.lunglet.array4j.math.FloatMatrixMath;
 import net.lunglet.array4j.matrix.FloatMatrix;
 import net.lunglet.array4j.matrix.FloatVector;
 import net.lunglet.array4j.matrix.Matrix;
@@ -13,6 +12,8 @@ import net.lunglet.array4j.matrix.dense.DenseFactory;
 import net.lunglet.array4j.matrix.dense.DenseMatrix;
 import net.lunglet.array4j.matrix.dense.FloatDenseMatrix;
 import net.lunglet.array4j.matrix.dense.FloatDenseVector;
+import net.lunglet.array4j.matrix.math.FloatMatrixMath;
+import net.lunglet.array4j.matrix.math.MatrixMath;
 import org.apache.commons.lang.NotImplementedException;
 
 // TODO implement unmodifiableMatrix
@@ -25,8 +26,8 @@ public final class FloatMatrixUtils {
         for (final FloatVector column : matrix.columnsIterator()) {
             n++;
             FloatVector delta = FloatMatrixMath.minus(column, mean);
-            delta.divideEquals(n);
-            mean.plusEquals(delta);
+            MatrixMath.divideEquals(delta, n);
+            MatrixMath.plusEquals(mean, delta);
         }
         return mean;
     }
@@ -35,7 +36,7 @@ public final class FloatMatrixUtils {
     public static FloatDenseVector columnSum(final FloatMatrix matrix) {
         final FloatDenseVector sum = columnVectorFor(matrix);
         for (final FloatVector column : matrix.columnsIterator()) {
-            sum.plusEquals(column);
+            MatrixMath.plusEquals(sum, column);
         }
         return sum;
     }
@@ -49,7 +50,7 @@ public final class FloatMatrixUtils {
             }
             FloatBuffer data = (FloatBuffer) ((DenseMatrix) matrix).data();
 //            v = new FloatDenseVector(data, length, 0, 1, Order.COLUMN);
-            v = null;
+            throw new NotImplementedException();
         } else {
             v = DenseFactory.floatVector(length, Direction.COLUMN, Storage.DEFAULT);
             for (int i = 0, k = 0; i < matrix.columns(); i++) {
@@ -166,8 +167,8 @@ public final class FloatMatrixUtils {
         for (final FloatVector row : matrix.rowsIterator()) {
             n++;
             FloatVector delta = FloatMatrixMath.minus(row, mean);
-            delta.divideEquals(n);
-            mean.plusEquals(delta);
+            MatrixMath.divideEquals(delta, n);
+            MatrixMath.plusEquals(mean, delta);
         }
         return mean;
     }
@@ -176,7 +177,7 @@ public final class FloatMatrixUtils {
     public static FloatDenseVector rowSum(final FloatMatrix matrix) {
         final FloatDenseVector sum = rowVectorFor(matrix);
         for (final FloatVector row : matrix.rowsIterator()) {
-            sum.plusEquals(row);
+            MatrixMath.plusEquals(sum, row);
         }
         return sum;
     }

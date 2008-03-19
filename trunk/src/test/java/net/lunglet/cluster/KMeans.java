@@ -3,11 +3,12 @@ package net.lunglet.cluster;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutionException;
-import net.lunglet.array4j.math.FloatMatrixMath;
 import net.lunglet.array4j.matrix.FloatMatrix;
 import net.lunglet.array4j.matrix.FloatVector;
 import net.lunglet.array4j.matrix.dense.DenseFactory;
 import net.lunglet.array4j.matrix.dense.FloatDenseMatrix;
+import net.lunglet.array4j.matrix.math.FloatMatrixMath;
+import net.lunglet.array4j.matrix.math.MatrixMath;
 import net.lunglet.array4j.matrix.util.FloatDenseUtils;
 import net.lunglet.array4j.matrix.util.FloatMatrixUtils;
 
@@ -107,8 +108,8 @@ public final class KMeans<T> {
             n[nearestIndex]++;
             FloatVector nearestNewCentroid = newCentroids.column(nearestIndex);
             FloatVector delta = FloatMatrixMath.minus(x, nearestNewCentroid);
-            delta.timesEquals(1.0f / n[nearestIndex]);
-            nearestNewCentroid.plusEquals(delta);
+            MatrixMath.divideEquals(delta, n[nearestIndex]);
+            MatrixMath.plusEquals(nearestNewCentroid, delta);
             totalDistortion += nearestDistance;
         }
         return new KMeansTaskResult(newCentroids, n, totalDistortion);
@@ -210,8 +211,8 @@ public final class KMeans<T> {
                 }
                 n[j] += result.n[j];
                 FloatVector delta = FloatMatrixMath.minus(result.centroids.column(j), centroid);
-                delta.timesEquals(result.n[j] / (float) n[j]);
-                centroid.plusEquals(delta);
+                MatrixMath.timesEquals(delta, result.n[j] / (float) n[j]);
+                MatrixMath.plusEquals(centroid, delta);
             }
             totalDistortion += result.totalDistortion;
         }

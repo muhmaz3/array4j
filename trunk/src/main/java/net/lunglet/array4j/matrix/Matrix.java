@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 
 public interface Matrix extends Serializable {
+    /** Returns the matrix as a vector. */
     Vector asVector();
 
     /** Get a column vector. */
@@ -19,7 +20,7 @@ public interface Matrix extends Serializable {
     List<? extends Vector> columnsList();
 
     /**
-     * Returns <CODE>true</CODE> if the matrix has the same number of rows and
+     * Returns <CODE>true</CODE> if the matrix has the same number of rows as
      * columns.
      */
     boolean isSquare();

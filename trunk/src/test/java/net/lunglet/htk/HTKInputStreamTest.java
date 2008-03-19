@@ -6,7 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.io.InputStream;
-import net.lunglet.array4j.math.ArraysMath;
+import net.lunglet.util.ArrayMath;
 import org.junit.Test;
 
 public final class HTKInputStreamTest {
@@ -25,8 +25,8 @@ public final class HTKInputStreamTest {
         in.reset();
         short[] waveform = in.readWaveform();
         assertEquals(16000, waveform.length);
-        assertEquals(-560, ArraysMath.min(waveform));
-        assertEquals(655, ArraysMath.max(waveform));
+        assertEquals(-560, ArrayMath.min(waveform));
+        assertEquals(655, ArrayMath.max(waveform));
         in.close();
     }
 

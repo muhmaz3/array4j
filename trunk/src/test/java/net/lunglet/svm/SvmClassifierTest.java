@@ -12,11 +12,12 @@ import libsvm.svm_model;
 import libsvm.svm_node;
 import libsvm.svm_parameter;
 import libsvm.svm_problem;
-import net.lunglet.array4j.math.FloatMatrixMath;
 import net.lunglet.array4j.matrix.FloatMatrix;
 import net.lunglet.array4j.matrix.FloatVector;
 import net.lunglet.array4j.matrix.dense.DenseFactory;
 import net.lunglet.array4j.matrix.dense.FloatDenseMatrix;
+import net.lunglet.array4j.matrix.math.FloatMatrixMath;
+import net.lunglet.array4j.matrix.math.MatrixMath;
 import net.lunglet.array4j.matrix.packed.FloatPackedMatrix;
 import net.lunglet.array4j.matrix.util.FloatMatrixUtils;
 import org.junit.Test;
@@ -118,7 +119,7 @@ public final class SvmClassifierTest {
 
         // XXX fix sign... might need something more complex here when dealing
         // with arbitrary labels. this assumes labels start at 0.
-        scores.timesEquals(labels[0] == 0 ? 1.0f : -1.0f);
+        MatrixMath.timesEquals(scores, labels[0] == 0 ? 1.0f : -1.0f);
 
         return scores;
     }
@@ -162,7 +163,7 @@ public final class SvmClassifierTest {
 
         // XXX fix sign... might need something more complex heren when dealing
         // with arbitrary labels. this assumes labels start at 0.
-        scores.timesEquals(labels[0] == 0 ? 1.0f : -1.0f);
+        MatrixMath.timesEquals(scores, labels[0] == 0 ? 1.0f : -1.0f);
 
         return scores;
     }

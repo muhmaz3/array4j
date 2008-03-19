@@ -6,7 +6,8 @@ import static org.junit.Assert.assertTrue;
 import java.util.Arrays;
 import java.util.Collection;
 import net.lunglet.array4j.Storage;
-import net.lunglet.array4j.math.FloatMatrixMath;
+import net.lunglet.array4j.matrix.math.FloatMatrixMath;
+import net.lunglet.array4j.matrix.math.MatrixMath;
 import net.lunglet.array4j.matrix.util.FloatMatrixUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -87,7 +88,7 @@ public final class FloatVectorTest {
                 x.set(j, j);
                 y.set(j, i - j);
             }
-            x.plusEquals(y);
+            MatrixMath.plusEquals(x, y);
             for (int j = 0; j < i; j++) {
                 assertEquals(i, x.get(j), 0.0);
                 assertEquals(i - j, y.get(j), 0.0);
