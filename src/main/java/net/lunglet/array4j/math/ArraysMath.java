@@ -1,6 +1,44 @@
 package net.lunglet.array4j.math;
 
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.TreeSet;
+
 public final class ArraysMath {
+    public static int[] argmaxn(final double[] x, final int n) {
+        if (n < 0 || n > x.length) {
+            throw new IllegalArgumentException();
+        }
+        TreeSet<Integer> indicesSet = new TreeSet<Integer>(new Comparator<Integer>() {
+            @Override
+            public int compare(final Integer o1, final Integer o2) {
+                return Double.compare(x[o1], x[o2]);
+            }
+        });
+        for (int i = 0; i < x.length; i++) {
+            indicesSet.add(i);
+        }
+        int[] indices = new int[n];
+        Iterator<Integer> iter = indicesSet.descendingIterator();
+        for (int i = 0; i < indices.length; i++) {
+            indices[i] = iter.next();
+        }
+        return indices;
+    }
+
+    public static double max(final double[] array) {
+        if (array.length == 0) {
+            throw new IllegalArgumentException();
+        }
+        double max = array[0];
+        for (int i = 1; i < array.length; i++) {
+            if (array[i] > max) {
+                max = array[i];
+            }
+        }
+        return max;
+    }
+
     public static int max(final int[] array) {
         if (array.length == 0) {
             throw new IllegalArgumentException();

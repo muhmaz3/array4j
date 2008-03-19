@@ -70,10 +70,7 @@ abstract class AbstractFloatDense extends AbstractDenseMatrix<FloatDenseVector, 
      * Constructor for new vector.
      */
     public AbstractFloatDense(final int size, final Direction direction, final Storage storage) {
-        // TODO this constructor fixes the order of vectors as COLUMN, which
-        // might not be ideal for some applications where vectors and row
-        // ordered matrices can be treated equally
-        this(vectorRows(size, direction), vectorColumns(size, direction), Order.COLUMN, storage);
+        this(vectorRows(size, direction), vectorColumns(size, direction), direction.order(), storage);
     }
 
     /**

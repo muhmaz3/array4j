@@ -6,6 +6,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.List;
+import net.lunglet.array4j.matrix.FloatMatrix;
 import net.lunglet.array4j.matrix.FloatVector;
 import net.lunglet.array4j.matrix.dense.DenseFactory;
 import org.junit.Test;
@@ -51,6 +53,61 @@ public final class GMMTest {
         GMM gmm = new DiagCovGMM(weights, means, vars);
         FloatVector x = DenseFactory.valueOf(0.0f);
         assertEquals(-1.41893853320467, gmm.marginalLogLh(x), 1.0e-6f);
+    }
+
+    @Test
+    public void testGMMMAPStats() {
+        FloatMatrix data = DenseFactory.valueOf(new float[][]{{-2.0f, 2.0f}});
+        FloatVector weights = DenseFactory.valueOf(0.5f, 0.5f);
+        FloatVector[] means = new FloatVector[]{DenseFactory.valueOf(1.0f), DenseFactory.valueOf(-1.0f)};
+        FloatVector[] vars = new FloatVector[]{DenseFactory.valueOf(1.0f), DenseFactory.valueOf(1.0f)};
+        DiagCovGMM gmm = new DiagCovGMM(weights, means, vars);
+        GMMMAPStats stats = new GMMMAPStats(gmm);
+        stats.add(data.rowsIterator());
+
+        GMMMAPStats stats2 = new GMMMAPStats(gmm);
+        List<int[]> indices = stats2.add(data.rowsIterator(), 2);
+        assertEquals(data.rows(), indices.size());
+        assertEquals(stats.getTotalLogLh(), stats2.getTotalLogLh(), 0);
+
+        GMMMAPStats stats3 = new GMMMAPStats(gmm);
+        stats3.add(data.rowsIterator(), indices);
+        assertEquals(stats.getTotalLogLh(), stats3.getTotalLogLh(), 0);
+
+        stats2 = new GMMMAPStats(gmm);
+        indices = stats2.add(data.rowsIterator(), 1);
+        assertEquals(data.rows(), indices.size());
+        stats3 = new GMMMAPStats(gmm);
+        stats3.add(data.rowsIterator(), indices);
+        assertEquals(stats2.getTotalLogLh(), stats3.getTotalLogLh(), 0);
+    }
+
+    @Test
+    public void testMAPonMeans() {
+        FloatMatrix data = DenseFactory.valueOf(new float[][]{{-2.0f, 2.0f}});
+        FloatVector weights = DenseFactory.valueOf(0.5f, 0.5f);
+        FloatVector[] means = new FloatVector[]{DenseFactory.valueOf(1.0f), DenseFactory.valueOf(-1.0f)};
+        FloatVector[] vars = new FloatVector[]{DenseFactory.valueOf(1.0f), DenseFactory.valueOf(1.0f)};
+        DiagCovGMM ubm = new DiagCovGMM(weights, means, vars);
+        int c = 1;
+        GMMMAPStats ubmStats = new GMMMAPStats(ubm);
+        List<int[]> indices = ubmStats.add(data.rowsIterator(), c);
+        assertEquals(data.rows(), indices.size());
+
+        DiagCovGMM gmm = ubm.copy();
+        GMMMAPStats stats = new GMMMAPStats(gmm);
+        stats.add(data.rowsIterator(), indices);
+        gmm.doMAPonMeans(stats, 0.0f);
+        assertEquals(2.0f, gmm.getMean(0).get(0), 0);
+        assertEquals(-2.0f, gmm.getMean(1).get(0), 0);
+
+        float r = 1.0f;
+        gmm = ubm.copy();
+        stats = new GMMMAPStats(gmm);
+        stats.add(data.rowsIterator(), indices);
+        gmm.doMAPonMeans(stats, r);
+        assertEquals(1.5f, gmm.getMean(0).get(0), 0);
+        assertEquals(-1.5f, gmm.getMean(1).get(0), 0);
     }
 
     @Test

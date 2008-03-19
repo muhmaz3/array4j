@@ -6,11 +6,21 @@ package net.lunglet.array4j;
 public enum Direction {
     COLUMN {
         @Override
+        public Order order() {
+            return Order.COLUMN;
+        }
+
+        @Override
         public Direction transpose() {
             return ROW;
         }
     },
     ROW {
+        @Override
+        public Order order() {
+            return Order.ROW;
+        }
+
         @Override
         public Direction transpose() {
             return COLUMN;
@@ -18,6 +28,8 @@ public enum Direction {
     };
 
     public static final Direction DEFAULT = COLUMN;
+
+    public abstract Order order();
 
     /** Check if all directions are the same. */
     public boolean same(final Direction... directions) {

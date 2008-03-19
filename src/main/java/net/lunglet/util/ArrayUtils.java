@@ -1,6 +1,7 @@
 package net.lunglet.util;
 
 import java.util.Arrays;
+import java.util.Random;
 
 public final class ArrayUtils {
     public static int[] castOf(final long[] original) {
@@ -28,6 +29,12 @@ public final class ArrayUtils {
             }
         }
         return y;
+    }
+
+    public static void fillRandom(final double[] x, final Random rng) {
+        for (int i = 0; i < x.length; i++) {
+            x[i] = rng.nextDouble();
+        }
     }
 
     private ArrayUtils() {

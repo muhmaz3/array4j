@@ -43,16 +43,25 @@ public final class HDFReader implements Closeable {
         try {
             dataset = h5file.getRootGroup().openDataSet(name);
             space = dataset.getSpace();
-            long[] dims = space.getDims();
+            int[] dims = space.getIntDims();
             if (dims.length != 2 && dims.length != 1) {
                 throw new RuntimeException(new IOException());
             }
             if (dims.length == 1) {
                 // TODO allow matrices with a single row or column when the dimension is 1
-                dims = new long[]{dims[0], 1};
+                dims = new int[]{dims[0], 1};
             }
-            if (matrix.rows() != dims[0] || matrix.columns() != dims[1]) {
-                throw new IllegalArgumentException();
+            if (dims[0] > 1 && dims[1] > 1) {
+                if (matrix.rows() != dims[0] || matrix.columns() != dims[1]) {
+                    throw new IllegalArgumentException();
+                }
+            } else {
+                int minDim = Math.min(dims[0], dims[1]);
+                int maxDim = Math.max(dims[0], dims[1]);
+                if (!((matrix.rows() == minDim && matrix.columns() == maxDim)
+                        || (matrix.rows() == maxDim && matrix.columns() == minDim))) {
+                    throw new IllegalArgumentException();
+                }
             }
             if (matrix.storage().equals(Storage.DIRECT)) {
                 dataset.read(matrix.data(), FloatType.IEEE_F32LE);

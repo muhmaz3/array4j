@@ -1,5 +1,8 @@
 package net.lunglet.util;
 
+// TODO add an argument range check that includes its endpoint to
+// be able to check things like [0, Integer.MAX_VALUE].
+
 public final class AssertUtils {
     public static void assertEquals(final int expected, final int actual) {
         if (expected != actual) {

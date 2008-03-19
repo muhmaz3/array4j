@@ -54,6 +54,10 @@ public final class DenseFactory {
         return v;
     }
 
+    public static FloatDenseVector directRowVector(final int length) {
+        return createFloatVector(length, Direction.ROW, Storage.DIRECT);
+    }
+
     public static FloatDenseVector floatVector(final Collection<? extends Number> values) {
         FloatDenseVector v = createFloatVector(values.size());
         int i = 0;
