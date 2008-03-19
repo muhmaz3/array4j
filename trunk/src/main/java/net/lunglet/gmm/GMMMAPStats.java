@@ -1,10 +1,11 @@
 package net.lunglet.gmm;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import net.lunglet.array4j.math.ArraysMath;
 import net.lunglet.array4j.matrix.FloatVector;
+import net.lunglet.util.AssertUtils;
 
 // TODO benchmark when using 1-d arrays to store ex and exx
 
@@ -61,6 +62,7 @@ public final class GMMMAPStats {
     }
 
     private void add(final float[] x, final BayesStats stats, final double[] posteriors, final int[] indices) {
+        AssertUtils.assertTrue(indices == null || posteriors.length == indices.length);
         final float[] xx;
         if (exx != null) {
             xx = ArraysMath.square(x);
@@ -73,7 +75,6 @@ public final class GMMMAPStats {
             if (post == 0.0) {
                 continue;
             }
-            // map from loop index to mixture index
             final int j = indices == null ? i : indices[i];
             n[j] += post;
             sum += post;
@@ -99,16 +100,12 @@ public final class GMMMAPStats {
         }
         final BayesStats stats = gmm.getStats(x, null, fraction);
         double[] posteriors = stats.getPosteriorProbs();
-        int[] indices = new int[c];
-        
-        
-        
-        // TODO get indices of top 5 posteriors
-        Arrays.fill(indices, Integer.MIN_VALUE);
-        
-        
-        
-        add(x, stats, posteriors, indices);
+        int[] indices = ArraysMath.argmaxn(posteriors, c);
+        double[] postpart = new double[indices.length];
+        for (int i = 0; i < indices.length; i++) {
+            postpart[i] = posteriors[indices[i]];
+        }
+        add(x, stats, postpart, indices);
         totLogLh += stats.getMarginalLogLh(indices);
         return indices;
     }
@@ -156,13 +153,12 @@ public final class GMMMAPStats {
 
     public List<int[]> add(final Iterable<? extends FloatVector> data, final int c) {
         checkGMM();
-        if (c <= 0 || c > gmm.getMixtureCount()) {
-            throw new IllegalArgumentException();
-        }
+        List<int[]> indicesList = new ArrayList<int[]>();
         for (FloatVector x : data) {
-            add(x.toArray(), c);
+            int[] indices = add(x.toArray(), c);
+            indicesList.add(indices);
         }
-        return null;
+        return indicesList;
     }
 
     public void add(final Iterable<? extends FloatVector> data, final Iterable<int[]> indices) {
@@ -180,7 +176,7 @@ public final class GMMMAPStats {
 
     private void checkGMM() {
         if (gmm == null) {
-            throw new IllegalStateException("Cannot add to or adapt instance without GMM");
+            throw new IllegalStateException("Cannot add to or adapt without GMM");
         }
     }
 

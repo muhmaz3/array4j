@@ -1,7 +1,7 @@
 package net.lunglet.gmm;
 
 import java.util.Arrays;
-import org.apache.commons.lang.NotImplementedException;
+import net.lunglet.array4j.math.ArraysMath;
 
 public abstract class AbstractBayesStats implements BayesStats {
     protected final double[] apriori;
@@ -54,15 +54,19 @@ public abstract class AbstractBayesStats implements BayesStats {
         }
     }
 
+    private double logsumexp(final double[] values, final double max) {
+        double sum = 0.0;
+        for (int i = 0; i < values.length; i++) {
+            sum += exp(values[i] - max);
+        }
+        return max + Math.log(sum);
+    }
+
     public final void done() {
         if (done) {
             throw new IllegalStateException();
         }
-        double sum = 0.0;
-        for (int i = 0; i < joint.length; i++) {
-            sum += exp(joint[i] - max);
-        }
-        marginal = Math.log(sum) + max;
+        marginal = logsumexp(joint, max);
         for (int i = 0; i < posterior.length; i++) {
             posterior[i] = exp(joint[i] - marginal);
         }
@@ -87,7 +91,11 @@ public abstract class AbstractBayesStats implements BayesStats {
         if (indices == null) {
             return marginal;
         }
-        throw new NotImplementedException();
+        double[] jointpart = new double[indices.length];
+        for (int i = 0; i < indices.length; i++) {
+            jointpart[i] = joint[indices[i]];
+        }
+        return logsumexp(jointpart, ArraysMath.max(jointpart));
     }
 
     public final double[] getPosteriorProbs() {
