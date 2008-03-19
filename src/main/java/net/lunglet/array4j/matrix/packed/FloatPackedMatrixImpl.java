@@ -29,6 +29,11 @@ final class FloatPackedMatrixImpl extends AbstractPackedMatrix<FloatDenseVector>
     }
 
     @Override
+    public FloatDenseVector asVector() {
+        throw new NotImplementedException();
+    }
+
+    @Override
     public FloatDenseVector column(final int column) {
         FloatDenseVector v = DenseFactory.floatVector(rows(), Direction.COLUMN, storage());
         for (int row = 0; row < rows; row++) {
@@ -42,12 +47,6 @@ final class FloatPackedMatrixImpl extends AbstractPackedMatrix<FloatDenseVector>
         return ((FloatBuffer) data.position(0)).slice();
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public void divideEquals(final float value) {
-        throw new UnsupportedOperationException();
-    }
-
     @Override
     public float get(final int row, final int column) {
         if (nonZeroElement(row, column)) {
@@ -59,13 +58,10 @@ final class FloatPackedMatrixImpl extends AbstractPackedMatrix<FloatDenseVector>
 
     /** {@inheritDoc} */
     @Override
-    public void minusEquals(final float value) {
-        throw new NotImplementedException();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void plusEquals(final float value) {
+    public void plusEquals(final FloatMatrix other) {
+        if (!(other instanceof FloatPackedMatrix)) {
+            throw new IllegalArgumentException();
+        }
         throw new NotImplementedException();
     }
 
@@ -123,16 +119,10 @@ final class FloatPackedMatrixImpl extends AbstractPackedMatrix<FloatDenseVector>
         return data.isDirect() ? Storage.DIRECT : Storage.HEAP;
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public void timesEquals(final float value) {
-        throw new UnsupportedOperationException();
-    }
-
     public float[] toArray() {
         // TODO figure out if this returns a dense array or a packed array
         // TODO a packed array will probably be more useful
-        throw new UnsupportedOperationException();
+        throw new NotImplementedException();
     }
 
     @Override
@@ -155,19 +145,5 @@ final class FloatPackedMatrixImpl extends AbstractPackedMatrix<FloatDenseVector>
     @Override
     public FloatPackedMatrix transpose() {
         return new FloatPackedMatrixImpl(data, rows, columns, packedType.transpose());
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void plusEquals(final FloatMatrix other) {
-        if (!(other instanceof FloatPackedMatrix)) {
-            throw new IllegalArgumentException();
-        }
-        throw new NotImplementedException();
-    }
-
-    @Override
-    public FloatDenseVector asVector() {
-        throw new NotImplementedException();
     }
 }

@@ -3,8 +3,8 @@ package net.lunglet.gmm;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import net.lunglet.array4j.math.ArraysMath;
 import net.lunglet.array4j.matrix.FloatVector;
+import net.lunglet.util.ArrayMath;
 import net.lunglet.util.AssertUtils;
 
 // TODO benchmark when using 1-d arrays to store ex and exx
@@ -65,7 +65,7 @@ public final class GMMMAPStats {
         AssertUtils.assertTrue(indices == null || posteriors.length == indices.length);
         final float[] xx;
         if (exx != null) {
-            xx = ArraysMath.square(x);
+            xx = ArrayMath.square(x);
         } else {
             xx = null;
         }
@@ -100,7 +100,7 @@ public final class GMMMAPStats {
         }
         final BayesStats stats = gmm.getStats(x, null, fraction);
         double[] posteriors = stats.getPosteriorProbs();
-        int[] indices = ArraysMath.argmaxn(posteriors, c);
+        int[] indices = ArrayMath.argmaxn(posteriors, c);
         double[] postpart = new double[indices.length];
         for (int i = 0; i < indices.length; i++) {
             postpart[i] = posteriors[indices[i]];

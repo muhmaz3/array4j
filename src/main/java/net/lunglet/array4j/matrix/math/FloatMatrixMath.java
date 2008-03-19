@@ -1,4 +1,4 @@
-package net.lunglet.array4j.math;
+package net.lunglet.array4j.matrix.math;
 
 import net.lunglet.array4j.Order;
 import net.lunglet.array4j.Storage;

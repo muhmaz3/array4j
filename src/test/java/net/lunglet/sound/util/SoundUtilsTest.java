@@ -9,8 +9,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.UnsupportedAudioFileException;
-import net.lunglet.array4j.math.ArraysMath;
 import net.lunglet.sound.sampled.SphereAudioFileReaderTest;
+import net.lunglet.util.ArrayMath;
 import org.junit.Test;
 
 public final class SoundUtilsTest {
@@ -42,11 +42,11 @@ public final class SoundUtilsTest {
         short[] channel0 = getEx5Channel(0);
         assertEquals(-72, channel0[0]);
         assertEquals(-72, channel0[1]);
-        assertEquals(-12412, ArraysMath.min(channel0));
-        assertEquals(11900, ArraysMath.max(channel0));
+        assertEquals(-12412, ArrayMath.min(channel0));
+        assertEquals(11900, ArrayMath.max(channel0));
         short[] channel1 = getEx5Channel(1);
-        assertEquals(-24956, ArraysMath.min(channel1));
-        assertEquals(19836, ArraysMath.max(channel1));
+        assertEquals(-24956, ArrayMath.min(channel1));
+        assertEquals(19836, ArrayMath.max(channel1));
     }
 
     @Test

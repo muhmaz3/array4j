@@ -16,7 +16,7 @@ public final class FloatPackedMatrixTest {
 
     @Test
     public void testLowerTriangular() {
-        FloatPackedMatrix tril = PackedFactory.createFloatLowerTriangular(2, 2);
+        FloatPackedMatrix tril = PackedFactory.floatLowerTriangular(2, 2);
         assertTrue(tril.isLowerTriangular());
         tril.set(0, 0, 1.0f);
         tril.set(1, 0, 2.0f);
@@ -54,7 +54,7 @@ public final class FloatPackedMatrixTest {
 
     @Test
     public void testUpperTriangular() {
-        FloatPackedMatrix triu = PackedFactory.createFloatUpperTriangular(2, 2);
+        FloatPackedMatrix triu = PackedFactory.floatUpperTriangular(2, 2);
         assertTrue(triu.isUpperTriangular());
         triu.set(0, 0, 1.0f);
         triu.set(0, 1, 2.0f);
