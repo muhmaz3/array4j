@@ -12,8 +12,6 @@ import libsvm.svm_model;
 import libsvm.svm_node;
 import libsvm.svm_parameter;
 import libsvm.svm_problem;
-import net.lunglet.array4j.Order;
-import net.lunglet.array4j.Storage;
 import net.lunglet.array4j.math.FloatMatrixMath;
 import net.lunglet.array4j.matrix.FloatMatrix;
 import net.lunglet.array4j.matrix.FloatVector;
@@ -22,8 +20,6 @@ import net.lunglet.array4j.matrix.dense.FloatDenseMatrix;
 import net.lunglet.array4j.matrix.packed.FloatPackedMatrix;
 import net.lunglet.array4j.matrix.util.FloatMatrixUtils;
 import org.junit.Test;
-
-// TODO rename to SvmClassifierTest
 
 // TODO test with heap and direct data oriented both ways
 
@@ -112,7 +108,7 @@ public final class SvmClassifierTest {
 
         // train
         double[] decvalues = new double[classes * (classes - 1) / 2];
-        FloatDenseMatrix scores = DenseFactory.createFloatMatrix(decvalues.length, prob.l);
+        FloatDenseMatrix scores = DenseFactory.floatMatrix(decvalues.length, prob.l);
         for (int i = 0; i < prob.l; i++) {
             svm.svm_predict_values(model, prob.x[i], decvalues);
             for (int j = 0; j < decvalues.length; j++) {
@@ -156,7 +152,7 @@ public final class SvmClassifierTest {
 
         // predict
         double[] decvalues = new double[classes * (classes - 1) / 2];
-        FloatDenseMatrix scores = DenseFactory.createFloatMatrix(decvalues.length, prob.l);
+        FloatDenseMatrix scores = DenseFactory.floatMatrix(decvalues.length, prob.l);
         for (int i = 0; i < prob.l; i++) {
             svm.svm_predict_values(model, dataprob.x[i], decvalues);
             for (int j = 0; j < decvalues.length; j++) {
@@ -196,7 +192,7 @@ public final class SvmClassifierTest {
         final Random rng = new Random(1234);
         for (int i = 2; i < 100; i += 10) {
             for (int j = 4; j < 100; j += 10) {
-                FloatDenseMatrix data = DenseFactory.createFloatMatrix(i, j, Order.ROW, Storage.HEAP);
+                FloatDenseMatrix data = DenseFactory.floatRowHeap(i, j);
                 FloatMatrixUtils.fillRandom(data, rng);
                 FloatPackedMatrix kernel = FloatMatrixMath.timesTranspose(data.transpose());
                 int[] labels = new int[data.columns()];

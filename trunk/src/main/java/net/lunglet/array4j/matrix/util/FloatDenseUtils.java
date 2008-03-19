@@ -13,6 +13,7 @@ import net.lunglet.array4j.Order;
 import net.lunglet.array4j.matrix.dense.DenseFactory;
 import net.lunglet.array4j.matrix.dense.FloatDenseMatrix;
 import net.lunglet.util.AssertUtils;
+import org.apache.commons.lang.NotImplementedException;
 
 public final class FloatDenseUtils {
     /**
@@ -73,9 +74,9 @@ public final class FloatDenseUtils {
         int cols = column1 - column0;
         if (x.order().equals(Order.COLUMN)) {
 //            return new FloatDenseMatrix(x, x.rows(), cols, x.columnOffset(column0), x.stride, x.order());
-            throw new UnsupportedOperationException();
+            throw new NotImplementedException();
         } else {
-            FloatDenseMatrix newMatrix = DenseFactory.createFloatMatrix(x.rows(), cols, x.order(), x.storage());
+            FloatDenseMatrix newMatrix = DenseFactory.floatMatrix(x.rows(), cols, x.order(), x.storage());
             for (int i = column0, j = 0; i < column1; i++, j++) {
                 newMatrix.setColumn(j, x.column(i));
             }

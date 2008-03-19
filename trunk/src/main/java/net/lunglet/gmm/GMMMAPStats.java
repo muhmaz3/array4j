@@ -167,11 +167,10 @@ public final class GMMMAPStats {
         Iterator<int[]> indicesIter = indices.iterator();
         for (FloatVector x : data) {
             int[] xindices = indicesIter.next();
-            if (xindices == null) {
-                throw new IllegalArgumentException();
-            }
+            AssertUtils.assertNotNull(xindices);
             add(x.toArray(), xindices);
         }
+        AssertUtils.assertTrue(!indicesIter.hasNext());
     }
 
     private void checkGMM() {

@@ -17,13 +17,13 @@ public final class GMMBenchmark {
         int mixtures = 20;
         int ndata = 200000;
         Random rng = new Random(0);
-        FloatVector weights = DenseFactory.createFloatVector(mixtures);
+        FloatVector weights = DenseFactory.floatVector(mixtures);
         FloatMatrixUtils.fill(weights, 1.0f);
-        FloatDenseMatrix means = DenseFactory.createFloatMatrix(dimension, mixtures);
+        FloatDenseMatrix means = DenseFactory.floatMatrix(dimension, mixtures);
         FloatMatrixUtils.fillGaussian(means, 0.0, 4.0, rng);
-        FloatDenseMatrix variances = DenseFactory.createFloatMatrix(dimension, mixtures);
+        FloatDenseMatrix variances = DenseFactory.floatMatrix(dimension, mixtures);
         FloatMatrixUtils.fillRandom(variances, 0.2f, 2.0f, rng);
-        FloatDenseMatrix data = DenseFactory.createFloatMatrix(dimension, ndata);
+        FloatDenseMatrix data = DenseFactory.floatMatrix(dimension, ndata);
         FloatMatrixUtils.fillRandom(data, -10.0f, 10.0f, rng);
         FloatVector[] meansArr = new ArrayList<FloatVector>(means.columnsList()).toArray(new FloatVector[0]);
         FloatVector[] varsArr = new ArrayList<FloatVector>(variances.columnsList()).toArray(new FloatVector[0]);
@@ -45,12 +45,12 @@ public final class GMMBenchmark {
     public void benchFullBayesStats() {
         int dimension = 39;
         int mixtures = 2048;
-        FloatVector weights = DenseFactory.createFloatVector(mixtures);
+        FloatVector weights = DenseFactory.floatVector(mixtures);
         FloatMatrixUtils.fill(weights, 1.0f);
         FloatVector[] means = new FloatVector[mixtures];
-        FloatVector mean = DenseFactory.createFloatVector(dimension);
+        FloatVector mean = DenseFactory.floatVector(dimension);
         FloatVector[] variances = new FloatVector[mixtures];
-        FloatVector variance = DenseFactory.createFloatVector(dimension);
+        FloatVector variance = DenseFactory.floatVector(dimension);
         FloatMatrixUtils.fill(variance, 1.0f);
         for (int i = 0; i < means.length; i++) {
             means[i] = mean;

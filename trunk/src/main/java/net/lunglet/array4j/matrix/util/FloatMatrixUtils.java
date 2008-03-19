@@ -51,7 +51,7 @@ public final class FloatMatrixUtils {
 //            v = new FloatDenseVector(data, length, 0, 1, Order.COLUMN);
             v = null;
         } else {
-            v = DenseFactory.createFloatVector(length, Direction.COLUMN, Storage.DEFAULT);
+            v = DenseFactory.floatVector(length, Direction.COLUMN, Storage.DEFAULT);
             for (int i = 0, k = 0; i < matrix.columns(); i++) {
                 for (int j = 0; j < matrix.rows(); j++, k++) {
                     v.set(k, matrix.get(j, i));
@@ -69,7 +69,7 @@ public final class FloatMatrixUtils {
         for (FloatVector vector : vectors) {
             length += vector.length();
         }
-        FloatDenseVector output = DenseFactory.createFloatVector(length);
+        FloatDenseVector output = DenseFactory.floatVector(length);
         FloatBuffer data = output.data();
         for (FloatVector vector : vectors) {
             for (int j = 0; j < vector.length(); j++) {
@@ -86,7 +86,7 @@ public final class FloatMatrixUtils {
         } else {
             storage = Storage.DEFAULT;
         }
-        return DenseFactory.createFloatVector(matrix.rows(), Direction.COLUMN, storage);
+        return DenseFactory.floatVector(matrix.rows(), Direction.COLUMN, storage);
     }
 
     private static FloatDenseVector rowVectorFor(final FloatMatrix matrix) {
@@ -96,7 +96,7 @@ public final class FloatMatrixUtils {
         } else {
             storage = Storage.DEFAULT;
         }
-        return DenseFactory.createFloatVector(matrix.columns(), Direction.ROW, storage);
+        return DenseFactory.floatVector(matrix.columns(), Direction.ROW, storage);
     }
 
     public static double euclideanDistance(final FloatVector x, final FloatVector y) {
@@ -183,7 +183,7 @@ public final class FloatMatrixUtils {
 
     public static FloatDenseVector rowsVector(final FloatMatrix matrix) {
         int length = matrix.rows() * matrix.columns();
-        FloatDenseVector vec = DenseFactory.createFloatVector(length, Direction.ROW);
+        FloatDenseVector vec = DenseFactory.floatRow(length);
         for (int i = 0, k = 0; i < matrix.rows(); i++) {
             for (int j = 0; j < matrix.columns(); j++, k++) {
                 vec.set(k, matrix.get(i, j));
@@ -246,7 +246,7 @@ public final class FloatMatrixUtils {
     }
 
     public static FloatDenseMatrix zerosLike(final Matrix matrix) {
-        return DenseFactory.createFloatMatrix(matrix.rows(), matrix.columns());
+        return DenseFactory.floatMatrix(matrix.rows(), matrix.columns());
     }
 
     private FloatMatrixUtils() {

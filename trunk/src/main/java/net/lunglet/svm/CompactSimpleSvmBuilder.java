@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import net.lunglet.array4j.blas.FloatDenseBLAS;
 import net.lunglet.array4j.matrix.FloatVector;
+import net.lunglet.array4j.matrix.dense.DenseFactory;
 import net.lunglet.array4j.matrix.dense.FloatDenseVector;
 import net.lunglet.util.AssertUtils;
 
@@ -33,8 +34,7 @@ public final class CompactSimpleSvmBuilder {
                 weights.put(index, (float) model.sv_coef[0][k]);
             }
         }
-//        this.sv = new FloatDenseVector(model.SV[0].getValue().length(), Order.COLUMN, Storage.DIRECT);
-        this.sv = null;
+        this.sv = DenseFactory.floatColumnDirect(model.SV[0].getValue().length());
     }
 
     public SvmClassifier build() {

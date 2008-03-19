@@ -30,7 +30,7 @@ public final class FloatDenseUtilsTest {
     public void testSubMatrixColumns() {
         for (int rows = 0; rows < 5; rows++) {
             for (int columns = 0; columns < 8; columns++) {
-                FloatDenseMatrix x = DenseFactory.createFloatMatrix(rows, columns, order, Storage.HEAP);
+                FloatDenseMatrix x = DenseFactory.floatMatrix(rows, columns, order, Storage.HEAP);
                 MatrixTestSupport.populateMatrix(x);
                 for (int i = 0; i < columns; i++) {
                     for (int j = i; j <= columns; j++) {

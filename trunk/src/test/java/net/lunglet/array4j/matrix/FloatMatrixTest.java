@@ -10,7 +10,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Arrays;
 import java.util.Collection;
-import net.lunglet.array4j.Direction;
 import net.lunglet.array4j.Order;
 import net.lunglet.array4j.matrix.dense.DenseFactory;
 import net.lunglet.array4j.matrix.util.FloatMatrixUtils;
@@ -320,14 +319,14 @@ public final class FloatMatrixTest {
         final FloatMatrix colMatrix = createColumnMatrixRange(rows, columns);
 
         for (int column = 0; column < columns; column++) {
-            FloatVector newColumn = DenseFactory.createFloatVector(rowMatrix.rows(), Direction.COLUMN);
+            FloatVector newColumn = DenseFactory.floatColumn(rowMatrix.rows());
             for (int index = 0; index < values[column].length; index++) {
                 newColumn.set(index, values[column][index]);
             }
             rowMatrix.setColumn(column, newColumn);
             assertTrue("Columns must be equal", Arrays.equals(values[column], rowMatrix.column(column).toArray()));
 
-            newColumn = DenseFactory.createFloatVector(colMatrix.rows(), Direction.COLUMN);
+            newColumn = DenseFactory.floatColumn(colMatrix.rows());
             for (int index = 0; index < values[column].length; index++) {
                 newColumn.set(index, values[column][index]);
             }
@@ -346,14 +345,14 @@ public final class FloatMatrixTest {
         final FloatMatrix rowMatrix = createRowMatrixRange(rows, columns);
         final FloatMatrix colMatrix = createColumnMatrixRange(rows, columns);
         for (int row = 0; row < rows; row++) {
-            FloatVector newRow = DenseFactory.createFloatVector(rowMatrix.columns(), Direction.ROW);
+            FloatVector newRow = DenseFactory.floatRow(rowMatrix.columns());
             for (int index = 0; index < values[row].length; index++) {
                 newRow.set(index, values[row][index]);
             }
             rowMatrix.setRow(row, newRow);
             assertTrue("Rows must be equal", Arrays.equals(values[row], rowMatrix.row(row).toArray()));
 
-            newRow = DenseFactory.createFloatVector(colMatrix.columns(), Direction.ROW);
+            newRow = DenseFactory.floatRow(colMatrix.columns());
             for (int index = 0; index < values[row].length; index++) {
                 newRow.set(index, values[row][index]);
             }

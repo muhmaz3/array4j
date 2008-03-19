@@ -30,7 +30,7 @@ final class FloatPackedMatrixImpl extends AbstractPackedMatrix<FloatDenseVector>
 
     @Override
     public FloatDenseVector column(final int column) {
-        FloatDenseVector v = DenseFactory.createFloatVector(rows(), Direction.COLUMN, storage());
+        FloatDenseVector v = DenseFactory.floatVector(rows(), Direction.COLUMN, storage());
         for (int row = 0; row < rows; row++) {
             v.set(row, get(row, column));
         }
@@ -72,7 +72,7 @@ final class FloatPackedMatrixImpl extends AbstractPackedMatrix<FloatDenseVector>
     /** {@inheritDoc} */
     @Override
     public FloatDenseVector row(final int row) {
-        FloatDenseVector v = DenseFactory.createFloatVector(columns(), Direction.ROW, storage());
+        FloatDenseVector v = DenseFactory.floatVector(columns(), Direction.ROW, storage());
         for (int column = 0; column < columns; column++) {
             v.set(column, get(row, column));
         }

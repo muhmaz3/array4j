@@ -36,7 +36,7 @@ public final class PRIMMETest {
         assertEquals(147, columns);
         int elements = Integer.valueOf(parts[2]);
         assertEquals(2449, elements);
-        FloatDenseMatrix matrix = DenseFactory.createFloatMatrix(rows, columns);
+        FloatDenseMatrix matrix = DenseFactory.floatMatrix(rows, columns);
         for (int i = 0; i < elements; i++) {
             line = reader.readLine();
             assertNotNull(line);
@@ -71,11 +71,11 @@ public final class PRIMMETest {
                     final PRIMMEParams params) {
                 DoubleBuffer xbuf = x.getByteBuffer(0, Constants.DOUBLE_BYTES * params.n).asDoubleBuffer();
                 DoubleBuffer ybuf = y.getByteBuffer(0, Constants.DOUBLE_BYTES * params.n).asDoubleBuffer();
-                FloatDenseVector xx = DenseFactory.createFloatVector(params.n);
+                FloatDenseVector xx = DenseFactory.floatVector(params.n);
                 for (int i = 0; i < xx.length(); i++) {
                     xx.set(i, (float) xbuf.get(i));
                 }
-                FloatDenseVector yy = DenseFactory.createFloatVector(params.n);
+                FloatDenseVector yy = DenseFactory.floatVector(params.n);
                 FloatDenseBLAS.DEFAULT.gemv(1.0f, matrix, xx, 0.0f, yy);
                 for (int i = 0; i < yy.length(); i++) {
                     ybuf.put(i, yy.get(i));

@@ -1,25 +1,57 @@
 package net.lunglet.gmm;
 
+import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import net.lunglet.array4j.matrix.FloatVector;
 import net.lunglet.array4j.matrix.dense.DenseFactory;
+import net.lunglet.array4j.matrix.dense.FloatDenseVector;
 import net.lunglet.array4j.matrix.util.FloatMatrixUtils;
 import org.apache.commons.lang.NotImplementedException;
 
 public final class GMMUtils {
     public static DiagCovGMM createDiagCovGMM(final int mixtures, final int dimension) {
-        FloatVector weights = DenseFactory.createFloatVector(mixtures);
+        FloatVector weights = DenseFactory.floatVector(mixtures);
         FloatMatrixUtils.fill(weights, 1.0f);
         ArrayList<FloatVector> means = new ArrayList<FloatVector>();
         ArrayList<FloatVector> vars = new ArrayList<FloatVector>();
         for (int i = 0; i < mixtures; i++) {
-            means.add(DenseFactory.createFloatVector(dimension));
-            FloatVector var = DenseFactory.createFloatVector(dimension);
+            means.add(DenseFactory.floatVector(dimension));
+            FloatVector var = DenseFactory.floatVector(dimension);
             FloatMatrixUtils.fill(var, 1.0f);
             vars.add(var);
         }
         return new DiagCovGMM(weights, means.toArray(new FloatVector[0]), vars.toArray(new FloatVector[0]));
+    }
+
+    public static FloatVector createSupervector(final DiagCovGMM gmm, final DiagCovGMM ubm) {
+        int mixtures = gmm.getMixtureCount();
+        int dimension = gmm.getDimension();
+        FloatDenseVector sv = DenseFactory.floatVector(mixtures * dimension);
+        FloatBuffer data = sv.data();
+        FloatVector weights = gmm.getWeights();
+        for (int i = 0; i < mixtures; i++) {
+            float[] x = gmm.getMean(i).toArray();
+            float[] x0 = ubm.getMean(i).toArray();
+            float[] variances = ubm.getVariance(i).toArray();
+            double sqrtw = Math.sqrt(weights.get(i));
+            for (int j = 0; j < x.length; j++) {
+                float y = x[j] - x0[j];
+                y /= Math.sqrt(variances[j]);
+                y *= sqrtw;
+                x[j] = y;
+            }
+            data.put(x);
+        }
+        return sv;
+    }
+
+    /**
+     * Replace weak components (components not supported by enough data) by
+     * splitting the strongest (heaviest) components.
+     */
+    public static DiagCovGMM replaceWeak(final DiagCovGMM gmm, final GMMMAPStats stats, final float thresh) {
+        throw new NotImplementedException();
     }
 
     /**
@@ -39,14 +71,14 @@ public final class GMMUtils {
                 newMean0[j] -= stddev;
                 newMean1[j] += stddev;
             }
-            newMeans.add(DenseFactory.valueOf(newMean0));
-            newMeans.add(DenseFactory.valueOf(newMean1));
+            newMeans.add(DenseFactory.floatVector(newMean0));
+            newMeans.add(DenseFactory.floatVector(newMean1));
             // use same variance for both new components
             newVars.add(var);
             newVars.add(var);
         }
         FloatVector oldWeights = gmm.getWeights();
-        FloatVector newWeights = DenseFactory.createFloatVector(2 * oldWeights.length());
+        FloatVector newWeights = DenseFactory.floatVector(2 * oldWeights.length());
         for (int i = 0; i < oldWeights.length(); i++) {
             float w = oldWeights.get(i) / 2.0f;
             newWeights.set(2 * i, w);
@@ -86,8 +118,8 @@ public final class GMMUtils {
                     newMean0[j] -= stddev;
                     newMean1[j] += stddev;
                 }
-                newMeans.add(DenseFactory.valueOf(newMean0));
-                newMeans.add(DenseFactory.valueOf(newMean1));
+                newMeans.add(DenseFactory.floatVector(newMean0));
+                newMeans.add(DenseFactory.floatVector(newMean1));
                 // use same variance for both new components
                 newVars.add(var);
                 newVars.add(var);
@@ -101,14 +133,6 @@ public final class GMMUtils {
         }
         FloatVector newWeights = DenseFactory.floatVector(newWeightsList);
         return new DiagCovGMM(newWeights, newMeans, newVars);
-    }
-
-    /**
-     * Replace weak components (components not supported by enough data) by
-     * splitting the strongest (heaviest) components.
-     */
-    public static DiagCovGMM replaceWeak(final DiagCovGMM gmm, final GMMMAPStats stats, final float thresh) {
-        throw new NotImplementedException();
     }
 
     private GMMUtils() {

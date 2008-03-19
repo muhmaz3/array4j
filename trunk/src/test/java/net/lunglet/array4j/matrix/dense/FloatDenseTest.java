@@ -44,15 +44,15 @@ public final class FloatDenseTest {
     @Test
     public void testSerialization() throws IOException, ClassNotFoundException {
         List<FloatMatrix> matrices = new ArrayList<FloatMatrix>();
-        matrices.add(DenseFactory.createFloatMatrix(0, 0));
-        matrices.add(DenseFactory.createFloatMatrix(1, 1));
-        matrices.add(DenseFactory.createFloatMatrix(2, 3));
-        matrices.add(DenseFactory.createFloatVector(0));
-        matrices.add(DenseFactory.createFloatVector(1));
-        for (FloatVector v : DenseFactory.createFloatMatrix(3, 4).columnsIterator()) {
+        matrices.add(DenseFactory.floatMatrix(0, 0));
+        matrices.add(DenseFactory.floatMatrix(1, 1));
+        matrices.add(DenseFactory.floatMatrix(2, 3));
+        matrices.add(DenseFactory.floatVector(0));
+        matrices.add(DenseFactory.floatVector(1));
+        for (FloatVector v : DenseFactory.floatMatrix(3, 4).columnsIterator()) {
             matrices.add(v);
         }
-        for (FloatVector v : DenseFactory.createFloatMatrix(3, 4).rowsIterator()) {
+        for (FloatVector v : DenseFactory.floatMatrix(3, 4).rowsIterator()) {
             matrices.add(v);
         }
         for (FloatMatrix x : matrices) {
