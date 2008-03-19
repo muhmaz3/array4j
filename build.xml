@@ -35,7 +35,7 @@
   <target name="compile-array4j" depends="prepare">
     <copy todir="${classes.dir}">
       <fileset dir="${resources.dir}">
-        <include name="**/*"/>
+        <include name="**/*" />
       </fileset>
     </copy>
     <javac destdir="${classes.dir}" debug="true" source="${javac.version}" deprecation="true">

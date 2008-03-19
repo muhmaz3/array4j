@@ -14,9 +14,8 @@ import net.lunglet.array4j.matrix.dense.FloatDenseMatrix;
 import net.lunglet.array4j.matrix.dense.FloatDenseVector;
 import net.lunglet.array4j.matrix.math.FloatMatrixMath;
 import net.lunglet.array4j.matrix.math.MatrixMath;
+import net.lunglet.util.AssertUtils;
 import org.apache.commons.lang.NotImplementedException;
-
-// TODO implement unmodifiableMatrix
 
 public final class FloatMatrixUtils {
     /** Mean over columns. */
@@ -62,8 +61,18 @@ public final class FloatMatrixUtils {
         return v;
     }
 
+    private static FloatDenseVector columnVectorFor(final FloatMatrix matrix) {
+        final Storage storage;
+        if (matrix instanceof DenseMatrix) {
+            storage = ((DenseMatrix) matrix).storage();
+        } else {
+            storage = Storage.DEFAULT;
+        }
+        return DenseFactory.floatVector(matrix.rows(), Direction.COLUMN, storage);
+    }
+
     public static FloatDenseVector concatenate(final FloatVector... vectors) {
-        if (!sameDirection(vectors)) {
+        if (!MatrixUtils.sameDirection(vectors)) {
             throw new IllegalArgumentException("all vectors must have the same direction");
         }
         int length = 0;
@@ -78,26 +87,6 @@ public final class FloatMatrixUtils {
             }
         }
         return output;
-    }
-
-    private static FloatDenseVector columnVectorFor(final FloatMatrix matrix) {
-        final Storage storage;
-        if (matrix instanceof DenseMatrix) {
-            storage = ((DenseMatrix) matrix).storage();
-        } else {
-            storage = Storage.DEFAULT;
-        }
-        return DenseFactory.floatVector(matrix.rows(), Direction.COLUMN, storage);
-    }
-
-    private static FloatDenseVector rowVectorFor(final FloatMatrix matrix) {
-        final Storage storage;
-        if (matrix instanceof DenseMatrix) {
-            storage = ((DenseMatrix) matrix).storage();
-        } else {
-            storage = Storage.DEFAULT;
-        }
-        return DenseFactory.floatVector(matrix.columns(), Direction.ROW, storage);
     }
 
     public static double euclideanDistance(final FloatVector x, final FloatVector y) {
@@ -132,19 +121,19 @@ public final class FloatMatrixUtils {
         fillRandom(matrix, new Random());
     }
 
-    public static void fillRandom(final FloatMatrix matrix, final Random rng) {
-        for (int i = 0; i < matrix.rows(); i++) {
-            for (int j = 0; j < matrix.columns(); j++) {
-                matrix.set(i, j, rng.nextFloat());
-            }
-        }
-    }
-
     public static void fillRandom(final FloatMatrix matrix, final float min, final float max, final Random rng) {
         float delta = max - min;
         for (int i = 0; i < matrix.rows(); i++) {
             for (int j = 0; j < matrix.columns(); j++) {
                 matrix.set(i, j, delta * rng.nextFloat() + min);
+            }
+        }
+    }
+
+    public static void fillRandom(final FloatMatrix matrix, final Random rng) {
+        for (int i = 0; i < matrix.rows(); i++) {
+            for (int j = 0; j < matrix.columns(); j++) {
+                matrix.set(i, j, rng.nextFloat());
             }
         }
     }
@@ -193,15 +182,38 @@ public final class FloatMatrixUtils {
         return vec;
     }
 
-    private static boolean sameDirection(final FloatVector... vectors) {
-        if (vectors.length == 0) {
-            return true;
+    private static FloatDenseVector rowVectorFor(final FloatMatrix matrix) {
+        final Storage storage;
+        if (matrix instanceof DenseMatrix) {
+            storage = ((DenseMatrix) matrix).storage();
+        } else {
+            storage = Storage.DEFAULT;
         }
-        Direction[] directions = new Direction[vectors.length];
-        for (int i = 0; i < vectors.length; i++) {
-            directions[i] = vectors[i].direction();
+        return DenseFactory.floatVector(matrix.columns(), Direction.ROW, storage);
+    }
+
+    /**
+     * Get a submatrix spanning the column range [column0, column1).
+     */
+    public static FloatDenseMatrix subMatrixColumns(final FloatDenseMatrix x, final int column0, final int column1) {
+        AssertUtils.checkArgument(column0 >= 0 && column0 <= x.columns(), String.format(
+            "column0=%d not in range [0, %d]", column0, x.columns()));
+        AssertUtils.checkArgument(column1 >= column0 && column1 <= x.columns(), String.format(
+            "column1=%d not in range [%d, %d]", column1, column0, x.columns()));
+        if (column0 == 0 && column1 == x.columns()) {
+            return x;
         }
-        return directions[0].same(directions);
+        int cols = column1 - column0;
+        if (x.order().equals(Order.COLUMN)) {
+//            return new FloatDenseMatrix(x, x.rows(), cols, x.columnOffset(column0), x.stride, x.order());
+            throw new NotImplementedException();
+        } else {
+            FloatDenseMatrix newMatrix = DenseFactory.floatMatrix(x.rows(), cols, x.order(), x.storage());
+            for (int i = column0, j = 0; i < column1; i++, j++) {
+                newMatrix.setColumn(j, x.column(i));
+            }
+            return newMatrix;
+        }
     }
 
     public static float sum(final FloatMatrix matrix) {

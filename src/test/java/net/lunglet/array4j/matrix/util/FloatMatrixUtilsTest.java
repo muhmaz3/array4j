@@ -9,9 +9,12 @@ import java.util.List;
 import java.util.Random;
 import net.lunglet.array4j.Direction;
 import net.lunglet.array4j.Order;
+import net.lunglet.array4j.Storage;
 import net.lunglet.array4j.matrix.FloatMatrix;
 import net.lunglet.array4j.matrix.FloatVector;
 import net.lunglet.array4j.matrix.MatrixTestSupport;
+import net.lunglet.array4j.matrix.dense.DenseFactory;
+import net.lunglet.array4j.matrix.dense.FloatDenseMatrix;
 import net.lunglet.array4j.matrix.dense.FloatDenseVector;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,6 +36,30 @@ public final class FloatMatrixUtilsTest {
 
     public FloatMatrixUtilsTest(final Order order) {
         this.order = order;
+    }
+
+    @Test
+    public void testSubMatrixColumns() {
+        for (int rows = 0; rows < 5; rows++) {
+            for (int columns = 0; columns < 8; columns++) {
+                FloatDenseMatrix x = DenseFactory.floatMatrix(rows, columns, order, Storage.HEAP);
+                MatrixTestSupport.populateMatrix(x);
+                for (int i = 0; i < columns; i++) {
+                    for (int j = i; j <= columns; j++) {
+                        FloatDenseMatrix y = FloatMatrixUtils.subMatrixColumns(x, i, j);
+                        assertEquals(x.rows(), y.rows());
+                        assertEquals(j - i, y.columns());
+                        for (int k = i; k < j; k++) {
+                            int n = k - i;
+                            for (int m = 0; m < x.rows(); m++) {
+                                assertEquals(x.get(m, k), y.get(m, n), 0);
+                            }
+                            assertEquals(x.column(k), y.column(n));
+                        }
+                    }
+                }
+            }
+        }
     }
 
     @Test

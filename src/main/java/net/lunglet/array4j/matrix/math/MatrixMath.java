@@ -4,6 +4,8 @@ import net.lunglet.array4j.matrix.FloatMatrix;
 import net.lunglet.array4j.matrix.Matrix;
 import org.apache.commons.lang.NotImplementedException;
 
+// TODO split into separate classes like FloatMatrixMath later
+
 public final class MatrixMath {
     private static void checkSameDimensions(final Matrix a, final Matrix b) {
         if (a.rows() != b.rows() || a.columns() != b.columns()) {
