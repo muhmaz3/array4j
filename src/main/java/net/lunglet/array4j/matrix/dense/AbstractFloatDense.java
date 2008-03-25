@@ -6,12 +6,10 @@ import net.lunglet.array4j.Constants;
 import net.lunglet.array4j.Direction;
 import net.lunglet.array4j.Order;
 import net.lunglet.array4j.Storage;
-import net.lunglet.array4j.blas.FloatDenseBLAS;
 import net.lunglet.array4j.matrix.FloatMatrix;
 import net.lunglet.array4j.matrix.FloatVector;
 import net.lunglet.array4j.matrix.util.FloatMatrixUtils;
 import net.lunglet.util.BufferUtils;
-import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.builder.EqualsBuilder;
 
 /**
@@ -82,13 +80,6 @@ abstract class AbstractFloatDense extends AbstractDenseMatrix<FloatDenseVector, 
         checkData(this.data);
     }
 
-    public final FloatDenseVector asVector() {
-        if (this instanceof FloatDenseVector) {
-            return (FloatDenseVector) this;
-        }
-        return new FloatDenseVectorImpl(this, length, offset, stride, Direction.DEFAULT);
-    }
-
     /** {@inheritDoc} */
     @Override
     public final FloatDenseVector column(final int column) {
@@ -110,10 +101,6 @@ abstract class AbstractFloatDense extends AbstractDenseMatrix<FloatDenseVector, 
         return ((FloatBuffer) data.position(offset)).slice();
     }
 
-    public final void divideEquals(final float value) {
-        timesEquals(1.0f / value);
-    }
-
     @Override
     public boolean equals(final Object obj) {
         if (obj == null || !(obj instanceof AbstractFloatDense)) {
@@ -126,7 +113,7 @@ abstract class AbstractFloatDense extends AbstractDenseMatrix<FloatDenseVector, 
     }
 
     @Override
-    protected final void fillFrom(final float[] dest, final int srcPos) {
+    protected final void fillWithElement(final float[] dest, final int srcPos) {
         Arrays.fill(dest, data.get(srcPos));
     }
 
@@ -140,22 +127,6 @@ abstract class AbstractFloatDense extends AbstractDenseMatrix<FloatDenseVector, 
 
     public final int length() {
         return length;
-    }
-
-    public final void minusEquals(final float value) {
-        plusEquals(-value);
-    }
-
-    public final void plusEquals(final float value) {
-        throw new NotImplementedException();
-    }
-
-    public void plusEquals(final FloatMatrix other) {
-        checkArithmeticOperand(other);
-        if (!(other instanceof FloatDenseMatrix)) {
-            throw new NotImplementedException();
-        }
-        FloatDenseBLAS.DEFAULT.axpy(1.0f, ((FloatDenseMatrix) other).asVector(), asVector());
     }
 
     @Override
@@ -199,10 +170,6 @@ abstract class AbstractFloatDense extends AbstractDenseMatrix<FloatDenseVector, 
     /** {@inheritDoc} */
     public final Storage storage() {
         return data.isDirect() ? Storage.DIRECT : Storage.HEAP;
-    }
-
-    public final void timesEquals(final float value) {
-        FloatDenseBLAS.DEFAULT.scal(value, asVector());
     }
 
     /** {@inheritDoc} */

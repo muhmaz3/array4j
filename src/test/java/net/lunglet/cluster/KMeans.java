@@ -11,6 +11,8 @@ import net.lunglet.array4j.matrix.math.FloatMatrixMath;
 import net.lunglet.array4j.matrix.math.MatrixMath;
 import net.lunglet.array4j.matrix.util.FloatMatrixUtils;
 
+// TODO most of euclidean distance work can be done with a gemm
+
 public final class KMeans<T> {
     public interface KMeansTask extends Callable<KMeansTaskResult> {
         FloatMatrix getCentroids();

@@ -4,7 +4,6 @@ import java.nio.FloatBuffer;
 import net.jcip.annotations.NotThreadSafe;
 import net.lunglet.array4j.Direction;
 import net.lunglet.array4j.Storage;
-import net.lunglet.array4j.matrix.FloatMatrix;
 import net.lunglet.array4j.matrix.FloatVector;
 import net.lunglet.array4j.matrix.dense.DenseFactory;
 import net.lunglet.array4j.matrix.dense.FloatDenseVector;
@@ -29,11 +28,6 @@ final class FloatPackedMatrixImpl extends AbstractPackedMatrix<FloatDenseVector>
     }
 
     @Override
-    public FloatDenseVector asVector() {
-        throw new NotImplementedException();
-    }
-
-    @Override
     public FloatDenseVector column(final int column) {
         FloatDenseVector v = DenseFactory.floatVector(rows(), Direction.COLUMN, storage());
         for (int row = 0; row < rows; row++) {
@@ -54,15 +48,6 @@ final class FloatPackedMatrixImpl extends AbstractPackedMatrix<FloatDenseVector>
         } else {
             return 0.0f;
         }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void plusEquals(final FloatMatrix other) {
-        if (!(other instanceof FloatPackedMatrix)) {
-            throw new IllegalArgumentException();
-        }
-        throw new NotImplementedException();
     }
 
     /** {@inheritDoc} */
@@ -127,12 +112,12 @@ final class FloatPackedMatrixImpl extends AbstractPackedMatrix<FloatDenseVector>
 
     @Override
     public float[][] toColumnArrays() {
-        throw new UnsupportedOperationException();
+        throw new NotImplementedException();
     }
 
     @Override
     public float[][] toRowArrays() {
-        throw new UnsupportedOperationException();
+        throw new NotImplementedException();
     }
 
     /** {@inheritDoc} */

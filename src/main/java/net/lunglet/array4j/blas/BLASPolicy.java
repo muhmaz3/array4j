@@ -3,7 +3,6 @@ package net.lunglet.array4j.blas;
 import net.lunglet.array4j.Order;
 import net.lunglet.array4j.Storage;
 import net.lunglet.array4j.matrix.dense.DenseMatrix;
-import net.lunglet.array4j.matrix.dense.DenseVector;
 
 interface BLASPolicy {
     /**
@@ -11,7 +10,7 @@ interface BLASPolicy {
      */
     public static final class AlwaysNative implements BLASPolicy {
         @Override
-        public Method chooseL1Method(final DenseVector x, final DenseVector y) {
+        public Method chooseL1Method(final DenseMatrix x, final DenseMatrix y) {
             return Method.NATIVE;
         }
 
@@ -21,14 +20,14 @@ interface BLASPolicy {
         }
 
         @Override
-        public Method chooseL2Method(final DenseMatrix a, final DenseVector x, final DenseVector y) {
+        public Method chooseL2Method(final DenseMatrix a, final DenseMatrix x, final DenseMatrix y) {
             return Method.NATIVE;
         }
     }
 
     public static final class BestEffort implements BLASPolicy {
         @Override
-        public Method chooseL1Method(final DenseVector x, final DenseVector y) {
+        public Method chooseL1Method(final DenseMatrix x, final DenseMatrix y) {
             if (x.storage().equals(Storage.DIRECT) || (y != null && y.storage().equals(Storage.DIRECT))) {
                 return Method.NATIVE;
             }
@@ -36,7 +35,7 @@ interface BLASPolicy {
         }
 
         @Override
-        public Method chooseL2Method(final DenseMatrix a, final DenseVector x, final DenseVector y) {
+        public Method chooseL2Method(final DenseMatrix a, final DenseMatrix x, final DenseMatrix y) {
             for (DenseMatrix arg : new DenseMatrix[]{a, x, y}) {
                 if (arg != null && arg.storage().equals(Storage.DIRECT)) {
                     return Method.NATIVE;
@@ -82,13 +81,13 @@ interface BLASPolicy {
         }
 
         @Override
-        public Method chooseL1Method(final DenseVector x, final DenseVector y) {
+        public Method chooseL1Method(final DenseMatrix x, final DenseMatrix y) {
             checkHasArray(x, y);
             return Method.F2J;
         }
 
         @Override
-        public Method chooseL2Method(final DenseMatrix a, final DenseVector x, final DenseVector y) {
+        public Method chooseL2Method(final DenseMatrix a, final DenseMatrix x, final DenseMatrix y) {
             checkHasArray(a, x, y);
             return Method.F2J;
         }
@@ -113,13 +112,13 @@ interface BLASPolicy {
         }
 
         @Override
-        public Method chooseL1Method(final DenseVector x, final DenseVector y) {
+        public Method chooseL1Method(final DenseMatrix x, final DenseMatrix y) {
             checkDirect(x, y);
             return Method.NATIVE;
         }
 
         @Override
-        public Method chooseL2Method(final DenseMatrix a, final DenseVector x, final DenseVector y) {
+        public Method chooseL2Method(final DenseMatrix a, final DenseMatrix x, final DenseMatrix y) {
             checkDirect(a, x, y);
             return Method.NATIVE;
         }
@@ -131,9 +130,9 @@ interface BLASPolicy {
         }
     }
 
-    Method chooseL1Method(DenseVector x, DenseVector y);
+    Method chooseL1Method(DenseMatrix x, DenseMatrix y);
 
-    Method chooseL2Method(DenseMatrix a, DenseVector x, DenseVector y);
+    Method chooseL2Method(DenseMatrix a, DenseMatrix x, DenseMatrix y);
 
     Method chooseL3Method(DenseMatrix a, DenseMatrix b, DenseMatrix c);
 }

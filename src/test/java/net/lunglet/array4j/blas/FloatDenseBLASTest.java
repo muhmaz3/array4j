@@ -15,7 +15,7 @@ import net.lunglet.array4j.matrix.dense.FloatDenseVector;
 import org.junit.Test;
 
 public final class FloatDenseBLASTest extends AbstractBLASTest {
-    private static void checkMatrix(final FloatDenseMatrix expected, final FloatDenseMatrix actual) {
+    private static void checkMatrix(final FloatMatrix expected, final FloatMatrix actual) {
         assertEquals(expected.rows(), actual.rows());
         assertEquals(expected.columns(), actual.columns());
         for (int i = 0; i < actual.rows(); i++) {
@@ -35,11 +35,6 @@ public final class FloatDenseBLASTest extends AbstractBLASTest {
             ret += x.get(i) * y.get(i);
         }
         return ret;
-    }
-
-    private static void gemv(final float alpha, final FloatMatrix a, final FloatVector x, final float beta,
-            final FloatVector y) {
-        gemm(alpha, a, x, beta, y);
     }
 
     private static void gemm(final float alpha, final FloatMatrix a, final FloatMatrix b, final float beta,
@@ -65,6 +60,24 @@ public final class FloatDenseBLASTest extends AbstractBLASTest {
         }
     }
 
+    private static void gemv(final float alpha, final FloatMatrix a, final FloatVector x, final float beta,
+            final FloatVector y) {
+        gemm(alpha, a, x, beta, y);
+    }
+
+    /**
+     * Make the matrix symmetric by copying the upper triangular part to the
+     * lower triangular part.
+     */
+    private static <T extends FloatMatrix> T makeSymmetric(final T a) {
+        for (int i = 0; i < a.rows(); i++) {
+            for (int j = i + 1; j < a.columns(); j++) {
+                a.set(j, i, a.get(i, j));
+            }
+        }
+        return a;
+    }
+
     @Test
     public void testDot() {
         for (Storage[] s : new Permutations<Storage>(2, Storage.values())) {
@@ -74,31 +87,6 @@ public final class FloatDenseBLASTest extends AbstractBLASTest {
                 MatrixTestSupport.populateMatrix(x);
                 MatrixTestSupport.populateMatrix(y);
                 assertEquals(dot(x, y), FloatDenseBLAS.DEFAULT.dot(x, y), 0);
-            }
-        }
-    }
-
-    @Test
-    public void testGemv() {
-        final float alpha = 1.0f;
-        final float beta = 1.0f;
-        for (Order o : Order.values()) {
-            for (Storage[] s : new Permutations<Storage>(3, Storage.values())) {
-                for (int m = 0; m < 20; m += m < 5 ? 1 : 5) {
-                    for (int n = 1; n < 20; n += n < 5 ? 1 : 5) {
-                        FloatDenseMatrix a = DenseFactory.floatMatrix(m, n, o, s[0]);
-                        FloatDenseVector x = DenseFactory.floatVector(n, Direction.COLUMN, s[1]);
-                        FloatDenseVector expectedy = DenseFactory.floatVector(m, Direction.COLUMN, s[2]);
-                        FloatDenseVector actualy = DenseFactory.floatVector(m, Direction.COLUMN, s[2]);
-                        MatrixTestSupport.populateMatrix(a);
-                        MatrixTestSupport.populateMatrix(x);
-                        MatrixTestSupport.populateMatrix(expectedy);
-                        gemv(alpha, a, x, beta, expectedy);
-                        MatrixTestSupport.populateMatrix(actualy);
-                        FloatDenseBLAS.DEFAULT.gemv(alpha, a, x, beta, actualy);
-                        checkMatrix(expectedy, actualy);
-                    }
-                }
             }
         }
     }
@@ -131,6 +119,55 @@ public final class FloatDenseBLASTest extends AbstractBLASTest {
     }
 
     @Test
+    public void testGemv() {
+        final float alpha = 1.0f;
+        final float beta = 1.0f;
+        for (Order o : Order.values()) {
+            for (Storage[] s : new Permutations<Storage>(3, Storage.values())) {
+                for (int m = 0; m < 20; m += m < 5 ? 1 : 5) {
+                    for (int n = 1; n < 20; n += n < 5 ? 1 : 5) {
+                        FloatDenseMatrix a = DenseFactory.floatMatrix(m, n, o, s[0]);
+                        FloatDenseVector x = DenseFactory.floatVector(n, Direction.COLUMN, s[1]);
+                        FloatDenseVector expectedy = DenseFactory.floatVector(m, Direction.COLUMN, s[2]);
+                        FloatDenseVector actualy = DenseFactory.floatVector(m, Direction.COLUMN, s[2]);
+                        MatrixTestSupport.populateMatrix(a);
+                        MatrixTestSupport.populateMatrix(x);
+                        MatrixTestSupport.populateMatrix(expectedy);
+                        gemv(alpha, a, x, beta, expectedy);
+                        MatrixTestSupport.populateMatrix(actualy);
+                        FloatDenseBLAS.DEFAULT.gemv(alpha, a, x, beta, actualy);
+                        checkMatrix(expectedy, actualy);
+                    }
+                }
+            }
+        }
+    }
+
+    @Test
+    public void testScal() {
+        for (Storage storage : Storage.values()) {
+            for (int i = 0; i < 10; i++) {
+                FloatDenseVector x = DenseFactory.floatVector(i, Direction.ROW, storage);
+                FloatDenseVector y = DenseFactory.floatVector(i, Direction.ROW, storage);
+                MatrixTestSupport.populateMatrix(x);
+                MatrixTestSupport.populateMatrix(y);
+                FloatDenseBLAS.DEFAULT.scal(1.0f, x);
+                for (int j = 0; j < x.length(); j++) {
+                    assertEquals(y.get(j), x.get(j), 0);
+                }
+                FloatDenseBLAS.DEFAULT.scal(2.0f, x);
+                for (int j = 0; j < x.length(); j++) {
+                    assertEquals(2.0f * y.get(j), x.get(j), 0);
+                }
+                FloatDenseBLAS.DEFAULT.scal(0, x);
+                for (int j = 0; j < x.length(); j++) {
+                    assertEquals(0, x.get(j), 0);
+                }
+            }
+        }
+    }
+
+    @Test
     public void testSyrk() {
         final float alpha = 1.0f;
         final float beta = 0.0f;
@@ -147,14 +184,11 @@ public final class FloatDenseBLASTest extends AbstractBLASTest {
         MatrixTestSupport.populateMatrix(actualc2);
         gemm(alpha, a, a.transpose(), beta, expectedc1);
         gemm(alpha, a.transpose(), a, beta, expectedc2);
-
-        System.out.println(a);
-        System.out.println(expectedc1);
-        System.out.println(expectedc2);
-
         FloatDenseBLAS.DEFAULT.syrk(alpha, a, beta, actualc1);
-        System.out.println(actualc1);
+        // syrk only assigns half of the output matrix, so make it symmetric
+        // before checking
+        checkMatrix(expectedc1, makeSymmetric(actualc1));
         FloatDenseBLAS.DEFAULT.syrk(alpha, a.transpose(), beta, actualc2);
-        System.out.println(actualc2);
+        checkMatrix(expectedc2, makeSymmetric(actualc2));
     }
 }

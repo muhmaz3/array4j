@@ -1,12 +1,11 @@
 package net.lunglet.array4j.matrix;
 
-import java.io.Serializable;
 import java.util.List;
 
-public interface Matrix extends Serializable {
-    /** Returns the matrix as a vector. */
-    Vector asVector();
-
+/**
+ * Matrix.
+ */
+public interface Matrix {
     /** Get a column vector. */
     Vector column(int column);
 
