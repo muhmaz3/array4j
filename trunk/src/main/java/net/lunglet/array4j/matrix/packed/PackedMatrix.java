@@ -3,14 +3,11 @@ package net.lunglet.array4j.matrix.packed;
 import java.nio.Buffer;
 import net.lunglet.array4j.Storage;
 import net.lunglet.array4j.matrix.Matrix;
-import net.lunglet.array4j.matrix.dense.DenseVector;
 
 /**
  * Matrix packed by columns.
  */
 public interface PackedMatrix extends Matrix {
-    DenseVector asVector();
-
     /** Get data buffer. */
     Buffer data();
 

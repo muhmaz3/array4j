@@ -2,7 +2,6 @@ package net.lunglet.array4j.blas;
 
 import java.nio.FloatBuffer;
 import net.lunglet.array4j.matrix.dense.FloatDenseMatrix;
-import net.lunglet.array4j.matrix.dense.FloatDenseVector;
 import org.netlib.blas.Saxpy;
 import org.netlib.blas.Sdot;
 import org.netlib.blas.Sgemm;
@@ -22,9 +21,9 @@ public final class FloatDenseBLAS extends AbstractDenseBLAS {
     /**
      * <CODE>y := a*x + y</CODE>
      */
-    public void axpy(final float a, final FloatDenseVector x, final FloatDenseVector y) {
+    public void axpy(final float a, final FloatDenseMatrix x, final FloatDenseMatrix y) {
         checkAxpy(x, y);
-        int n = x.length();
+        int n = length(x);
         FloatBuffer xbuf = x.data();
         int incx = x.stride();
         FloatBuffer ybuf = y.data();
@@ -41,9 +40,9 @@ public final class FloatDenseBLAS extends AbstractDenseBLAS {
         }
     }
 
-    public float dot(final FloatDenseVector x, final FloatDenseVector y) {
+    public float dot(final FloatDenseMatrix x, final FloatDenseMatrix y) {
         checkDot(x, y);
-        int n = x.length();
+        int n = length(x);
         FloatBuffer xbuf = x.data();
         int incx = x.stride();
         FloatBuffer ybuf = y.data();
@@ -90,8 +89,8 @@ public final class FloatDenseBLAS extends AbstractDenseBLAS {
     /**
      * <CODE>y := alpha*A*x + beta*y</CODE>.
      */
-    public void gemv(final float alpha, final FloatDenseMatrix a, final FloatDenseVector x, final float beta,
-            final FloatDenseVector y) {
+    public void gemv(final float alpha, final FloatDenseMatrix a, final FloatDenseMatrix x, final float beta,
+            final FloatDenseMatrix y) {
         checkGemv(a, x, y);
         int m = a.rows();
         int n = a.columns();
@@ -117,10 +116,11 @@ public final class FloatDenseBLAS extends AbstractDenseBLAS {
     }
 
     /**
-     * <CODE>x = a*x</CODE>
+     * <CODE>x := a*x</CODE>
      */
-    public void scal(final float a, final FloatDenseVector x) {
-        int n = x.length();
+    public void scal(final float a, final FloatDenseMatrix x) {
+        checkScal(x);
+        int n = length(x);
         FloatBuffer xbuf = x.data();
         int incx = x.stride();
         switch (policy.chooseL1Method(x, null)) {
@@ -135,6 +135,12 @@ public final class FloatDenseBLAS extends AbstractDenseBLAS {
         }
     }
 
+    /**
+     * <CODE>C := alpha*A*A' + beta*C</CODE>
+     * <p>
+     * The upper triangular part of the matrix <CODE>c</CODE> is overwritten
+     * by the upper triangular part of the updated matrix.
+     */
     public void syrk(final float alpha, final FloatDenseMatrix a, final float beta, final FloatDenseMatrix c) {
         checkSyrk(a, c);
         int n = a.rows();
@@ -149,7 +155,7 @@ public final class FloatDenseBLAS extends AbstractDenseBLAS {
                 cbuf.arrayOffset(), ldc);
             return;
         case NATIVE:
-            // typedef enum {CblasUpper=121, CblasLower=122} CBLAS_UPLO;
+            // XXX typedef enum {CblasUpper=121, CblasLower=122} CBLAS_UPLO;
             BLASLibrary.INSTANCE.array4j_ssyrk(corder(c), 121, cblasL3Trans(c, a), n, k, alpha, abuf, lda, beta, cbuf, ldc);
             return;
         default:

@@ -8,9 +8,6 @@ import net.lunglet.array4j.matrix.Matrix;
 
 public interface DenseMatrix extends Matrix {
     /** {@inheritDoc} */
-    DenseVector asVector();
-
-    /** {@inheritDoc} */
     DenseVector column(int column);
 
     /** {@inheritDoc} */

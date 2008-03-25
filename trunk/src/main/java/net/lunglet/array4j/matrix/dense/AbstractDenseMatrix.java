@@ -133,8 +133,17 @@ public abstract class AbstractDenseMatrix<V extends DenseVector, T> extends Abst
         return equalsBuilder.isEquals();
     }
 
-    // TODO give this method a better name
-    protected abstract void fillFrom(T dest, int srcPos);
+    /**
+     * Assigns the value at the specified position to each element of specified
+     * array.
+     *
+     * @param dest
+     *                the array to be filled
+     * @param srcPos
+     *                the position of the value to be stored in all elements of
+     *                the array
+     */
+    protected abstract void fillWithElement(T dest, int srcPos);
 
     @Override
     public int hashCode() {
@@ -187,7 +196,7 @@ public abstract class AbstractDenseMatrix<V extends DenseVector, T> extends Abst
             return arr;
         }
         if (stride == 0) {
-            fillFrom(arr, offset);
+            fillWithElement(arr, offset);
             return arr;
         }
         for (int i = offset, j = 0; j < length; i += elementSize * stride, j++) {

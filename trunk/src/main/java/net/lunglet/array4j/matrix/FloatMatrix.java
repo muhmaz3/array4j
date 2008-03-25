@@ -7,9 +7,6 @@ import java.util.List;
  */
 public interface FloatMatrix extends Matrix {
     /** {@inheritDoc} */
-    FloatVector asVector();
-
-    /** {@inheritDoc} */
     FloatVector column(int column);
 
     /** {@inheritDoc} */
@@ -39,10 +36,10 @@ public interface FloatMatrix extends Matrix {
     /** Pack matrix into an array. */
     float[] toArray();
 
-    /** Convert columns to an array of arrays. */
+    /** Return columns as an array of float arrays. */
     float[][] toColumnArrays();
 
-    /** Convert rows to an array of arrays. */
+    /** Return rows as an array of float arrays. */
     float[][] toRowArrays();
 
     /** {@inheritDoc} */

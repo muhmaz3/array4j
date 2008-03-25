@@ -31,11 +31,16 @@ public final class MatrixMath {
     /** Element-wise addition without broadcasting. */
     public static void plusEquals(final FloatMatrix a, final FloatMatrix b) {
         checkSameDimensions(a, b);
+//        if (!(other instanceof FloatDenseMatrix)) {
+//            throw new NotImplementedException();
+//        }
+//        FloatDenseBLAS.DEFAULT.axpy(1.0f, ((FloatDenseMatrix) other).asVector(), asVector());
         throw new NotImplementedException();
     }
 
     /** Scalar multiplication. */
     public static void timesEquals(final FloatMatrix x, final float value) {
+//        FloatDenseBLAS.DEFAULT.scal(value, asVector());
         throw new NotImplementedException();
     }
 

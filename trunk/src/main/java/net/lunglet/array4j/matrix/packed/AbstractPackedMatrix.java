@@ -32,7 +32,7 @@ public abstract class AbstractPackedMatrix<V extends DenseVector> extends Abstra
     protected final PackedType packedType;
 
     public AbstractPackedMatrix(final int rows, final int columns, final PackedType packedType) {
-        super(null, rows, columns);
+        super(rows, columns);
         // TODO can possibly relax this restriction in some cases?
         if (rows != columns) {
             throw new IllegalArgumentException();

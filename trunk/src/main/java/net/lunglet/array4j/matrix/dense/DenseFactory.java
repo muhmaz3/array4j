@@ -23,25 +23,23 @@ public final class DenseFactory {
     /**
      * Returns a copy of the vector with direct storage.
      */
-    public static FloatDenseVector copyOfDirect(final FloatVector other) {
+    public static FloatDenseVector directCopyOf(final FloatVector other) {
         FloatDenseVector v = new FloatDenseVectorImpl(other.length(), other.direction(), Storage.DIRECT);
         v.data().put(other.toArray());
         return v;
     }
 
     /**
-     * Returns a copy of the vector with heap storage.
+     * Returns a column vector of floats with the specified length.
      */
-    public static FloatDenseVector copyOfHeap(final FloatVector other) {
-        FloatDenseVector v = new FloatDenseVectorImpl(other.length(), other.direction(), Storage.HEAP);
-        v.data().put(other.toArray());
-        return v;
-    }
-
     public static FloatVector floatColumn(final int length) {
         return floatVector(length, Direction.COLUMN, Storage.DEFAULT);
     }
 
+    /**
+     * Returns a column vector of floats with the specified length and direct
+     * storage.
+     */
     public static FloatDenseVector floatColumnDirect(final int length) {
         return floatVector(length, Direction.COLUMN, Storage.DIRECT);
     }
@@ -73,6 +71,9 @@ public final class DenseFactory {
         return matrix;
     }
 
+    /**
+     * Returns a matrix of floats with the specified number of rows and columns.
+     */
     public static FloatDenseMatrix floatMatrix(final int rows, final int columns) {
         return floatMatrix(rows, columns, Order.DEFAULT, Storage.DEFAULT);
     }
@@ -89,18 +90,33 @@ public final class DenseFactory {
         return floatMatrix(dims[0], dims[1], order, storage);
     }
 
+    /**
+     * Returns a row vector of floats with the specified length.
+     */
     public static FloatDenseVector floatRow(final int length) {
         return floatVector(length, Direction.ROW, Storage.DEFAULT);
     }
 
+    /**
+     * Returns a row vector of floats with the specified length and direct
+     * storage.
+     */
     public static FloatDenseVector floatRowDirect(final int length) {
         return floatVector(length, Direction.ROW, Storage.DIRECT);
     }
 
+    /**
+     * Returns a row matrix of floats with the specified dimensions and direct
+     * storage.
+     */
     public static FloatDenseMatrix floatRowDirect(final int[] dims) {
         return floatMatrix(dims, Order.ROW, Storage.DIRECT);
     }
 
+    /**
+     * Returns a row matrix of floats with the specified rows and columns and
+     * heap storage.
+     */
     public static FloatDenseMatrix floatRowHeap(final int rows, final int columns) {
         return floatMatrix(rows, columns, Order.ROW, Storage.HEAP);
     }
@@ -122,6 +138,9 @@ public final class DenseFactory {
         return v;
     }
 
+    /**
+     * Returns a vector of floats containing the specified values.
+     */
     public static FloatDenseVector floatVector(final float... values) {
         return floatVector(values, Direction.DEFAULT, Storage.DEFAULT);
     }
@@ -138,6 +157,15 @@ public final class DenseFactory {
 
     public static FloatDenseVector floatVector(final int length, final Direction dir, final Storage storage) {
         return new FloatDenseVectorImpl(length, dir, storage);
+    }
+
+    /**
+     * Returns a copy of the vector with heap storage.
+     */
+    public static FloatDenseVector heapCopyOf(final FloatVector other) {
+        FloatDenseVector v = new FloatDenseVectorImpl(other.length(), other.direction(), Storage.HEAP);
+        v.data().put(other.toArray());
+        return v;
     }
 
     private DenseFactory() {

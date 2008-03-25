@@ -6,9 +6,6 @@ import net.lunglet.array4j.matrix.FloatMatrix;
 
 public interface FloatDenseMatrix extends FloatMatrix, DenseMatrix {
     /** {@inheritDoc} */
-    FloatDenseVector asVector();
-
-    /** {@inheritDoc} */
     FloatDenseVector column(int column);
 
     /** {@inheritDoc} */
