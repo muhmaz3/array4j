@@ -46,6 +46,21 @@ public final class GMMUtils {
         return sv;
     }
 
+    public static boolean isGMMParametersFinite(final DiagCovGMM gmm) {
+        for (int index = 0; index < gmm.getMixtureCount(); index++) {
+            if (!FloatMatrixUtils.isAllFinite(gmm.getMean(index))) {
+                return false;
+            }
+            if (!FloatMatrixUtils.isAllFinite(gmm.getVariance(index))) {
+                return false;
+            }
+        }
+        if (!FloatMatrixUtils.isAllFinite(gmm.getWeights())) {
+            return false;
+        }
+        return true;
+    }
+
     /**
      * Replace weak components (components not supported by enough data) by
      * splitting the strongest (heaviest) components.

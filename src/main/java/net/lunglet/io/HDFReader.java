@@ -35,7 +35,7 @@ public final class HDFReader implements Closeable {
     }
 
     public void read(final String name, final FloatDenseMatrix matrix) {
-        if (!matrix.order().equals(Order.ROW)) {
+        if (matrix.rows() > 1 && matrix.columns() > 1 && !matrix.order().equals(Order.ROW)) {
             throw new NotImplementedException();
         }
         DataSet dataset = null;

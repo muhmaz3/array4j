@@ -1,6 +1,5 @@
 package net.lunglet.array4j.matrix;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -12,7 +11,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 /**
  * Abstract base class for matrices.
  */
-public abstract class AbstractMatrix<V extends Vector> implements Matrix, Serializable {
+public abstract class AbstractMatrix<V extends Vector> implements Matrix {
     private static final long serialVersionUID = 1L;
 
     protected static int vectorColumns(final int size, final Direction direction) {

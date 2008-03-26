@@ -2,6 +2,7 @@ package net.lunglet.svm;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -233,13 +234,15 @@ public final class SvmClassifierTest {
                     assertEquals(linearScores.columns(), precomputedScores.columns());
                     assertEquals(linearScores.rows(), scores.rows());
                     assertEquals(linearScores.columns(), scores.columns());
-//                    for (int k = 0; k < linearScores.length(); k++) {
-//                        float linearScore = linearScores.get(k);
-//                        float precomputedScore = precomputedScores.get(k);
-//                        float score = scores.get(k);
-//                        assertTrue(Math.abs(linearScore - precomputedScore) < 0.2f);
-//                        assertTrue(Math.abs(linearScore - score) < 0.2f);
-//                    }
+                    for (int m = 0; m < linearScores.rows(); m++) {
+                        for (int n = 0; n < linearScores.columns(); n++) {
+                            float linearScore = linearScores.get(m, n);
+                            float precomputedScore = precomputedScores.get(m, n);
+                            float score = scores.get(m, n);
+                            assertTrue(Math.abs(linearScore - precomputedScore) < 0.2f);
+                            assertTrue(Math.abs(linearScore - score) < 0.2f);
+                        }
+                    }
                 }
             }
         }

@@ -138,6 +138,18 @@ public final class FloatMatrixUtils {
         }
     }
 
+    public static boolean isAllFinite(final FloatMatrix matrix) {
+        for (int i = 0; i < matrix.rows(); i++) {
+            for (int j = 0; j < matrix.columns(); j++) {
+                float v = matrix.get(i, j);
+                if (Float.isInfinite(v) || Float.isNaN(v)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     public static float mean(final FloatMatrix matrix) {
         float mean = 0.0f;
         int n = 0;
@@ -206,7 +218,11 @@ public final class FloatMatrixUtils {
         int cols = column1 - column0;
         if (x.order().equals(Order.COLUMN)) {
 //            return new FloatDenseMatrix(x, x.rows(), cols, x.columnOffset(column0), x.stride, x.order());
-            throw new NotImplementedException();
+            FloatDenseMatrix newMatrix = DenseFactory.floatMatrix(x.rows(), cols, x.order(), x.storage());
+            for (int i = column0, j = 0; i < column1; i++, j++) {
+                newMatrix.setColumn(j, x.column(i));
+            }
+            return newMatrix;
         } else {
             FloatDenseMatrix newMatrix = DenseFactory.floatMatrix(x.rows(), cols, x.order(), x.storage());
             for (int i = column0, j = 0; i < column1; i++, j++) {

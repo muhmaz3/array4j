@@ -25,6 +25,9 @@ public final class DenseFactory {
      */
     public static FloatDenseVector directCopyOf(final FloatVector other) {
         FloatDenseVector v = new FloatDenseVectorImpl(other.length(), other.direction(), Storage.DIRECT);
+
+        System.out.println(((FloatDenseVector) other).data());
+
         v.data().put(other.toArray());
         return v;
     }
@@ -42,6 +45,14 @@ public final class DenseFactory {
      */
     public static FloatDenseVector floatColumnDirect(final int length) {
         return floatVector(length, Direction.COLUMN, Storage.DIRECT);
+    }
+
+    /**
+     * Returns a row matrix of floats with the specified rows and columns and
+     * direct storage.
+     */
+    public static FloatDenseMatrix floatColumnDirect(final int rows, final int columns) {
+        return floatMatrix(rows, columns, Order.COLUMN, Storage.DIRECT);
     }
 
     public static FloatDenseMatrix floatMatrix(final float[][] values) {

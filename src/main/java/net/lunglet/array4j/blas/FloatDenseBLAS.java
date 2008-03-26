@@ -9,8 +9,6 @@ import org.netlib.blas.Sgemv;
 import org.netlib.blas.Sscal;
 import org.netlib.blas.Ssyrk;
 
-// XXX all BLAS level 3 functions require dense matrices
-
 public final class FloatDenseBLAS extends AbstractDenseBLAS {
     public static final FloatDenseBLAS DEFAULT = new FloatDenseBLAS(new BLASPolicy.BestEffort());
 
