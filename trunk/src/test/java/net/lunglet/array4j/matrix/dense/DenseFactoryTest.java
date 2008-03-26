@@ -10,7 +10,8 @@ import net.lunglet.array4j.Storage;
 import org.junit.Test;
 
 public final class DenseFactoryTest {
-    private static void checkValueOf(final int rows, final int columns, final Storage storage, final Order order) {
+    private static void checkFloatMatrixValues(final int rows, final int columns, final Storage storage,
+            final Order order) {
         int m = order.equals(ROW) ? rows : columns;
         int n = order.equals(ROW) ? columns : rows;
         float[][] values = new float[m][];
@@ -54,12 +55,12 @@ public final class DenseFactoryTest {
     }
 
     @Test
-    public void testValueOf() {
+    public void testFloatMatrixValues() {
         for (int rows = 0; rows < 5; rows++) {
             for (int columns = 0; columns < 5; columns++) {
                 for (Storage storage : new Storage[]{DIRECT, HEAP}) {
                     for (Order order : new Order[]{ROW, COLUMN}) {
-                        checkValueOf(rows, columns, storage, order);
+                        checkFloatMatrixValues(rows, columns, storage, order);
                     }
                 }
             }

@@ -11,7 +11,6 @@ import java.util.List;
 import net.lunglet.array4j.matrix.FloatMatrix;
 import net.lunglet.array4j.matrix.FloatVector;
 import net.lunglet.array4j.matrix.MatrixTestSupport;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public final class FloatDenseTest {
@@ -40,7 +39,6 @@ public final class FloatDenseTest {
         }
     }
 
-    @Ignore
     @Test
     public void testSerialization() throws IOException, ClassNotFoundException {
         List<FloatMatrix> matrices = new ArrayList<FloatMatrix>();
