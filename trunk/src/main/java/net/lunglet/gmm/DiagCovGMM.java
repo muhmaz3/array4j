@@ -12,6 +12,8 @@ import net.lunglet.array4j.matrix.dense.FloatDenseVector;
 import org.apache.commons.lang.NotImplementedException;
 
 public final class DiagCovGMM extends AbstractGMM {
+    private static final double N_EPSILON = 2.0 * Math.sqrt(Float.MIN_VALUE);
+
     private static final long serialVersionUID = 1L;
 
     private static void checkArguments(final FloatVector w, final FloatVector[] u, final FloatVector[] v) {
@@ -127,8 +129,14 @@ public final class DiagCovGMM extends AbstractGMM {
             ex = ex.clone();
             for (int i = 0; i < ex.length; i++) {
                 float ni = n[i];
+                if (ni < N_EPSILON) {
+                    // if ni is too small, keep original means
+                    ex[i] = means[i];
+                    continue;
+                }
                 ex[i] = ex[i].clone();
                 float[] exi = ex[i];
+                // divide by ni to convert to expected value
                 for (int j = 0; j < exi.length; j++) {
                     exi[j] /= ni;
                 }
@@ -144,6 +152,9 @@ public final class DiagCovGMM extends AbstractGMM {
         if (doVars) {
             for (int i = 0; i < exx.length; i++) {
                 float ni = n[i];
+                if (ni < N_EPSILON) {
+                    continue;
+                }
                 float[] vari = variances[i];
                 float[] exi = ex[i];
                 float[] exxi = exx[i];
@@ -167,14 +178,18 @@ public final class DiagCovGMM extends AbstractGMM {
         if (doMeans) {
             float[][] ex = stats.getEx();
             for (int i = 0; i < means.length; i++) {
+                float ni = n[i];
+                if (ni < N_EPSILON) {
+                    continue;
+                }
                 float[] meani = means[i];
                 float[] exi = ex[i];
-                float ni = n[i];
                 float alpha = ni / (ni + r);
+                // divide by ni to convert to expected value
                 float a1 = alpha / ni;
                 float a2 = 1.0f - alpha;
                 for (int j = 0; j < meani.length; j++) {
-                    meani[j] = a1 * exi[j] +  a2 * meani[j];
+                    meani[j] = a1 * exi[j] + a2 * meani[j];
                 }
             }
         }
