@@ -15,19 +15,6 @@ import net.lunglet.array4j.matrix.dense.FloatDenseVector;
 import org.junit.Test;
 
 public final class FloatDenseBLASTest extends AbstractBLASTest {
-    private static void checkMatrix(final FloatMatrix expected, final FloatMatrix actual) {
-        assertEquals(expected.rows(), actual.rows());
-        assertEquals(expected.columns(), actual.columns());
-        for (int i = 0; i < actual.rows(); i++) {
-            for (int j = 0; j < actual.columns(); j++) {
-                // compare relative to the reference value because the absolute
-                // values can become large
-                float refij = expected.get(i, j);
-                assertEquals(refij, actual.get(i, j), refij * 1.0e-6f);
-            }
-        }
-    }
-
     private static float dot(final FloatVector x, final FloatVector y) {
         assertEquals(x.length(), y.length());
         float ret = 0.0f;
@@ -110,7 +97,7 @@ public final class FloatDenseBLASTest extends AbstractBLASTest {
                             gemm(alpha, a, b, beta, expectedc);
                             MatrixTestSupport.populateMatrix(actualc);
                             FloatDenseBLAS.DEFAULT.gemm(alpha, a, b, beta, actualc);
-                            checkMatrix(expectedc, actualc);
+                            MatrixTestSupport.checkMatrix(expectedc, actualc, 1.0e-6f, true);
                         }
                     }
                 }
@@ -136,7 +123,7 @@ public final class FloatDenseBLASTest extends AbstractBLASTest {
                         gemv(alpha, a, x, beta, expectedy);
                         MatrixTestSupport.populateMatrix(actualy);
                         FloatDenseBLAS.DEFAULT.gemv(alpha, a, x, beta, actualy);
-                        checkMatrix(expectedy, actualy);
+                        MatrixTestSupport.checkMatrix(expectedy, actualy, 1.0e-6f, true);
                     }
                 }
             }
@@ -187,8 +174,8 @@ public final class FloatDenseBLASTest extends AbstractBLASTest {
         FloatDenseBLAS.DEFAULT.syrk(alpha, a, beta, actualc1);
         // syrk only assigns half of the output matrix, so make it symmetric
         // before checking
-        checkMatrix(expectedc1, makeSymmetric(actualc1));
+        MatrixTestSupport.checkMatrix(expectedc1, makeSymmetric(actualc1), 0);
         FloatDenseBLAS.DEFAULT.syrk(alpha, a.transpose(), beta, actualc2);
-        checkMatrix(expectedc2, makeSymmetric(actualc2));
+        MatrixTestSupport.checkMatrix(expectedc2, makeSymmetric(actualc2), 0);
     }
 }

@@ -1,5 +1,8 @@
 package net.lunglet.array4j.matrix.packed;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.nio.FloatBuffer;
 import net.jcip.annotations.NotThreadSafe;
 import net.lunglet.array4j.Direction;
@@ -17,14 +20,15 @@ final class FloatPackedMatrixImpl extends AbstractPackedMatrix<FloatDenseVector>
 
     private transient FloatBuffer data;
 
-    FloatPackedMatrixImpl(final FloatBuffer data, final int rows, final int columns, final PackedType packedType) {
-        super(rows, columns, packedType);
-        this.data = data;
+    FloatPackedMatrixImpl(final FloatPackedMatrixImpl other, final boolean transpose) {
+        super(transpose ? other.columns : other.rows, transpose ? other.rows : other.columns,
+                transpose ? other.packedType.transpose() : other.packedType, other.storage);
+        this.data = other.data;
     }
 
     FloatPackedMatrixImpl(final int rows, final int columns, final PackedType packedType, final Storage storage) {
-        super(rows, columns, packedType);
-        this.data = BufferUtils.createFloatBuffer(getBufferSize(), storage);
+        super(rows, columns, packedType, storage);
+        this.data = createData();
     }
 
     @Override
@@ -34,6 +38,10 @@ final class FloatPackedMatrixImpl extends AbstractPackedMatrix<FloatDenseVector>
             v.set(row, get(row, column));
         }
         return v;
+    }
+
+    private FloatBuffer createData() {
+        return BufferUtils.createFloatBuffer(getPackedLength(), storage);
     }
 
     /** {@inheritDoc} */
@@ -47,6 +55,16 @@ final class FloatPackedMatrixImpl extends AbstractPackedMatrix<FloatDenseVector>
             return data.get(elementOffset(row, column));
         } else {
             return 0.0f;
+        }
+    }
+
+    private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        this.data = createData();
+        FloatBuffer buf = data();
+        int len = getPackedLength();
+        for (int i = 0; i < len; i++) {
+            buf.put(in.readFloat());
         }
     }
 
@@ -129,6 +147,15 @@ final class FloatPackedMatrixImpl extends AbstractPackedMatrix<FloatDenseVector>
     /** {@inheritDoc} */
     @Override
     public FloatPackedMatrix transpose() {
-        return new FloatPackedMatrixImpl(data, rows, columns, packedType.transpose());
+        return new FloatPackedMatrixImpl(this, true);
+    }
+
+    private void writeObject(final ObjectOutputStream out) throws IOException {
+        out.defaultWriteObject();
+        FloatBuffer buf = data();
+        int len = getPackedLength();
+        for (int i = 0; i < len; i++) {
+            out.writeFloat(buf.get(i));
+        }
     }
 }
