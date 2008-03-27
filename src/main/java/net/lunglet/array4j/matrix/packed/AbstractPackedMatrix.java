@@ -1,11 +1,10 @@
 package net.lunglet.array4j.matrix.packed;
 
+import net.lunglet.array4j.Storage;
 import net.lunglet.array4j.matrix.AbstractMatrix;
 import net.lunglet.array4j.matrix.dense.DenseVector;
 
 public abstract class AbstractPackedMatrix<V extends DenseVector> extends AbstractMatrix<V> implements PackedMatrix {
-    private static final long serialVersionUID = 1L;
-
     protected enum PackedType {
         LOWER_TRIANGULAR {
             @Override
@@ -29,15 +28,20 @@ public abstract class AbstractPackedMatrix<V extends DenseVector> extends Abstra
         public abstract PackedType transpose();
     }
 
+    private static final long serialVersionUID = 1L;
+
     protected final PackedType packedType;
 
-    public AbstractPackedMatrix(final int rows, final int columns, final PackedType packedType) {
+    protected final Storage storage;
+
+    public AbstractPackedMatrix(final int rows, final int columns, final PackedType packedType, final Storage storage) {
         super(rows, columns);
         // TODO can possibly relax this restriction in some cases?
         if (rows != columns) {
             throw new IllegalArgumentException();
         }
         this.packedType = packedType;
+        this.storage = storage;
     }
 
     protected final void checkCanSet(final int row, final int column) {
@@ -64,7 +68,7 @@ public abstract class AbstractPackedMatrix<V extends DenseVector> extends Abstra
         }
     }
 
-    protected final int getBufferSize() {
+    protected final int getPackedLength() {
         return rows * (rows + 1) / 2;
     }
 

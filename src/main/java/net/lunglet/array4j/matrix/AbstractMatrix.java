@@ -1,10 +1,13 @@
 package net.lunglet.array4j.matrix;
 
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import net.lunglet.array4j.Direction;
 import net.lunglet.util.AssertUtils;
+import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
@@ -40,7 +43,7 @@ public abstract class AbstractMatrix<V extends Vector> implements Matrix {
         }
     }
 
-    protected final AbstractMatrix<V> base;
+    protected final transient AbstractMatrix<V> base;
 
     protected final int columns;
 
@@ -48,14 +51,18 @@ public abstract class AbstractMatrix<V extends Vector> implements Matrix {
 
     protected final int rows;
 
-    public AbstractMatrix(final AbstractMatrix<V> base, final int rows, final int columns) {
-        AssertUtils.checkArgument(rows >= 0);
-        AssertUtils.checkArgument(columns >= 0);
-        this.rows = rows;
-        this.columns = columns;
+    private static void checkDimensions(final int rows, final int columns) {
         if ((1L * rows * columns) > Integer.MAX_VALUE) {
             throw new IllegalArgumentException("dimensions too large");
         }
+    }
+
+    public AbstractMatrix(final AbstractMatrix<V> base, final int rows, final int columns) {
+        AssertUtils.checkArgument(rows >= 0);
+        AssertUtils.checkArgument(columns >= 0);
+        checkDimensions(rows, columns);
+        this.rows = rows;
+        this.columns = columns;
         this.length = rows * columns;
         this.base = base;
     }
@@ -201,5 +208,13 @@ public abstract class AbstractMatrix<V extends Vector> implements Matrix {
                 };
             }
         };
+    }
+
+    private void writeObject(final ObjectOutputStream out) throws IOException {
+        if (base != null) {
+            // TODO figure out if we want to serialize the base matrix
+            throw new NotImplementedException();
+        }
+        out.defaultWriteObject();
     }
 }
