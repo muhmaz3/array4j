@@ -6,6 +6,8 @@ import java.io.File;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import net.jcip.annotations.NotThreadSafe;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @NotThreadSafe
 public final class H5File extends IdComponent {
@@ -59,6 +61,8 @@ public final class H5File extends IdComponent {
         return id;
     }
 
+    private final Logger logger = LoggerFactory.getLogger(H5File.class);
+
     private final Group rootGroup;
 
     public H5File(final File file) {
@@ -72,6 +76,7 @@ public final class H5File extends IdComponent {
     public H5File(final File file, final int flags, final FileCreatePropList fcpl, final FileAccessPropList fapl) {
         super(init(file.getPath(), flags, fcpl, fapl), CLOSE_ACTION);
         this.rootGroup = new Group(getId(), true);
+        logger.debug("Created [id={}]", getId());
     }
 
     public H5File(final String name) {

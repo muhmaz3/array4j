@@ -12,7 +12,9 @@ public final class DataSpaceTest {
     public void testOffsetSimple() {
         DataSpace space = new DataSpace(1L);
         // TODO this doesn't work, even though the documentation says it should
-//        space.offsetSimple(null);
+        if (false) {
+            space.offsetSimple(null);
+        }
     }
 
     @Test
@@ -87,5 +89,10 @@ public final class DataSpaceTest {
         assertEquals(new Point(0, 0, 0), bounds[0]);
         assertEquals(new Point(i - 1, j - 1, k - 1), bounds[1]);
         space.close();
+    }
+
+    @Test
+    public void testToString() {
+        DataSpace.ALL.toString();
     }
 }

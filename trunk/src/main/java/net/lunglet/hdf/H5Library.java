@@ -12,6 +12,7 @@ import com.sun.jna.Structure;
 import com.sun.jna.ToNativeContext;
 import com.sun.jna.ToNativeConverter;
 import com.sun.jna.TypeMapper;
+import com.sun.jna.Structure.ByReference;
 import com.sun.jna.ptr.DoubleByReference;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.LongByReference;
@@ -27,22 +28,28 @@ import java.util.Map;
 // TODO look at opening of absolute names from arbitrary groups or datasets
 
 public interface H5Library extends Library {
-    static class H5E_error_t extends Structure {
-        String desc;
+    static class H5E_error_t extends Structure implements ByReference {
+        /** Major number (first field). */
+        public int maj_num;
 
-        String file_name;
+        /** Minor number (second field). */
+        public int min_num;
 
-        String func_name;
+        /** Function name (third field). */
+        public String func_name;
 
-        int line;
+        /** File name (fourth field). */
+        public String file_name;
 
-        int maj_num;
+        /** Line number (fifth field). */
+        public int line;
 
-        int min_num;
+        /** Description (sixth field). */
+        public String desc;
     }
 
     interface H5E_walk_t extends Callback {
-        int callback(int n, Pointer err_desc, Pointer client_data);
+        int callback(int n, H5E_error_t err_desc, Pointer client_data);
     }
 
     interface H5G_iterate_t extends Callback {
@@ -71,9 +78,10 @@ public interface H5Library extends Library {
                 }
             });
             options.put(Library.OPTION_TYPE_MAPPER, mapper);
-            // TODO loadLibrary with options at some stage
-            Library lib = (Library) Native.loadLibrary(LIBRARY_NAME, H5Library.class);
-            // TODO set error handle with H5Eset_auto(..., ...)
+            // TODO use type mapper at some stage
+            H5Library lib = (H5Library) Native.loadLibrary(LIBRARY_NAME, H5Library.class);
+            // Disable automatic printing of errors
+            lib.H5Eset_auto(null, null);
             return (H5Library) Native.synchronizedLibrary(lib);
         }
 
@@ -105,6 +113,12 @@ public interface H5Library extends Library {
      * The number of bytes used to represent a <tt>float</tt> value.
      */
     int FLOAT_BYTES = Float.SIZE >>> 3;
+
+    /** Begin error stack traversal at API function, end deep. */
+    int H5E_WALK_DOWNWARD = 1;
+
+    /** Begin error stack traversal deep, end at API function. */
+    int H5E_WALK_UPWARD = 0;
 
     int H5G_DATASET = 2;
 
@@ -356,7 +370,22 @@ public interface H5Library extends Library {
 
     int H5Dwrite(int dset_id, int mem_type_id, int mem_space_id, int file_space_id, int plist_id, Buffer buf);
 
+    /**
+     * <CODE>const char *H5Eget_major(H5E_major_t major_number)</CODE>
+     */
+    String H5Eget_major(int major_number);
+
+    /**
+     * <CODE>const char *H5Eget_minor(H5E_minor_t minor_number)</CODE>
+     */
+    String H5Eget_minor(int minor_number);
+
     int H5Eset_auto(Pointer func, Pointer client_data);
+
+    /**
+     * <CODE>herr_t H5Ewalk(H5E_direction_t direction, H5E_walk_t func, void* client_data)</CODE>
+     */
+    int H5Ewalk(int direction, H5E_walk_t func, Pointer client_data);
 
     int H5Fclose(int file_id);
 
