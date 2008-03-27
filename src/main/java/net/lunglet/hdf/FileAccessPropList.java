@@ -3,9 +3,13 @@ package net.lunglet.hdf;
 import com.sun.jna.ptr.DoubleByReference;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.NativeLongByReference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class FileAccessPropList extends PropertyList {
     public static final FileAccessPropList DEFAULT = new FileAccessPropList(H5Library.H5P_DEFAULT);
+
+    private final Logger logger = LoggerFactory.getLogger(FileAccessPropList.class);
 
     FileAccessPropList() {
         this(create(PropertyListClass.H5P_FILE_ACCESS));
@@ -13,6 +17,7 @@ public final class FileAccessPropList extends PropertyList {
 
     FileAccessPropList(final int id) {
         super(id);
+        logger.debug("Created [id={}]", getId());
     }
 
     private void getCache(final IntByReference mdcNelmts, final IntByReference rdccNelmts,

@@ -6,4 +6,8 @@ public final class H5GroupException extends H5Exception {
     public H5GroupException(final String message) {
         super(message);
     }
+
+    public H5GroupException(final String message, final boolean includeError) {
+        super(message, includeError);
+    }
 }

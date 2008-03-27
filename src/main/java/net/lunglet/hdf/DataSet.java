@@ -2,6 +2,8 @@ package net.lunglet.hdf;
 
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class DataSet extends AbstractDs implements Comparable<DataSet> {
     private static final CloseAction CLOSE_ACTION = new CloseAction() {
@@ -14,8 +16,11 @@ public final class DataSet extends AbstractDs implements Comparable<DataSet> {
         }
     };
 
+    private final Logger logger = LoggerFactory.getLogger(DataSet.class);
+
     DataSet(final int id) {
         super(id, CLOSE_ACTION);
+        logger.debug("Created {} [id={}]", getName(), getId());
     }
 
     @Override

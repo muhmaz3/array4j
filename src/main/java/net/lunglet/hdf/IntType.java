@@ -1,12 +1,18 @@
 package net.lunglet.hdf;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public final class IntType extends AtomType<IntType> {
     public static final IntType STD_I32LE = new IntType(H5Library.H5T_STD_I32LE, true);
 
     public static final IntType STD_I8BE = new IntType(H5Library.H5T_STD_I8BE, true);
 
+    private final Logger logger = LoggerFactory.getLogger(IntType.class);
+
     IntType(final int id, final boolean predefined) {
         super(id, predefined);
+        logger.info("Created [id={}]", getId());
     }
 
     @Override

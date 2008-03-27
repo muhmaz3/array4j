@@ -5,6 +5,8 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /*
  * http://hdfgroup.com/hdf-java-html/JNI/index.html
@@ -12,6 +14,8 @@ import java.util.List;
  */
 
 final class NativeIdComponent extends WeakReference<IdComponent> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(NativeIdComponent.class);
+
     private static final int MAX_ITERATIONS = 100;
 
     private static final List<NativeIdComponent> REF_LIST =
@@ -51,6 +55,7 @@ final class NativeIdComponent extends WeakReference<IdComponent> {
         // Ignore close if there is no close action. This is required for
         // components that cannot be closed, e.g. predefined types.
         if (open && closeAction != null) {
+            LOGGER.debug("Closing [id={}]", getId());
             REF_LIST.remove(this);
             closeAction.close(getId());
             open = false;

@@ -6,6 +6,8 @@ import java.nio.ByteOrder;
 import java.nio.LongBuffer;
 import java.util.Arrays;
 import net.lunglet.util.ArrayUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class DataSpace extends IdComponent {
     public static final DataSpace ALL = new DataSpace(H5Library.H5S_ALL, true);
@@ -46,6 +48,8 @@ public final class DataSpace extends IdComponent {
         return id;
     }
 
+    private final Logger logger = LoggerFactory.getLogger(DataSpace.class);
+
     private DataSpace(final DataSpaceClass type) {
         this(init(type), true);
     }
@@ -53,6 +57,7 @@ public final class DataSpace extends IdComponent {
     DataSpace(final int id, final boolean tag) {
         // tag helps to avoid confusion with long... constructor
         super(id, CLOSE_ACTION);
+        logger.debug("Created [id={}]", getId());
     }
 
     public DataSpace(final long... dims) {
@@ -305,7 +310,9 @@ public final class DataSpace extends IdComponent {
 
     @Override
     public String toString() {
-        if (isOpen()) {
+        if (equals(ALL)) {
+            return "DataSpace[ALL]";
+        } else if (isOpen()) {
             return "DataSpace[dims=" + Arrays.toString(getDims()) + ", maxdims=" + Arrays.toString(getMaxDims()) + "]";
         } else {
             return "DataSpace[invalid]";
