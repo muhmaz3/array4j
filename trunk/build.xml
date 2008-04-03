@@ -61,6 +61,7 @@
       <zipfileset src="${lib.dir}/jna.jar" />
       <zipfileset src="${lib.dir}/commons-lang-2.3.jar" />
       <zipfileset src="${lib.dir}/jcip-annotations.jar" />
+      <zipfileset src="${lib.dir}/slf4j-api-1.5.0.jar" />
     </jarjar>
   </target>
 
