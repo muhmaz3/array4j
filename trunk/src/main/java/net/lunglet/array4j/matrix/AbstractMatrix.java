@@ -5,6 +5,7 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 import net.lunglet.array4j.Direction;
 import net.lunglet.util.AssertUtils;
 import org.apache.commons.lang.NotImplementedException;
@@ -122,6 +123,9 @@ public abstract class AbstractMatrix<V extends Vector> implements Matrix {
                     }
 
                     public V next() {
+                        if (!hasNext()) {
+                            throw new NoSuchElementException();
+                        }
                         return column(column++);
                     }
 
@@ -199,6 +203,9 @@ public abstract class AbstractMatrix<V extends Vector> implements Matrix {
                     }
 
                     public V next() {
+                        if (!hasNext()) {
+                            throw new NoSuchElementException();
+                        }
                         return row(row++);
                     }
 
