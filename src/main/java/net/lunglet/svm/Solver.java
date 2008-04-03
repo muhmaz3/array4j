@@ -1,6 +1,11 @@
 package net.lunglet.svm;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 class Solver {
+    private final Logger logger = LoggerFactory.getLogger(Solver.class);
+
     // java: information about solution except alpha,
     // because we cannot return multiple values otherwise...
     static class SolutionInfo {
@@ -539,7 +544,7 @@ class Solver {
         si.upper_bound_p = Cp;
         si.upper_bound_n = Cn;
 
-//        log.info("optimization finished, #iter = " + iter);
+        logger.info("optimization finished, #iter = " + iter);
     }
 
     void swap_index(final int i, final int j) {

@@ -1,8 +1,12 @@
 package net.lunglet.svm;
 
 import net.lunglet.array4j.matrix.FloatVector;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 final class Svm {
+    private final Logger logger = LoggerFactory.getLogger(Svm.class);
+
     static class decision_function {
         double[] alpha;
 
@@ -440,7 +444,7 @@ final class Svm {
             }
         }
         if (iter >= max_iter) {
-//            log.error("Exceeds max_iter in multiclass_prob");
+            logger.error("Exceeds max_iter in multiclass_prob");
         }
     }
 
@@ -550,13 +554,13 @@ final class Svm {
             }
 
             if (stepsize < min_step) {
-//                log.error("Line search fails in two-class probability estimates");
+                logger.error("Line search fails in two-class probability estimates");
                 break;
             }
         }
 
         if (iter >= max_iter) {
-//            log.error("Reaching maximal iterations in two-class probability estimates");
+            logger.error("Reaching maximal iterations in two-class probability estimates");
         }
         probAB[0] = A;
         probAB[1] = B;
@@ -590,7 +594,7 @@ final class Svm {
         }
 
         if (Cp == Cn) {
-//            log.info("nu = " + sumAlpha / (Cp * prob.l));
+            logger.info("nu = " + sumAlpha / (Cp * prob.l));
         }
 
         for (i = 0; i < l; i++) {
@@ -624,7 +628,7 @@ final class Svm {
             alpha[i] = alpha2[i] - alpha2[i + l];
             sumAlpha += Math.abs(alpha[i]);
         }
-//        log.info("nu = " + sumAlpha / (param.C * l));
+        logger.info("nu = " + sumAlpha / (param.C * l));
     }
 
     private void solve_nu_svr(final SvmProblem prob, final SvmParameter param, final double[] alpha,
@@ -651,7 +655,7 @@ final class Svm {
         NuSolver s = new NuSolver();
         s.Solve(2 * l, new SVRKernel(prob, param), linear_term, y, alpha2, C, C, param.eps, si, param.shrinking);
 
-//        log.info("epsilon = " + (-si.r));
+        logger.info("epsilon = " + (-si.r));
 
         for (i = 0; i < l; i++) {
             alpha[i] = alpha2[i] - alpha2[i + l];
@@ -866,7 +870,7 @@ final class Svm {
                 && model.probA != null) {
             return model.probA[0];
         } else {
-//            log.error("Model doesn't contain information for SVR probability inference");
+            logger.error("Model doesn't contain information for SVR probability inference");
             return 0;
         }
     }
@@ -931,8 +935,8 @@ final class Svm {
             }
         }
         mae /= (prob.l - count);
-//        log.info("Prob. model for test data: target value = predicted value + z");
-//        log.info("z: Laplace distribution e^(-|z|/sigma)/(2sigma),sigma=" + mae);
+        logger.info("Prob. model for test data: target value = predicted value + z");
+        logger.info("z: Laplace distribution e^(-|z|/sigma)/(2sigma),sigma=" + mae);
         return mae;
     }
 
@@ -1016,7 +1020,7 @@ final class Svm {
                     }
                 }
                 if (j == nr_class) {
-//                    log.error("warning: class label " + param.weight_label[i] + " specified in weight is not found");
+                    logger.error("warning: class label " + param.weight_label[i] + " specified in weight is not found");
                 } else {
                     weighted_C[j] *= param.weight[i];
                 }
@@ -1119,7 +1123,7 @@ final class Svm {
                 nzCount[i] = nSV;
             }
 
-//            log.info("Total nSV = " + nnz);
+            logger.info("Total nSV = " + nnz);
 
             model.l = nnz;
             model.SV = new SvmNode[nnz];
@@ -1197,7 +1201,7 @@ final class Svm {
             throw new AssertionError();
         }
 
-//        log.info("obj = " + si.obj + ", rho = " + si.rho);
+        logger.info("obj = " + si.obj + ", rho = " + si.rho);
 
         // output SVs
 
@@ -1218,7 +1222,7 @@ final class Svm {
             }
         }
 
-//        log.info("nSV = " + nSV + ", nBSV = " + nBSV);
+        logger.info("nSV = " + nSV + ", nBSV = " + nBSV);
 
         decision_function f = new decision_function();
         f.alpha = alpha;
