@@ -30,6 +30,10 @@ public final class HDFReader implements Closeable {
         this.h5file = h5file;
     }
 
+    public HDFReader(final String name) {
+        this(new H5File(name, H5File.H5F_ACC_RDONLY));
+    }
+
     public void close() {
         h5file.close();
     }
