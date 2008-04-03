@@ -9,8 +9,6 @@ import net.lunglet.hdf.H5Library.H5G_iterate_t;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-// TODO implement existsGroup
-
 // TODO implement groupsIterator and dataSetsIterator
 
 public final class Group extends H5Object {
@@ -63,6 +61,15 @@ public final class Group extends H5Object {
             throw new H5GroupException("H5Gcreate failed");
         }
         return new Group(groupId, false);
+    }
+
+    public boolean existsGroup(final String name) {
+        int groupId = H5Library.INSTANCE.H5Gopen(getId(), name);
+        if (groupId < 0) {
+            return false;
+        }
+        new Group(groupId, false).close();
+        return true;
     }
 
     public Set<String> getDataSetNames() {

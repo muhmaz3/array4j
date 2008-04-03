@@ -15,12 +15,18 @@ import net.lunglet.hdf.H5File;
 // TODO write via an intermediate direct buffer if matrix is
 // stored on the heap and exceeds some maximum size
 
+// TODO recursively create non-existant groups
+
 @NotThreadSafe
 public final class HDFWriter implements Closeable {
     private final H5File h5file;
 
     public HDFWriter(final H5File h5file) {
         this.h5file = h5file;
+    }
+
+    public HDFWriter(final String name) {
+        this(new H5File(name, H5File.H5F_ACC_TRUNC));
     }
 
     public void close() {
