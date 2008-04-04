@@ -63,6 +63,15 @@ public final class Group extends H5Object {
         return new Group(groupId, false);
     }
 
+    public boolean existsDataSet(final String name) {
+        int datasetId = H5Library.INSTANCE.H5Dopen(getId(), name);
+        if (datasetId < 0) {
+            return false;
+        }
+        new DataSet(datasetId).close();
+        return true;
+    }
+
     public boolean existsGroup(final String name) {
         int groupId = H5Library.INSTANCE.H5Gopen(getId(), name);
         if (groupId < 0) {
