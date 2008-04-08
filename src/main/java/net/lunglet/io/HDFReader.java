@@ -70,6 +70,9 @@ public final class HDFReader implements Closeable {
             if (matrix.storage().equals(Storage.DIRECT)) {
                 dataset.read(matrix.data(), FloatType.IEEE_F32LE);
             } else {
+                // TODO use a smallish direct buffer here
+                // TODO and maybe use a threadlocal softreference or something
+                // so that we don't reallocate it too many times
                 throw new UnsupportedOperationException();
             }
         } finally {

@@ -37,6 +37,7 @@ public final class GMMMAPStats {
     }
 
     public GMMMAPStats(final GMM gmm, final double fraction, final boolean doMeans, final boolean doVars) {
+        // TODO check upper bound on fraction
         if (fraction < 0) {
             throw new IllegalArgumentException();
         }

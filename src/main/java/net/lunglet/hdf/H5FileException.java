@@ -6,4 +6,8 @@ public final class H5FileException extends H5Exception {
     public H5FileException(final String message) {
         super(message);
     }
+
+    public H5FileException(final String message, final boolean includeError) {
+        super(message, includeError);
+    }
 }
