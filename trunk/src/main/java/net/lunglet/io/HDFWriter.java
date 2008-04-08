@@ -34,7 +34,7 @@ public final class HDFWriter implements Closeable {
     }
 
     public void write(final String name, final FloatDenseMatrix matrix) {
-        if (!matrix.order().equals(Order.ROW)) {
+        if (!matrix.order().equals(Order.ROW) && matrix.rows() > 1 && matrix.columns() > 1) {
             throw new IllegalArgumentException();
         }
         DataType memType = FloatType.IEEE_F32LE;

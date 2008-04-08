@@ -9,6 +9,10 @@ import net.jcip.annotations.NotThreadSafe;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+// TODO include human readable flags in exceptions when opening
+// fails, to make it easy to diagnose e.g. 'n RDWR open of a
+// non-existant file
+
 @NotThreadSafe
 public final class H5File extends IdComponent {
     private static final CloseAction CLOSE_ACTION = new CloseAction() {
@@ -55,7 +59,7 @@ public final class H5File extends IdComponent {
             id = H5Library.INSTANCE.H5Fopen(name, flags, accessPlist.getId());
             if (id < 0) {
                 // throw an exception when open/create fail
-                throw new H5FileException("H5Fopen failed");
+                throw new H5FileException("H5Fopen failed", true);
             }
         }
         return id;

@@ -2,14 +2,30 @@ package net.lunglet.gmm;
 
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import net.lunglet.array4j.matrix.FloatVector;
 import net.lunglet.array4j.matrix.dense.DenseFactory;
 import net.lunglet.array4j.matrix.dense.FloatDenseVector;
 import net.lunglet.array4j.matrix.util.FloatMatrixUtils;
-import org.apache.commons.lang.NotImplementedException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class GMMUtils {
+    private static final Logger LOGGER = LoggerFactory.getLogger(GMMUtils.class);
+
+    public static int countWeak(final DiagCovGMM gmm, final GMMMAPStats stats, final float nthresh) {
+        float[] n = stats.getN();
+        int count = 0;
+        for (int i = 0; i < n.length; i++) {
+            if (n[i] < nthresh) {
+                count++;
+            }
+        }
+        return count;
+    }
+
     public static DiagCovGMM createDiagCovGMM(final int mixtures, final int dimension) {
         FloatVector weights = DenseFactory.floatVector(mixtures);
         FloatMatrixUtils.fill(weights, 1.0f);
@@ -61,18 +77,66 @@ public final class GMMUtils {
         return true;
     }
 
+    public static DiagCovGMM keepHeaviest(final DiagCovGMM gmm, final int count) {
+        if (count > gmm.getMixtureCount()) {
+            throw new IllegalArgumentException();
+        }
+        final float[] weights = gmm.getWeights().toArray();
+        Integer[] indexes = new Integer[weights.length];
+        for (int i = 0; i < indexes.length; i++) {
+            indexes[i] = i;
+        }
+        Arrays.sort(indexes, new Comparator<Integer>() {
+            @Override
+            public int compare(final Integer o1, final Integer o2) {
+                // sort in descending order
+                return -Float.compare(weights[o1], weights[o2]);
+            }
+        });
+        List<Float> weightsList = new ArrayList<Float>();
+        List<FloatVector> means = new ArrayList<FloatVector>();
+        List<FloatVector> vars = new ArrayList<FloatVector>();
+        for (int i = 0; i < count; i++) {
+            int index = indexes[i];
+            weightsList.add(weights[index]);
+            means.add(gmm.getMean(index));
+            vars.add(gmm.getVariance(index));
+        }
+        return new DiagCovGMM(DenseFactory.floatVector(weightsList), means, vars);
+    }
+
     /**
      * Replace weak components (components not supported by enough data) by
      * splitting the strongest (heaviest) components.
      */
-    public static DiagCovGMM replaceWeak(final DiagCovGMM gmm, final GMMMAPStats stats, final float thresh) {
-        throw new NotImplementedException();
+    public static DiagCovGMM replaceWeak(final DiagCovGMM gmm, final GMMMAPStats stats, final float nthresh) {
+        float[] n = stats.getN();
+        List<Float> weights = new ArrayList<Float>();
+        List<FloatVector> means = new ArrayList<FloatVector>();
+        List<FloatVector> vars = new ArrayList<FloatVector>();
+        for (int i = 0; i < n.length; i++) {
+            if (n[i] < nthresh) {
+                LOGGER.info("Component {} is weak: n = {} < {}", new Object[]{i, n[i], nthresh});
+                continue;
+            }
+            means.add(gmm.getMean(i));
+            vars.add(gmm.getVariance(i));
+            weights.add(gmm.getWeights().get(i));
+        }
+        FloatVector weightsVec = DenseFactory.floatVector(weights);
+        DiagCovGMM newGmm = new DiagCovGMM(weightsVec, means, vars);
+        while (newGmm.getMixtureCount() < gmm.getMixtureCount()) {
+            newGmm = splitHeaviest(newGmm);
+        }
+        return newGmm;
     }
 
     /**
      * Split all the components in the GMM.
      */
     public static DiagCovGMM splitAll(final DiagCovGMM gmm) {
+        LOGGER.info("Splitting all components");
+
         List<FloatVector> newMeans = new ArrayList<FloatVector>();
         List<FloatVector> newVars = new ArrayList<FloatVector>();
         for (int i = 0; i < gmm.getMixtureCount(); i++) {
@@ -116,6 +180,8 @@ public final class GMMUtils {
                 maxIndex = i;
             }
         }
+
+        LOGGER.info("Splitting heaviest component {}", maxIndex);
 
         List<FloatVector> newMeans = new ArrayList<FloatVector>();
         List<FloatVector> newVars = new ArrayList<FloatVector>();
