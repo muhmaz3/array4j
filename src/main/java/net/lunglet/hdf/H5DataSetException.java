@@ -6,4 +6,8 @@ public final class H5DataSetException extends H5Exception {
     public H5DataSetException(final String message) {
         super(message);
     }
+
+    public H5DataSetException(final String message, final boolean includeError) {
+        super(message, includeError);
+    }
 }

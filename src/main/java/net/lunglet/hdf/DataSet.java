@@ -69,7 +69,7 @@ public final class DataSet extends AbstractDs implements Comparable<DataSet> {
         final int xferPlistId = xferPlist.getId();
         int err = H5Library.INSTANCE.H5Dread(getId(), memTypeId, memSpaceId, fileSpaceId, xferPlistId, buf);
         if (err < 0) {
-            throw new H5DataSetException("H5Dread failed");
+            throw new H5DataSetException("H5Dread failed", true);
         }
     }
 
