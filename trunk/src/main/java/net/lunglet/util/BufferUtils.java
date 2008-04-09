@@ -18,6 +18,9 @@ public final class BufferUtils {
         NativeLong array4j_addressof(Buffer buffer);
     }
 
+    /**
+     * Returns an aligned buffer with native byte order.
+     */
     public static ByteBuffer createAlignedBuffer(final int size, final int alignment) {
         if (alignment < 1) {
             throw new IllegalArgumentException();
@@ -26,12 +29,15 @@ public final class BufferUtils {
         long addr = BufferUtilsLibrary.INSTANCE.array4j_addressof(buffer).longValue();
         int mod = (int) (addr % alignment);
         int offset = mod > 0 ? alignment - mod : 0;
-        ByteBuffer nativeBuffer = buffer.order(ByteOrder.nativeOrder());
-        ByteBuffer slicedBuffer = ((ByteBuffer) nativeBuffer.position(offset)).slice();
+        ByteBuffer slicedBuffer = ((ByteBuffer) buffer.position(offset)).slice();
+        slicedBuffer.order(ByteOrder.nativeOrder());
         Buffer limitedBuffer = slicedBuffer.limit(size);
         return (ByteBuffer) limitedBuffer;
     }
 
+    /**
+     * Returns a buffer for complex floats (with native byte order if it is direct).
+     */
     public static FloatBuffer createComplexFloatBuffer(final int size, final Storage storage) {
         if (size < 0) {
             throw new IllegalArgumentException();
@@ -44,6 +50,9 @@ public final class BufferUtils {
         return FloatBuffer.allocate(2 * size);
     }
 
+    /**
+     * Returns a buffer doubles (with native byte order if it is direct).
+     */
     public static DoubleBuffer createDoubleBuffer(final int size, final Storage storage) {
         if (size < 0) {
             throw new IllegalArgumentException();
@@ -56,6 +65,9 @@ public final class BufferUtils {
         return DoubleBuffer.allocate(size);
     }
 
+    /**
+     * Returns a buffer for floats (with native byte order if it is direct).
+     */
     public static FloatBuffer createFloatBuffer(final int size, final Storage storage) {
         if (size < 0) {
             throw new IllegalArgumentException();
@@ -68,6 +80,9 @@ public final class BufferUtils {
         return FloatBuffer.allocate(size);
     }
 
+    /**
+     * Returns the capacity of the buffer in bytes.
+     */
     public static int getBytesCapacity(final Buffer buf) {
         if (buf instanceof ByteBuffer) {
             return buf.capacity();

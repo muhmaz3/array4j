@@ -2,7 +2,9 @@ package net.lunglet.io;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
+import java.util.Iterator;
 import net.jcip.annotations.NotThreadSafe;
 import net.lunglet.array4j.Order;
 import net.lunglet.array4j.Storage;
@@ -14,28 +16,137 @@ import net.lunglet.hdf.FloatType;
 import net.lunglet.hdf.H5File;
 import net.lunglet.hdf.SelectionOperator;
 import net.lunglet.util.BufferUtils;
+import net.lunglet.util.NumberUtils;
 import org.apache.commons.lang.NotImplementedException;
 
 // TODO handle any order, stride, offset, size, etc.
 
-// TODO write generic function to do direct buffered reads from any dataset into a heap buffer
-
 @NotThreadSafe
 public final class HDFReader implements Closeable {
-    private static final int DEFAULT_BUFFER_SIZE = 4 * 1024 * 1024;
+    private static final class MatrixSelector implements Iterable<DataSpace> {
+        private final int capacity;
+
+        private final DataSpace space;
+
+        /**
+         * @param capacity size of buffer in number of elements
+         */
+        public MatrixSelector(final DataSpace space, final int capacity) {
+            if (capacity <= 0) {
+                throw new IllegalArgumentException();
+            }
+            this.space = space;
+            this.capacity = capacity;
+        }
+
+        @Override
+        public Iterator<DataSpace> iterator() {
+            final int[] dims = space.getIntDims();
+            if (dims.length != 2) {
+                throw new NotImplementedException();
+            }
+            final int rows = dims[0];
+            final int columns = dims[1];
+            final long[] count = {1, 1};
+            return new Iterator<DataSpace>() {
+                private int column = 0;
+
+                private int row = 0;
+
+                @Override
+                public boolean hasNext() {
+                    return row < rows && column < columns;
+                }
+
+                @Override
+                public DataSpace next() {
+                    space.selectNone();
+                    int remaining = capacity;
+
+                    // try to read remainder of current row
+                    remaining = readColumns(remaining);
+
+                    if (remaining == 0 || row == rows) {
+                        return space;
+                    }
+
+                    // try to read complete rows
+                    while (remaining >= columns && row < rows) {
+                        long[] start = {row, column};
+                        long[] block = {1, columns};
+                        space.selectHyperslab(SelectionOperator.OR, start, null, count, block);
+                        row++;
+                        column = 0;
+                        remaining -= columns;
+                    }
+
+                    if (remaining == 0 || row == rows) {
+                        return space;
+                    }
+
+                    // try to read part of current row
+                    remaining = readColumns(remaining);
+                    return space;
+                }
+
+                private int readColumns(final int origCapacity) {
+                    int capacity = origCapacity;
+                    int columnsRemaining = columns - column;
+                    int columnsToRead = Math.min(capacity, columnsRemaining);
+                    if (columnsToRead > 0) {
+                        long[] start = {row, column};
+                        long[] block = {1, columnsToRead};
+                        space.selectHyperslab(SelectionOperator.OR, start, null, count, block);
+                        column += columnsToRead;
+                        if (column == columns) {
+                            row++;
+                            column = 0;
+                        }
+                        capacity -= columnsToRead;
+                    }
+                    return capacity;
+                }
+
+                @Override
+                public void remove() {
+                    throw new UnsupportedOperationException();
+                }
+            };
+        }
+    }
+
+    private static final int DEFAULT_BUFFER_SIZE = 8 * 1024 * 1024;
+
+    private final ByteBuffer buffer;
 
     private final H5File h5file;
 
     public HDFReader(final H5File h5file) {
+        this(h5file, DEFAULT_BUFFER_SIZE);
+    }
+
+    /**
+     * @param bufSize read buffer size in bytes
+     */
+    public HDFReader(final H5File h5file, final int bufSize) {
         this.h5file = h5file;
+        this.buffer = BufferUtils.createAlignedBuffer(bufSize, 1);
     }
 
     public HDFReader(final String name) {
-        this(new H5File(name, H5File.H5F_ACC_RDONLY));
+        this(new H5File(name, H5File.H5F_ACC_RDONLY), DEFAULT_BUFFER_SIZE);
+    }
+
+    public HDFReader(final String name, final int bufSize) {
+        this(new H5File(name, H5File.H5F_ACC_RDONLY), bufSize);
     }
 
     public void close() {
         h5file.close();
+    }
+
+    private ByteBuffer getBuffer() {
+        return (ByteBuffer) buffer.position(0);
     }
 
     public void read(final String name, final FloatDenseMatrix matrix) {
@@ -70,10 +181,35 @@ public final class HDFReader implements Closeable {
             if (matrix.storage().equals(Storage.DIRECT)) {
                 dataset.read(matrix.data(), FloatType.IEEE_F32LE);
             } else {
-                // TODO use a smallish direct buffer here
-                // TODO and maybe use a threadlocal softreference or something
-                // so that we don't reallocate it too many times
-                throw new UnsupportedOperationException();
+                FloatBuffer buf = getBuffer().asFloatBuffer();
+                if (buf.capacity() < 1) {
+                    throw new IllegalStateException("Buffer is too small to contain a float");
+                }
+                FloatBuffer data = matrix.data();
+                space.selectAll();
+                int npoints = NumberUtils.castLongToInt(space.getSelectNPoints());
+                if (buf.capacity() >= npoints) {
+                    buf.limit(npoints);
+                    dataset.read(buf, FloatType.IEEE_F32LE);
+                    buf.rewind();
+                    data.put(buf);
+                } else {
+                    DataSpace memSpace = new DataSpace(buf.capacity());
+                    final long[] start = {0};
+                    final long[] count = {1};
+                    final long[] block = new long[1];
+                    for (DataSpace selectedSpace : new MatrixSelector(space, buf.capacity())) {
+                        int selectNPoints = NumberUtils.castLongToInt(selectedSpace.getSelectNPoints());
+                        buf.limit(selectNPoints);
+                        block[0] = selectNPoints;
+                        memSpace.selectHyperslab(SelectionOperator.SET, start, null, count, block);
+                        // TODO check if reading with ALL memory space is faster
+                        dataset.read(buf, FloatType.IEEE_F32LE, memSpace, selectedSpace);
+                        buf.rewind();
+                        data.put(buf);
+                    }
+                    memSpace.close();
+                }
             }
         } finally {
             if (space != null) {
@@ -111,6 +247,7 @@ public final class HDFReader implements Closeable {
                 dataset.read(matrix.data(), FloatType.IEEE_F32LE);
             } else {
                 FloatBuffer data = matrix.data();
+                // TODO don't allocate this buffer each time
                 FloatBuffer buf = BufferUtils.createFloatBuffer(bufSize, Storage.DIRECT);
                 DataSpace memSpace = new DataSpace(buf.capacity());
                 for (int i = 0; i < data.capacity(); i += buf.capacity()) {

@@ -1,6 +1,7 @@
 package net.lunglet.io;
 
 import static org.junit.Assert.assertEquals;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -20,7 +21,7 @@ import net.lunglet.hdf.Group;
 import net.lunglet.hdf.H5File;
 import net.lunglet.hdf.Point;
 import net.lunglet.hdf.SelectionOperator;
-import org.junit.Ignore;
+import net.lunglet.util.BufferUtils;
 import org.junit.Test;
 
 public final class HDFReaderTest extends AbstractHDFTest {
@@ -33,6 +34,15 @@ public final class HDFReaderTest extends AbstractHDFTest {
     }
 
     @Test
+    public void testBuffers() {
+        ByteBuffer buf = BufferUtils.createAlignedBuffer(8, 1);
+        assertEquals(0, ((ByteBuffer) buf.limit(3)).asFloatBuffer().capacity());
+        assertEquals(1, ((ByteBuffer) buf.limit(4)).asFloatBuffer().capacity());
+        assertEquals(1, ((ByteBuffer) buf.limit(7)).asFloatBuffer().capacity());
+        assertEquals(2, ((ByteBuffer) buf.limit(8)).asFloatBuffer().capacity());
+    }
+
+    @Test
     public void testReadFloatDenseMatrix() {
         H5File h5 = createMemoryH5File();
         Group group = h5.getRootGroup().createGroup("/foo");
@@ -40,18 +50,22 @@ public final class HDFReaderTest extends AbstractHDFTest {
         DataSet ds = h5.getRootGroup().createDataSet("/foo/bar", FloatType.IEEE_F32LE, 2, 3);
         ds.write(new float[]{1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f});
         ds.close();
-        HDFReader reader = new HDFReader(h5);
-        FloatDenseMatrix x = DenseFactory.floatMatrix(2, 3, Order.ROW, Storage.DIRECT);
-        reader.read("/foo/bar", x);
-        reader.close();
-        assertEquals(1.0f, x.get(0, 0), 0);
-        assertEquals(2.0f, x.get(0, 1), 0);
-        assertEquals(3.0f, x.get(0, 2), 0);
-        assertEquals(4.0f, x.get(1, 0), 0);
-        assertEquals(5.0f, x.get(1, 1), 0);
-        assertEquals(6.0f, x.get(1, 2), 0);
-        assertEquals(1.0f, x.row(0).toArray()[0], 0);
-        assertEquals(2.0f, x.row(0).toArray()[1], 0);
+        for (Storage storage : new Storage[]{Storage.HEAP, Storage.DIRECT}) {
+            for (int bufSize = 4; bufSize < 30; bufSize++) {
+                HDFReader reader = new HDFReader(h5, bufSize);
+                FloatDenseMatrix x = DenseFactory.floatMatrix(2, 3, Order.ROW, storage);
+                reader.read("/foo/bar", x);
+                assertEquals(1.0f, x.get(0, 0), 0);
+                assertEquals(2.0f, x.get(0, 1), 0);
+                assertEquals(3.0f, x.get(0, 2), 0);
+                assertEquals(4.0f, x.get(1, 0), 0);
+                assertEquals(5.0f, x.get(1, 1), 0);
+                assertEquals(6.0f, x.get(1, 2), 0);
+                assertEquals(1.0f, x.row(0).toArray()[0], 0);
+                assertEquals(2.0f, x.row(0).toArray()[1], 0);
+            }
+        }
+        h5.close();
     }
 
     @Test
@@ -100,7 +114,6 @@ public final class HDFReaderTest extends AbstractHDFTest {
         h5.close();
     }
 
-    @Ignore
     @Test
     public void testReadPackedRowsColumns() {
         H5File h5 = createMemoryH5File();
@@ -145,7 +158,6 @@ public final class HDFReaderTest extends AbstractHDFTest {
         // TODO need to check that x contains the right values
     }
 
-    @Ignore
     @Test
     public void testXXX() {
         FloatPackedMatrix x = PackedFactory.floatSymmetricDirect(4);

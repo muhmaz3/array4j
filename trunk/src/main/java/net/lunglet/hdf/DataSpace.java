@@ -267,10 +267,15 @@ public final class DataSpace extends IdComponent {
      * Regions selected with this function call default to C order iteration
      * when I/O is performed.
      *
-     * @param start starting coordinates of the hyperslab to select
-     * @param stride how many elements to move in each dimension
-     * @param count how many blocks to select from the dataspace, in each dimension
-     * @param block size of the element block selected from the dataspace
+     * @param start
+     *                starting coordinates of the hyperslab to select
+     * @param stride
+     *                how many elements to move in each dimension
+     * @param count
+     *                how many blocks to select from the dataspace, in each
+     *                dimension
+     * @param block
+     *                size of the element block selected from the dataspace
      */
     public void selectHyperslab(final SelectionOperator op, final long[] start, final long[] stride,
             final long[] count, final long[] block) {
