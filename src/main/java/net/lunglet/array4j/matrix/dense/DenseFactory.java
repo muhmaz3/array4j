@@ -25,9 +25,6 @@ public final class DenseFactory {
      */
     public static FloatDenseVector directCopyOf(final FloatVector other) {
         FloatDenseVector v = new FloatDenseVectorImpl(other.length(), other.direction(), Storage.DIRECT);
-
-        System.out.println(((FloatDenseVector) other).data());
-
         v.data().put(other.toArray());
         return v;
     }
