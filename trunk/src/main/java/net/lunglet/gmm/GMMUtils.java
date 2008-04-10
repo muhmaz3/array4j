@@ -167,7 +167,8 @@ public final class GMMUtils {
     }
 
     /**
-     * Split the heaviest component in the GMM into two components.
+     * Split the heaviest component in the GMM into two components that are both
+     * one standard deviation away from the original mean.
      */
     public static DiagCovGMM splitHeaviest(final DiagCovGMM gmm) {
         // TODO move this code into an argmax function

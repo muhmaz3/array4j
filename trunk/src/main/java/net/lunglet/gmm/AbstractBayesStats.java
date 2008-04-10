@@ -19,7 +19,7 @@ public abstract class AbstractBayesStats implements BayesStats {
 
     private double max;
 
-    private final double[] posterior;
+    private final double[] posteriors;
 
     public AbstractBayesStats(final int n) {
         this(n, MIN_EXP_THRESHOLD);
@@ -28,7 +28,7 @@ public abstract class AbstractBayesStats implements BayesStats {
     public AbstractBayesStats(final int n, final double expThresh) {
         this.conditional = new double[n];
         this.apriori = new double[n];
-        this.posterior = new double[n];
+        this.posteriors = new double[n];
         this.joint = new double[n];
         this.expThresh = expThresh;
         this.marginal = Double.NEGATIVE_INFINITY;
@@ -67,8 +67,8 @@ public abstract class AbstractBayesStats implements BayesStats {
             throw new IllegalStateException();
         }
         marginal = logsumexp(joint, max);
-        for (int i = 0; i < posterior.length; i++) {
-            posterior[i] = exp(joint[i] - marginal);
+        for (int i = 0; i < posteriors.length; i++) {
+            posteriors[i] = exp(joint[i] - marginal);
         }
         done = true;
         checkState();
@@ -100,6 +100,6 @@ public abstract class AbstractBayesStats implements BayesStats {
 
     public final double[] getPosteriorProbs() {
         checkState();
-        return posterior;
+        return posteriors;
     }
 }
