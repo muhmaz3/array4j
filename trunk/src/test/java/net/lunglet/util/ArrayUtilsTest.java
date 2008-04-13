@@ -1,11 +1,20 @@
 package net.lunglet.util;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import org.junit.Test;
-
 public final class ArrayUtilsTest {
+    @Test
+    public void testArgSort() {
+        float[] a = {3.0f, 1.0f, 2.0f};
+        // sort in ascending order
+        assertArrayEquals(new int[]{1, 2, 0}, ArrayUtils.argsort(a, true));
+        // sort in descending order
+        assertArrayEquals(new int[]{0, 2, 1}, ArrayUtils.argsort(a, false));
+    }
+
     @Test
     public void testCopyOf() {
         float[][] values = {{1.0f, 2.0f}, null, {3.0f, 4.0f, 5.0f}};

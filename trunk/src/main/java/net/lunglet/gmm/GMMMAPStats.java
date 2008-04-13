@@ -203,4 +203,8 @@ public final class GMMMAPStats {
     public double getTotalLogLh() {
         return totLogLh;
     }
+
+    public double getTotalN() {
+        return totN;
+    }
 }

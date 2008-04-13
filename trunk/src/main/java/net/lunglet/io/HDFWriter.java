@@ -17,6 +17,9 @@ import net.lunglet.hdf.H5File;
 
 // TODO recursively create non-existant groups
 
+// TODO allow a large matrix to be created and return a handle
+// that allows it be written one row or column at a time
+
 @NotThreadSafe
 public final class HDFWriter implements Closeable {
     private final H5File h5file;
@@ -31,6 +34,10 @@ public final class HDFWriter implements Closeable {
 
     public void close() {
         h5file.close();
+    }
+
+    public void createGroup(final String name) {
+        h5file.getRootGroup().createGroup(name).close();
     }
 
     public void write(final String name, final FloatDenseMatrix matrix) {

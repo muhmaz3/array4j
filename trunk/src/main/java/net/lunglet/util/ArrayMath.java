@@ -4,9 +4,15 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.TreeSet;
 
-// TODO move this class to somewhere else
-
 public final class ArrayMath {
+    public static int[] argmax(final double[] x) {
+        return argmaxn(x, x.length);
+    }
+
+    public static int[] argmax(final float[] x) {
+        return argmax(ArrayUtils.castOf(x));
+    }
+
     public static int[] argmaxn(final double[] x, final int n) {
         if (n < 0 || n > x.length) {
             throw new IllegalArgumentException();
@@ -96,6 +102,14 @@ public final class ArrayMath {
             xx[i] = v * v;
         }
         return xx;
+    }
+
+    public static float sum(final float[] x) {
+        float sum = 0.0f;
+        for (float f : x) {
+            sum += f;
+        }
+        return sum;
     }
 
     private ArrayMath() {
