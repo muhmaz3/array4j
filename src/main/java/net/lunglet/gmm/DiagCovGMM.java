@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import net.lunglet.array4j.matrix.FloatVector;
 import net.lunglet.array4j.matrix.dense.DenseFactory;
 import net.lunglet.array4j.matrix.dense.FloatDenseVector;
@@ -16,7 +17,8 @@ public final class DiagCovGMM extends AbstractGMM {
 
     private static final long serialVersionUID = 1L;
 
-    private static void checkArguments(final FloatVector w, final FloatVector[] u, final FloatVector[] v) {
+    private static <M extends FloatVector, V extends FloatVector> void checkArguments(final FloatVector w, final M[] u,
+            final V[] v) {
         if (w.length() == 0) {
             throw new IllegalArgumentException();
         }
@@ -52,6 +54,11 @@ public final class DiagCovGMM extends AbstractGMM {
 
     private final float[] weights;
 
+    public DiagCovGMM(final Collection<? extends Number> weights, final List<? extends FloatVector> means,
+            final List<? extends FloatVector> variances) {
+        this(DenseFactory.floatVector(weights), means, variances);
+    }
+
     /**
      * Internal copy constructor.
      */
@@ -77,7 +84,12 @@ public final class DiagCovGMM extends AbstractGMM {
                 variances).toArray(new FloatVector[0]));
     }
 
-    public DiagCovGMM(final FloatVector weights, final FloatVector[] means, final FloatVector[] variances) {
+    public DiagCovGMM(final FloatVector mean, final FloatVector variance) {
+        this(DenseFactory.floatVector(1.0f), new FloatVector[]{mean}, new FloatVector[]{variance});
+    }
+
+    public <M extends FloatVector, V extends FloatVector> DiagCovGMM(final FloatVector weights, final M[] means,
+            final V[] variances) {
         checkArguments(weights, means, variances);
         this.weights = weights.toArray();
         this.logWeights = new float[this.weights.length];
@@ -128,7 +140,7 @@ public final class DiagCovGMM extends AbstractGMM {
         if (doMeans || doVars) {
             ex = ex.clone();
             for (int i = 0; i < ex.length; i++) {
-                float ni = n[i];
+                double ni = n[i];
                 if (ni < N_EPSILON) {
                     // if ni is too small, keep original means
                     ex[i] = means[i];

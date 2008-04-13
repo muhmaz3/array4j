@@ -12,17 +12,25 @@ import net.lunglet.array4j.matrix.util.FloatMatrixUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+// TODO investigate use of eigenanalysis of data for splitAll
+
 public final class GMMUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(GMMUtils.class);
 
-    public static int countWeak(final DiagCovGMM gmm, final GMMMAPStats stats, final float nthresh) {
+    public static int countWeak(final DiagCovGMM gmm, final GMMMAPStats stats, final double nthresh) {
         float[] n = stats.getN();
         int count = 0;
+        double sum = 0.0f;
         for (int i = 0; i < n.length; i++) {
+            LOGGER.info("Count for component {} is {}", i, n[i]);
+            sum += n[i];
             if (n[i] < nthresh) {
                 count++;
             }
         }
+        // using a fraction when evaluating the GMM could cause this total to
+        // vary between training iterations
+        LOGGER.info("Total count is {}", stats.getTotalN());
         return count;
     }
 
@@ -102,14 +110,14 @@ public final class GMMUtils {
             means.add(gmm.getMean(index));
             vars.add(gmm.getVariance(index));
         }
-        return new DiagCovGMM(DenseFactory.floatVector(weightsList), means, vars);
+        return new DiagCovGMM(weightsList, means, vars);
     }
 
     /**
      * Replace weak components (components not supported by enough data) by
      * splitting the strongest (heaviest) components.
      */
-    public static DiagCovGMM replaceWeak(final DiagCovGMM gmm, final GMMMAPStats stats, final float nthresh) {
+    public static DiagCovGMM replaceWeak(final DiagCovGMM gmm, final GMMMAPStats stats, final double nthresh) {
         float[] n = stats.getN();
         List<Float> weights = new ArrayList<Float>();
         List<FloatVector> means = new ArrayList<FloatVector>();
@@ -123,8 +131,7 @@ public final class GMMUtils {
             vars.add(gmm.getVariance(i));
             weights.add(gmm.getWeights().get(i));
         }
-        FloatVector weightsVec = DenseFactory.floatVector(weights);
-        DiagCovGMM newGmm = new DiagCovGMM(weightsVec, means, vars);
+        DiagCovGMM newGmm = new DiagCovGMM(weights, means, vars);
         while (newGmm.getMixtureCount() < gmm.getMixtureCount()) {
             newGmm = splitHeaviest(newGmm);
         }
@@ -135,8 +142,6 @@ public final class GMMUtils {
      * Split all the components in the GMM.
      */
     public static DiagCovGMM splitAll(final DiagCovGMM gmm) {
-        LOGGER.info("Splitting all components");
-
         List<FloatVector> newMeans = new ArrayList<FloatVector>();
         List<FloatVector> newVars = new ArrayList<FloatVector>();
         for (int i = 0; i < gmm.getMixtureCount(); i++) {
@@ -213,8 +218,7 @@ public final class GMMUtils {
                 newWeightsList.add(weight);
             }
         }
-        FloatVector newWeights = DenseFactory.floatVector(newWeightsList);
-        return new DiagCovGMM(newWeights, newMeans, newVars);
+        return new DiagCovGMM(newWeightsList, newMeans, newVars);
     }
 
     private GMMUtils() {
