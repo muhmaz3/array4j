@@ -18,6 +18,7 @@ public final class GMMUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(GMMUtils.class);
 
     public static int countWeak(final DiagCovGMM gmm, final GMMMAPStats stats, final double nthresh) {
+        LOGGER.info("Checking for weak components against threshold {}", nthresh);
         float[] n = stats.getN();
         int count = 0;
         double sum = 0.0f;
@@ -60,10 +61,10 @@ public final class GMMUtils {
             float[] variances = ubm.getVariance(i).toArray();
             double sqrtw = Math.sqrt(weights.get(i));
             for (int j = 0; j < x.length; j++) {
-                float y = x[j] - x0[j];
+                double y = x[j] - x0[j];
                 y /= Math.sqrt(variances[j]);
                 y *= sqrtw;
-                x[j] = y;
+                x[j] = (float) y;
             }
             data.put(x);
         }
