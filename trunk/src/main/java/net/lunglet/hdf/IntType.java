@@ -17,9 +17,12 @@ public final class IntType extends AtomType<IntType> {
 
     @Override
     public IntType copy() {
-        int id = H5Library.INSTANCE.H5Tcopy(getId());
-        if (id < 0) {
-            throw new H5DataTypeException("H5Tcopy failed");
+        final int id;
+        synchronized (H5Library.INSTANCE) {
+            id = H5Library.INSTANCE.H5Tcopy(getId());
+            if (id < 0) {
+                throw new H5DataTypeException("H5Tcopy failed");
+            }
         }
         return new IntType(id, false);
     }

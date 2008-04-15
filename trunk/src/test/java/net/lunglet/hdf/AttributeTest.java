@@ -2,9 +2,11 @@ package net.lunglet.hdf;
 
 import static org.junit.Assert.assertEquals;
 import java.util.UUID;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public final class AttributeTest {
+    @Ignore
     @Test
     public void testSize() {
         FileCreatePropList fcpl = FileCreatePropList.DEFAULT;

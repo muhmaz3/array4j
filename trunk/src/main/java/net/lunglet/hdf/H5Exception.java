@@ -4,6 +4,9 @@ import com.sun.jna.Pointer;
 import net.lunglet.hdf.H5Library.H5E_error_t;
 import net.lunglet.hdf.H5Library.H5E_walk_t;
 
+// TODO add getters for HDF5 error info
+// TODO test that right threads get right errors
+
 public class H5Exception extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
@@ -37,6 +40,8 @@ public class H5Exception extends RuntimeException {
                 return 0;
             }
         };
+        // this library call should be synchronized in the function that is
+        // constructing the exception
         H5Library.INSTANCE.H5Ewalk(H5Library.H5E_WALK_UPWARD, callback, null);
         return message[0];
     }
@@ -50,6 +55,6 @@ public class H5Exception extends RuntimeException {
     }
 
     public H5Exception(final String message, final boolean includeError) {
-        super(message + (includeError ? " (" + getErrorMessage() + ")" : ""));
+        super(message + (includeError ? ": " + getErrorMessage() : ""));
     }
 }

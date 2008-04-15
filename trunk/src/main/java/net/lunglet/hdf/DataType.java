@@ -31,9 +31,12 @@ public class DataType extends H5Object {
         types.add(IntType.STD_I8BE);
         types.add(StringType.C_S1);
         for (DataType predefinedType : types) {
-            int tri = H5Library.INSTANCE.H5Tequal(id, predefinedType.getId());
-            if (tri < 0) {
-                throw new H5DataTypeException("H5Tequal failed");
+            final int tri;
+            synchronized (H5Library.INSTANCE) {
+                tri = H5Library.INSTANCE.H5Tequal(id, predefinedType.getId());
+                if (tri < 0) {
+                    throw new H5DataTypeException("H5Tequal failed");
+                }
             }
             if (tri > 0) {
                 CLOSE_ACTION.close(id);
@@ -42,9 +45,12 @@ public class DataType extends H5Object {
         }
         DataType dtype = null;
         try {
-            int dtypeClass = H5Library.INSTANCE.H5Tget_class(id);
-            if (dtypeClass < 0) {
-                throw new H5DataTypeException("H5Tget_class failed");
+            final int dtypeClass;
+            synchronized (H5Library.INSTANCE) {
+                dtypeClass = H5Library.INSTANCE.H5Tget_class(id);
+                if (dtypeClass < 0) {
+                    throw new H5DataTypeException("H5Tget_class failed");
+                }
             }
             if (dtypeClass == DataTypeClass.STRING.intValue()) {
                 dtype = new StringType(id, false);
@@ -63,27 +69,35 @@ public class DataType extends H5Object {
     }
 
     final void commit(final Group group, final String name) {
-        int err = H5Library.INSTANCE.H5Tcommit(group.getId(), name, getId());
-        if (err < 0) {
-            throw new H5DataTypeException("H5Tcommit failed");
+        synchronized (H5Library.INSTANCE) {
+            int err = H5Library.INSTANCE.H5Tcommit(group.getId(), name, getId());
+            if (err < 0) {
+                throw new H5DataTypeException("H5Tcommit failed");
+            }
         }
     }
 
     final boolean committed() {
-        int committed = H5Library.INSTANCE.H5Tcommitted(getId());
+        final int committed;
+        synchronized (H5Library.INSTANCE) {
+            committed = H5Library.INSTANCE.H5Tcommitted(getId());
+        }
         if (committed > 0) {
             return true;
         } else if (committed == 0) {
             return false;
         } else {
-            throw new RuntimeException("H5Tcommitted failed");
+            throw new H5DataTypeException("H5Tcommitted failed");
         }
     }
 
     public final long getSize() {
-        NativeLong size = H5Library.INSTANCE.H5Tget_size(getId());
-        if (size.longValue() == 0) {
-            throw new H5DataTypeException("H5Tget_size failed");
+        final NativeLong size;
+        synchronized (H5Library.INSTANCE) {
+            size = H5Library.INSTANCE.H5Tget_size(getId());
+            if (size.longValue() == 0) {
+                throw new H5DataTypeException("H5Tget_size failed");
+            }
         }
         return size.longValue();
     }

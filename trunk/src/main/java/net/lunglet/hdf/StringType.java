@@ -9,9 +9,12 @@ public final class StringType extends AtomType<StringType> {
 
     @Override
     public StringType copy() {
-        int id = H5Library.INSTANCE.H5Tcopy(getId());
-        if (id < 0) {
-            throw new H5DataTypeException("H5Tcopy failed");
+        final int id;
+        synchronized (H5Library.INSTANCE) {
+            id = H5Library.INSTANCE.H5Tcopy(getId());
+            if (id < 0) {
+                throw new H5DataTypeException("H5Tcopy failed");
+            }
         }
         return new StringType(id, false);
     }

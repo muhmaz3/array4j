@@ -23,8 +23,6 @@ import org.junit.Test;
 
 // TODO move testHyperslabReadWrite and refactor to not use array4j classes
 
-// TODO test thread error stacks
-
 public final class H5LibraryTest {
     private static final class MTTask implements Callable<Boolean> {
         @Override

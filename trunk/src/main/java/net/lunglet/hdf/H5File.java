@@ -46,20 +46,22 @@ public final class H5File extends IdComponent {
     private static int init(final String name, final int flags, final FileCreatePropList createPlist,
             final FileAccessPropList accessPlist) {
         final int id;
-        // These bits only set for creation, so if any of them are set,
-        // create the file.
-        if ((flags & (H5F_ACC_EXCL | H5F_ACC_TRUNC | H5F_ACC_DEBUG)) != 0) {
-            id = H5Library.INSTANCE.H5Fcreate(name, flags, createPlist.getId(), accessPlist.getId());
-            if (id < 0) {
-                // throw an exception when open/create fail
-                throw new H5FileException("H5Fcreate failed");
-            }
-        } else {
-            // Open the file if none of the bits above are set.
-            id = H5Library.INSTANCE.H5Fopen(name, flags, accessPlist.getId());
-            if (id < 0) {
-                // throw an exception when open/create fail
-                throw new H5FileException("H5Fopen failed", true);
+        // Create file if any creation bits are set
+        final int creationBits = H5F_ACC_EXCL | H5F_ACC_TRUNC | H5F_ACC_DEBUG;
+        synchronized (H5Library.INSTANCE) {
+            if ((flags & creationBits) != 0) {
+                id = H5Library.INSTANCE.H5Fcreate(name, flags, createPlist.getId(), accessPlist.getId());
+                if (id < 0) {
+                    // throw an exception when open/create fail
+                    throw new H5FileException("H5Fcreate failed", true);
+                }
+            } else {
+                // Open the file if none of the bits above are set.
+                id = H5Library.INSTANCE.H5Fopen(name, flags, accessPlist.getId());
+                if (id < 0) {
+                    // throw an exception when open/create fail
+                    throw new H5FileException("H5Fopen failed", true);
+                }
             }
         }
         return id;
@@ -100,49 +102,64 @@ public final class H5File extends IdComponent {
     }
 
     public FileAccessPropList getAccessPropertyList() {
-        int id = H5Library.INSTANCE.H5Fget_access_plist(getId());
-        if (id < 0) {
-            throw new H5FileException("H5Fget_access_plist failed");
+        final int id;
+        synchronized (H5Library.INSTANCE) {
+            id = H5Library.INSTANCE.H5Fget_access_plist(getId());
+            if (id < 0) {
+                throw new H5FileException("H5Fget_access_plist failed");
+            }
         }
         return new FileAccessPropList(id);
     }
 
     public FileCreatePropList getCreatePropertyList() {
-        int id = H5Library.INSTANCE.H5Fget_create_plist(getId());
-        if (id < 0) {
-            throw new H5FileException("H5Fget_create_plist failed");
+        final int id;
+        synchronized (H5Library.INSTANCE) {
+            id = H5Library.INSTANCE.H5Fget_create_plist(getId());
+            if (id < 0) {
+                throw new H5FileException("H5Fget_create_plist failed");
+            }
         }
         return new FileCreatePropList(id);
     }
 
     public String getFileName() {
-        NativeLong size = H5Library.INSTANCE.H5Fget_name(getId(), null, new NativeLong(0));
-        if (size.longValue() < 0) {
-            throw new H5FileException("H5Fget_name failed");
+        final NativeLong size;
+        synchronized (H5Library.INSTANCE) {
+            size = H5Library.INSTANCE.H5Fget_name(getId(), null, new NativeLong(0));
+            if (size.longValue() < 0) {
+                throw new H5FileException("H5Fget_name failed");
+            }
         }
         byte[] buf = new byte[size.intValue() + 1];
-        NativeLong err = H5Library.INSTANCE.H5Fget_name(getId(), buf, new NativeLong(buf.length));
-        if (err.longValue() < 0) {
-            throw new H5FileException("H5Fget_name failed");
+        synchronized (H5Library.INSTANCE) {
+            NativeLong err = H5Library.INSTANCE.H5Fget_name(getId(), buf, new NativeLong(buf.length));
+            if (err.longValue() < 0) {
+                throw new H5FileException("H5Fget_name failed");
+            }
         }
         return new String(Arrays.copyOf(buf, buf.length - 1), Charset.forName("US-ASCII"));
     }
 
     public long getFileSize() {
         LongByReference psize = new LongByReference();
-        int err = H5Library.INSTANCE.H5Fget_filesize(getId(), psize);
-        if (err < 0) {
-            throw new H5FileException("H5Fget_filesize failed");
+        synchronized (H5Library.INSTANCE) {
+            int err = H5Library.INSTANCE.H5Fget_filesize(getId(), psize);
+            if (err < 0) {
+                throw new H5FileException("H5Fget_filesize failed");
+            }
         }
         return psize.getValue();
     }
 
     public long getFreeSpace() {
-        long size = H5Library.INSTANCE.H5Fget_freespace(getId());
-        if (size < 0) {
-            throw new H5FileException("H5Fget_freespace failed");
+        synchronized (H5Library.INSTANCE) {
+            long size = H5Library.INSTANCE.H5Fget_freespace(getId());
+            if (size < 0) {
+                throw new H5FileException("H5Fget_freespace failed");
+            }
+            return size;
         }
-        return size;
     }
 
     public Group getRootGroup() {

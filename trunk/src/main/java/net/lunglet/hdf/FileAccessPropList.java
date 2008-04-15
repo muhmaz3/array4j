@@ -22,9 +22,11 @@ public final class FileAccessPropList extends PropertyList {
 
     private void getCache(final IntByReference mdcNelmts, final IntByReference rdccNelmts,
             final NativeLongByReference rdccNbytes, final DoubleByReference rdccw) {
-        int err = H5Library.INSTANCE.H5Pget_cache(getId(), mdcNelmts, rdccNelmts, rdccNbytes, rdccw);
-        if (err < 0) {
-            throw new H5PropertyListException("H5Pget_cache failed");
+        synchronized (H5Library.INSTANCE) {
+            int err = H5Library.INSTANCE.H5Pget_cache(getId(), mdcNelmts, rdccNelmts, rdccNbytes, rdccw);
+            if (err < 0) {
+                throw new H5PropertyListException("H5Pget_cache failed");
+            }
         }
     }
 

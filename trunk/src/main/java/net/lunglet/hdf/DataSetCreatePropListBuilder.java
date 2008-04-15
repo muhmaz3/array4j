@@ -42,9 +42,11 @@ public final class DataSetCreatePropListBuilder {
     }
 
     public DataSetCreatePropListBuilder setFillTime(final FillTime fillTime) {
-        int err = H5Library.INSTANCE.H5Pset_fill_time(propList.getId(), fillTime.intValue());
-        if (err < 0) {
-            throw new H5PropertyListException("H5Pset_fill_time failed");
+        synchronized (H5Library.INSTANCE) {
+            int err = H5Library.INSTANCE.H5Pset_fill_time(propList.getId(), fillTime.intValue());
+            if (err < 0) {
+                throw new H5PropertyListException("H5Pset_fill_time failed");
+            }
         }
         return this;
     }
