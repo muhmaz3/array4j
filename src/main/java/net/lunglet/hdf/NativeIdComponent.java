@@ -57,7 +57,9 @@ final class NativeIdComponent extends WeakReference<IdComponent> {
         if (open && closeAction != null) {
             LOGGER.debug("Closing [id={}]", getId());
             REF_LIST.remove(this);
-            closeAction.close(getId());
+            synchronized (H5Library.INSTANCE) {
+                closeAction.close(getId());
+            }
             open = false;
         }
     }

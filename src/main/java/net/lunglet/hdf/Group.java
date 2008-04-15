@@ -38,9 +38,12 @@ public final class Group extends H5Object {
         int typeId = dataType.getId();
         int spaceId = dataSpace.getId();
         int createPlistId = createPlist.getId();
-        int datasetId = H5Library.INSTANCE.H5Dcreate(getId(), name, typeId, spaceId, createPlistId);
-        if (datasetId < 0) {
-            throw new H5GroupException("H5Dcreate failed");
+        final int datasetId;
+        synchronized (H5Library.INSTANCE) {
+            datasetId = H5Library.INSTANCE.H5Dcreate(getId(), name, typeId, spaceId, createPlistId);
+            if (datasetId < 0) {
+                throw new H5GroupException("H5Dcreate failed");
+            }
         }
         return new DataSet(datasetId);
     }
@@ -56,15 +59,21 @@ public final class Group extends H5Object {
     }
 
     public Group createGroup(final String name) {
-        int groupId = H5Library.INSTANCE.H5Gcreate(getId(), name, new NativeLong(0));
-        if (groupId < 0) {
-            throw new H5GroupException("H5Gcreate failed");
+        final int groupId;
+        synchronized (H5Library.INSTANCE) {
+            groupId = H5Library.INSTANCE.H5Gcreate(getId(), name, new NativeLong(0));
+            if (groupId < 0) {
+                throw new H5GroupException("H5Gcreate failed");
+            }
         }
         return new Group(groupId, false);
     }
 
     public boolean existsDataSet(final String name) {
-        int datasetId = H5Library.INSTANCE.H5Dopen(getId(), name);
+        final int datasetId;
+        synchronized (H5Library.INSTANCE) {
+            datasetId = H5Library.INSTANCE.H5Dopen(getId(), name);
+        }
         if (datasetId < 0) {
             return false;
         }
@@ -73,7 +82,10 @@ public final class Group extends H5Object {
     }
 
     public boolean existsGroup(final String name) {
-        int groupId = H5Library.INSTANCE.H5Gopen(getId(), name);
+        final int groupId;
+        synchronized (H5Library.INSTANCE) {
+            groupId = H5Library.INSTANCE.H5Gopen(getId(), name);
+        }
         if (groupId < 0) {
             return false;
         }
@@ -106,7 +118,9 @@ public final class Group extends H5Object {
                 return 0;
             }
         };
-        H5Library.INSTANCE.H5Giterate(getId(), ".", idx, operator, null);
+        synchronized (H5Library.INSTANCE) {
+            H5Library.INSTANCE.H5Giterate(getId(), ".", idx, operator, null);
+        }
         HashSet<DataSet> datasets = new HashSet<DataSet>();
         for (String datasetName : datasetNames) {
             datasets.add(openDataSet(datasetName));
@@ -130,7 +144,9 @@ public final class Group extends H5Object {
                 return 0;
             }
         };
-        H5Library.INSTANCE.H5Giterate(getId(), ".", idx, operator, null);
+        synchronized (H5Library.INSTANCE) {
+            H5Library.INSTANCE.H5Giterate(getId(), ".", idx, operator, null);
+        }
         HashSet<Group> groups = new HashSet<Group>();
         for (String groupName : groupNames) {
             groups.add(openGroup(groupName));
@@ -139,18 +155,24 @@ public final class Group extends H5Object {
     }
 
     public DataSet openDataSet(final String name) {
-        int datasetId = H5Library.INSTANCE.H5Dopen(getId(), name);
-        if (datasetId < 0) {
-            throw new H5GroupException("H5Dopen failed", true);
+        final int datasetId;
+        synchronized (H5Library.INSTANCE) {
+            datasetId = H5Library.INSTANCE.H5Dopen(getId(), name);
+            if (datasetId < 0) {
+                throw new H5GroupException("H5Dopen failed", true);
+            }
         }
         return new DataSet(datasetId);
     }
 
     public Group openGroup(final String name) {
         logger.debug("Opening group {}", name);
-        int groupId = H5Library.INSTANCE.H5Gopen(getId(), name);
-        if (groupId < 0) {
-            throw new H5GroupException("H5Gopen of " + name + " failed", true);
+        final int groupId;
+        synchronized (H5Library.INSTANCE) {
+            groupId = H5Library.INSTANCE.H5Gopen(getId(), name);
+            if (groupId < 0) {
+                throw new H5GroupException("H5Gopen of " + name + " failed", true);
+            }
         }
         return new Group(groupId, false);
     }

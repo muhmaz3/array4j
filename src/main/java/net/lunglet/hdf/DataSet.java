@@ -30,23 +30,31 @@ public final class DataSet extends AbstractDs implements Comparable<DataSet> {
 
     @Override
     public DataSpace getSpace() {
-        int dataspaceId = H5Library.INSTANCE.H5Dget_space(getId());
-        if (dataspaceId < 0) {
-            throw new H5DataSetException("H5Dget_space failed");
+        final int dataspaceId;
+        synchronized (H5Library.INSTANCE) {
+            dataspaceId = H5Library.INSTANCE.H5Dget_space(getId());
+            if (dataspaceId < 0) {
+                throw new H5DataSetException("H5Dget_space failed");
+            }
         }
         return new DataSpace(dataspaceId, true);
     }
 
     @Override
     public long getStorageSize() {
-        return H5Library.INSTANCE.H5Dget_storage_size(getId());
+        synchronized (H5Library.INSTANCE) {
+            return H5Library.INSTANCE.H5Dget_storage_size(getId());
+        }
     }
 
     @Override
     public DataType getType() {
-        int typeId = H5Library.INSTANCE.H5Dget_type(getId());
-        if (typeId < 0) {
-            throw new H5DataSetException("H5Aget_type failed");
+        final int typeId;
+        synchronized (H5Library.INSTANCE) {
+            typeId = H5Library.INSTANCE.H5Dget_type(getId());
+            if (typeId < 0) {
+                throw new H5DataSetException("H5Aget_type failed");
+            }
         }
         return DataType.createTypeFromId(typeId);
     }
@@ -67,9 +75,11 @@ public final class DataSet extends AbstractDs implements Comparable<DataSet> {
         final int memSpaceId = memSpace.getId();
         final int fileSpaceId = fileSpace.getId();
         final int xferPlistId = xferPlist.getId();
-        int err = H5Library.INSTANCE.H5Dread(getId(), memTypeId, memSpaceId, fileSpaceId, xferPlistId, buf);
-        if (err < 0) {
-            throw new H5DataSetException("H5Dread failed", true);
+        synchronized (H5Library.INSTANCE) {
+            int err = H5Library.INSTANCE.H5Dread(getId(), memTypeId, memSpaceId, fileSpaceId, xferPlistId, buf);
+            if (err < 0) {
+                throw new H5DataSetException("H5Dread failed", true);
+            }
         }
     }
 
@@ -111,9 +121,11 @@ public final class DataSet extends AbstractDs implements Comparable<DataSet> {
         final int memSpaceId = memSpace.getId();
         final int fileSpaceId = fileSpace.getId();
         final int xferPlistId = xferPlist.getId();
-        int err = H5Library.INSTANCE.H5Dwrite(getId(), memTypeId, memSpaceId, fileSpaceId, xferPlistId, buf);
-        if (err < 0) {
-            throw new H5DataSetException("H5Dwrite failed");
+        synchronized (H5Library.INSTANCE) {
+            int err = H5Library.INSTANCE.H5Dwrite(getId(), memTypeId, memSpaceId, fileSpaceId, xferPlistId, buf);
+            if (err < 0) {
+                throw new H5DataSetException("H5Dwrite failed");
+            }
         }
     }
 

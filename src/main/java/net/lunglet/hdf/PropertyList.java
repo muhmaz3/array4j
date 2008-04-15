@@ -30,11 +30,13 @@ abstract class PropertyList extends IdComponent {
     };
 
     protected static int create(final PropertyListClass cls) {
-        int id = H5Library.INSTANCE.H5Pcreate(cls.intValue());
-        if (id < 0) {
-            throw new H5PropertyListException("H5Pcreate failed");
+        synchronized (H5Library.INSTANCE) {
+            int id = H5Library.INSTANCE.H5Pcreate(cls.intValue());
+            if (id < 0) {
+                throw new H5PropertyListException("H5Pcreate failed");
+            }
+            return id;
         }
-        return id;
     }
 
     public PropertyList(final int id) {

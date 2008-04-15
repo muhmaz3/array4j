@@ -19,9 +19,12 @@ public final class FloatType extends AtomType<FloatType> {
 
     @Override
     public FloatType copy() {
-        int id = H5Library.INSTANCE.H5Tcopy(getId());
-        if (id < 0) {
-            throw new H5DataTypeException("H5Tcopy failed");
+        final int id;
+        synchronized (H5Library.INSTANCE) {
+            id = H5Library.INSTANCE.H5Tcopy(getId());
+            if (id < 0) {
+                throw new H5DataTypeException("H5Tcopy failed");
+            }
         }
         return new FloatType(id, false);
     }

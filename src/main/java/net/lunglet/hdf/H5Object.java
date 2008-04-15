@@ -79,14 +79,19 @@ abstract class H5Object extends IdComponent {
     }
 
     public String getName() {
-        NativeLong size = H5Library.INSTANCE.H5Iget_name(getId(), null, new NativeLong(0));
-        if (size.longValue() < 0) {
-            throw new H5IdComponentException("H5Iget_name failed");
+        final NativeLong size;
+        synchronized (H5Library.INSTANCE) {
+            size = H5Library.INSTANCE.H5Iget_name(getId(), null, new NativeLong(0));
+            if (size.longValue() < 0) {
+                throw new H5IdComponentException("H5Iget_name failed");
+            }
         }
         byte[] buf = new byte[size.intValue() + 1];
-        NativeLong err = H5Library.INSTANCE.H5Iget_name(getId(), buf, new NativeLong(buf.length));
-        if (err.longValue() < 0) {
-            throw new H5IdComponentException("H5Iget_name failed");
+        synchronized (H5Library.INSTANCE) {
+            NativeLong err = H5Library.INSTANCE.H5Iget_name(getId(), buf, new NativeLong(buf.length));
+            if (err.longValue() < 0) {
+                throw new H5IdComponentException("H5Iget_name failed");
+            }
         }
         return new String(Arrays.copyOf(buf, buf.length - 1), CHARSET);
     }

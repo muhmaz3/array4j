@@ -82,7 +82,7 @@ public interface H5Library extends Library {
             H5Library lib = (H5Library) Native.loadLibrary(LIBRARY_NAME, H5Library.class);
             // Disable automatic printing of errors
             lib.H5Eset_auto(null, null);
-            return (H5Library) Native.synchronizedLibrary(lib);
+            return lib;
         }
 
         private Loader() {

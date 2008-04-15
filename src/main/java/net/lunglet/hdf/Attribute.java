@@ -21,17 +21,23 @@ public final class Attribute extends AbstractDs {
     };
 
     static Attribute create(final int locId, final String name, final DataType type, final DataSpace space) {
-        int id = H5Library.INSTANCE.H5Acreate(locId, name, type.getId(), space.getId(), H5Library.H5P_DEFAULT);
-        if (id < 0) {
-            throw new H5AttributeException("H5Acreate failed");
+        final int id;
+        synchronized (H5Library.INSTANCE) {
+            id = H5Library.INSTANCE.H5Acreate(locId, name, type.getId(), space.getId(), H5Library.H5P_DEFAULT);
+            if (id < 0) {
+                throw new H5AttributeException("H5Acreate failed");
+            }
         }
         return new Attribute(id);
     }
 
     static Attribute open(final int locId, final String name) {
-        int id = H5Library.INSTANCE.H5Aopen_name(locId, name);
-        if (id < 0) {
-            throw new H5AttributeException("H5Aopen_name failed");
+        final int id;
+        synchronized (H5Library.INSTANCE) {
+            id = H5Library.INSTANCE.H5Aopen_name(locId, name);
+            if (id < 0) {
+                throw new H5AttributeException("H5Aopen_name failed");
+            }
         }
         return new Attribute(id);
     }
@@ -60,9 +66,12 @@ public final class Attribute extends AbstractDs {
 
     @Override
     public DataSpace getSpace() {
-        int dataspaceId = H5Library.INSTANCE.H5Aget_space(getId());
-        if (dataspaceId < 0) {
-            throw new H5AttributeException("H5Aget_space failed");
+        final int dataspaceId;
+        synchronized (H5Library.INSTANCE) {
+            dataspaceId = H5Library.INSTANCE.H5Aget_space(getId());
+            if (dataspaceId < 0) {
+                throw new H5AttributeException("H5Aget_space failed");
+            }
         }
         return new DataSpace(dataspaceId, true);
     }
@@ -74,9 +83,12 @@ public final class Attribute extends AbstractDs {
 
     @Override
     public DataType getType() {
-        int typeId = H5Library.INSTANCE.H5Aget_type(getId());
-        if (typeId < 0) {
-            throw new H5AttributeException("H5Aget_type failed");
+        final int typeId;
+        synchronized (H5Library.INSTANCE) {
+            typeId = H5Library.INSTANCE.H5Aget_type(getId());
+            if (typeId < 0) {
+                throw new H5AttributeException("H5Aget_type failed");
+            }
         }
         return DataType.createTypeFromId(typeId);
     }
@@ -84,9 +96,11 @@ public final class Attribute extends AbstractDs {
     @Override
     public void read(final Buffer buf, final DataType memType) {
         checkBuffer(buf, memType);
-        int err = H5Library.INSTANCE.H5Aread(getId(), memType.getId(), buf);
-        if (err < 0) {
-            throw new H5AttributeException("H5Aread failed");
+        synchronized (H5Library.INSTANCE) {
+            int err = H5Library.INSTANCE.H5Aread(getId(), memType.getId(), buf);
+            if (err < 0) {
+                throw new H5AttributeException("H5Aread failed");
+            }
         }
     }
 
@@ -106,9 +120,11 @@ public final class Attribute extends AbstractDs {
     @Override
     public void write(final Buffer buf, final DataType memType) {
         checkBuffer(buf, memType);
-        int err = H5Library.INSTANCE.H5Awrite(getId(), memType.getId(), buf);
-        if (err < 0) {
-            throw new H5AttributeException("H5Awrite failed");
+        synchronized (H5Library.INSTANCE) {
+            int err = H5Library.INSTANCE.H5Awrite(getId(), memType.getId(), buf);
+            if (err < 0) {
+                throw new H5AttributeException("H5Awrite failed");
+            }
         }
     }
 
