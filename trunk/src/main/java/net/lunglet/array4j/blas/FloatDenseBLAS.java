@@ -104,9 +104,9 @@ public final class FloatDenseBLAS extends AbstractDenseBLAS {
                 xbuf.arrayOffset(), incx, beta, ybuf.array(), ybuf.arrayOffset(), incy);
             return;
         case NATIVE:
-            // TODO might want to transpose here in some cases so that ACML works for more cases
-            BLASLibrary.INSTANCE.array4j_sgemv(corder(a), NOTRANS_INT, m, n, alpha, abuf, lda, xbuf, incx, beta, ybuf,
-                incy);
+            // TODO might want to transpose here in some cases so that ACML
+            // works for more cases
+            BLASLibrary.INSTANCE.array4j_sgemv(corder(a), NOTRANS_INT, m, n, alpha, abuf, lda, xbuf, incx, beta, ybuf, incy);
             return;
         default:
             throw new AssertionError();

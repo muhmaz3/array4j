@@ -18,6 +18,5 @@ public final class HTKDataTypeTest {
         assertEquals(9, HTKDataType.USER.ordinal());
         assertEquals(10, HTKDataType.DISCRETE.ordinal());
         assertEquals(11, HTKDataType.PLP.ordinal());
-        assertEquals(12, HTKDataType.ANON.ordinal());
     }
 }

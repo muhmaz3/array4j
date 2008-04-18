@@ -111,9 +111,8 @@ final class Svm {
         // kernel_type, degree
 
         int kernelType = param.kernel_type;
-        if (kernelType != SvmParameter.LINEAR && kernelType != SvmParameter.POLY
-                && kernelType != SvmParameter.RBF && kernelType != SvmParameter.SIGMOID
-                && kernelType != SvmParameter.PRECOMPUTED) {
+        if (kernelType != SvmParameter.LINEAR && kernelType != SvmParameter.POLY && kernelType != SvmParameter.RBF
+                && kernelType != SvmParameter.SIGMOID && kernelType != SvmParameter.PRECOMPUTED) {
             return "unknown kernel type";
         }
 
@@ -131,8 +130,7 @@ final class Svm {
             return "eps <= 0";
         }
 
-        if (svmType == SvmParameter.C_SVC || svmType == SvmParameter.EPSILON_SVR
-                || svmType == SvmParameter.NU_SVR) {
+        if (svmType == SvmParameter.C_SVC || svmType == SvmParameter.EPSILON_SVR || svmType == SvmParameter.NU_SVR) {
             if (param.C <= 0) {
                 return "C <= 0";
             }
@@ -298,7 +296,7 @@ final class Svm {
         count_ret[0] = count;
     }
 
-    public static double svm_predict(final SvmModel model, FloatVector x) {
+    public static double svm_predict(final SvmModel model, final FloatVector x) {
         if (model.param.svm_type == SvmParameter.ONE_CLASS || model.param.svm_type == SvmParameter.EPSILON_SVR
                 || model.param.svm_type == SvmParameter.NU_SVR) {
             double[] res = new double[1];
@@ -340,7 +338,7 @@ final class Svm {
         }
     }
 
-    public static void svm_predict_values(SvmModel model, FloatVector x, double[] dec_values) {
+    public static void svm_predict_values(final SvmModel model, final FloatVector x, final double[] dec_values) {
         if (model.param.svm_type == SvmParameter.ONE_CLASS || model.param.svm_type == SvmParameter.EPSILON_SVR
                 || model.param.svm_type == SvmParameter.NU_SVR) {
             double[] sv_coef = model.sv_coef[0];
@@ -449,7 +447,7 @@ final class Svm {
     }
 
     // Platt's binary SVM Probablistic Output: an improvement from Lin et al.
-    private void sigmoid_train(int l, double[] dec_values, double[] labels, double[] probAB) {
+    private void sigmoid_train(final int l, final double[] dec_values, final double[] labels, final double[] probAB) {
         double A, B;
         double prior1 = 0, prior0 = 0;
         int i;
@@ -875,7 +873,7 @@ final class Svm {
         }
     }
 
-    public double svm_predict_probability(SvmModel model, FloatVector x, double[] prob_estimates) {
+    public double svm_predict_probability(final SvmModel model, final FloatVector x, final double[] prob_estimates) {
         if ((model.param.svm_type == SvmParameter.C_SVC || model.param.svm_type == SvmParameter.NU_SVC)
                 && model.probA != null && model.probB != null) {
             int i;

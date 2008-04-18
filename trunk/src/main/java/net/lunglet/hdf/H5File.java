@@ -53,14 +53,14 @@ public final class H5File extends IdComponent {
                 id = H5Library.INSTANCE.H5Fcreate(name, flags, createPlist.getId(), accessPlist.getId());
                 if (id < 0) {
                     // throw an exception when open/create fail
-                    throw new H5FileException("H5Fcreate failed", true);
+                    throw new H5FileException("H5Fcreate failed for " + name, true);
                 }
             } else {
                 // Open the file if none of the bits above are set.
                 id = H5Library.INSTANCE.H5Fopen(name, flags, accessPlist.getId());
                 if (id < 0) {
                     // throw an exception when open/create fail
-                    throw new H5FileException("H5Fopen failed", true);
+                    throw new H5FileException("H5Fopen failed for " + name, true);
                 }
             }
         }

@@ -43,6 +43,7 @@ public final class HTKInputStreamTest {
      * SAVECOMPRESSED = F<br/>
      * SAVEWITHCRC = F<br/>
      * </CODE>
+     * 
      * @throws IOException
      */
     @Test
@@ -81,6 +82,7 @@ public final class HTKInputStreamTest {
      * SOURCERATE = 1250<br/>
      * TARGETKIND = MFCC_0_E_Z<br/>
      * </CODE>
+     * 
      * @throws IOException
      */
     @Test

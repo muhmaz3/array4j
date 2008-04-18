@@ -18,9 +18,7 @@ public final class DataSetCreatePropListBuilder {
     }
 
     public enum Layout {
-        CHUNKED,
-        COMPACT,
-        CONTIGUOUS
+        CHUNKED, COMPACT, CONTIGUOUS
     }
 
     private static final int H5D_FILL_TIME_ALLOC = 0;

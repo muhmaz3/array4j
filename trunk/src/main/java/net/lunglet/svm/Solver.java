@@ -56,7 +56,7 @@ class Solver {
 
     byte[] y;
 
-    private boolean be_shrunken(int i, double Gmax1, double Gmax2) {
+    private boolean be_shrunken(final int i, final double Gmax1, final double Gmax2) {
         if (is_upper_bound(i)) {
             if (y[i] == +1) {
                 return (-G[i] > Gmax1);

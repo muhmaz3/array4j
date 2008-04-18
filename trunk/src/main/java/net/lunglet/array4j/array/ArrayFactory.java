@@ -1,6 +1,5 @@
 package net.lunglet.array4j.array;
 
-
 public final class ArrayFactory {
     public static FloatArray createFloatArray(final int... shape) {
         return null;

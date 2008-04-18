@@ -35,8 +35,8 @@ public final class AttributeTest {
         assertEquals(expectedValue, actualValue);
         // XXX this doesn't work on 64-bit Linux with HDF5 1.6.5
         if (false) {
-          h5file.getRootGroup().createAttribute(name, expectedValue);
-          String actualValue2 = h5file.getRootGroup().getStringAttribute(name);
+            h5file.getRootGroup().createAttribute(name, expectedValue);
+            String actualValue2 = h5file.getRootGroup().getStringAttribute(name);
         }
         h5file.close();
     }
