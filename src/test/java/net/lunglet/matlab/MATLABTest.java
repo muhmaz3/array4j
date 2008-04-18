@@ -138,7 +138,8 @@ public final class MATLABTest {
         subs = toNativeLongs(0, 0);
         singleSub = MXLibrary.INSTANCE.mxCalcSingleSubscript(a, new NativeLong(subs.length), subs);
         assertEquals(0L, singleSub.longValue());
-        // check single subscript of second element (MATLAB always uses column-major order)
+        // check single subscript of second element (MATLAB always uses
+        // column-major order)
         subs = toNativeLongs(1, 0);
         singleSub = MXLibrary.INSTANCE.mxCalcSingleSubscript(a, new NativeLong(subs.length), subs);
         assertEquals(1L, singleSub.longValue());

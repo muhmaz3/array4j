@@ -23,7 +23,7 @@ public final class ULawtoPCMCodec extends FormatConversionProvider {
             int bufsize = 65536 * stream.getFormat().getChannels();
             this.bytebuf = new byte[bufsize];
             // buffer to contain PCM output samples
-            this.shortbuf =  ByteBuffer.allocate(2 * bufsize).order(ByteOrder.LITTLE_ENDIAN);
+            this.shortbuf = ByteBuffer.allocate(2 * bufsize).order(ByteOrder.LITTLE_ENDIAN);
             // there is nothing to output initially, so limit the buffer to 0
             shortbuf.limit(0);
         }

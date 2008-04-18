@@ -40,6 +40,10 @@ public final class HDFWriter implements Closeable {
         h5file.getRootGroup().createGroup(name).close();
     }
 
+    public H5File getH5File() {
+        return h5file;
+    }
+
     public void write(final String name, final FloatDenseMatrix matrix) {
         if (!matrix.order().equals(Order.ROW) && matrix.rows() > 1 && matrix.columns() > 1) {
             throw new IllegalArgumentException();

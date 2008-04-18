@@ -14,14 +14,16 @@ import net.lunglet.sound.sampled.RawAudioFileWriter;
 
 public final class SoundUtils {
     /**
-     * Read audio channel from file and return it as signed 16-bit, little-endian PCM data.
+     * Read audio channel from file and return it as signed 16-bit,
+     * little-endian PCM data.
      */
     public static byte[] readChannel(final File file, final int channel) throws FileNotFoundException {
         return readChannel(new FileInputStream(file), channel);
     }
 
     /**
-     * Read audio channel from stream and return it as signed 16-bit, little-endian PCM data.
+     * Read audio channel from stream and return it as signed 16-bit,
+     * little-endian PCM data.
      */
     public static byte[] readChannel(final InputStream stream, final int channel) {
         final AudioInputStream audioStream;

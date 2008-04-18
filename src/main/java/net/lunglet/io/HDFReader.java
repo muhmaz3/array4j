@@ -130,7 +130,11 @@ public final class HDFReader implements Closeable {
      */
     public HDFReader(final H5File h5file, final int bufSize) {
         this.h5file = h5file;
-        this.buffer = BufferUtils.createAlignedBuffer(bufSize, 1);
+        if (bufSize > 0) {
+            this.buffer = BufferUtils.createAlignedBuffer(bufSize, 1);
+        } else {
+            this.buffer = null;
+        }
     }
 
     public HDFReader(final String name) {
@@ -146,7 +150,14 @@ public final class HDFReader implements Closeable {
     }
 
     private ByteBuffer getBuffer() {
+        if (buffer == null) {
+            throw new IllegalStateException();
+        }
         return (ByteBuffer) buffer.position(0);
+    }
+
+    public H5File getH5File() {
+        return h5file;
     }
 
     public void read(final String name, final FloatDenseMatrix matrix) {
@@ -163,7 +174,8 @@ public final class HDFReader implements Closeable {
                 throw new RuntimeException(new IOException());
             }
             if (dims.length == 1) {
-                // TODO allow matrices with a single row or column when the dimension is 1
+                // TODO allow matrices with a single row or column when the
+                // dimension is 1
                 dims = new int[]{dims[0], 1};
             }
             if (dims[0] > 1 && dims[1] > 1) {

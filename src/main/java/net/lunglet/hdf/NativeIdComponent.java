@@ -18,8 +18,7 @@ final class NativeIdComponent extends WeakReference<IdComponent> {
 
     private static final int MAX_ITERATIONS = 100;
 
-    private static final List<NativeIdComponent> REF_LIST =
-        Collections.synchronizedList(new ArrayList<NativeIdComponent>());
+    private static final List<NativeIdComponent> REF_LIST = Collections.synchronizedList(new ArrayList<NativeIdComponent>());
 
     private static final ReferenceQueue<IdComponent> REF_QUEUE = new ReferenceQueue<IdComponent>();
 

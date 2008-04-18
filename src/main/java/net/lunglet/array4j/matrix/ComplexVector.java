@@ -1,6 +1,5 @@
 package net.lunglet.array4j.matrix;
 
-
 /**
  * Complex vector.
  */

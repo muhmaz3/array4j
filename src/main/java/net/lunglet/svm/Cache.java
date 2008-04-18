@@ -17,7 +17,7 @@ final class Cache {
 
     private final Entry[] entries;
 
-    private Entry lruHead;
+    private final Entry lruHead;
 
     private long size;
 

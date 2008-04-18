@@ -42,7 +42,7 @@ public final class Group extends H5Object {
         synchronized (H5Library.INSTANCE) {
             datasetId = H5Library.INSTANCE.H5Dcreate(getId(), name, typeId, spaceId, createPlistId);
             if (datasetId < 0) {
-                throw new H5GroupException("H5Dcreate failed");
+                throw new H5GroupException("H5Dcreate failed", true);
             }
         }
         return new DataSet(datasetId);

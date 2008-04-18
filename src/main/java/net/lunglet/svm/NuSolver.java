@@ -75,10 +75,14 @@ final class NuSolver extends Solver {
 
     @Override
     void doShrinking() {
-        double Gmax1 = -INF; // max { -y_i * grad(f)_i | y_i = +1, i in I_up(\alpha) }
-        double Gmax2 = -INF; // max { y_i * grad(f)_i | y_i = +1, i in I_low(\alpha) }
-        double Gmax3 = -INF; // max { -y_i * grad(f)_i | y_i = -1, i in I_up(\alpha) }
-        double Gmax4 = -INF; // max { y_i * grad(f)_i | y_i = -1, i in I_low(\alpha) }
+        // max { -y_i * grad(f)_i | y_i = +1, i in I_up(\alpha) }
+        double Gmax1 = -INF;
+        // max { y_i * grad(f)_i | y_i = +1, i in I_low(\alpha) }
+        double Gmax2 = -INF;
+        // max { -y_i * grad(f)_i | y_i = -1, i in I_up(\alpha) }
+        double Gmax3 = -INF;
+        // max { y_i * grad(f)_i | y_i = -1, i in I_low(\alpha) }
+        double Gmax4 = -INF;
 
         // find maximal violating pair first
         int i;

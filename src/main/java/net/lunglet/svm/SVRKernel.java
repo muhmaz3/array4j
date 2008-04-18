@@ -1,7 +1,7 @@
 package net.lunglet.svm;
 
 final class SVRKernel extends Kernel {
-    private float[][] buffer;
+    private final float[][] buffer;
 
     private final Cache cache;
 

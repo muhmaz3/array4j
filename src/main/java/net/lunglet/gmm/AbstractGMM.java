@@ -16,7 +16,7 @@ public abstract class AbstractGMM implements GMM, Serializable {
     }
 
     protected final void checkStats(final GMMMAPStats stats, final boolean doMeans, final boolean doVars) {
-        if (stats.getDimension() != getDimension() || stats.getMixtureCount()  != getMixtureCount()) {
+        if (stats.getDimension() != getDimension() || stats.getMixtureCount() != getMixtureCount()) {
             throw new IllegalArgumentException();
         }
         float[][] ex = stats.getEx();

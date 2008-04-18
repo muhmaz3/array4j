@@ -3,6 +3,8 @@ package net.lunglet.array4j.matrix;
 import java.io.Serializable;
 import java.util.List;
 
+// TODO remove columnsList and isSquare from this interface
+
 /**
  * Matrix.
  */

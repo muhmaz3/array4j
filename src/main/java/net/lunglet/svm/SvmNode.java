@@ -8,7 +8,7 @@ public final class SvmNode implements Serializable {
 
     private transient Handle handle;
 
-    private int index;
+    private final int index;
 
     public SvmNode(final int index) {
         this(index, (Handle) null);

@@ -58,7 +58,7 @@ abstract class Kernel extends QMatrix {
 
     private final int kernel_type;
 
-    private SvmNode[] x;
+    private final SvmNode[] x;
 
     private final double[] x_square;
 

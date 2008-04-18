@@ -54,7 +54,8 @@ public final class Engine {
     }
 
     /**
-     * @param command null-terminated command to evaluate
+     * @param command
+     *                null-terminated command to evaluate
      */
     private String eval(final byte[] command, final boolean keepOutput) {
         if (command[command.length - 1] != 0) {

@@ -2,8 +2,6 @@ package net.lunglet.util;
 
 import static org.junit.Assert.assertEquals;
 import java.util.Random;
-import net.lunglet.util.ArrayMath;
-import net.lunglet.util.ArrayUtils;
 import org.junit.Test;
 
 // TODO test argmaxn with infs and NaNs

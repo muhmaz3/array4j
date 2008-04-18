@@ -24,8 +24,7 @@ public enum HTKDataType {
     /** Vector quantised codebook. */
     DISCRETE,
     /** Perceptual Linear prediction. */
-    PLP,
-    ANON;
+    PLP;
 
     private HTKDataType() {
     }
