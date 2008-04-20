@@ -137,6 +137,13 @@ public final class HDFReader implements Closeable {
         }
     }
 
+    /**
+     * Create a reader that is not associated with a specific file.
+     */
+    public HDFReader(final int bufSize) {
+        this((H5File) null, bufSize);
+    }
+
     public HDFReader(final String name) {
         this(new H5File(name, H5File.H5F_ACC_RDONLY), DEFAULT_BUFFER_SIZE);
     }
@@ -146,7 +153,9 @@ public final class HDFReader implements Closeable {
     }
 
     public void close() {
-        h5file.close();
+        if (h5file != null) {
+            h5file.close();
+        }
     }
 
     private ByteBuffer getBuffer() {
@@ -157,10 +166,81 @@ public final class HDFReader implements Closeable {
     }
 
     public H5File getH5File() {
+        if (h5file == null) {
+            throw new IllegalStateException();
+        }
         return h5file;
     }
 
+    /**
+     * Read matrix from file.
+     * <p>
+     * This method is provided to facilitate reuse of a single HDFReader
+     * instance containing a direct buffer while reading many heap matrices.
+     */
+    public void read(final H5File h5file, final String name, final FloatDenseMatrix matrix) {
+        readImpl(h5file, name, matrix);
+    }
+
     public void read(final String name, final FloatDenseMatrix matrix) {
+        if (h5file == null) {
+            throw new IllegalStateException();
+        }
+        readImpl(h5file, name, matrix);
+    }
+
+    public void read(final String name, final FloatPackedMatrix matrix) {
+        read(name, matrix, DEFAULT_BUFFER_SIZE);
+    }
+
+    public void read(final String name, final FloatPackedMatrix matrix, final int bufSize) {
+        if (bufSize <= 0) {
+            throw new IllegalArgumentException();
+        }
+        DataSet dataset = null;
+        DataSpace space = null;
+        try {
+            dataset = h5file.getRootGroup().openDataSet(name);
+            space = dataset.getSpace();
+            long[] dims = space.getDims();
+            if (dims.length != 1) {
+                throw new RuntimeException(new IOException());
+            }
+            int k = (int) dims[0];
+            int n = ((int) Math.sqrt(1 + 8 * k) - 1) / 2;
+            if (matrix.rows() != n) {
+                throw new IllegalArgumentException();
+            }
+            if (matrix.storage().equals(Storage.DIRECT)) {
+                dataset.read(matrix.data(), FloatType.IEEE_F32LE);
+            } else {
+                FloatBuffer data = matrix.data();
+                // TODO don't allocate this buffer each time
+                FloatBuffer buf = BufferUtils.createFloatBuffer(bufSize, Storage.DIRECT);
+                DataSpace memSpace = new DataSpace(buf.capacity());
+                for (int i = 0; i < data.capacity(); i += buf.capacity()) {
+                    int remaining = data.capacity() - i;
+                    int count = Math.min(remaining, buf.capacity());
+                    buf.limit(count);
+                    memSpace.selectHyperslab(SelectionOperator.SET, new long[]{0}, new long[]{count});
+                    space.selectHyperslab(SelectionOperator.SET, new long[]{i}, new long[]{count});
+                    dataset.read(buf, FloatType.IEEE_F32LE, memSpace, space);
+                    buf.rewind();
+                    data.put(buf);
+                }
+                memSpace.close();
+            }
+        } finally {
+            if (space != null) {
+                space.close();
+            }
+            if (dataset != null) {
+                dataset.close();
+            }
+        }
+    }
+
+    private void readImpl(final H5File h5file, final String name, final FloatDenseMatrix matrix) {
         if (matrix.rows() > 1 && matrix.columns() > 1 && !matrix.order().equals(Order.ROW)) {
             throw new NotImplementedException();
         }
@@ -222,57 +302,6 @@ public final class HDFReader implements Closeable {
                     }
                     memSpace.close();
                 }
-            }
-        } finally {
-            if (space != null) {
-                space.close();
-            }
-            if (dataset != null) {
-                dataset.close();
-            }
-        }
-    }
-
-    public void read(final String name, final FloatPackedMatrix matrix) {
-        read(name, matrix, DEFAULT_BUFFER_SIZE);
-    }
-
-    public void read(final String name, final FloatPackedMatrix matrix, final int bufSize) {
-        if (bufSize <= 0) {
-            throw new IllegalArgumentException();
-        }
-        DataSet dataset = null;
-        DataSpace space = null;
-        try {
-            dataset = h5file.getRootGroup().openDataSet(name);
-            space = dataset.getSpace();
-            long[] dims = space.getDims();
-            if (dims.length != 1) {
-                throw new RuntimeException(new IOException());
-            }
-            int k = (int) dims[0];
-            int n = ((int) Math.sqrt(1 + 8 * k) - 1) / 2;
-            if (matrix.rows() != n) {
-                throw new IllegalArgumentException();
-            }
-            if (matrix.storage().equals(Storage.DIRECT)) {
-                dataset.read(matrix.data(), FloatType.IEEE_F32LE);
-            } else {
-                FloatBuffer data = matrix.data();
-                // TODO don't allocate this buffer each time
-                FloatBuffer buf = BufferUtils.createFloatBuffer(bufSize, Storage.DIRECT);
-                DataSpace memSpace = new DataSpace(buf.capacity());
-                for (int i = 0; i < data.capacity(); i += buf.capacity()) {
-                    int remaining = data.capacity() - i;
-                    int count = Math.min(remaining, buf.capacity());
-                    buf.limit(count);
-                    memSpace.selectHyperslab(SelectionOperator.SET, new long[]{0}, new long[]{count});
-                    space.selectHyperslab(SelectionOperator.SET, new long[]{i}, new long[]{count});
-                    dataset.read(buf, FloatType.IEEE_F32LE, memSpace, space);
-                    buf.rewind();
-                    data.put(buf);
-                }
-                memSpace.close();
             }
         } finally {
             if (space != null) {

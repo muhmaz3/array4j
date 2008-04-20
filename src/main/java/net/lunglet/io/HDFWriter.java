@@ -20,6 +20,9 @@ import net.lunglet.hdf.H5File;
 // TODO allow a large matrix to be created and return a handle
 // that allows it be written one row or column at a time
 
+// TODO make it easy to write to an in-memory file and then only
+// commit data to disk once everything is okay (transactions work-alike)
+
 @NotThreadSafe
 public final class HDFWriter implements Closeable {
     private final H5File h5file;
