@@ -3,7 +3,7 @@
   <jmxConfigurator />
   <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
     <layout class="ch.qos.logback.classic.PatternLayout">
-      <pattern>%d %r %p %t %c{1} %m%n</pattern>
+      <pattern>%d %r %p %t %c %m%n</pattern>
     </layout>
   </appender>
   <root>
