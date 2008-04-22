@@ -68,12 +68,18 @@ public final class FloatDenseBLASTest extends AbstractBLASTest {
     @Test
     public void testDot() {
         for (Storage[] s : new Permutations<Storage>(2, Storage.values())) {
-            for (int i = 0; i < 10; i++) {
-                FloatDenseVector x = DenseFactory.floatVector(i, Direction.ROW, s[0]);
-                FloatDenseVector y = DenseFactory.floatVector(i, Direction.ROW, s[1]);
-                MatrixTestSupport.populateMatrix(x);
-                MatrixTestSupport.populateMatrix(y);
-                assertEquals(dot(x, y), FloatDenseBLAS.DEFAULT.dot(x, y), 0);
+            for (Direction[] d : new Permutations<Direction>(2, Direction.values())) {
+                for (int i = 0; i < 10; i++) {
+                    FloatDenseVector x = DenseFactory.floatVector(i, d[0], s[0]);
+                    FloatDenseVector y = DenseFactory.floatVector(i, d[1], s[1]);
+                    MatrixTestSupport.populateMatrix(x);
+                    MatrixTestSupport.populateMatrix(y);
+                    float z = dot(x, y);
+                    assertEquals(z, FloatDenseBLAS.DEFAULT.dot(x, y), 0);
+                    FloatDenseVector xt = x.transpose();
+                    FloatDenseVector yt = y.transpose();
+                    assertEquals(z, FloatDenseBLAS.DEFAULT.dot(xt, yt), 0);
+                }
             }
         }
     }

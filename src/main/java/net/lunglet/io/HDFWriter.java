@@ -1,6 +1,7 @@
 package net.lunglet.io;
 
 import java.io.Closeable;
+import java.io.File;
 import net.jcip.annotations.NotThreadSafe;
 import net.lunglet.array4j.Order;
 import net.lunglet.array4j.matrix.dense.FloatDenseMatrix;
@@ -26,6 +27,10 @@ import net.lunglet.hdf.H5File;
 @NotThreadSafe
 public final class HDFWriter implements Closeable {
     private final H5File h5file;
+
+    public HDFWriter(final File file) {
+        this(new H5File(file, H5File.H5F_ACC_TRUNC));
+    }
 
     public HDFWriter(final H5File h5file) {
         this.h5file = h5file;
