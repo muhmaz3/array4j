@@ -148,6 +148,8 @@ public final class SvmClassifier implements Serializable {
 
     public FloatDenseMatrix score(final FloatMatrix testData) {
         List<Handle> handles = new ArrayList<Handle>();
+        // TODO weird things happen here when trying to score data that is
+        // oriented in the wrong direction
         for (final FloatVector x : testData.columnsIterator()) {
             handles.add(new Handle() {
                 @Override

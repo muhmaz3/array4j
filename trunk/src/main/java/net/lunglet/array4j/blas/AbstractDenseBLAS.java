@@ -87,7 +87,8 @@ public abstract class AbstractDenseBLAS {
         checkMatrixAsVector(a);
         checkMatrixAsVector(b);
         if (length(a) != length(b)) {
-            throw new IllegalArgumentException("Arguments must have the same length");
+            throw new IllegalArgumentException(String.format("Arguments must have the same length: %d != %d",
+                length(a), length(b)));
         }
     }
 
