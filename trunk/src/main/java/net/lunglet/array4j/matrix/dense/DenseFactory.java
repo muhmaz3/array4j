@@ -8,6 +8,9 @@ import net.lunglet.array4j.Storage;
 import net.lunglet.array4j.matrix.FloatMatrix;
 import net.lunglet.array4j.matrix.FloatVector;
 
+// TODO use factory instances
+// TODO provide some defaults like DenseFactory.ROW_DIRECT
+
 /**
  * Factory for creating dense matrices and vectors.
  */

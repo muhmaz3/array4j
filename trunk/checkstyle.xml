@@ -66,7 +66,9 @@
         <module name="DoubleCheckedLocking"/>
         <module name="EmptyStatement"/>
         <module name="EqualsHashCode"/>
-        <module name="HiddenField"/>
+        <module name="HiddenField">
+            <property name="severity" value="ignore"/>
+        </module>
         <module name="IllegalInstantiation"/>
         <module name="InnerAssignment"/>
         <module name="MagicNumber">
@@ -96,6 +98,10 @@
         <module name="UpperEll"/>
         <module name="DefaultComesLast"/>
         <module name="CovariantEquals"/>
+        <module name="TrailingComment"/>
+        <module name="JUnitTestCase"/>
+        <module name="ParameterAssignment"/>
+        <module name="UnnecessaryParentheses"/>
     </module>
     <module name="PackageHtml">
         <property name="severity" value="ignore"/>
