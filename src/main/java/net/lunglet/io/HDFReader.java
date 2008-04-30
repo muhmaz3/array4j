@@ -167,7 +167,7 @@ public final class HDFReader implements Closeable {
 
     public H5File getH5File() {
         if (h5file == null) {
-            throw new IllegalStateException();
+            throw new IllegalStateException("No file associated with this reader");
         }
         return h5file;
     }

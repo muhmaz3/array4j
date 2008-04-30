@@ -43,6 +43,12 @@ public final class H5File extends IdComponent {
     /* overwrite existing files */
     public static final int H5F_ACC_TRUNC = 0x0002;
 
+    /* specified file handle only */
+    private static final int H5F_SCOPE_LOCAL = 0;
+
+    /* entire virtual file */
+    private static final int H5F_SCOPE_GLOBAL = 1;
+
     private static int init(final String name, final int flags, final FileCreatePropList createPlist,
             final FileAccessPropList accessPlist) {
         final int id;
@@ -164,5 +170,14 @@ public final class H5File extends IdComponent {
 
     public Group getRootGroup() {
         return rootGroup;
+    }
+
+    public void flush() {
+        synchronized (H5Library.INSTANCE) {
+            int err = H5Library.INSTANCE.H5Fflush(getId(), H5F_SCOPE_LOCAL);
+            if (err < 0) {
+                throw new H5FileException("H5Fflush failed");
+            }
+        }
     }
 }

@@ -391,6 +391,11 @@ public interface H5Library extends Library {
 
     int H5Fcreate(String filename, int flags, int create_plist, int access_plist);
 
+    /**
+     * <CODE>herr_t H5Fflush(hid_t object_id, H5F_scope_t scope)</CODE>
+     */
+    int H5Fflush(int object_id, int scope);
+
     int H5Fget_access_plist(int file_id);
 
     int H5Fget_create_plist(int file_id);

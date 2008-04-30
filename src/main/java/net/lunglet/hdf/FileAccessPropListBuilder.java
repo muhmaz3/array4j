@@ -2,10 +2,8 @@ package net.lunglet.hdf;
 
 import com.sun.jna.NativeLong;
 
-// TODO provide a way to abort the build
-
 public final class FileAccessPropListBuilder {
-    private final FileAccessPropList propList;
+    private FileAccessPropList propList;
 
     public FileAccessPropListBuilder() {
         this.propList = new FileAccessPropList();
@@ -13,6 +11,11 @@ public final class FileAccessPropListBuilder {
 
     public FileAccessPropList build() {
         return propList;
+    }
+
+    public void reset() {
+        propList.close();
+        propList = new FileAccessPropList();
     }
 
     public FileAccessPropListBuilder setCache(final int mdcNelmts, final int rdccNelmts, final long rdccNbytes,

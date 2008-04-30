@@ -48,6 +48,10 @@ public final class HDFWriter implements Closeable {
         h5file.getRootGroup().createGroup(name).close();
     }
 
+    public void flush() {
+        h5file.flush();
+    }
+
     public H5File getH5File() {
         return h5file;
     }
