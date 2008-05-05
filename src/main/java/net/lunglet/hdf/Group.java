@@ -159,7 +159,7 @@ public final class Group extends H5Object {
         synchronized (H5Library.INSTANCE) {
             datasetId = H5Library.INSTANCE.H5Dopen(getId(), name);
             if (datasetId < 0) {
-                throw new H5GroupException("H5Dopen failed", true);
+                throw new H5GroupException("H5Dopen of " + name + " failed", true);
             }
         }
         return new DataSet(datasetId);

@@ -13,8 +13,8 @@
 	<classpathentry kind="lib" path="lib/jcip-annotations.jar"/>
 	<classpathentry kind="lib" path="lib/jna.jar"/>
 	<classpathentry kind="lib" path="lib/slf4j-api-1.5.0.jar"/>
-	<classpathentry kind="lib" path="lib/logback-classic-0.9.9.jar"/>
-	<classpathentry kind="lib" path="lib/logback-core-0.9.9.jar"/>
+	<classpathentry kind="lib" path="lib/log4j-1.2.15.jar"/>
+	<classpathentry kind="lib" path="lib/slf4j-log4j12-1.5.0.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="build.eclipse/classes"/>
 </classpath>
