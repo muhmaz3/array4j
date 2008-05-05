@@ -1,6 +1,7 @@
 package net.lunglet.io;
 
 import java.io.Closeable;
+import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
@@ -20,6 +21,10 @@ import net.lunglet.util.NumberUtils;
 import org.apache.commons.lang.NotImplementedException;
 
 // TODO handle any order, stride, offset, size, etc.
+
+// TODO make an HDFReader2 that takes a storage constructor
+// argument (and optional buffer size) and operates on new
+// matrices instead of existing ones
 
 @NotThreadSafe
 public final class HDFReader implements Closeable {
@@ -120,6 +125,14 @@ public final class HDFReader implements Closeable {
     private final ByteBuffer buffer;
 
     private final H5File h5file;
+
+    public HDFReader(final File file) {
+        this(new H5File(file, H5File.H5F_ACC_RDONLY), DEFAULT_BUFFER_SIZE);
+    }
+
+    public HDFReader(final File file, final int bufSize) {
+        this(new H5File(file, H5File.H5F_ACC_RDONLY), bufSize);
+    }
 
     public HDFReader(final H5File h5file) {
         this(h5file, DEFAULT_BUFFER_SIZE);

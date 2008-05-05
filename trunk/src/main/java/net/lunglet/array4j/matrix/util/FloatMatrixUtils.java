@@ -217,7 +217,7 @@ public final class FloatMatrixUtils {
         }
         int cols = column1 - column0;
         if (x.order().equals(Order.COLUMN)) {
-//            return new FloatDenseMatrix(x, x.rows(), cols, x.columnOffset(column0), x.stride, x.order());
+            // TODO do this without copying
             FloatDenseMatrix newMatrix = DenseFactory.floatMatrix(x.rows(), cols, x.order(), x.storage());
             for (int i = column0, j = 0; i < column1; i++, j++) {
                 newMatrix.setColumn(j, x.column(i));
