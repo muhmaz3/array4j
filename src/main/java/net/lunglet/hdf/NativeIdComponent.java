@@ -22,10 +22,13 @@ final class NativeIdComponent extends WeakReference<IdComponent> {
 
     private static final ReferenceQueue<IdComponent> REF_QUEUE = new ReferenceQueue<IdComponent>();
 
-    static void cleanup() {
+    // TODO this synchronized should not be needed
+    static synchronized void cleanup() {
         int iterations = 0;
         do {
             NativeIdComponent nativeId = null;
+            // ReferenceQueue synchronizes poll internally, so multiple threads
+            // should not be able to obtain the same pending object here
             nativeId = (NativeIdComponent) REF_QUEUE.poll();
             iterations++;
             if (nativeId != null) {
@@ -55,10 +58,12 @@ final class NativeIdComponent extends WeakReference<IdComponent> {
         // components that cannot be closed, e.g. predefined types.
         if (open && closeAction != null) {
             LOGGER.debug("Closing [id={}]", getId());
-            REF_LIST.remove(this);
             synchronized (H5Library.INSTANCE) {
                 closeAction.close(getId());
             }
+            // XXX removing this reference before closing might have been
+            // causing double-closes on some objects
+            REF_LIST.remove(this);
             open = false;
         }
     }
