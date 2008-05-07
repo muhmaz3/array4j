@@ -42,7 +42,7 @@ public final class Group extends H5Object {
         synchronized (H5Library.INSTANCE) {
             datasetId = H5Library.INSTANCE.H5Dcreate(getId(), name, typeId, spaceId, createPlistId);
             if (datasetId < 0) {
-                throw new H5GroupException("H5Dcreate failed", true);
+                throw new H5GroupException("H5Dcreate of " + name + " failed", true);
             }
         }
         return new DataSet(datasetId);
@@ -63,7 +63,7 @@ public final class Group extends H5Object {
         synchronized (H5Library.INSTANCE) {
             groupId = H5Library.INSTANCE.H5Gcreate(getId(), name, new NativeLong(0));
             if (groupId < 0) {
-                throw new H5GroupException("H5Gcreate failed");
+                throw new H5GroupException("H5Gcreate of " + name + " failed");
             }
         }
         return new Group(groupId, false);
