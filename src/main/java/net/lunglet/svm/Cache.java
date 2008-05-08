@@ -31,7 +31,7 @@ final class Cache {
         // sizeof(head_t) == 16
         this.size -= l * (16L / 4L);
         // cache must be large enough for two columns
-        this.size = Math.max(size, (long) 2 * l);
+        this.size = Math.max(size, 2 * (long) l);
         lruHead = new Entry();
         lruHead.next = lruHead;
         lruHead.prev = lruHead;

@@ -1,8 +1,5 @@
-
-
-
-
 package libsvm;
+
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.FileOutputStream;
@@ -36,7 +33,7 @@ class Cache {
 		for(int i=0;i<l;i++) head[i] = new head_t();
 		size /= 4;
 		size -= l * (16/4);	// sizeof(head_t) == 16
-		size = Math.max(size, (long) 2*l);  // cache must be large enough for two columns
+		size = Math.max(size, 2* (long) l);  // cache must be large enough for two columns
 		lru_head = new head_t();
 		lru_head.next = lru_head.prev = lru_head;
 	}
@@ -167,12 +164,6 @@ abstract class Kernel extends QMatrix {
 	        return ret;
 	}
 
-	private static double tanh(double x)
-	{
-		double e = Math.exp(x);
-		return 1.0-2.0/(e*e+1);
-	}
-
 	double kernel_function(int i, int j)
 	{
 		switch(kernel_type)
@@ -184,7 +175,7 @@ abstract class Kernel extends QMatrix {
 			case svm_parameter.RBF:
 				return Math.exp(-gamma*(x_square[i]+x_square[j]-2*dot(x[i],x[j])));
 			case svm_parameter.SIGMOID:
-				return tanh(gamma*dot(x[i],x[j])+coef0);
+				return Math.tanh(gamma*dot(x[i],x[j])+coef0);
 			case svm_parameter.PRECOMPUTED:
 				return x[i][(int)(x[j][0].value)].value;
 			default:
@@ -282,7 +273,7 @@ abstract class Kernel extends QMatrix {
 				return Math.exp(-param.gamma*sum);
 			}
 			case svm_parameter.SIGMOID:
-				return tanh(param.gamma*dot(x,y)+param.coef0);
+				return Math.tanh(param.gamma*dot(x,y)+param.coef0);
 			case svm_parameter.PRECOMPUTED:
 				return 	x[(int)(y[0].value)].value;
 			default:
@@ -455,6 +446,7 @@ class Solver {
 			{
 				counter = Math.min(l,1000);
 				if(shrinking!=0) do_shrinking();
+				System.err.print(".");
 			}
 
 			if(select_working_set(working_set)!=0)
@@ -463,6 +455,7 @@ class Solver {
 				reconstruct_gradient();
 				// reset active set size and check
 				active_size = l;
+				System.err.print("*");
 				if(select_working_set(working_set)!=0)
 					break;
 				else
@@ -1297,6 +1290,7 @@ public class svm {
 	//
 	// construct and solve various formulations
 	//
+	public static final int LIBSVM_VERSION=286;
 	private static void solve_c_svc(svm_problem prob, svm_parameter param,
 					double[] alpha, Solver.SolutionInfo si,
 					double Cp, double Cn)
@@ -1554,7 +1548,7 @@ public class svm {
 
 		int max_iter=100; 	// Maximal number of iterations
 		double min_step=1e-10;	// Minimal step taken in line search
-		double sigma=1e-3;	// For numerically strict PD of Hessian
+		double sigma=1e-12;	// For numerically strict PD of Hessian
 		double eps=1e-5;
 		double hiTarget=(prior1+1.0)/(prior1+2.0);
 		double loTarget=1/(prior0+2.0);
