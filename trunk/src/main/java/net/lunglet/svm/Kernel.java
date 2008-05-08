@@ -21,7 +21,7 @@ abstract class Kernel extends QMatrix {
         case SvmParameter.RBF:
             throw new UnsupportedOperationException();
         case SvmParameter.SIGMOID:
-            return tanh(param.gamma * dot(x, y) + param.coef0);
+            return Math.tanh(param.gamma * dot(x, y) + param.coef0);
         case SvmParameter.PRECOMPUTED:
             // This should never happen. If it does, it's probably because the
             // svm type parameter wasn't fixed after training.
@@ -41,11 +41,6 @@ abstract class Kernel extends QMatrix {
             tmp = tmp * tmp;
         }
         return ret;
-    }
-
-    private static double tanh(final double x) {
-        double e = Math.exp(x);
-        return 1.0 - 2.0 / (e * e + 1);
     }
 
     private final double coef0;
@@ -94,7 +89,7 @@ abstract class Kernel extends QMatrix {
         case SvmParameter.RBF:
             return Math.exp(-gamma * (x_square[i] + x_square[j] - 2 * dot(x[i], x[j])));
         case SvmParameter.SIGMOID:
-            return tanh(gamma * dot(x[i], x[j]) + coef0);
+            return Math.tanh(gamma * dot(x[i], x[j]) + coef0);
         case SvmParameter.PRECOMPUTED:
             return kernel.get(x[i].getIndex(), x[j].getIndex());
         default:
