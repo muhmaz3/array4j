@@ -37,7 +37,7 @@ abstract class IdComponent implements Closeable {
         return new HashCodeBuilder().append(getId()).toHashCode();
     }
 
-    protected final boolean isOpen() {
+    public final boolean isOpen() {
         return nativeId.isOpen();
     }
 }

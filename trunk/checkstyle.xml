@@ -26,11 +26,17 @@
         <module name="LocalFinalVariableName"/>
         <module name="LocalVariableName"/>
         <module name="MemberName"/>
-        <module name="MethodName"/>
+        <module name="MethodName">
+            <property name="severity" value="ignore"/>
+        </module>
         <module name="PackageName"/>
-        <module name="ParameterName"/>
+        <module name="ParameterName">
+            <property name="severity" value="ignore"/>
+        </module>
         <module name="StaticVariableName"/>
-        <module name="TypeName"/>
+        <module name="TypeName">
+            <property name="severity" value="ignore"/>
+        </module>
         <module name="AvoidStarImport"/>
         <module name="IllegalImport"/>
         <module name="RedundantImport"/>

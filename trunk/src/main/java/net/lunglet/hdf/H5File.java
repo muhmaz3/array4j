@@ -13,6 +13,8 @@ import org.slf4j.LoggerFactory;
 // fails, to make it easy to diagnose e.g. 'n RDWR open of a
 // non-existant file
 
+// TODO register shutdown hook to close files if possible
+
 @NotThreadSafe
 public final class H5File extends IdComponent {
     private static final CloseAction CLOSE_ACTION = new CloseAction() {

@@ -26,7 +26,6 @@ import org.junit.Test;
 // TODO test with heap and direct data oriented both ways
 
 public final class SvmClassifierTest {
-    @SuppressWarnings("unchecked")
     private static List<Handle> createHandles(final List<? extends FloatVector> data, final int[] labels) {
         List<Handle> handles = new ArrayList<Handle>();
         int i = 0;
