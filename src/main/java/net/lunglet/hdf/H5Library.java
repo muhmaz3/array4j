@@ -441,7 +441,10 @@ public interface H5Library extends Library {
     int H5Gget_objtype_by_idx(int loc_id, long idx);
 
     /**
-     * <CODE>int H5Giterate(hid_t loc_id, const char *name, int *idx, H5G_iterate_t operator, void *operator_data)</CODE>
+     * <CODE>
+     * int
+     * H5Giterate(hid_t loc_id, const char *name, int *idx, H5G_iterate_t operator, void *operator_data)
+     * </CODE>
      */
     int H5Giterate(int loc_id, String name, IntByReference idx, H5G_iterate_t operator, Pointer operator_data);
 
@@ -461,13 +464,19 @@ public interface H5Library extends Library {
     int H5Pcreate(int cls_id);
 
     /**
-     * <CODE>herr_t H5Pget_cache(hid_t plist_id, int *mdc_nelmts, int *rdcc_nelmts, size_t *rdcc_nbytes, double *rdcc_w0)</CODE>
+     * <CODE>
+     * herr_t
+     * H5Pget_cache(hid_t plist_id, int *mdc_nelmts, int *rdcc_nelmts, size_t *rdcc_nbytes, double *rdcc_w0)
+     * </CODE>
      */
     int H5Pget_cache(int plist_id, IntByReference mdc_nelmts, IntByReference rdcc_nelmts,
             NativeLongByReference rdcc_nbytes, DoubleByReference rdcc_w);
 
     /**
-     * <CODE>herr_t H5Pset_cache(hid_t plist_id, int mdc_nelmts, int rdcc_nelmts, size_t rdcc_nbytes, double rdcc_w0)</CODE>
+     * <CODE>
+     * herr_t
+     * H5Pset_cache(hid_t plist_id, int mdc_nelmts, int rdcc_nelmts, size_t rdcc_nbytes, double rdcc_w0)
+     * </CODE>
      */
     int H5Pset_cache(int plist_id, int mdc_nelmts, int rdcc_nelmts, NativeLong rdcc_nbytes, double rdcc_w);
 
@@ -533,7 +542,10 @@ public interface H5Library extends Library {
     int H5Sselect_all(int space_id);
 
     /**
-     * <CODE>herr_t H5Sselect_elements(hid_t space_id, H5S_seloper_t op, const size_t num_elements, const hsize_t *coord[])</CODE>
+     * <CODE>
+     * herr_t
+     * H5Sselect_elements(hid_t space_id, H5S_seloper_t op, const size_t num_elements, const hsize_t *coord[])
+     * </CODE>
      */
     int H5Sselect_elements(int space_id, int op, NativeLong num_elements, Buffer coord);
 

@@ -8,34 +8,29 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/*
- * http://hdfgroup.com/hdf-java-html/JNI/index.html
- * http://hdfgroup.org/HDF5/doc/TechNotes/ThreadSafeLibrary.html
- */
+// TODO close shouldn't have to be synchronized
 
 final class NativeIdComponent extends WeakReference<IdComponent> {
     private static final Logger LOGGER = LoggerFactory.getLogger(NativeIdComponent.class);
 
     private static final int MAX_ITERATIONS = 100;
 
-    private static final List<NativeIdComponent> REF_LIST = Collections.synchronizedList(new ArrayList<NativeIdComponent>());
+    private static final List<NativeIdComponent> REF_LIST =
+            Collections.synchronizedList(new ArrayList<NativeIdComponent>());
 
     private static final ReferenceQueue<IdComponent> REF_QUEUE = new ReferenceQueue<IdComponent>();
 
-    // TODO this synchronized should not be needed
-    static synchronized void cleanup() {
+    static void cleanup() {
         int iterations = 0;
         do {
-            NativeIdComponent nativeId = null;
-            // ReferenceQueue synchronizes poll internally, so multiple threads
-            // should not be able to obtain the same pending object here
-            nativeId = (NativeIdComponent) REF_QUEUE.poll();
-            iterations++;
-            if (nativeId != null) {
-                nativeId.close();
-            } else {
+            // ReferenceQueue synchronizes poll internally, so different threads
+            // should not receive the same object here
+            NativeIdComponent nativeId = (NativeIdComponent) REF_QUEUE.poll();
+            if (nativeId == null) {
                 break;
             }
+            nativeId.close();
+            iterations++;
         } while (iterations < MAX_ITERATIONS);
     }
 
@@ -45,6 +40,8 @@ final class NativeIdComponent extends WeakReference<IdComponent> {
 
     private boolean open;
 
+    private Throwable closeStack = null;
+
     public NativeIdComponent(final IdComponent component, final int id, final CloseAction closeAction) {
         super(component, REF_QUEUE);
         this.id = id;
@@ -53,7 +50,7 @@ final class NativeIdComponent extends WeakReference<IdComponent> {
         REF_LIST.add(this);
     }
 
-    public void close() {
+    public synchronized void close() {
         // Ignore close if there is no close action. This is required for
         // components that cannot be closed, e.g. predefined types.
         if (open && closeAction != null) {
@@ -61,16 +58,17 @@ final class NativeIdComponent extends WeakReference<IdComponent> {
             synchronized (H5Library.INSTANCE) {
                 closeAction.close(getId());
             }
-            // XXX removing this reference before closing might have been
-            // causing double-closes on some objects
             REF_LIST.remove(this);
+            if (false) {
+                closeStack = new Throwable().fillInStackTrace();
+            }
             open = false;
         }
     }
 
     public int getId() {
         if (!open) {
-            throw new IllegalStateException();
+            throw new IllegalStateException("Already closed", closeStack);
         }
         return id;
     }
