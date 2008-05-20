@@ -7,7 +7,15 @@
   <property file="default.build.properties" />
 
   <path id="build.classpath">
-    <fileset dir="${lib.dir}" includes="*.jar" />
+    <fileset dir="${lib.dir}">
+      <include name="blas.jar" />
+      <include name="f2jutil.jar" />
+      <include name="lapack.jar" />
+      <include name="commons-lang-2.3.jar" />
+      <include name="jcip-annotations.jar" />
+      <include name="jna.jar" />
+      <include name="slf4j-api-1.5.0.jar" />
+    </fileset>
   </path>
 
   <patternset id="java.src.pattern">
@@ -32,12 +40,23 @@
     <mkdir dir="${dist.dir}" />
   </target>
 
-  <target name="compile-array4j" depends="prepare">
+  <target name="compile-tasks" depends="prepare">
     <copy todir="${classes.dir}">
       <fileset dir="${resources.dir}">
         <include name="**/*" />
       </fileset>
     </copy>
+  </target>
+
+  <target name="compile-test-tasks" depends="prepare">
+    <copy todir="${test.classes.dir}">
+      <fileset dir="${test.resources.dir}">
+        <include name="**/*" />
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="compile-array4j" depends="compile-tasks">
     <javac destdir="${classes.dir}" debug="true" source="${javac.version}" deprecation="true">
       <classpath refid="build.classpath" />
       <src path="${src.dir}" />
@@ -48,12 +67,28 @@
   <target name="compile" depends="compile-array4j" description="Compile the source files for the project.">
   </target>
 
-  <target name="jar-complete" depends="compile" description="Create the complete array4j jar.">
-    <property name="filename" value="array4j-complete.jar" />
+  <target name="compile-test" depends="jar, compile-test-tasks">
+    <javac destdir="${test.classes.dir}" debug="true" source="${javac.version}" deprecation="true">
+      <classpath>
+        <pathelement path="${dist.dir}/array4j.jar"/>
+        <pathelement path="${lib.dir}/junit-4.4.jar" />
+      </classpath>
+      <src path="${test.src.dir}" />
+      <src path="${bench.src.dir}" />
+      <patternset refid="java.src.pattern" />
+    </javac>
+  </target>
+
+  <target name="jar" depends="init" description="Create the array4j.jar file">
+    <antcall target="jar-array4j" inheritall="true" />
+  </target>
+
+  <target name="jar-array4j">
+    <antcall target="compile" inheritall="true" />
     <taskdef name="jarjar"
              classname="com.tonicsystems.jarjar.JarJarTask"
-             classpath="${build.lib.dir}/jarjar-1.0rc6.jar" />
-    <jarjar destfile="${dist.dir}/${filename}">
+             classpath="${build.lib.dir}/jarjar-1.0rc7.jar" />
+    <jarjar destfile="${dist.dir}/array4j.jar">
       <fileset dir="${classes.dir}" />
       <zipfileset src="${lib.dir}/blas.jar" />
       <zipfileset src="${lib.dir}/f2jutil.jar" />
@@ -62,6 +97,27 @@
       <zipfileset src="${lib.dir}/commons-lang-2.3.jar" />
       <zipfileset src="${lib.dir}/jcip-annotations.jar" />
       <zipfileset src="${lib.dir}/slf4j-api-1.5.0.jar" />
+      <manifest>
+        <attribute name="Built-By" value="${user.name}" />
+        <attribute name="Main-Class" value="net.lunglet.array4j.Main" />
+      </manifest>
+    </jarjar>
+  </target>
+
+  <target name="jar-test" depends="compile-test">
+    <taskdef name="jarjar"
+             classname="com.tonicsystems.jarjar.JarJarTask"
+             classpath="${build.lib.dir}/jarjar-1.0rc7.jar" />
+    <jarjar destfile="${dist.dir}/array4j-tests.jar">
+      <fileset dir="${test.classes.dir}" />
+      <zipfileset src="${dist.dir}/array4j.jar" />
+      <zipfileset src="${lib.dir}/junit-4.4.jar" />
+      <zipfileset src="${lib.dir}/logback-core-0.9.9.jar" />
+      <zipfileset src="${lib.dir}/logback-classic-0.9.9.jar" />
+      <manifest>
+        <attribute name="Built-By" value="${user.name}" />
+        <attribute name="Main-Class" value="net.lunglet.array4j.test.Main" />
+      </manifest>
     </jarjar>
   </target>
 

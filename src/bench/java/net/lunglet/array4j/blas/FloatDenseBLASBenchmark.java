@@ -10,11 +10,10 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 public final class FloatDenseBLASBenchmark {
-    @Ignore
     @Test
     public void benchmarkGemm() {
         Random rng = new Random(0);
-        for (int n = 50; n < 751; n += 10) {
+        for (int n = 50; n < 1001; n += 10) {
             final int r;
             if (n < 100) {
                 r = 5000;
@@ -45,6 +44,7 @@ public final class FloatDenseBLASBenchmark {
         }
     }
 
+    @Ignore
     @Test
     public void benchmarkGemm2() {
         Random rng = new Random(0);

@@ -28,7 +28,7 @@ public final class SphereAudioFileReaderTest {
 
         private final int size;
 
-        public SegmentInfo(final int size, final String md5sum) {
+        private SegmentInfo(final int size, final String md5sum) {
             this.size = size;
             this.md5sum = md5sum;
         }
@@ -170,36 +170,42 @@ public final class SphereAudioFileReaderTest {
     public void testEx512() throws UnsupportedAudioFileException, IOException {
         AudioInputStream ais = getAudioInputStream("ex5_12.wav", 17024, "8b19477ffdc4ed94abb65af950bb4cf8");
         AudioFormat format = ais.getFormat();
+        assertEquals(1, format.getChannels());
     }
 
     @Test
     public void testEx512p() throws UnsupportedAudioFileException, IOException {
         AudioInputStream ais = getAudioInputStream("ex5_12_p.wav", 33024, "9a49dabcc340912a76057b687c29d51a");
         AudioFormat format = ais.getFormat();
+        assertEquals(1, format.getChannels());
     }
 
     @Test
     public void testEx5c1() throws UnsupportedAudioFileException, IOException {
         AudioInputStream ais = getAudioInputStream("ex5_c1.wav", 17024, "e3113334cf3b347607ede08ddcfd0134");
         AudioFormat format = ais.getFormat();
+        assertEquals(1, format.getChannels());
     }
 
     @Test
     public void testEx5c1p() throws UnsupportedAudioFileException, IOException {
         AudioInputStream ais = getAudioInputStream("ex5_c1_p.wav", 33024, "a95d9a49344c822f8a60e5bcd48ca982");
         AudioFormat format = ais.getFormat();
+        assertEquals(1, format.getChannels());
     }
 
     @Test
     public void testEx5c2() throws UnsupportedAudioFileException, IOException {
         AudioInputStream ais = getAudioInputStream("ex5_c2.wav", 17024, "f7df3b17aad8337f9748fdd7fb8359de");
         AudioFormat format = ais.getFormat();
+        assertEquals(1, format.getChannels());
     }
 
     @Test
     public void testEx5c2p() throws UnsupportedAudioFileException, IOException {
         AudioInputStream ais = getAudioInputStream("ex5_c2_p.wav", 33024, "ec3ec5b50c8ee47df0043b0a903e4d49");
         AudioFormat format = ais.getFormat();
+        assertEquals(1, format.getChannels());
     }
 
     @Test

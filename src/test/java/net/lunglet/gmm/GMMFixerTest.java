@@ -7,14 +7,14 @@ import net.lunglet.array4j.matrix.dense.DenseFactory;
 import net.lunglet.array4j.matrix.dense.FloatDenseMatrix;
 import net.lunglet.array4j.matrix.util.FloatMatrixUtils;
 import net.lunglet.gmm.GMMFixer.GMMFixerStats;
-import org.junit.Test;
+import org.junit.Ignore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class GMMFixerTest {
     private final Logger logger = LoggerFactory.getLogger(GMMFixerTest.class);
 
-    @Test
+    @Ignore
     public void test() {
         int dimension = 39;
         int mixtures = 20;
