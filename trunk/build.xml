@@ -116,7 +116,7 @@
       <zipfileset src="${lib.dir}/logback-classic-0.9.9.jar" />
       <manifest>
         <attribute name="Built-By" value="${user.name}" />
-        <attribute name="Main-Class" value="net.lunglet.array4j.test.Main" />
+        <attribute name="Main-Class" value="net.lunglet.array4j.AllTests" />
       </manifest>
     </jarjar>
   </target>
