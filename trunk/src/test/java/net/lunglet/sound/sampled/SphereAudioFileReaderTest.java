@@ -22,6 +22,10 @@ import javax.sound.sampled.AudioFormat.Encoding;
 import javax.sound.sampled.spi.AudioFileReader;
 import org.junit.Test;
 
+// TODO make a test where we first try to get an AudioInputStream
+// from a wave file using SphereAudioFileReader, then using
+// WaveFileReader, to check that the stream is reset properly
+
 public final class SphereAudioFileReaderTest {
     private static final class SegmentInfo {
         private final String md5sum;
@@ -94,6 +98,7 @@ public final class SphereAudioFileReaderTest {
         for (Object provider : providers) {
             if (provider instanceof SphereAudioFileReader) {
                 found = true;
+                break;
             }
         }
         assertTrue(found);
