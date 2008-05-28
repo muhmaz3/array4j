@@ -229,10 +229,9 @@ public final class SphereAudioFileReader extends AudioFileReader {
     @Override
     public AudioInputStream getAudioInputStream(final InputStream stream) throws UnsupportedAudioFileException,
             IOException {
-        BufferedInputStream bis = new BufferedInputStream(stream);
-        AudioFileFormat audioFileFormat = getAudioFileFormat(bis);
+        AudioFileFormat audioFileFormat = getAudioFileFormat(stream);
         AudioFormat audioFormat = audioFileFormat.getFormat();
-        return new AudioInputStream(bis, audioFormat, audioFileFormat.getFrameLength());
+        return new AudioInputStream(stream, audioFormat, audioFileFormat.getFrameLength());
     }
 
     @Override
